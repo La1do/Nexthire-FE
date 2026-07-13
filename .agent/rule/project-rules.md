@@ -193,3 +193,11 @@ npm run lint
 ```
 
 - If a command cannot run, report the reason clearly.
+
+## 11. Approval-First Implementation Rule
+
+- Before implementing any code, config, UI, API, refactor, or rule change, always present a short plan first.
+- Show the intended code changes or file changes for user review before applying them.
+- Wait for explicit user approval before editing files or triển khai implementation.
+- After approval, implement only the approved scope.
+- If the implementation needs to change from the approved plan, stop and show the updated plan or diff for approval first.

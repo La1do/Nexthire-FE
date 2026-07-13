@@ -1,8 +1,24 @@
-import { MainLayout } from '../layouts/MainLayout'
-import { mainRoute } from './routes'
+import { mainRoute, routes } from './routes'
+
+function normalizePath(pathname: string) {
+  if (pathname === '/') {
+    return pathname
+  }
+
+  return pathname.replace(/\/+$/, '')
+}
+
+function getActiveRoute() {
+  const currentPath = normalizePath(window.location.pathname)
+
+  return routes.find((route) => route.path === currentPath) ?? mainRoute
+}
 
 export function App() {
-  return <MainLayout>{mainRoute.element}</MainLayout>
+  const activeRoute = getActiveRoute()
+  const Layout = activeRoute.layout
+
+  return <Layout>{activeRoute.element}</Layout>
 }
 
 export default App

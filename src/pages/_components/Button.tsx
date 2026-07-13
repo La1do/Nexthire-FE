@@ -1,20 +1,22 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-type ButtonVariant = 'primary' | 'secondary'
+type ButtonVariant = 'ghost' | 'primary' | 'secondary'
 
 type ButtonProps = ComponentPropsWithoutRef<'button'> & {
   variant?: ButtonVariant
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-[#116a5b] text-white hover:bg-[#0d5449]',
-  secondary: 'border border-[#cfd4c7] bg-white text-[#20242c] hover:bg-[#eef2e7]',
+  ghost: 'text-[var(--color-brand-solid)] hover:bg-[var(--color-brand-soft)]',
+  primary: 'brand-gradient brand-action-shadow text-[var(--color-text-inverse)] hover:brightness-105',
+  secondary:
+    'border border-[var(--color-border-default)] bg-[var(--color-surface-card)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-subtle)]',
 }
 
 export function Button({ className = '', type = 'button', variant = 'primary', ...props }: ButtonProps) {
   return (
     <button
-      className={`inline-flex h-11 items-center justify-center rounded-md px-5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#116a5b] ${variantClasses[variant]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center rounded-lg px-5 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-solid)] disabled:cursor-not-allowed disabled:opacity-60 ${variantClasses[variant]} ${className}`}
       type={type}
       {...props}
     />
