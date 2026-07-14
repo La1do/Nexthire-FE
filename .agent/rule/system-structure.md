@@ -27,7 +27,26 @@ Nexhire/
 
 ---
 
-## 2. Required Source Structure
+## 2. Technology Stack
+
+Project frontend uses these libraries:
+
+- **React Router v6** — quản lý điều hướng phía client.
+- **Zustand** — quản lý state toàn cục nhẹ và đơn giản.
+- **React Query (TanStack Query)** — cache và đồng bộ dữ liệu từ API.
+- **React Hook Form + Zod** — quản lý form và validate dữ liệu.
+- **Tailwind CSS** — styling utility-first.
+- **Recharts** — hiển thị biểu đồ cho trang AI score và admin dashboard.
+
+Rules:
+
+- Cài đặt qua pnpm/npm tương ứng với package manager đang dùng.
+- Không tự ý thêm thư viện ngoài stack này mà không được user phê duyệt trước.
+- Khi thêm package mới vào stack, cập nhật lại mục này.
+
+---
+
+## 3. Required Source Structure
 
 ```text
 src/
@@ -101,7 +120,7 @@ Note: folders that do not have implementation yet may keep `.gitkeep` files.
 
 ---
 
-## 3. Page Folder Contract
+## 4. Page Folder Contract
 
 Each page must follow this structure:
 
@@ -130,7 +149,7 @@ Rules:
 
 ---
 
-## 4. i18n Structure Contract
+## 5. i18n Structure Contract
 
 Every supported language gets its own folder:
 
@@ -168,7 +187,7 @@ All language folders must have the same page locale files.
 
 ---
 
-## 5. Theme Structure Contract
+## 6. Theme Structure Contract
 
 Theme tokens should live in:
 
@@ -218,7 +237,7 @@ Use these tokens for login, auth, dashboard, forms, and shared UI.
 
 ---
 
-## 6. API And Services Structure
+## 7. API And Services Structure
 
 Axios client:
 
@@ -245,7 +264,7 @@ Rules:
 
 ---
 
-## 7. Auth UI Structure Example
+## 8. Auth UI Structure Example
 
 Login page:
 
@@ -279,7 +298,7 @@ src/services/auth.service.ts
 
 ---
 
-## 8. Import Direction
+## 9. Import Direction
 
 Allowed direction:
 
@@ -307,7 +326,7 @@ This keeps reusable code independent from page-specific code.
 
 ---
 
-## 9. Files To Avoid
+## 10. Files To Avoid
 
 Do not add:
 
