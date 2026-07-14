@@ -6,21 +6,24 @@ type SearchResultCardProps = {
   labels: SearchTranslations['results']
 }
 
+function BookmarkIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z" />
+    </svg>
+  )
+}
+
 export function SearchResultCard({ job, labels }: SearchResultCardProps) {
   return (
     <article className="search-result-card home-hover-card">
-      <div className="search-result-logo-row">
-        <CompanyLogoMark
-          alt={job.companyLogo.alt}
-          className="search-result-logo"
-          fallbackText={job.companyLogo.fallbackText}
-          src={job.companyLogo.src}
-          tone={job.companyLogo.tone}
-        />
-        <button aria-label={labels.saveLabel} className="search-save-button" type="button">
-          {labels.saveLabel}
-        </button>
-      </div>
+      <CompanyLogoMark
+        alt={job.companyLogo.alt}
+        className="search-result-logo"
+        fallbackText={job.companyLogo.fallbackText}
+        src={job.companyLogo.src}
+        tone={job.companyLogo.tone}
+      />
 
       <div className="search-result-main">
         <div className="search-result-company">
@@ -44,6 +47,10 @@ export function SearchResultCard({ job, labels }: SearchResultCardProps) {
           ))}
         </div>
       </div>
+
+      <button aria-label={labels.saveLabel} className="search-save-button" type="button">
+        <BookmarkIcon />
+      </button>
 
       <a className="search-detail-link" href="/">
         {labels.detailLabel}
