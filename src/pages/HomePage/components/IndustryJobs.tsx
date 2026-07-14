@@ -9,7 +9,7 @@ type IndustryJobsProps = {
 export function IndustryJobs({ content }: IndustryJobsProps) {
   return (
     <section className="home-section home-reveal">
-      <SectionHeading eyebrow={content.eyebrow} title={content.title} />
+      <SectionHeading action={content.viewAll} eyebrow={content.eyebrow} title={content.title} />
       <div className="home-industry-list">
         {content.groups.map((group) => (
           <section className="home-industry-group" key={group.title}>
@@ -21,7 +21,12 @@ export function IndustryJobs({ content }: IndustryJobsProps) {
             </div>
             <div className="home-card-grid">
               {group.jobs.map((job) => (
-                <JobCard job={job} key={`${group.title}-${job.company}-${job.title}`} />
+                <JobCard
+                  job={job}
+                  key={`${group.title}-${job.company}-${job.title}`}
+                  saveLabel={content.saveLabel}
+                  variant="compact"
+                />
               ))}
             </div>
           </section>

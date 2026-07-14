@@ -16,10 +16,15 @@ export function NewsletterPanel({ content }: NewsletterPanelProps) {
         <p className="home-eyebrow">{content.eyebrow}</p>
         <h2>{content.title}</h2>
         <p>{content.description}</p>
+        <div className="home-newsletter-chips">
+          {content.chips.map((chip) => (
+            <span key={chip}>{chip}</span>
+          ))}
+        </div>
         <form className="home-newsletter-form" onSubmit={handleSubmit}>
           <label>
             <span>{content.emailLabel}</span>
-            <input placeholder={content.emailPlaceholder} type="email" />
+            <input autoComplete="email" id="home-newsletter-email" name="email" placeholder={content.emailPlaceholder} type="email" />
           </label>
           <button type="submit">{content.submit}</button>
         </form>

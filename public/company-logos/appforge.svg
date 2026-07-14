@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="AppForge">
+  <defs>
+    <linearGradient id="g" x1="14" x2="82" y1="14" y2="82">
+      <stop stop-color="#10b981"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="url(#g)"/>
+  <path d="M29 64 45 31h8l16 33H58l-3-7H43l-3 7H29Zm17-15h6l-3-8-3 8Z" fill="#fff"/>
+  <path d="M31 28h34" stroke="#ccfbf1" stroke-width="5" stroke-linecap="round"/>
+</svg>

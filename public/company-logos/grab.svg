@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Grab">
+  <rect width="96" height="96" rx="24" fill="#ecfdf5"/>
+  <path d="M29 58c6 8 26 8 34-2 7-9 1-22-14-22H38" fill="none" stroke="#16a34a" stroke-width="10" stroke-linecap="round"/>
+  <path d="M29 44h17" stroke="#86efac" stroke-width="8" stroke-linecap="round"/>
+</svg>

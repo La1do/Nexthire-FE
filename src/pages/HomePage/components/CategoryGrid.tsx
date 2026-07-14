@@ -71,17 +71,7 @@ function CategoryIcon({ icon }: CategoryIconProps) {
 export function CategoryGrid({ content }: CategoryGridProps) {
   return (
     <section className="home-section home-reveal">
-      <div className="home-category-heading">
-        <SectionHeading eyebrow={content.eyebrow} title={content.title} />
-        <div className="home-category-actions">
-          <button aria-label={content.previous} type="button">
-            <span aria-hidden="true">←</span>
-          </button>
-          <button aria-label={content.next} type="button">
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
-      </div>
+      <SectionHeading eyebrow={content.eyebrow} title={content.title} />
 
       <div className="home-category-grid">
         {content.items.map((item) => (
@@ -93,6 +83,7 @@ export function CategoryGrid({ content }: CategoryGridProps) {
               <strong>{item.title}</strong>
               <small>{item.count}</small>
             </span>
+            <small className="home-category-arrow" aria-hidden="true">→</small>
           </article>
         ))}
       </div>

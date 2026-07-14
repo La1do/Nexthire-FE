@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="VNG">
+  <rect width="96" height="96" rx="24" fill="#eff6ff"/>
+  <rect x="15" y="18" width="66" height="60" rx="18" fill="#2563eb"/>
+  <text x="48" y="57" fill="#fff" font-family="Arial, sans-serif" font-size="24" font-weight="800" text-anchor="middle">VNG</text>
+</svg>

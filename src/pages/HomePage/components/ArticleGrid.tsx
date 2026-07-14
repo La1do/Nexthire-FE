@@ -11,7 +11,9 @@ export function ArticleGrid({ content }: ArticleGridProps) {
       <div className="home-article-grid">
         {content.items.map((article) => (
           <article className="home-article-card home-hover-card" key={article.title}>
-            <div className="home-article-media" />
+            <div className={`home-article-media home-article-media-${article.tone}`}>
+              <span>{article.category}</span>
+            </div>
             <h3>{article.title}</h3>
             <p>{article.description}</p>
             <a href="/">

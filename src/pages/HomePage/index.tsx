@@ -15,8 +15,10 @@ export function HomePage() {
     <div className="home-page">
       <HeroPanel content={home.hero} />
       <EmployerStrip content={home.employers} />
-      <JobSections content={home.jobs} />
-      <CategoryGrid content={home.categories} />
+      <div className="home-discovery-grid">
+        <JobSections content={home.jobs} />
+        <CategoryGrid content={home.categories} />
+      </div>
       <IndustryJobs content={home.industryJobs} />
       <ArticleGrid content={home.articles} />
       <NewsletterPanel content={home.newsletter} />
