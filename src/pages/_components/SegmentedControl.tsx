@@ -42,7 +42,7 @@ export function SegmentedControl({ label, name, onChange, options, value }: Segm
           return (
             <button
               aria-checked={isSelected}
-              className={`segmented-control-option min-h-12 rounded-md px-4 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-solid)] ${
+              className={`segmented-control-option min-h-12 rounded-md px-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-solid)] sm:px-4 sm:text-base ${
                 isSelected
                   ? 'text-[var(--color-text-primary)]'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'

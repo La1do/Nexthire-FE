@@ -35,7 +35,7 @@ export function RegisterForm({ translations }: RegisterFormProps) {
   }
 
   return (
-    <form className="auth-form-grid grid gap-5" noValidate onSubmit={handleSubmit}>
+    <form className="auth-form-grid grid" noValidate onSubmit={handleSubmit}>
       <SegmentedControl
         label={form.roleLabel}
         name="role"
