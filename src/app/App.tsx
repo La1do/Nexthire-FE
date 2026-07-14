@@ -8,10 +8,21 @@ function normalizePath(pathname: string) {
   return pathname.replace(/\/+$/, '')
 }
 
+function doesRouteMatch(routePath: string, pathname: string) {
+  const routeParts = routePath.split('/').filter(Boolean)
+  const pathParts = pathname.split('/').filter(Boolean)
+
+  if (routeParts.length !== pathParts.length) {
+    return false
+  }
+
+  return routeParts.every((part, index) => part.startsWith(':') || part === pathParts[index])
+}
+
 function getActiveRoute() {
   const currentPath = normalizePath(window.location.pathname)
 
-  return routes.find((route) => route.path === currentPath) ?? mainRoute
+  return routes.find((route) => doesRouteMatch(route.path, currentPath)) ?? mainRoute
 }
 
 export function App() {

@@ -1,5 +1,6 @@
 import type { HomeJobItem } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
+import { createJobDetailHref } from '../../_utils/jobRoutes'
 
 type JobCardProps = {
   job: HomeJobItem
@@ -29,6 +30,8 @@ export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
 
   return (
     <article className={classes}>
+      <a aria-label={`${job.title} ${job.company}`} className="job-card-link-layer" href={createJobDetailHref(job)} />
+
       <div className={`job-card-media job-card-media-${job.companyLogo.tone}`}>
         <CompanyLogoMark
           alt={job.companyLogo.alt}

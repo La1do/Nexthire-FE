@@ -4,6 +4,7 @@ import { MainLayout } from '../layouts/MainLayout'
 import { getTranslations } from '../i18n'
 import { ForgotPasswordPage } from '../pages/ForgotPasswordPage'
 import { HomePage } from '../pages/HomePage'
+import { JobDetailPage } from '../pages/JobDetailPage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { SearchPage } from '../pages/SearchPage'
@@ -28,6 +29,12 @@ export const routes: AppRoute[] = [
     path: '/search',
     label: pages.search.routeLabel,
     element: <SearchPage />,
+    layout: MainLayout,
+  },
+  {
+    path: '/jobs/:slug',
+    label: pages.jobDetail.routeLabel,
+    element: <JobDetailPage />,
     layout: MainLayout,
   },
   {

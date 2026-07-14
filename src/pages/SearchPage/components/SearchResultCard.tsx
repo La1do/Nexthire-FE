@@ -1,5 +1,6 @@
 import type { HomeJobItem, SearchTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
+import { createJobDetailHref } from '../../_utils/jobRoutes'
 
 type SearchResultCardProps = {
   job: HomeJobItem
@@ -52,7 +53,7 @@ export function SearchResultCard({ job, labels }: SearchResultCardProps) {
         <BookmarkIcon />
       </button>
 
-      <a className="search-detail-link" href="/">
+      <a className="search-detail-link" href={createJobDetailHref(job)}>
         {labels.detailLabel}
       </a>
     </article>

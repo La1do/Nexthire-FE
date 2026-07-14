@@ -297,11 +297,59 @@ export type SearchTranslations = {
   }
 }
 
+export type JobDetailTranslations = {
+  routeLabel: string
+  backToSearch: string
+  hero: {
+    metaLabel: string
+    verifiedLabel: string
+  }
+  sidebar: {
+    title: string
+    salary: string
+    location: string
+    workMode: string
+    field: string
+    postedAt: string
+    apply: string
+    save: string
+  }
+  sections: {
+    overview: {
+      title: string
+      body: string
+    }
+    responsibilities: {
+      title: string
+      items: ReadonlyArray<string>
+    }
+    requirements: {
+      title: string
+      items: ReadonlyArray<string>
+    }
+    benefits: {
+      title: string
+      items: ReadonlyArray<string>
+    }
+  }
+  related: {
+    title: string
+    viewAll: string
+    viewDetail: string
+  }
+  notFound: {
+    title: string
+    description: string
+    action: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations
+    jobDetail: JobDetailTranslations
     login: LoginTranslations
     register: RegisterTranslations
     search: SearchTranslations
