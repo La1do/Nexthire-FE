@@ -1,0 +1,62 @@
+import type { PropsWithChildren } from 'react'
+import { getTranslations } from '../i18n'
+import { BrandMark } from '../pages/_components'
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(-2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+}
+
+export function CandidateLayout({ children }: PropsWithChildren) {
+  const { common, pages } = getTranslations()
+  const profile = pages.profile
+  const navItems = [
+    { href: '/search', label: profile.sidebar.searchJobs },
+    { href: '/', label: profile.sidebar.applications },
+    { href: '/profile', label: profile.sidebar.profile },
+    { href: '/', label: profile.sidebar.messages },
+  ]
+
+  return (
+    <div className="candidate-shell">
+      <aside className="candidate-sidebar">
+        <a className="candidate-brand" href="/">
+          <BrandMark label={common.brandName} />
+        </a>
+
+        <nav aria-label={profile.routeLabel} className="candidate-nav">
+          {navItems.map((item) => (
+            <a aria-current={item.href === '/profile' ? 'page' : undefined} href={item.href} key={item.label}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="candidate-sidebar-user">
+          <span>{getInitials(profile.profile.name)}</span>
+          <div>
+            <strong>{profile.profile.name}</strong>
+            <small>{profile.sidebar.currentRole}</small>
+          </div>
+        </div>
+      </aside>
+
+      <div className="candidate-main">
+        <header className="candidate-topbar">
+          <h1>{profile.pageTitle}</h1>
+          <div className="candidate-topbar-actions">
+            <button aria-label={profile.topbar.notificationsLabel} className="candidate-icon-button" type="button" />
+            <a href="/login">{profile.topbar.logout}</a>
+          </div>
+        </header>
+
+        <main className="candidate-content">{children}</main>
+      </div>
+    </div>
+  )
+}

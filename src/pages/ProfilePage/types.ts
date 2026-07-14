@@ -1,0 +1,44 @@
+export type CandidateExperience = {
+  company: string
+  description: string
+  endDate: string
+  id: string
+  isCurrent: boolean
+  position: string
+  startDate: string
+}
+
+export type CandidateEducation = {
+  degree: string
+  endYear: string
+  id: string
+  school: string
+  startYear: string
+}
+
+export type CandidateProfile = {
+  education: CandidateEducation[]
+  email: string
+  experiences: CandidateExperience[]
+  headline: string
+  linkedin: string
+  location: string
+  name: string
+  phone: string
+  portfolio: string
+  resumeFile: string
+  skills: string[]
+  summary: string
+}
+
+export type CompletionKey = 'basic' | 'contact' | 'experience' | 'resume' | 'skills'
+
+export type ProfileCompletionItem = {
+  completed: boolean
+  key: CompletionKey
+}
+
+export type ProfileCompletion = {
+  items: ProfileCompletionItem[]
+  percent: number
+}
