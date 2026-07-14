@@ -91,7 +91,8 @@ git switch -c feature/<task-name>
 
 ## 4. Commit Rules
 
-- Commit only when the user asks to commit or clearly asks to save changes in Git.
+- Commit when the user asks to commit, clearly asks to save changes in Git, or when an approved large feature has been completed and verified.
+- For approved large features, create the commit automatically after required checks pass unless the user explicitly says not to commit.
 - Stage only files related to the task.
 - Do not stage `node_modules`, `dist`, local logs, local env files, or unrelated changes.
 - Do not include generated build output unless the user explicitly asks for it.
@@ -205,4 +206,3 @@ Force push is forbidden unless the user explicitly requests it and the branch is
 - Do not delete branches unless the user explicitly asks.
 - Do not rewrite history on shared branches.
 - Keep user work intact.
-

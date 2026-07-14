@@ -3,15 +3,19 @@ import type { ReactNode } from 'react'
 import { BrandMark } from './BrandMark'
 
 type AuthPageShellProps = {
+  align?: 'center' | 'start'
   brandName: string
   children: ReactNode
-  footer: ReactNode
-  subtitle: string
+  footer?: ReactNode
+  subtitle: ReactNode
   title: string
+  visual?: ReactNode
 }
 
-export function AuthPageShell({ brandName, children, footer, subtitle, title }: AuthPageShellProps) {
+export function AuthPageShell({ align = 'start', brandName, children, footer, subtitle, title, visual }: AuthPageShellProps) {
   const titleId = useId()
+  const alignmentClass = align === 'center' ? 'text-center' : 'text-left'
+  const visualAlignmentClass = align === 'center' ? 'justify-center' : 'justify-start'
 
   return (
     <section
@@ -22,7 +26,13 @@ export function AuthPageShell({ brandName, children, footer, subtitle, title }: 
         <BrandMark label={brandName} />
       </div>
 
-      <div className="auth-motion auth-motion-heading mt-10">
+      {visual ? (
+        <div className={`auth-motion auth-motion-visual mt-10 flex ${visualAlignmentClass}`}>
+          {visual}
+        </div>
+      ) : null}
+
+      <div className={`auth-motion auth-motion-heading ${visual ? 'mt-7' : 'mt-10'} ${alignmentClass}`}>
         <h1 className="text-3xl font-bold leading-tight text-[var(--color-text-primary)]" id={titleId}>
           {title}
         </h1>
@@ -31,9 +41,11 @@ export function AuthPageShell({ brandName, children, footer, subtitle, title }: 
 
       <div className="auth-motion auth-motion-form mt-9">{children}</div>
 
-      <div className="auth-motion auth-motion-footer mt-6 border-t border-[var(--color-border-subtle)] pt-6 text-center text-base text-[var(--color-text-muted)]">
-        {footer}
-      </div>
+      {footer ? (
+        <div className="auth-motion auth-motion-footer mt-6 border-t border-[var(--color-border-subtle)] pt-6 text-center text-base text-[var(--color-text-muted)]">
+          {footer}
+        </div>
+      ) : null}
     </section>
   )
 }

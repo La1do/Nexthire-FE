@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import type { CSSProperties } from 'react'
 
 type SegmentedControlOption = {
   value: string
@@ -15,6 +16,14 @@ type SegmentedControlProps = {
 
 export function SegmentedControl({ label, name, onChange, options, value }: SegmentedControlProps) {
   const labelId = useId()
+  const activeIndex = Math.max(
+    options.findIndex((option) => option.value === value),
+    0,
+  )
+  const controlStyle = {
+    '--segment-count': options.length,
+    '--segment-index': activeIndex,
+  } as CSSProperties
 
   return (
     <fieldset className="grid gap-3">
@@ -23,8 +32,9 @@ export function SegmentedControl({ label, name, onChange, options, value }: Segm
       </legend>
       <div
         aria-labelledby={labelId}
-        className="segmented-control grid rounded-lg bg-[var(--color-surface-muted)] p-1 sm:grid-cols-2"
+        className="segmented-control rounded-lg bg-[var(--color-surface-muted)] p-1"
         role="radiogroup"
+        style={controlStyle}
       >
         {options.map((option) => {
           const isSelected = option.value === value
@@ -34,7 +44,7 @@ export function SegmentedControl({ label, name, onChange, options, value }: Segm
               aria-checked={isSelected}
               className={`segmented-control-option min-h-12 rounded-md px-4 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-solid)] ${
                 isSelected
-                  ? 'bg-[var(--color-surface-card)] text-[var(--color-text-primary)] shadow-[var(--shadow-control)]'
+                  ? 'text-[var(--color-text-primary)]'
                   : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
               }`}
               key={option.value}

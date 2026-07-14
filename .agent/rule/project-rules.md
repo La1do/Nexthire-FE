@@ -127,6 +127,11 @@ Rules:
 - Buttons, links, active states, and logo accents should use the pink-to-orange brand direction.
 - Cards and auth panels should use white surfaces, soft borders, and subtle shadow.
 - Keep border radius moderate: usually `8px` or less, unless the design requires a larger auth card radius.
+- All UI work must be responsive across mobile, tablet, laptop, and desktop viewports.
+- New or changed screens must define responsive layout behavior for small, medium, and large breakpoints before implementation.
+- Avoid fixed widths/heights that break on small screens; use responsive constraints such as min/max widths, fluid grids, wrapping, and container-safe spacing.
+- Text, buttons, forms, cards, navigation, and media must not overflow, overlap, or become unusable on narrow screens.
+- After UI changes, verify responsive behavior on mobile and desktop layouts at minimum. If browser preview is unavailable, report that visual responsive verification could not be performed.
 
 ---
 
@@ -193,11 +198,16 @@ npm run lint
 ```
 
 - If a command cannot run, report the reason clearly.
+- When completing an approved large feature, automatically create a scoped Git commit after build and lint pass, unless the user explicitly says not to commit.
+- Large features include new pages, multi-file UI flows, new routed experiences, API/service integrations, or broad shared UI changes.
+- Do not auto-commit small fixes, exploratory changes, documentation-only edits, or partial work unless the user asks.
 
 ## 11. Approval-First Implementation Rule
 
-- Before implementing any code, config, UI, API, refactor, or rule change, always present a short plan first.
-- Show the intended code changes or file changes for user review before applying them.
+- Before implementing any code, config, UI, API, refactor, or rule change, always present a detailed implementation plan first.
+- The plan must include the goal, affected files, intended behavior changes, implementation steps, and verification steps.
+- Show the intended code changes, config changes, or rule changes as code snippets or a proposed diff before applying them.
+- For large changes, show the most important code snippets plus a file-by-file change summary.
 - Wait for explicit user approval before editing files or triển khai implementation.
 - After approval, implement only the approved scope.
-- If the implementation needs to change from the approved plan, stop and show the updated plan or diff for approval first.
+- If the implementation needs to change from the approved plan or proposed code, stop and show the updated plan and updated code/diff for approval first.

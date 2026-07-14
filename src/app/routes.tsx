@@ -2,6 +2,7 @@ import type { ComponentType, PropsWithChildren, ReactNode } from 'react'
 import { AuthLayout } from '../layouts/AuthLayout'
 import { MainLayout } from '../layouts/MainLayout'
 import { getTranslations } from '../i18n'
+import { ForgotPasswordPage } from '../pages/ForgotPasswordPage'
 import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
@@ -13,7 +14,7 @@ export type AppRoute = {
   path: string
 }
 
-const { common } = getTranslations()
+const { common, pages } = getTranslations()
 
 export const routes: AppRoute[] = [
   {
@@ -32,6 +33,12 @@ export const routes: AppRoute[] = [
     path: '/register',
     label: common.navigation.register,
     element: <RegisterPage />,
+    layout: AuthLayout,
+  },
+  {
+    path: '/forgot-password',
+    label: pages.forgotPassword.routeLabel,
+    element: <ForgotPasswordPage />,
     layout: AuthLayout,
   },
 ]
