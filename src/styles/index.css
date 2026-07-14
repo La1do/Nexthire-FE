@@ -2120,7 +2120,7 @@ select {
 
   .search-result-card {
     align-items: start;
-    grid-template-columns: minmax(8rem, 0.28fr) minmax(0, 1fr) auto;
+    grid-template-columns: minmax(8rem, 0.28fr) minmax(0, 1fr);
   }
 
   .search-result-card > .search-result-logo {
@@ -2131,14 +2131,16 @@ select {
   }
 
   .search-save-button {
-    grid-column: 3;
-    grid-row: 1;
-    position: static;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
   }
 
   .search-detail-link {
-    grid-column: 3;
+    align-self: end;
+    grid-column: 2;
     grid-row: 2;
+    justify-self: end;
   }
 
   .search-result-logo {
