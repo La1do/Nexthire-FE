@@ -1,4 +1,3 @@
-import type { FormEvent } from 'react'
 import type { HomeTranslations } from '../../../i18n/types'
 
 type JobSearchBarProps = {
@@ -36,14 +35,27 @@ function LocationIcon() {
   )
 }
 
-export function JobSearchBar({ content }: JobSearchBarProps) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+function getQuickFilterHref(filter: string) {
+  const params = new URLSearchParams()
+  const normalizedFilter = filter.toLowerCase()
+
+  if (normalizedFilter.includes('remote') || filter.includes('リモート')) {
+    params.set('workMode', filter.includes('リモート') ? 'リモート' : 'Remote')
+  } else if (normalizedFilter.includes('hybrid') || filter.includes('ハイブリッド')) {
+    params.set('workMode', filter.includes('ハイブリッド') ? 'ハイブリッド' : 'Hybrid')
+  } else if (normalizedFilter.includes('25')) {
+    params.set('salary', '25')
+  } else {
+    params.set('keyword', filter)
   }
 
+  return `/search?${params.toString()}`
+}
+
+export function JobSearchBar({ content }: JobSearchBarProps) {
   return (
     <div className="job-search-shell">
-      <form className="job-search-bar" onSubmit={handleSubmit}>
+      <form action="/search" className="job-search-bar" method="get">
         <label className="job-search-field job-search-field-main">
           <span>{content.keywordLabel}</span>
           <SearchIcon />
@@ -65,7 +77,7 @@ export function JobSearchBar({ content }: JobSearchBarProps) {
           </select>
         </label>
 
-        <button aria-label={content.filterLabel} className="job-search-filter" type="button">
+        <button aria-label={content.filterLabel} className="job-search-filter" name="filters" type="submit" value="open">
           <FilterIcon />
         </button>
 
@@ -76,9 +88,9 @@ export function JobSearchBar({ content }: JobSearchBarProps) {
 
       <div className="job-search-chips" aria-label={content.filterLabel}>
         {content.quickFilters.map((filter) => (
-          <button key={filter} type="button">
+          <a href={getQuickFilterHref(filter)} key={filter}>
             {filter}
-          </button>
+          </a>
         ))}
       </div>
     </div>

@@ -242,6 +242,61 @@ export type HomeTranslations = {
   }
 }
 
+export type SearchTranslations = {
+  routeLabel: string
+  toolbar: {
+    title: string
+    description: string
+    keywordLabel: string
+    keywordPlaceholder: string
+    locationLabel: string
+    locationPlaceholder: string
+    submit: string
+  }
+  filters: {
+    title: string
+    description: string
+    fieldLabel: string
+    locationLabel: string
+    salaryLabel: string
+    workModeLabel: string
+    allOption: string
+    clear: string
+    apply: string
+    fieldOptions: ReadonlyArray<{
+      label: string
+      value: string
+    }>
+    salaryOptions: ReadonlyArray<{
+      label: string
+      value: string
+    }>
+    workModeOptions: ReadonlyArray<{
+      label: string
+      value: string
+    }>
+  }
+  results: {
+    title: string
+    countLabel: string
+    emptyQuery: string
+    sortLabel: string
+    sortOptions: ReadonlyArray<{
+      label: string
+      value: string
+    }>
+    saveLabel: string
+    verifiedLabel: string
+    detailLabel: string
+    activeFiltersLabel: string
+  }
+  empty: {
+    title: string
+    description: string
+    action: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -249,5 +304,6 @@ export type Translations = {
     home: HomeTranslations
     login: LoginTranslations
     register: RegisterTranslations
+    search: SearchTranslations
   }
 }

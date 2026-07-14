@@ -6,6 +6,7 @@ import { ForgotPasswordPage } from '../pages/ForgotPasswordPage'
 import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
 import { RegisterPage } from '../pages/RegisterPage'
+import { SearchPage } from '../pages/SearchPage'
 
 export type AppRoute = {
   element: ReactNode
@@ -21,6 +22,12 @@ export const routes: AppRoute[] = [
     path: '/',
     label: common.navigation.home,
     element: <HomePage />,
+    layout: MainLayout,
+  },
+  {
+    path: '/search',
+    label: pages.search.routeLabel,
+    element: <SearchPage />,
     layout: MainLayout,
   },
   {

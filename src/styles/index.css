@@ -1987,6 +1987,10 @@ select {
     grid-template-columns: minmax(14rem, 1fr) auto minmax(10rem, 0.62fr) auto auto;
   }
 
+  .search-toolbar-form {
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.7fr) auto;
+  }
+
   .home-newsletter-form {
     grid-template-columns: minmax(0, 1fr) auto;
   }
@@ -2010,12 +2014,43 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .search-results-header,
+  .search-result-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .search-result-logo-row {
+    align-content: start;
+    display: grid;
+    justify-items: start;
+  }
+
+  .search-result-main {
+    grid-column: 1;
+  }
+
+  .search-detail-link {
+    align-self: end;
+    grid-column: 2;
+    grid-row: 2;
+  }
+
   .home-category-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
+  .search-layout {
+    align-items: start;
+    grid-template-columns: 20rem minmax(0, 1fr);
+  }
+
+  .search-filter-panel {
+    position: sticky;
+    top: 6rem;
+  }
+
   .home-discovery-grid {
     align-items: start;
     grid-template-columns: minmax(0, 1.8fr) minmax(18rem, 0.75fr);
@@ -2071,6 +2106,11 @@ select {
   .home-hero-stats {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
+
+  .search-toolbar-form button,
+  .search-sort-form button {
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2103,6 +2143,11 @@ select {
     align-items: start;
     flex-direction: column;
   }
+
+  .search-result-meta span + span::before {
+    content: "";
+    margin: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2130,6 +2175,8 @@ select {
   .home-employer-strip > *,
   .home-hero-board,
   .job-search-shell,
+  .search-motion,
+  .search-result-card,
   .home-reveal,
   .auth-form-grid > * {
     animation: none;
@@ -2155,6 +2202,11 @@ select {
   .job-save-button:hover,
   .job-search-filter:hover,
   .job-search-submit:hover,
+  .search-detail-link:hover,
+  .search-filter-actions button:hover,
+  .search-save-button:hover,
+  .search-sort-form button:hover,
+  .search-toolbar-form button:hover,
   .home-newsletter-form button:hover,
   .main-employer-link:hover,
   .main-register-link:hover {

@@ -1,5 +1,5 @@
 import type { HomeTranslations } from '../../../i18n/types'
-import { CompanyLogoMark } from './CompanyLogoMark'
+import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
 import { JobSearchBar } from './JobSearchBar'
 
 type HeroPanelProps = {

@@ -1,5 +1,5 @@
 import type { HomeJobItem } from '../../../i18n/types'
-import { CompanyLogoMark } from './CompanyLogoMark'
+import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
 
 type JobCardProps = {
   job: HomeJobItem
