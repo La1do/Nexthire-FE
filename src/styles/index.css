@@ -976,9 +976,10 @@ select {
 }
 
 .job-card-topline {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
+  align-items: start;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .company-logo-mark {
@@ -1018,8 +1019,11 @@ select {
 }
 
 .job-company-logo {
-  height: 3.4rem;
-  width: 3.4rem;
+  aspect-ratio: 4 / 1.35;
+  border-radius: 16px;
+  height: auto;
+  min-height: 4.75rem;
+  width: 100%;
 }
 
 .job-save-button {
@@ -1028,6 +1032,7 @@ select {
   color: var(--color-text-muted);
   min-height: 2.4rem;
   min-width: 2.4rem;
+  justify-self: end;
 }
 
 .job-save-button:hover {
@@ -1139,6 +1144,11 @@ select {
 
 .job-card-compact {
   min-height: 13rem;
+}
+
+.job-card-compact .job-company-logo {
+  min-height: 4.35rem;
+  width: 100%;
 }
 
 .home-load-more {
@@ -1613,13 +1623,18 @@ select {
 }
 
 .search-result-logo-row {
+  display: grid;
   gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
   justify-content: space-between;
 }
 
 .search-result-logo {
-  height: 3.4rem;
-  width: 3.4rem;
+  aspect-ratio: 4 / 1.4;
+  border-radius: 16px;
+  height: auto;
+  min-height: 5rem;
+  width: 100%;
 }
 
 .search-save-button {
@@ -2019,19 +2034,34 @@ select {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .search-result-card {
+    align-items: start;
+    grid-template-columns: minmax(8rem, 0.28fr) minmax(0, 1fr) auto;
+  }
+
   .search-result-logo-row {
     align-content: start;
     display: grid;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    gap: 0.75rem;
     justify-items: start;
   }
 
+  .search-result-logo {
+    aspect-ratio: 1 / 1;
+    min-height: 7rem;
+    width: 100%;
+  }
+
   .search-result-main {
-    grid-column: 1;
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
 
   .search-detail-link {
     align-self: end;
-    grid-column: 2;
+    grid-column: 3;
     grid-row: 2;
   }
 
