@@ -1,0 +1,77 @@
+import type { AdminUsersTranslations } from '../../../types'
+
+export const adminUsers: AdminUsersTranslations = {
+  routeLabel: 'Admin — Users',
+  pageTitle: 'User management',
+  pageSubtitle: 'Track and manage candidate, employer, and admin accounts.',
+  sidebar: {
+    dashboard: 'Dashboard',
+    users: 'Users',
+    jobs: 'Job posts',
+    settings: 'Settings',
+    logout: 'Sign out',
+  },
+  topbar: {
+    searchPlaceholder: 'Quick search the console…',
+    notificationsLabel: 'Notifications',
+    toggleSidebarLabel: 'Open menu',
+    profileLabel: 'Profile',
+  },
+  stats: {
+    totalLabel: 'Total users',
+    candidatesLabel: 'Candidates',
+    employersLabel: 'Employers',
+    lockedLabel: 'Locked accounts',
+    totalDelta: '+12 this week',
+    candidatesDelta: '+9 this week',
+    employersDelta: '+2 this week',
+    lockedDelta: '+1 this week',
+  },
+  filters: {
+    queryLabel: 'Find a user',
+    queryPlaceholder: 'Name or email',
+    roleLabel: 'Role',
+    statusLabel: 'Status',
+    roleAll: 'All roles',
+    statusAll: 'All statuses',
+    clear: 'Clear filters',
+  },
+  results: {
+    caption: 'User list',
+    countLabel: '{{count}} users',
+    emptyTitle: 'No matching users',
+    emptyDescription: 'Try a shorter keyword or remove a few filters to widen the result set.',
+    columns: {
+      user: 'User',
+      role: 'Role',
+      status: 'Status',
+      createdAt: 'Created',
+      lastActiveAt: 'Last active',
+      actions: 'Actions',
+    },
+    actionView: 'View details',
+    actionLock: 'Lock account',
+    actionUnlock: 'Unlock account',
+    actionDelete: 'Delete user',
+  },
+  pagination: {
+    prev: 'Previous page',
+    next: 'Next page',
+    pageOf: '{{current}} / {{total}}',
+  },
+  roles: {
+    admin: 'Admin',
+    employer: 'Employer',
+    candidate: 'Candidate',
+  },
+  statuses: {
+    active: 'Active',
+    locked: 'Locked',
+    invited: 'Invited',
+  },
+  currentUser: {
+    name: 'Man Ha',
+    email: 'manha@nexhire.vn',
+    role: 'Senior admin',
+  },
+}

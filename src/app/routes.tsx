@@ -1,11 +1,15 @@
 import type { ComponentType, PropsWithChildren, ReactNode } from 'react'
+import { AdminLayout } from '../layouts/AdminLayout'
 import { AuthLayout } from '../layouts/AuthLayout'
+import { CandidateLayout } from '../layouts/CandidateLayout'
 import { MainLayout } from '../layouts/MainLayout'
 import { getTranslations } from '../i18n'
+import { AdminUsersPage } from '../pages/AdminUsersPage'
 import { ForgotPasswordPage } from '../pages/ForgotPasswordPage'
 import { HomePage } from '../pages/HomePage'
 import { JobDetailPage } from '../pages/JobDetailPage'
 import { LoginPage } from '../pages/LoginPage'
+import { ProfilePage } from '../pages/ProfilePage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { SearchPage } from '../pages/SearchPage'
 
@@ -38,6 +42,12 @@ export const routes: AppRoute[] = [
     layout: MainLayout,
   },
   {
+    path: '/profile',
+    label: pages.profile.routeLabel,
+    element: <ProfilePage />,
+    layout: CandidateLayout,
+  },
+  {
     path: '/login',
     label: common.navigation.login,
     element: <LoginPage />,
@@ -54,6 +64,12 @@ export const routes: AppRoute[] = [
     label: pages.forgotPassword.routeLabel,
     element: <ForgotPasswordPage />,
     layout: AuthLayout,
+  },
+  {
+    path: '/admin/users',
+    label: pages.adminUsers.routeLabel,
+    element: <AdminUsersPage />,
+    layout: AdminLayout,
   },
 ]
 

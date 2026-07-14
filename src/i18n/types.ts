@@ -297,6 +297,82 @@ export type SearchTranslations = {
   }
 }
 
+export type AdminUsersTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  sidebar: {
+    dashboard: string
+    users: string
+    jobs: string
+    settings: string
+    logout: string
+  }
+  topbar: {
+    searchPlaceholder: string
+    notificationsLabel: string
+    toggleSidebarLabel: string
+    profileLabel: string
+  }
+  stats: {
+    totalLabel: string
+    candidatesLabel: string
+    employersLabel: string
+    lockedLabel: string
+    totalDelta: string
+    candidatesDelta: string
+    employersDelta: string
+    lockedDelta: string
+  }
+  filters: {
+    queryLabel: string
+    queryPlaceholder: string
+    roleLabel: string
+    statusLabel: string
+    roleAll: string
+    statusAll: string
+    clear: string
+  }
+  results: {
+    caption: string
+    countLabel: string
+    emptyTitle: string
+    emptyDescription: string
+    columns: {
+      user: string
+      role: string
+      status: string
+      createdAt: string
+      lastActiveAt: string
+      actions: string
+    }
+    actionView: string
+    actionLock: string
+    actionUnlock: string
+    actionDelete: string
+  }
+  pagination: {
+    prev: string
+    next: string
+    pageOf: string
+  }
+  roles: {
+    admin: string
+    employer: string
+    candidate: string
+  }
+  statuses: {
+    active: string
+    locked: string
+    invited: string
+  }
+  currentUser: {
+    name: string
+    email: string
+    role: string
+  }
+}
+
 export type JobDetailTranslations = {
   routeLabel: string
   backToSearch: string
@@ -344,13 +420,134 @@ export type JobDetailTranslations = {
   }
 }
 
+export type ProfileTranslations = {
+  routeLabel: string
+  pageTitle: string
+  sidebar: {
+    searchJobs: string
+    applications: string
+    profile: string
+    messages: string
+    currentRole: string
+  }
+  topbar: {
+    notificationsLabel: string
+    logout: string
+  }
+  hero: {
+    avatarAction: string
+    completionLabel: string
+    saved: string
+    unsaved: string
+    save: string
+    viewPublic: string
+  }
+  completion: {
+    title: string
+    description: string
+    items: {
+      basic: string
+      contact: string
+      skills: string
+      experience: string
+      resume: string
+    }
+  }
+  sections: {
+    basic: {
+      title: string
+      description: string
+      nameLabel: string
+      headlineLabel: string
+      locationLabel: string
+      summaryLabel: string
+      summaryCount: string
+    }
+    contact: {
+      title: string
+      description: string
+      emailLabel: string
+      phoneLabel: string
+      lockedHint: string
+    }
+    skills: {
+      title: string
+      description: string
+      inputLabel: string
+      inputPlaceholder: string
+      add: string
+      removeLabel: string
+    }
+    experience: {
+      title: string
+      description: string
+      add: string
+      remove: string
+      positionLabel: string
+      companyLabel: string
+      startLabel: string
+      endLabel: string
+      currentLabel: string
+      descriptionLabel: string
+    }
+    education: {
+      title: string
+      description: string
+      add: string
+      remove: string
+      degreeLabel: string
+      schoolLabel: string
+      startLabel: string
+      endLabel: string
+    }
+    resume: {
+      title: string
+      description: string
+      fileLabel: string
+      removeFileLabel: string
+      portfolioLabel: string
+      linkedinLabel: string
+    }
+  }
+  profile: {
+    name: string
+    headline: string
+    location: string
+    summary: string
+    email: string
+    phone: string
+    skills: ReadonlyArray<string>
+    resumeFile: string
+    portfolio: string
+    linkedin: string
+    experiences: ReadonlyArray<{
+      id: string
+      company: string
+      description: string
+      endDate: string
+      isCurrent: boolean
+      position: string
+      startDate: string
+    }>
+    education: ReadonlyArray<{
+      id: string
+      degree: string
+      endYear: string
+      school: string
+      startYear: string
+    }>
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
+    adminUsers: AdminUsersTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations
     jobDetail: JobDetailTranslations
     login: LoginTranslations
+    profile: ProfileTranslations
     register: RegisterTranslations
     search: SearchTranslations
   }

@@ -1,0 +1,77 @@
+import type { AdminUsersTranslations } from '../../../types'
+
+export const adminUsers: AdminUsersTranslations = {
+  routeLabel: '管理者 - ユーザー',
+  pageTitle: 'ユーザー管理',
+  pageSubtitle: '候補者、企業、管理者アカウントを確認して管理します。',
+  sidebar: {
+    dashboard: 'ダッシュボード',
+    users: 'ユーザー',
+    jobs: '求人',
+    settings: '設定',
+    logout: 'ログアウト',
+  },
+  topbar: {
+    searchPlaceholder: '管理画面を検索',
+    notificationsLabel: '通知',
+    toggleSidebarLabel: 'メニューを開く',
+    profileLabel: 'プロフィール',
+  },
+  stats: {
+    totalLabel: '総ユーザー',
+    candidatesLabel: '候補者',
+    employersLabel: '企業',
+    lockedLabel: 'ロック済み',
+    totalDelta: '今週 +12',
+    candidatesDelta: '今週 +9',
+    employersDelta: '今週 +2',
+    lockedDelta: '今週 +1',
+  },
+  filters: {
+    queryLabel: 'ユーザー検索',
+    queryPlaceholder: '名前またはメール',
+    roleLabel: '役割',
+    statusLabel: 'ステータス',
+    roleAll: 'すべての役割',
+    statusAll: 'すべてのステータス',
+    clear: 'フィルターをクリア',
+  },
+  results: {
+    caption: 'ユーザー一覧',
+    countLabel: '{{count}}人のユーザー',
+    emptyTitle: '一致するユーザーがいません',
+    emptyDescription: 'キーワードを短くするか、フィルターを減らしてください。',
+    columns: {
+      user: 'ユーザー',
+      role: '役割',
+      status: 'ステータス',
+      createdAt: '作成日',
+      lastActiveAt: '最終活動',
+      actions: '操作',
+    },
+    actionView: '詳細を見る',
+    actionLock: 'アカウントをロック',
+    actionUnlock: 'アカウントを解除',
+    actionDelete: 'ユーザーを削除',
+  },
+  pagination: {
+    prev: '前のページ',
+    next: '次のページ',
+    pageOf: '{{current}} / {{total}}',
+  },
+  roles: {
+    admin: '管理者',
+    employer: '企業',
+    candidate: '候補者',
+  },
+  statuses: {
+    active: '有効',
+    locked: 'ロック済み',
+    invited: '招待済み',
+  },
+  currentUser: {
+    name: 'Man Ha',
+    email: 'manha@nexhire.vn',
+    role: 'シニア管理者',
+  },
+}

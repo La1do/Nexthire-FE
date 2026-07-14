@@ -1,0 +1,77 @@
+import type { AdminUsersTranslations } from '../../../types'
+
+export const adminUsers: AdminUsersTranslations = {
+  routeLabel: 'Quản trị viên — Người dùng',
+  pageTitle: 'Quản lý người dùng',
+  pageSubtitle: 'Theo dõi và xử lý tài khoản ứng viên, nhà tuyển dụng và quản trị viên.',
+  sidebar: {
+    dashboard: 'Tổng quan',
+    users: 'Người dùng',
+    jobs: 'Tin tuyển dụng',
+    settings: 'Cài đặt',
+    logout: 'Đăng xuất',
+  },
+  topbar: {
+    searchPlaceholder: 'Tìm nhanh trong bảng điều khiển…',
+    notificationsLabel: 'Thông báo',
+    toggleSidebarLabel: 'Mở menu',
+    profileLabel: 'Tài khoản',
+  },
+  stats: {
+    totalLabel: 'Tổng người dùng',
+    candidatesLabel: 'Ứng viên',
+    employersLabel: 'Nhà tuyển dụng',
+    lockedLabel: 'Đã khóa',
+    totalDelta: '+12 trong tuần',
+    candidatesDelta: '+9 trong tuần',
+    employersDelta: '+2 trong tuần',
+    lockedDelta: '+1 trong tuần',
+  },
+  filters: {
+    queryLabel: 'Tìm kiếm người dùng',
+    queryPlaceholder: 'Tên hoặc email',
+    roleLabel: 'Vai trò',
+    statusLabel: 'Trạng thái',
+    roleAll: 'Tất cả vai trò',
+    statusAll: 'Tất cả trạng thái',
+    clear: 'Xóa lọc',
+  },
+  results: {
+    caption: 'Danh sách người dùng',
+    countLabel: '{{count}} người dùng',
+    emptyTitle: 'Không có người dùng phù hợp',
+    emptyDescription: 'Thử rút gọn từ khóa hoặc xóa bớt bộ lọc để mở rộng kết quả.',
+    columns: {
+      user: 'Người dùng',
+      role: 'Vai trò',
+      status: 'Trạng thái',
+      createdAt: 'Ngày tạo',
+      lastActiveAt: 'Hoạt động gần nhất',
+      actions: 'Thao tác',
+    },
+    actionView: 'Xem chi tiết',
+    actionLock: 'Khóa tài khoản',
+    actionUnlock: 'Mở khóa tài khoản',
+    actionDelete: 'Xóa người dùng',
+  },
+  pagination: {
+    prev: 'Trang trước',
+    next: 'Trang sau',
+    pageOf: '{{current}} / {{total}}',
+  },
+  roles: {
+    admin: 'Quản trị viên',
+    employer: 'Nhà tuyển dụng',
+    candidate: 'Ứng viên',
+  },
+  statuses: {
+    active: 'Đang hoạt động',
+    locked: 'Đã khóa',
+    invited: 'Đã mời',
+  },
+  currentUser: {
+    name: 'Mẫn Hà',
+    email: 'manha@nexhire.vn',
+    role: 'Quản trị viên cấp cao',
+  },
+}
