@@ -1026,6 +1026,86 @@ select {
   width: 100%;
 }
 
+.job-card-media {
+  align-items: stretch;
+  aspect-ratio: 16 / 7;
+  border-radius: 16px;
+  display: flex;
+  isolation: isolate;
+  min-height: 4.75rem;
+  overflow: hidden;
+  padding: 1.1rem;
+  position: relative;
+}
+
+.job-card-media-blue {
+  background: #eff6ff;
+}
+
+.job-card-media-coral {
+  background: #fff1f2;
+}
+
+.job-card-media-green {
+  background: #ecfdf5;
+}
+
+.job-card-media-violet {
+  background: #f5f3ff;
+}
+
+.job-company-logo-image {
+  align-items: center;
+  border-radius: 12px;
+  color: var(--color-text-secondary);
+  display: flex;
+  font-size: 0.95rem;
+  font-weight: 900;
+  height: 100%;
+  justify-content: center;
+  min-height: 3.4rem;
+  min-width: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.job-company-logo-image img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.job-save-overlay {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  height: 2.4rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
+  width: 2.4rem;
+  z-index: 2;
+  transition:
+    background-color 180ms var(--motion-ease-standard),
+    color 180ms var(--motion-ease-standard),
+    transform 180ms var(--motion-ease-standard);
+}
+
+.job-save-overlay svg {
+  height: 1.1rem;
+  width: 1.1rem;
+}
+
+.job-save-overlay:hover {
+  background: var(--color-brand-soft);
+  color: var(--color-brand-solid);
+  transform: translateY(-1px);
+}
+
 .job-save-button {
   background: var(--color-surface-muted);
   border-radius: 999px;

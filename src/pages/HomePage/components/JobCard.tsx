@@ -29,15 +29,15 @@ export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
 
   return (
     <article className={classes}>
-      <div className="job-card-topline">
+      <div className={`job-card-media job-card-media-${job.companyLogo.tone}`}>
         <CompanyLogoMark
           alt={job.companyLogo.alt}
-          className="job-company-logo"
+          className="job-company-logo-image"
           fallbackText={job.companyLogo.fallbackText}
           src={job.companyLogo.src}
           tone={job.companyLogo.tone}
         />
-        <button aria-label={saveLabel} className="job-save-button" type="button">
+        <button aria-label={saveLabel} className="job-save-overlay" type="button">
           <BookmarkIcon />
         </button>
       </div>
