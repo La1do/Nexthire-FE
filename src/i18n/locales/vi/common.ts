@@ -1,5 +1,24 @@
 export const common = {
   brandName: 'NexHire',
+  apiErrors: {
+    default: 'Có lỗi xảy ra, vui lòng thử lại.',
+    byCode: {
+      'COMMON.VALIDATION_FAILED': 'Dữ liệu gửi lên chưa hợp lệ.',
+      'COMMON.UNAUTHENTICATED': 'Phiên đăng nhập đã hết hạn.',
+      'COMMON.FORBIDDEN': 'Bạn không có quyền thực hiện thao tác này.',
+      'COMMON.CONFLICT': 'Dữ liệu đã tồn tại hoặc bị trùng.',
+      'COMMON.RATE_LIMITED': 'Bạn thao tác quá nhanh, vui lòng thử lại sau.',
+      'COMMON.INTERNAL_ERROR': 'Hệ thống đang gặp lỗi, vui lòng thử lại sau.',
+      'AUTH.INVALID_CREDENTIALS': 'Email hoặc mật khẩu không đúng.',
+      'AUTH.LOGIN_ROLE_NOT_ALLOWED': 'Tài khoản không thuộc vai trò đã chọn.',
+      'AUTH.ACCOUNT_TEMPORARILY_LOCKED': 'Tài khoản đang bị khóa tạm thời.',
+      'AUTH.EMAIL_ALREADY_REGISTERED': 'Email này đã được đăng ký.',
+      'AUTH.REGISTRATION_ROLE_NOT_ALLOWED': 'Vai trò này không thể tự đăng ký.',
+      'AUTH.ROLE_NOT_PROVISIONED': 'Vai trò này chưa được hệ thống hỗ trợ.',
+      'AUTH.CANDIDATE_ROLE_NOT_PROVISIONED': 'Vai trò ứng viên chưa được hệ thống hỗ trợ.',
+      'AUTH.INVALID_REFRESH_TOKEN': 'Phiên đăng nhập không còn hợp lệ.',
+    },
+  },
   navigation: {
     companies: 'Công ty',
     employerCta: 'Bạn là nhà tuyển dụng',

@@ -2,6 +2,8 @@ import type { FormErrors } from '../../../hooks/useFormState'
 import type { RegisterFormValues, RegisterValidationMessages } from '../types'
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const minimumFullNameLength = 2
+const minimumPhoneLength = 8
 const minimumPasswordLength = 8
 
 export function validateRegisterForm(
@@ -10,6 +12,20 @@ export function validateRegisterForm(
 ): FormErrors<RegisterFormValues> {
   const errors: FormErrors<RegisterFormValues> = {}
   const email = values.email.trim()
+  const fullName = values.fullName.trim()
+  const phone = values.phone.trim()
+
+  if (!fullName) {
+    errors.fullName = messages.fullNameRequired
+  } else if (fullName.length < minimumFullNameLength) {
+    errors.fullName = messages.fullNameMinLength
+  }
+
+  if (!phone) {
+    errors.phone = messages.phoneRequired
+  } else if (phone.length < minimumPhoneLength) {
+    errors.phone = messages.phoneMinLength
+  }
 
   if (!email) {
     errors.email = messages.emailRequired

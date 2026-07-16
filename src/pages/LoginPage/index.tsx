@@ -20,7 +20,7 @@ export function LoginPage() {
       subtitle={login.subtitle}
       title={login.title}
     >
-      <LoginForm translations={login} />
+      <LoginForm apiErrors={common.apiErrors} translations={login} />
     </AuthPageShell>
   )
 }

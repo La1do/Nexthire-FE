@@ -1,5 +1,24 @@
 export const common = {
   brandName: 'NexHire',
+  apiErrors: {
+    default: 'Something went wrong. Please try again.',
+    byCode: {
+      'COMMON.VALIDATION_FAILED': 'The submitted data is invalid.',
+      'COMMON.UNAUTHENTICATED': 'Your session has expired.',
+      'COMMON.FORBIDDEN': 'You do not have permission to perform this action.',
+      'COMMON.CONFLICT': 'This data already exists or conflicts with another record.',
+      'COMMON.RATE_LIMITED': 'You are doing that too quickly. Please try again later.',
+      'COMMON.INTERNAL_ERROR': 'The system is having trouble. Please try again later.',
+      'AUTH.INVALID_CREDENTIALS': 'Email or password is incorrect.',
+      'AUTH.LOGIN_ROLE_NOT_ALLOWED': 'This account does not match the selected role.',
+      'AUTH.ACCOUNT_TEMPORARILY_LOCKED': 'This account is temporarily locked.',
+      'AUTH.EMAIL_ALREADY_REGISTERED': 'This email has already been registered.',
+      'AUTH.REGISTRATION_ROLE_NOT_ALLOWED': 'This role cannot self-register.',
+      'AUTH.ROLE_NOT_PROVISIONED': 'This role is not available yet.',
+      'AUTH.CANDIDATE_ROLE_NOT_PROVISIONED': 'The candidate role is not available yet.',
+      'AUTH.INVALID_REFRESH_TOKEN': 'Your session is no longer valid.',
+    },
+  },
   navigation: {
     companies: 'Companies',
     employerCta: 'For employers',

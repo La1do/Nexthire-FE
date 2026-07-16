@@ -20,7 +20,7 @@ export function RegisterPage() {
       subtitle={register.subtitle}
       title={register.title}
     >
-      <RegisterForm translations={register} />
+      <RegisterForm apiErrors={common.apiErrors} translations={register} />
     </AuthPageShell>
   )
 }

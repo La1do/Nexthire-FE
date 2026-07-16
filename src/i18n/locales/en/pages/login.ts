@@ -2,6 +2,11 @@ export const login = {
   title: 'Welcome back',
   subtitle: 'Log in to continue with NexHire',
   form: {
+    roleLabel: 'Log in as',
+    roleOptions: [
+      { value: 'candidate', label: 'Candidate' },
+      { value: 'employer', label: 'Employer' },
+    ],
     emailLabel: 'Email',
     emailPlaceholder: 'name@company.com',
     passwordLabel: 'Password',
@@ -11,6 +16,7 @@ export const login = {
     showPassword: 'Show password',
     hidePassword: 'Hide password',
     submit: 'Log in',
+    submitLoading: 'Logging in...',
   },
   footer: {
     prompt: 'No account yet?',

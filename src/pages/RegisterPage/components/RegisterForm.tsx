@@ -1,35 +1,68 @@
+import { useState } from 'react'
 import { Button, Input, PasswordInput, SegmentedControl } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
-import type { RegisterTranslations } from '../../../i18n/types'
-import type { RegisterFormValues, RegisterRole } from '../types'
+import { getApiErrorMessage } from '../../../i18n/apiErrors'
+import { authTokenStorage } from '../../../lib/api'
+import { isAuthFormRole, toAuthApiRole } from '../../../lib/auth/authRole'
+import { authService } from '../../../services/auth.service'
+import type { CommonTranslations, RegisterTranslations } from '../../../i18n/types'
+import type { RegisterFormValues } from '../types'
 import { validateRegisterForm } from '../utils/registerValidation'
 
 type RegisterFormProps = {
+  apiErrors: CommonTranslations['apiErrors']
   translations: RegisterTranslations
 }
 
 const initialValues: RegisterFormValues = {
   confirmPassword: '',
   email: '',
+  fullName: '',
   password: '',
+  phone: '',
   role: 'candidate',
 }
 
-function isRegisterRole(value: string): value is RegisterRole {
-  return value === 'candidate' || value === 'employer'
+function getRegisterRedirect(role: ReturnType<typeof toAuthApiRole>) {
+  return role === 'CANDIDATE' ? '/profile' : '/'
 }
 
-export function RegisterForm({ translations }: RegisterFormProps) {
+export function RegisterForm({ apiErrors, translations }: RegisterFormProps) {
   const { form, validation } = translations
+  const [isSubmitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | undefined>()
   const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
     useFormState<RegisterFormValues>({
       initialValues,
-      onSubmit: () => undefined,
+      onSubmit: async (formValues) => {
+        const role = toAuthApiRole(formValues.role)
+
+        setSubmitError(undefined)
+        setSubmitting(true)
+
+        try {
+          const auth = await authService.register({
+            fullName: formValues.fullName.trim(),
+            phone: formValues.phone.trim(),
+            email: formValues.email.trim(),
+            password: formValues.password,
+            role,
+          })
+
+          authTokenStorage.setTokens(auth.tokens, 'session')
+          window.location.assign(getRegisterRedirect(role))
+        } catch (error) {
+          setSubmitError(getApiErrorMessage(error, apiErrors))
+        } finally {
+          setSubmitting(false)
+        }
+      },
       validate: (formValues) => validateRegisterForm(formValues, validation),
     })
 
   const handleRoleChange = (role: string) => {
-    if (isRegisterRole(role)) {
+    if (isAuthFormRole(role)) {
+      setSubmitError(undefined)
       setFieldValue('role', role)
     }
   }
@@ -45,7 +78,32 @@ export function RegisterForm({ translations }: RegisterFormProps) {
       />
 
       <Input
+        autoComplete="name"
+        disabled={isSubmitting}
+        error={getFieldError('fullName')}
+        label={form.fullNameLabel}
+        onBlur={() => setFieldTouched('fullName')}
+        onChange={handleFieldChange('fullName')}
+        placeholder={form.fullNamePlaceholder}
+        type="text"
+        value={values.fullName}
+      />
+
+      <Input
+        autoComplete="tel"
+        disabled={isSubmitting}
+        error={getFieldError('phone')}
+        label={form.phoneLabel}
+        onBlur={() => setFieldTouched('phone')}
+        onChange={handleFieldChange('phone')}
+        placeholder={form.phonePlaceholder}
+        type="tel"
+        value={values.phone}
+      />
+
+      <Input
         autoComplete="email"
+        disabled={isSubmitting}
         error={getFieldError('email')}
         label={form.emailLabel}
         onBlur={() => setFieldTouched('email')}
@@ -57,6 +115,7 @@ export function RegisterForm({ translations }: RegisterFormProps) {
 
       <PasswordInput
         autoComplete="new-password"
+        disabled={isSubmitting}
         error={getFieldError('password')}
         hidePasswordLabel={form.hidePassword}
         label={form.passwordLabel}
@@ -69,6 +128,7 @@ export function RegisterForm({ translations }: RegisterFormProps) {
 
       <PasswordInput
         autoComplete="new-password"
+        disabled={isSubmitting}
         error={getFieldError('confirmPassword')}
         hidePasswordLabel={form.hidePassword}
         label={form.confirmPasswordLabel}
@@ -79,8 +139,14 @@ export function RegisterForm({ translations }: RegisterFormProps) {
         value={values.confirmPassword}
       />
 
-      <Button className="mt-1 w-full" type="submit">
-        {form.submit}
+      {submitError ? (
+        <p className="rounded-lg border border-[rgba(220,38,38,0.24)] bg-[rgba(220,38,38,0.08)] px-3 py-2 text-sm font-medium text-[var(--color-text-danger)]" role="alert">
+          {submitError}
+        </p>
+      ) : null}
+
+      <Button className="mt-1 w-full" disabled={isSubmitting} type="submit">
+        {isSubmitting ? form.submitLoading : form.submit}
       </Button>
     </form>
   )

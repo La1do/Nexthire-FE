@@ -2,6 +2,10 @@ export type Locale = 'en' | 'vi' | 'ja'
 
 export type CommonTranslations = {
   brandName: string
+  apiErrors: {
+    default: string
+    byCode: Record<string, string>
+  }
   navigation: {
     companies: string
     employerCta: string
@@ -26,6 +30,11 @@ export type LoginTranslations = {
   title: string
   subtitle: string
   form: {
+    roleLabel: string
+    roleOptions: ReadonlyArray<{
+      value: string
+      label: string
+    }>
     emailLabel: string
     emailPlaceholder: string
     passwordLabel: string
@@ -35,6 +44,7 @@ export type LoginTranslations = {
     showPassword: string
     hidePassword: string
     submit: string
+    submitLoading: string
   }
   footer: {
     prompt: string
@@ -56,6 +66,10 @@ export type RegisterTranslations = {
       value: string
       label: string
     }>
+    fullNameLabel: string
+    fullNamePlaceholder: string
+    phoneLabel: string
+    phonePlaceholder: string
     emailLabel: string
     emailPlaceholder: string
     passwordLabel: string
@@ -65,6 +79,7 @@ export type RegisterTranslations = {
     showPassword: string
     hidePassword: string
     submit: string
+    submitLoading: string
   }
   footer: {
     prompt: string
@@ -73,6 +88,10 @@ export type RegisterTranslations = {
   validation: {
     emailRequired: string
     emailInvalid: string
+    fullNameRequired: string
+    fullNameMinLength: string
+    phoneRequired: string
+    phoneMinLength: string
     passwordRequired: string
     passwordMinLength: string
     confirmPasswordRequired: string

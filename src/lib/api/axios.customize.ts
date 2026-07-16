@@ -16,17 +16,80 @@ type QueueItem = {
 }
 
 type RefreshTokenResponse = {
-  accessToken: string
+  success: true
+  data: {
+    tokens: {
+      accessToken: string
+      refreshToken: string
+      accessTokenExpiresIn: number
+      refreshTokenExpiresIn: number
+    }
+  }
 }
 
-const ACCESS_TOKEN_KEY = 'access_token'
-const REFRESH_TOKEN_ENDPOINT = '/auth/refresh-token'
+type TokenPersistence = 'local' | 'session'
+
+type AuthTokens = RefreshTokenResponse['data']['tokens']
+
+const ACCESS_TOKEN_KEY = 'nexhire_access_token'
+const REFRESH_TOKEN_KEY = 'nexhire_refresh_token'
+const TOKEN_PERSISTENCE_KEY = 'nexhire_token_persistence'
+const REFRESH_TOKEN_ENDPOINT = '/auth/refresh'
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined
 
+function getStorage(persistence: TokenPersistence) {
+  return persistence === 'local' ? window.localStorage : window.sessionStorage
+}
+
+function getCurrentPersistence(): TokenPersistence {
+  if (localStorage.getItem(TOKEN_PERSISTENCE_KEY) === 'local') {
+    return 'local'
+  }
+
+  if (sessionStorage.getItem(TOKEN_PERSISTENCE_KEY) === 'session') {
+    return 'session'
+  }
+
+  return localStorage.getItem(REFRESH_TOKEN_KEY) ? 'local' : 'session'
+}
+
+function readToken(key: string) {
+  return sessionStorage.getItem(key) ?? localStorage.getItem(key)
+}
+
+function clearStoredTokens() {
+  localStorage.removeItem(ACCESS_TOKEN_KEY)
+  localStorage.removeItem(REFRESH_TOKEN_KEY)
+  localStorage.removeItem(TOKEN_PERSISTENCE_KEY)
+  sessionStorage.removeItem(ACCESS_TOKEN_KEY)
+  sessionStorage.removeItem(REFRESH_TOKEN_KEY)
+  sessionStorage.removeItem(TOKEN_PERSISTENCE_KEY)
+}
+
+function isPublicAuthRequest(url?: string) {
+  return Boolean(
+    url?.startsWith('/auth/login') ||
+      url?.startsWith('/auth/register') ||
+      url?.startsWith('/auth/forgot-password') ||
+      url?.startsWith('/auth/reset-password') ||
+      url?.startsWith('/auth/verify-email') ||
+      url?.startsWith('/auth/resend-verification') ||
+      url?.startsWith(REFRESH_TOKEN_ENDPOINT),
+  )
+}
+
 export const authTokenStorage = {
-  getAccessToken: () => localStorage.getItem(ACCESS_TOKEN_KEY),
-  setAccessToken: (token: string) => localStorage.setItem(ACCESS_TOKEN_KEY, token),
-  clearAccessToken: () => localStorage.removeItem(ACCESS_TOKEN_KEY),
+  getAccessToken: () => readToken(ACCESS_TOKEN_KEY),
+  getRefreshToken: () => readToken(REFRESH_TOKEN_KEY),
+  setTokens: (tokens: AuthTokens, persistence: TokenPersistence = getCurrentPersistence()) => {
+    clearStoredTokens()
+
+    const storage = getStorage(persistence)
+    storage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken)
+    storage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
+    storage.setItem(TOKEN_PERSISTENCE_KEY, persistence)
+  },
+  clearTokens: clearStoredTokens,
 }
 
 const apiClient: AxiosInstance = axios.create({
@@ -78,8 +141,19 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry && accessToken) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      accessToken &&
+      !isPublicAuthRequest(originalRequest.url)
+    ) {
       originalRequest._retry = true
+      const refreshToken = authTokenStorage.getRefreshToken()
+
+      if (!refreshToken) {
+        authTokenStorage.clearTokens()
+        return Promise.reject(error)
+      }
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -96,21 +170,24 @@ apiClient.interceptors.response.use(
       isRefreshing = true
 
       try {
-        const response = await refreshClient.post<RefreshTokenResponse>(REFRESH_TOKEN_ENDPOINT)
-        const newAccessToken = response.data.accessToken
+        const response = await refreshClient.post<RefreshTokenResponse>(
+          REFRESH_TOKEN_ENDPOINT,
+          { refreshToken },
+        )
+        const newAccessToken = response.data.data.tokens.accessToken
 
         if (!newAccessToken) {
           throw new Error('Missing refreshed access token')
         }
 
-        authTokenStorage.setAccessToken(newAccessToken)
+        authTokenStorage.setTokens(response.data.data.tokens)
         processQueue(null, newAccessToken)
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         return apiClient(originalRequest)
       } catch (refreshError) {
         processQueue(refreshError)
-        authTokenStorage.clearAccessToken()
+        authTokenStorage.clearTokens()
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false

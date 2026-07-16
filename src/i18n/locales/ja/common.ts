@@ -1,5 +1,24 @@
 export const common = {
   brandName: 'NexHire',
+  apiErrors: {
+    default: 'エラーが発生しました。もう一度お試しください。',
+    byCode: {
+      'COMMON.VALIDATION_FAILED': '送信されたデータが正しくありません。',
+      'COMMON.UNAUTHENTICATED': 'セッションの有効期限が切れました。',
+      'COMMON.FORBIDDEN': 'この操作を実行する権限がありません。',
+      'COMMON.CONFLICT': 'データが既に存在するか、競合しています。',
+      'COMMON.RATE_LIMITED': '操作が速すぎます。しばらくしてからお試しください。',
+      'COMMON.INTERNAL_ERROR': 'システムで問題が発生しています。後でもう一度お試しください。',
+      'AUTH.INVALID_CREDENTIALS': 'メールまたはパスワードが正しくありません。',
+      'AUTH.LOGIN_ROLE_NOT_ALLOWED': 'このアカウントは選択した役割では利用できません。',
+      'AUTH.ACCOUNT_TEMPORARILY_LOCKED': 'このアカウントは一時的にロックされています。',
+      'AUTH.EMAIL_ALREADY_REGISTERED': 'このメールは既に登録されています。',
+      'AUTH.REGISTRATION_ROLE_NOT_ALLOWED': 'この役割では自己登録できません。',
+      'AUTH.ROLE_NOT_PROVISIONED': 'この役割はまだ利用できません。',
+      'AUTH.CANDIDATE_ROLE_NOT_PROVISIONED': '候補者の役割はまだ利用できません。',
+      'AUTH.INVALID_REFRESH_TOKEN': 'セッションが無効になりました。',
+    },
+  },
   navigation: {
     companies: '企業',
     employerCta: '採用担当者向け',
