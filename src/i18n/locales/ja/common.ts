@@ -28,6 +28,13 @@ export const common = {
     login: 'ログイン',
     register: '登録',
   },
+  authUser: {
+    profile: 'プロフィール',
+    logout: 'ログアウト',
+    candidateRole: '候補者',
+    recruiterRole: '採用担当者',
+    adminRole: '管理者',
+  },
   footer: {
     description: '企業と候補者を、わかりやすく信頼できる採用体験でつなぎます。',
     legalLabel: '商工省登録済み',

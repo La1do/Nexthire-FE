@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Checkbox, Input, PasswordInput, SegmentedControl } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
+import { useAuth } from '../../../context'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
-import { authTokenStorage } from '../../../lib/api'
 import { isAuthFormRole, toAuthApiRole } from '../../../lib/auth/authRole'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, LoginTranslations } from '../../../i18n/types'
@@ -29,6 +29,7 @@ function getLoginRedirect(role: ReturnType<typeof toAuthApiRole>) {
 export function LoginForm({ apiErrors, translations }: LoginFormProps) {
   const { form, validation } = translations
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
   const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
@@ -47,7 +48,7 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
             role,
           })
 
-          authTokenStorage.setTokens(auth.tokens, formValues.rememberMe ? 'local' : 'session')
+          login(auth, formValues.rememberMe ? 'local' : 'session')
           navigate(getLoginRedirect(role))
         } catch (error) {
           setSubmitError(getApiErrorMessage(error, apiErrors))

@@ -28,6 +28,13 @@ export const common = {
     login: 'Log in',
     register: 'Register',
   },
+  authUser: {
+    profile: 'Profile',
+    logout: 'Log out',
+    candidateRole: 'Candidate',
+    recruiterRole: 'Recruiter',
+    adminRole: 'Administrator',
+  },
   footer: {
     description: 'Connect with businesses through a modern, fast, and trustworthy hiring experience.',
     legalLabel: 'Registered with the Ministry of Labor',

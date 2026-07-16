@@ -422,6 +422,102 @@ select {
   transform: translateY(-1px);
 }
 
+.main-user-menu {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.6rem;
+}
+
+.main-user-copy {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.main-user-avatar {
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 800;
+  height: 2.25rem;
+  letter-spacing: 0.02em;
+  object-fit: cover;
+  width: 2.25rem;
+}
+
+.main-user-avatar--initials {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.main-user-meta {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.main-user-meta strong {
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 800;
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.main-user-meta small {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.main-user-actions {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.main-user-action {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-height: 2rem;
+  padding: 0 0.85rem;
+  transition:
+    background 160ms var(--motion-ease-standard),
+    color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.main-user-action--profile {
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+}
+
+.main-user-action--profile:hover {
+  color: var(--color-text-primary);
+}
+
+.main-user-action--logout {
+  background: transparent;
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.main-user-action--logout:hover {
+  color: var(--color-text-danger);
+}
+
 .main-footer {
   background: var(--color-home-footer);
   color: var(--color-text-inverse);
@@ -4036,6 +4132,10 @@ select {
     display: none;
   }
 
+  .main-user-meta strong {
+    max-width: 7rem;
+  }
+
   .home-jobs-heading,
   .home-section-heading,
   .home-industry-heading {
@@ -4105,6 +4205,18 @@ select {
 
   .main-login-link {
     display: none;
+  }
+
+  .main-user-meta {
+    display: none;
+  }
+
+  .main-user-actions {
+    gap: 0.35rem;
+  }
+
+  .main-user-action {
+    padding: 0 0.6rem;
   }
 
   .home-page {

@@ -28,6 +28,13 @@ export const common = {
     login: 'Đăng nhập',
     register: 'Đăng ký',
   },
+  authUser: {
+    profile: 'Hồ sơ',
+    logout: 'Đăng xuất',
+    candidateRole: 'Ứng viên',
+    recruiterRole: 'Nhà tuyển dụng',
+    adminRole: 'Quản trị viên',
+  },
   footer: {
     description: 'Kết nối ứng viên và doanh nghiệp bằng trải nghiệm tuyển dụng rõ ràng, đáng tin cậy.',
     legalLabel: 'Đã đăng ký Bộ Công Thương',

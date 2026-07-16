@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, PasswordInput, SegmentedControl } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
+import { useAuth } from '../../../context'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
-import { authTokenStorage } from '../../../lib/api'
 import { isAuthFormRole, toAuthApiRole } from '../../../lib/auth/authRole'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, RegisterTranslations } from '../../../i18n/types'
@@ -31,6 +31,7 @@ function getRegisterRedirect(role: ReturnType<typeof toAuthApiRole>) {
 export function RegisterForm({ apiErrors, translations }: RegisterFormProps) {
   const { form, validation } = translations
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
   const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
@@ -51,7 +52,7 @@ export function RegisterForm({ apiErrors, translations }: RegisterFormProps) {
             role,
           })
 
-          authTokenStorage.setTokens(auth.tokens, 'session')
+          login(auth, 'session')
           navigate(getRegisterRedirect(role))
         } catch (error) {
           setSubmitError(getApiErrorMessage(error, apiErrors))

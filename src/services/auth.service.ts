@@ -13,6 +13,7 @@ export type AuthUser = {
   phone: string | null
   role: AuthApiRole
   emailVerified: boolean
+  logoUrl?: string | null
 }
 
 export type AuthTokens = {

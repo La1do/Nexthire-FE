@@ -15,6 +15,13 @@ export type CommonTranslations = {
     login: string
     register: string
   }
+  authUser: {
+    profile: string
+    logout: string
+    candidateRole: string
+    recruiterRole: string
+    adminRole: string
+  }
   footer: {
     description: string
     legalLabel: string

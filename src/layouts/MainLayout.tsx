@@ -1,8 +1,31 @@
 import type { PropsWithChildren } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  getAuthUserDisplayName,
+  getInitials,
+  useAuth,
+} from '../context'
+import type { AuthApiRole } from '../lib/auth/authRole'
 import { getTranslations } from '../i18n'
+
+function getRoleLabel(
+  role: AuthApiRole,
+  labels: { candidateRole: string; recruiterRole: string; adminRole: string },
+) {
+  if (role === 'CANDIDATE') return labels.candidateRole
+  if (role === 'RECRUITER') return labels.recruiterRole
+  return labels.adminRole
+}
 
 export function MainLayout({ children }: PropsWithChildren) {
   const { common } = getTranslations()
+  const { user, isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <div className="main-shell min-h-screen text-[var(--color-text-primary)]">
@@ -23,15 +46,51 @@ export function MainLayout({ children }: PropsWithChildren) {
             </a>
           </nav>
           <div className="main-header-actions">
-            <a className="main-employer-link" href="/">
-              {common.navigation.employerCta}
-            </a>
-            <a className="main-login-link" href="/login">
-              {common.navigation.login}
-            </a>
-            <a className="main-register-link" href="/register">
-              {common.navigation.register}
-            </a>
+            {isAuthenticated && user ? (
+              <div className="main-user-menu">
+                <div className="main-user-copy">
+                  {user.logoUrl ? (
+                    <img
+                      alt=""
+                      className="main-user-avatar"
+                      src={user.logoUrl}
+                    />
+                  ) : (
+                    <span className="main-user-avatar main-user-avatar--initials">
+                      {getInitials(getAuthUserDisplayName(user))}
+                    </span>
+                  )}
+                  <span className="main-user-meta">
+                    <strong>{getAuthUserDisplayName(user)}</strong>
+                    <small>{getRoleLabel(user.role, common.authUser)}</small>
+                  </span>
+                </div>
+                <div className="main-user-actions">
+                  <a className="main-user-action main-user-action--profile" href="/profile">
+                    {common.authUser.profile}
+                  </a>
+                  <button
+                    className="main-user-action main-user-action--logout"
+                    onClick={handleLogout}
+                    type="button"
+                  >
+                    {common.authUser.logout}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <a className="main-employer-link" href="/">
+                  {common.navigation.employerCta}
+                </a>
+                <a className="main-login-link" href="/login">
+                  {common.navigation.login}
+                </a>
+                <a className="main-register-link" href="/register">
+                  {common.navigation.register}
+                </a>
+              </>
+            )}
           </div>
         </div>
       </header>
