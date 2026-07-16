@@ -1,7 +1,4 @@
-export {
-  AuthProvider,
-  useAuth,
-  getAuthUserDisplayName,
-  getInitials,
-} from './AuthContext'
-export type { AuthContextValue, AuthPersistence } from './AuthContext'
+export { AuthProvider } from './AuthContext'
+export { getAuthUserDisplayName, getInitials } from './authUser'
+export { useAuth } from './useAuth'
+export type { AuthContextValue, AuthPersistence } from './authContextValue'

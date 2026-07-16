@@ -12,6 +12,8 @@ export type AuthUser = {
   fullName: string | null
   phone: string | null
   role: AuthApiRole
+  companyId?: string | null
+  companyName?: string | null
   emailVerified: boolean
   logoUrl?: string | null
 }
@@ -50,6 +52,11 @@ export const authService = {
 
   async register(payload: RegisterPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/register', payload)
+    return response.data.data
+  },
+
+  async logout(refreshToken: string) {
+    const response = await apiClient.post<ApiSuccessEnvelope<{ message: string }>>('/auth/logout', { refreshToken })
     return response.data.data
   },
 }

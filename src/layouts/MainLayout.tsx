@@ -6,6 +6,7 @@ import {
   useAuth,
 } from '../context'
 import type { AuthApiRole } from '../lib/auth/authRole'
+import type { AuthUser } from '../services/auth.service'
 import { getTranslations } from '../i18n'
 
 function getRoleLabel(
@@ -17,13 +18,29 @@ function getRoleLabel(
   return labels.adminRole
 }
 
+function getUserMetaLabel(
+  user: AuthUser,
+  labels: { candidateRole: string; recruiterRole: string; adminRole: string },
+) {
+  const roleLabel = getRoleLabel(user.role, labels)
+  return user.role === 'RECRUITER' && user.companyName
+    ? `${user.companyName} - ${roleLabel}`
+    : roleLabel
+}
+
+function getProfileHref(role: AuthApiRole) {
+  if (role === 'CANDIDATE') return '/profile'
+  if (role === 'ADMIN') return '/admin/users'
+  return '/'
+}
+
 export function MainLayout({ children }: PropsWithChildren) {
   const { common } = getTranslations()
   const { user, isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    logout()
+    void logout()
     navigate('/login')
   }
 
@@ -51,7 +68,7 @@ export function MainLayout({ children }: PropsWithChildren) {
                 <div className="main-user-copy">
                   {user.logoUrl ? (
                     <img
-                      alt=""
+                      alt={user.companyName ? `${user.companyName} logo` : ''}
                       className="main-user-avatar"
                       src={user.logoUrl}
                     />
@@ -62,11 +79,11 @@ export function MainLayout({ children }: PropsWithChildren) {
                   )}
                   <span className="main-user-meta">
                     <strong>{getAuthUserDisplayName(user)}</strong>
-                    <small>{getRoleLabel(user.role, common.authUser)}</small>
+                    <small>{getUserMetaLabel(user, common.authUser)}</small>
                   </span>
                 </div>
                 <div className="main-user-actions">
-                  <a className="main-user-action main-user-action--profile" href="/profile">
+                  <a className="main-user-action main-user-action--profile" href={getProfileHref(user.role)}>
                     {common.authUser.profile}
                   </a>
                   <button
