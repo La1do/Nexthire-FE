@@ -57,6 +57,12 @@ export function AdminLayout({ children }: PropsWithChildren) {
   const content = pages.adminUsers
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
+  const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
+  const pageTitle = currentPath.startsWith('/admin/companies/')
+    ? pages.adminCompanies.detail.pageTitle
+    : currentPath.startsWith('/admin/companies')
+      ? pages.adminCompanies.pageTitle
+      : content.pageTitle
 
   useEffect(() => {
     if (!isSidebarOpen) {
@@ -86,7 +92,6 @@ export function AdminLayout({ children }: PropsWithChildren) {
     }
   }, [isSidebarOpen])
 
-  const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
   const sidebarOpen = isSidebarOpen
 
   return (
@@ -116,6 +121,14 @@ export function AdminLayout({ children }: PropsWithChildren) {
               tabIndex={sidebarOpen ? undefined : -1}
             >
               {content.sidebar.users}
+            </a>
+            <a
+              aria-current={currentPath.startsWith('/admin/companies') ? 'page' : undefined}
+              className={`admin-sidebar__link${currentPath.startsWith('/admin/companies') ? ' is-active' : ''}`}
+              href="/admin/companies"
+              tabIndex={sidebarOpen ? undefined : -1}
+            >
+              {common.navigation.companies}
             </a>
             <a className="admin-sidebar__link" href="/" tabIndex={sidebarOpen ? undefined : -1}>
               {content.sidebar.jobs}
@@ -158,7 +171,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <MenuIcon />
           </button>
 
-          <h1 className="admin-topbar__title">{content.pageTitle}</h1>
+          <h1 className="admin-topbar__title">{pageTitle}</h1>
 
           <label className="admin-topbar__search">
             <span className="sr-only">{content.topbar.searchPlaceholder}</span>

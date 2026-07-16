@@ -373,6 +373,79 @@ export type AdminUsersTranslations = {
   }
 }
 
+export type AdminCompaniesTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  detailRouteLabel: string
+  stats: {
+    pendingLabel: string
+    approvedLabel: string
+    rejectedLabel: string
+    pendingDelta: string
+    approvedDelta: string
+    rejectedDelta: string
+  }
+  filters: {
+    queryLabel: string
+    queryPlaceholder: string
+    statusLabel: string
+    statusAll: string
+    clear: string
+  }
+  results: {
+    countLabel: string
+    emptyTitle: string
+    emptyDescription: string
+    columns: {
+      company: string
+      submittedAt: string
+      status: string
+      actions: string
+    }
+    actions: {
+      viewDetail: string
+      approve: string
+      reject: string
+      verified: string
+    }
+  }
+  pagination: {
+    prev: string
+    next: string
+    pageOf: string
+  }
+  statuses: {
+    pending: string
+    approved: string
+    rejected: string
+  }
+  detail: {
+    pageTitle: string
+    backToList: string
+    taxCodeLabel: string
+    submittedAtLabel: string
+    addressLabel: string
+    descriptionTitle: string
+    documentsTitle: string
+    documentsDescription: string
+    download: string
+    reviewTitle: string
+    pendingHint: string
+    approvedHint: string
+    rejectedHint: string
+    approve: string
+    reject: string
+    quickStatsTitle: string
+    jobPostsLabel: string
+    applicantsLabel: string
+    responseRateLabel: string
+    notFoundEyebrow: string
+    notFoundTitle: string
+    notFoundDescription: string
+  }
+}
+
 export type JobDetailTranslations = {
   routeLabel: string
   backToSearch: string
@@ -542,6 +615,7 @@ export type ProfileTranslations = {
 export type Translations = {
   common: CommonTranslations
   pages: {
+    adminCompanies: AdminCompaniesTranslations
     adminUsers: AdminUsersTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations

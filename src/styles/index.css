@@ -3196,6 +3196,18 @@ select {
   }
 }
 
+@keyframes admin-panel-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @keyframes profile-progress-fill {
   from {
     transform: scaleX(0);
@@ -3581,6 +3593,9 @@ select {
   .auth-card-motion::before,
   .auth-motion,
   .auth-step-motion,
+  .admin-companies-page > *,
+  .admin-company-detail-back,
+  .admin-company-panel,
   .forgot-password-envelope-badge,
   .forgot-password-envelope-body,
   .forgot-password-envelope-flap,
@@ -3606,6 +3621,7 @@ select {
   }
 
   .button-motion:hover:not(:disabled),
+  .admin-company-action:hover:not(:disabled),
   .segmented-control-option:hover {
     transform: none;
   }
@@ -4473,10 +4489,501 @@ select {
   /* visually hidden; available to screen readers */
 }
 
+/* ---------- Admin company moderation ---------- */
+
+.admin-companies-page,
+.admin-company-detail-page {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  max-width: 1200px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.admin-companies-page > *,
+.admin-company-panel,
+.admin-company-detail-back {
+  animation: admin-panel-enter 420ms var(--motion-ease-out) both;
+}
+
+.admin-companies-page > :nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.admin-companies-page > :nth-child(3) {
+  animation-delay: 110ms;
+}
+
+.admin-companies-page > :nth-child(4) {
+  animation-delay: 160ms;
+}
+
+.admin-companies-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-companies-filters {
+  grid-template-columns: minmax(0, 1fr) 220px auto;
+}
+
+.admin-company-table-wrap {
+  min-width: 0;
+}
+
+.admin-company-table__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.admin-company-cell {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-width: min(280px, 52vw);
+}
+
+.admin-company-cell__logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-surface-muted), var(--color-surface-card));
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.admin-company-cell__name {
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.admin-company-cell__website {
+  display: inline-block;
+  margin-top: 0.18rem;
+  max-width: 100%;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-company-cell__website:hover {
+  color: var(--color-brand-solid);
+}
+
+.admin-company-action {
+  min-height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-surface-card);
+  color: var(--color-text-secondary);
+  padding: 0.4rem 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.1;
+  cursor: pointer;
+  transition: background-color 160ms var(--motion-ease-standard),
+    border-color 160ms var(--motion-ease-standard),
+    color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.admin-company-action svg {
+  width: 15px;
+  height: 15px;
+}
+
+.admin-company-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.admin-company-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.admin-company-action--ghost:hover:not(:disabled) {
+  border-color: var(--color-brand-solid);
+  color: var(--color-brand-solid);
+}
+
+.admin-company-action--approve {
+  border-color: rgba(25, 169, 116, 0.32);
+  background: var(--color-home-accent-soft);
+  color: var(--color-home-accent);
+}
+
+.admin-company-action--approve:hover:not(:disabled) {
+  background: rgba(25, 169, 116, 0.2);
+  border-color: var(--color-home-accent);
+}
+
+.admin-company-action--reject {
+  border-color: rgba(220, 38, 38, 0.24);
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--color-text-danger);
+}
+
+.admin-company-action--reject:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: var(--color-text-danger);
+}
+
+.admin-company-action--verified {
+  border-color: rgba(25, 169, 116, 0.28);
+  background: var(--color-home-accent-soft);
+  color: var(--color-home-accent);
+}
+
+.admin-badge--company-pending {
+  background: var(--color-home-warning-soft);
+  color: #b3780d;
+  border-color: rgba(179, 120, 13, 0.32);
+}
+
+.admin-badge--company-approved {
+  background: var(--color-home-accent-soft);
+  color: var(--color-home-accent);
+  border-color: rgba(25, 169, 116, 0.36);
+}
+
+.admin-badge--company-rejected {
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--color-text-danger);
+  border-color: rgba(220, 38, 38, 0.24);
+}
+
+.admin-company-mobile-list {
+  display: none;
+  gap: 0.75rem;
+}
+
+.admin-company-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.85rem;
+  box-shadow: var(--shadow-control);
+}
+
+.admin-company-card__meta {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-company-card__meta div {
+  min-width: 0;
+}
+
+.admin-company-card__meta dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.25rem;
+}
+
+.admin-company-card__meta dd {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.admin-company-card__actions {
+  display: grid;
+  gap: 0.45rem;
+}
+
+/* ---------- Admin company detail ---------- */
+
+.admin-company-detail-page {
+  max-width: 1160px;
+}
+
+.admin-company-detail-back {
+  justify-self: start;
+  color: var(--color-brand-solid);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.admin-company-detail-back::before {
+  content: "←";
+  margin-right: 0.35rem;
+}
+
+.admin-company-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  gap: 1rem;
+  align-items: start;
+}
+
+.admin-company-detail-main,
+.admin-company-detail-aside {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.admin-company-detail-aside {
+  position: sticky;
+  top: 5.25rem;
+}
+
+.admin-company-panel {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 14px;
+  padding: clamp(1rem, 2.2vw, 1.25rem);
+  box-shadow: var(--shadow-control);
+}
+
+.admin-company-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.9rem;
+}
+
+.admin-company-panel__header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.admin-company-panel__header p {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.admin-company-overview {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.admin-company-overview__head {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.admin-company-overview__logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--color-surface-muted), var(--color-surface-card));
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.admin-company-overview__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.admin-company-overview__title-row h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
+}
+
+.admin-company-overview__website {
+  display: inline-block;
+  margin-top: 0.35rem;
+  color: var(--color-brand-solid);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.admin-company-overview__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.admin-company-overview__meta div {
+  min-width: 0;
+}
+
+.admin-company-overview__wide {
+  grid-column: 1 / -1;
+}
+
+.admin-company-overview__meta dt {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.admin-company-overview__meta dd {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.admin-company-description {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.admin-company-documents {
+  display: grid;
+  gap: 0.55rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-company-document {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 10px;
+  background: var(--color-surface-subtle);
+}
+
+.admin-company-document__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(242, 85, 85, 0.1);
+  color: var(--color-brand-solid);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-company-document__icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.admin-company-document__name {
+  font-weight: 600;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-company-document__download {
+  color: var(--color-brand-solid);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.admin-company-review-panel__hint {
+  margin: 0 0 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.admin-company-review-panel__actions {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.admin-company-quick-stats__list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.admin-company-quick-stats__list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-company-quick-stats__list dt {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.admin-company-quick-stats__list dd {
+  margin: 0;
+  font-weight: 800;
+}
+
+.admin-company-not-found {
+  justify-items: start;
+  max-width: 560px;
+}
+
+.admin-company-not-found__eyebrow {
+  color: var(--color-brand-solid);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.admin-company-not-found h2 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+}
+
+.admin-company-not-found p:not(.admin-company-not-found__eyebrow) {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1100px) {
   .admin-users-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-company-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-detail-aside {
+    position: static;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -4514,7 +5021,8 @@ select {
     display: none;
   }
 
-  .admin-users-mobile-list {
+  .admin-users-mobile-list,
+  .admin-company-mobile-list {
     display: grid;
   }
 }
@@ -4533,5 +5041,23 @@ select {
 
   .admin-topbar__search {
     display: none;
+  }
+
+  .admin-company-card__meta,
+  .admin-company-detail-aside,
+  .admin-company-overview__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-overview__head {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-document {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .admin-company-document__download {
+    grid-column: 2;
   }
 }

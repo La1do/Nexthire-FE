@@ -1,7 +1,11 @@
-import type { AdminUsersTranslations } from '../../../i18n/types'
+type AdminPaginationLabels = {
+  prev: string
+  next: string
+  pageOf: string
+}
 
 type AdminPaginationProps = {
-  labels: AdminUsersTranslations['pagination']
+  labels: AdminPaginationLabels
   onPageChange: (page: number) => void
   page: number
   totalPages: number

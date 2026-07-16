@@ -1,4 +1,5 @@
 import { common as enCommon } from './locales/en/common'
+import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
 import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
 import { forgotPassword as enForgotPassword } from './locales/en/pages/forgotPassword'
 import { home as enHome } from './locales/en/pages/home'
@@ -8,6 +9,7 @@ import { profile as enProfile } from './locales/en/pages/profile'
 import { register as enRegister } from './locales/en/pages/register'
 import { search as enSearch } from './locales/en/pages/search'
 import { common as jaCommon } from './locales/ja/common'
+import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
 import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
 import { forgotPassword as jaForgotPassword } from './locales/ja/pages/forgotPassword'
 import { home as jaHome } from './locales/ja/pages/home'
@@ -17,6 +19,7 @@ import { profile as jaProfile } from './locales/ja/pages/profile'
 import { register as jaRegister } from './locales/ja/pages/register'
 import { search as jaSearch } from './locales/ja/pages/search'
 import { common as viCommon } from './locales/vi/common'
+import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
 import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
 import { forgotPassword as viForgotPassword } from './locales/vi/pages/forgotPassword'
 import { home as viHome } from './locales/vi/pages/home'
@@ -33,6 +36,7 @@ export const translations = {
   en: {
     common: enCommon,
     pages: {
+      adminCompanies: enAdminCompanies,
       adminUsers: enAdminUsers,
       forgotPassword: enForgotPassword,
       home: enHome,
@@ -46,6 +50,7 @@ export const translations = {
   vi: {
     common: viCommon,
     pages: {
+      adminCompanies: viAdminCompanies,
       adminUsers: viAdminUsers,
       forgotPassword: viForgotPassword,
       home: viHome,
@@ -59,6 +64,7 @@ export const translations = {
   ja: {
     common: jaCommon,
     pages: {
+      adminCompanies: jaAdminCompanies,
       adminUsers: jaAdminUsers,
       forgotPassword: jaForgotPassword,
       home: jaHome,

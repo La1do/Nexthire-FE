@@ -4,6 +4,8 @@ import { AuthLayout } from '../layouts/AuthLayout'
 import { CandidateLayout } from '../layouts/CandidateLayout'
 import { MainLayout } from '../layouts/MainLayout'
 import { getTranslations } from '../i18n'
+import { AdminCompaniesPage } from '../pages/AdminCompaniesPage'
+import { AdminCompanyDetailPage } from '../pages/AdminCompanyDetailPage'
 import { AdminUsersPage } from '../pages/AdminUsersPage'
 import { ForgotPasswordPage } from '../pages/ForgotPasswordPage'
 import { HomePage } from '../pages/HomePage'
@@ -69,6 +71,18 @@ export const routes: AppRoute[] = [
     path: '/admin/users',
     label: pages.adminUsers.routeLabel,
     element: <AdminUsersPage />,
+    layout: AdminLayout,
+  },
+  {
+    path: '/admin/companies',
+    label: pages.adminCompanies.routeLabel,
+    element: <AdminCompaniesPage />,
+    layout: AdminLayout,
+  },
+  {
+    path: '/admin/companies/:id',
+    label: pages.adminCompanies.detailRouteLabel,
+    element: <AdminCompanyDetailPage />,
     layout: AdminLayout,
   },
 ]
