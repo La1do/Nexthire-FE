@@ -31,6 +31,7 @@ export const common = {
   authUser: {
     profile: 'Profile',
     logout: 'Log out',
+    menuLabel: 'Open account menu',
     candidateRole: 'Candidate',
     recruiterRole: 'Recruiter',
     adminRole: 'Administrator',

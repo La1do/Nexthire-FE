@@ -1,3 +1,4 @@
+import { useEffect, useId, useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -34,6 +35,136 @@ function getProfileHref(role: AuthApiRole) {
   return '/'
 }
 
+type MainUserMenuProps = {
+  labels: {
+    profile: string
+    logout: string
+    menuLabel: string
+    candidateRole: string
+    recruiterRole: string
+    adminRole: string
+  }
+  onLogout: () => void
+  user: AuthUser
+}
+
+function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
+  const [isOpen, setOpen] = useState(false)
+  const menuId = useId()
+  const menuRef = useRef<HTMLDivElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const displayName = getAuthUserDisplayName(user)
+  const metaLabel = getUserMetaLabel(user, labels)
+  const profileHref = getProfileHref(user.role)
+
+  useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+
+    function handlePointerDown(event: MouseEvent) {
+      if (menuRef.current?.contains(event.target as Node)) {
+        return
+      }
+
+      setOpen(false)
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') {
+        return
+      }
+
+      setOpen(false)
+      triggerRef.current?.focus()
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen])
+
+  const handleLogoutClick = () => {
+    setOpen(false)
+    onLogout()
+  }
+
+  return (
+    <div className={`main-user-menu${isOpen ? ' is-open' : ''}`} ref={menuRef}>
+      <button
+        aria-controls={menuId}
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
+        aria-label={labels.menuLabel}
+        className="main-user-trigger"
+        onClick={() => setOpen((current) => !current)}
+        ref={triggerRef}
+        type="button"
+      >
+        {user.logoUrl ? (
+          <img
+            alt={user.companyName ? `${user.companyName} logo` : ''}
+            className="main-user-avatar"
+            src={user.logoUrl}
+          />
+        ) : (
+          <span className="main-user-avatar main-user-avatar--initials">
+            {getInitials(displayName)}
+          </span>
+        )}
+        <span className="main-user-meta">
+          <strong>{displayName}</strong>
+          <small>{metaLabel}</small>
+        </span>
+        <span aria-hidden="true" className="main-user-caret" />
+      </button>
+
+      <div className="main-user-dropdown" hidden={!isOpen} id={menuId} role="menu">
+        <div className="main-user-dropdown-header" role="none">
+          {user.logoUrl ? (
+            <img
+              alt={user.companyName ? `${user.companyName} logo` : ''}
+              className="main-user-dropdown-avatar"
+              src={user.logoUrl}
+            />
+          ) : (
+            <span className="main-user-dropdown-avatar main-user-avatar--initials">
+              {getInitials(displayName)}
+            </span>
+          )}
+          <div className="main-user-dropdown-copy">
+            <strong>{displayName}</strong>
+            <span>{user.email}</span>
+            <small>{metaLabel}</small>
+          </div>
+        </div>
+
+        <div className="main-user-dropdown-actions" role="none">
+          <a
+            className="main-user-dropdown-item"
+            href={profileHref}
+            onClick={() => setOpen(false)}
+            role="menuitem"
+          >
+            {labels.profile}
+          </a>
+          <button
+            className="main-user-dropdown-item main-user-dropdown-item--danger"
+            onClick={handleLogoutClick}
+            role="menuitem"
+            type="button"
+          >
+            {labels.logout}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function MainLayout({ children }: PropsWithChildren) {
   const { common } = getTranslations()
   const { user, isAuthenticated, logout } = useAuth()
@@ -64,37 +195,7 @@ export function MainLayout({ children }: PropsWithChildren) {
           </nav>
           <div className="main-header-actions">
             {isAuthenticated && user ? (
-              <div className="main-user-menu">
-                <div className="main-user-copy">
-                  {user.logoUrl ? (
-                    <img
-                      alt={user.companyName ? `${user.companyName} logo` : ''}
-                      className="main-user-avatar"
-                      src={user.logoUrl}
-                    />
-                  ) : (
-                    <span className="main-user-avatar main-user-avatar--initials">
-                      {getInitials(getAuthUserDisplayName(user))}
-                    </span>
-                  )}
-                  <span className="main-user-meta">
-                    <strong>{getAuthUserDisplayName(user)}</strong>
-                    <small>{getUserMetaLabel(user, common.authUser)}</small>
-                  </span>
-                </div>
-                <div className="main-user-actions">
-                  <a className="main-user-action main-user-action--profile" href={getProfileHref(user.role)}>
-                    {common.authUser.profile}
-                  </a>
-                  <button
-                    className="main-user-action main-user-action--logout"
-                    onClick={handleLogout}
-                    type="button"
-                  >
-                    {common.authUser.logout}
-                  </button>
-                </div>
-              </div>
+              <MainUserMenu labels={common.authUser} onLogout={handleLogout} user={user} />
             ) : (
               <>
                 <a className="main-employer-link" href="/">

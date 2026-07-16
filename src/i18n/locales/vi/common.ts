@@ -31,6 +31,7 @@ export const common = {
   authUser: {
     profile: 'Hồ sơ',
     logout: 'Đăng xuất',
+    menuLabel: 'Mở menu tài khoản',
     candidateRole: 'Ứng viên',
     recruiterRole: 'Nhà tuyển dụng',
     adminRole: 'Quản trị viên',

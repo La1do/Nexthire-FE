@@ -18,6 +18,7 @@ export type CommonTranslations = {
   authUser: {
     profile: string
     logout: string
+    menuLabel: string
     candidateRole: string
     recruiterRole: string
     adminRole: string

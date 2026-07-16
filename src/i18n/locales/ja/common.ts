@@ -31,6 +31,7 @@ export const common = {
   authUser: {
     profile: 'プロフィール',
     logout: 'ログアウト',
+    menuLabel: 'アカウントメニューを開く',
     candidateRole: '候補者',
     recruiterRole: '採用担当者',
     adminRole: '管理者',
