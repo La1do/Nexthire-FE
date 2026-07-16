@@ -1,32 +1,31 @@
-import type { ComponentType, PropsWithChildren, ReactNode } from 'react'
-import { AdminLayout } from '../layouts/AdminLayout'
-import { AuthLayout } from '../layouts/AuthLayout'
-import { CandidateLayout } from '../layouts/CandidateLayout'
-import { MainLayout } from '../layouts/MainLayout'
-import { getTranslations } from '../i18n'
-import { AdminCompaniesPage } from '../pages/AdminCompaniesPage'
-import { AdminCompanyDetailPage } from '../pages/AdminCompanyDetailPage'
-import { AdminUsersPage } from '../pages/AdminUsersPage'
-import { ForgotPasswordPage } from '../pages/ForgotPasswordPage'
-import { HomePage } from '../pages/HomePage'
-import { JobDetailPage } from '../pages/JobDetailPage'
-import { LoginPage } from '../pages/LoginPage'
-import { ProfilePage } from '../pages/ProfilePage'
-import { RegisterPage } from '../pages/RegisterPage'
-import { SearchPage } from '../pages/SearchPage'
-
-export type AppRoute = {
-  element: ReactNode
-  label: string
-  layout: ComponentType<PropsWithChildren>
-  path: string
-}
+import { AdminLayout } from '../../layouts/AdminLayout'
+import { AuthLayout } from '../../layouts/AuthLayout'
+import { CandidateLayout } from '../../layouts/CandidateLayout'
+import { MainLayout } from '../../layouts/MainLayout'
+import { getTranslations } from '../../i18n'
+import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
+import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
+import { AdminUsersPage } from '../../pages/AdminUsersPage'
+import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
+import { HomePage } from '../../pages/HomePage'
+import { JobDetailPage } from '../../pages/JobDetailPage'
+import { LoginPage } from '../../pages/LoginPage'
+import { ProfilePage } from '../../pages/ProfilePage'
+import { RegisterPage } from '../../pages/RegisterPage'
+import { SearchPage } from '../../pages/SearchPage'
+import type { AppRoute } from './routeTypes'
 
 const { common, pages } = getTranslations()
 
 export const routes: AppRoute[] = [
   {
     path: '/',
+    label: common.navigation.home,
+    element: <HomePage />,
+    layout: MainLayout,
+  },
+  {
+    path: '/home',
     label: common.navigation.home,
     element: <HomePage />,
     layout: MainLayout,
@@ -86,5 +85,3 @@ export const routes: AppRoute[] = [
     layout: AdminLayout,
   },
 ]
-
-export const mainRoute = routes[0]

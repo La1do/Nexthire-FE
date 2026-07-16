@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Checkbox, Input, PasswordInput, SegmentedControl } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
@@ -22,11 +23,12 @@ const initialValues: LoginFormValues = {
 }
 
 function getLoginRedirect(role: ReturnType<typeof toAuthApiRole>) {
-  return role === 'CANDIDATE' ? '/profile' : '/'
+  return role === 'CANDIDATE' ? '/home' : '/'
 }
 
 export function LoginForm({ apiErrors, translations }: LoginFormProps) {
   const { form, validation } = translations
+  const navigate = useNavigate()
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
   const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
@@ -46,7 +48,7 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
           })
 
           authTokenStorage.setTokens(auth.tokens, formValues.rememberMe ? 'local' : 'session')
-          window.location.assign(getLoginRedirect(role))
+          navigate(getLoginRedirect(role))
         } catch (error) {
           setSubmitError(getApiErrorMessage(error, apiErrors))
         } finally {
