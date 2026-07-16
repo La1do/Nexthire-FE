@@ -2,6 +2,7 @@ import { AdminLayout } from '../../layouts/AdminLayout'
 import { AuthLayout } from '../../layouts/AuthLayout'
 import { CandidateLayout } from '../../layouts/CandidateLayout'
 import { MainLayout } from '../../layouts/MainLayout'
+import { RecruiterLayout } from '../../layouts/RecruiterLayout'
 import { getTranslations } from '../../i18n'
 import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
@@ -12,6 +13,7 @@ import { HomePage } from '../../pages/HomePage'
 import { JobDetailPage } from '../../pages/JobDetailPage'
 import { LoginPage } from '../../pages/LoginPage'
 import { ProfilePage } from '../../pages/ProfilePage'
+import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RegisterPage } from '../../pages/RegisterPage'
 import { SearchPage } from '../../pages/SearchPage'
 import type { AppRoute } from './routeTypes'
@@ -54,6 +56,12 @@ export const routes: AppRoute[] = [
     label: pages.profile.routeLabel,
     element: <ProfilePage />,
     layout: CandidateLayout,
+  },
+  {
+    path: '/recruiter',
+    label: pages.recruiterHome.routeLabel,
+    element: <RecruiterHomePage />,
+    layout: RecruiterLayout,
   },
   {
     path: '/login',

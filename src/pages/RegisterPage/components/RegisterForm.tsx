@@ -25,7 +25,9 @@ const initialValues: RegisterFormValues = {
 }
 
 function getRegisterRedirect(role: ReturnType<typeof toAuthApiRole>) {
-  return role === 'CANDIDATE' ? '/home' : '/'
+  if (role === 'CANDIDATE') return '/home'
+  if (role === 'RECRUITER') return '/recruiter'
+  return '/admin/users'
 }
 
 export function RegisterForm({ apiErrors, translations }: RegisterFormProps) {

@@ -706,6 +706,111 @@ export type ProfileTranslations = {
   }
 }
 
+export type RecruiterHomeTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  sidebar: {
+    overview: string
+    jobs: string
+    candidates: string
+    company: string
+    messages: string
+    settings: string
+    currentRole: string
+    logout: string
+  }
+  topbar: {
+    searchPlaceholder: string
+    notificationsLabel: string
+    toggleSidebarLabel: string
+    profileLabel: string
+  }
+  verification: {
+    eyebrow: string
+    completionLabel: string
+    submittedLabel: string
+    rejectionReasonLabel: string
+    statusLabels: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    statusTitles: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    statusDescriptions: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    actions: {
+      openForm: string
+      viewSubmitted: string
+      manageProfile: string
+      close: string
+      submit: string
+      cancel: string
+    }
+    form: {
+      title: string
+      description: string
+      nameLabel: string
+      namePlaceholder: string
+      taxCodeLabel: string
+      taxCodePlaceholder: string
+      websiteLabel: string
+      websitePlaceholder: string
+      addressLabel: string
+      addressPlaceholder: string
+      logoLabel: string
+      logoPlaceholder: string
+      descriptionLabel: string
+      descriptionPlaceholder: string
+      documentsTitle: string
+      documentsDescription: string
+      documentOptions: ReadonlyArray<{
+        id: string
+        label: string
+        description: string
+      }>
+      selectedLabel: string
+      validation: {
+        nameRequired: string
+        taxCodeRequired: string
+        taxCodeMinLength: string
+        websiteRequired: string
+        websiteInvalid: string
+        addressRequired: string
+        descriptionRequired: string
+        documentsRequired: string
+      }
+    }
+  }
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+    primaryAction: string
+    secondaryAction: string
+  }
+  stats: {
+    title: string
+  }
+  quickActions: {
+    title: string
+    lockedHint: string
+  }
+  pipeline: {
+    title: string
+    description: string
+  }
+  applications: {
+    title: string
+    description: string
+    viewAll: string
+  }
+  performance: {
+    title: string
+    description: string
+    applicationsLabel: string
+  }
+  tasks: {
+    title: string
+    description: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -717,6 +822,7 @@ export type Translations = {
     jobDetail: JobDetailTranslations
     login: LoginTranslations
     profile: ProfileTranslations
+    recruiterHome: RecruiterHomeTranslations
     register: RegisterTranslations
     search: SearchTranslations
   }

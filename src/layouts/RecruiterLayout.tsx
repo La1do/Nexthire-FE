@@ -1,0 +1,181 @@
+import type { PropsWithChildren } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { getAuthUserDisplayName, getInitials, useAuth } from '../context'
+import { getTranslations } from '../i18n'
+import { BrandMark } from '../pages/_components'
+
+function MenuIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M4 7h16" />
+      <path d="M4 12h16" />
+      <path d="M4 17h16" />
+    </svg>
+  )
+}
+
+function BellIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z" />
+      <path d="M10 19a2 2 0 0 0 4 0" />
+    </svg>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  )
+}
+
+export function RecruiterLayout({ children }: PropsWithChildren) {
+  const { common, pages } = getTranslations()
+  const content = pages.recruiterHome
+  const { logout, user } = useAuth()
+  const navigate = useNavigate()
+  const [isSidebarOpen, setSidebarOpen] = useState(false)
+  const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
+  const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
+  const displayName = user ? getAuthUserDisplayName(user) : common.brandName
+  const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
+  const navItems = [
+    { href: '/recruiter', label: content.sidebar.overview },
+    { href: '/', label: content.sidebar.jobs },
+    { href: '/', label: content.sidebar.candidates },
+    { href: '/', label: content.sidebar.company },
+    { href: '/', label: content.sidebar.messages },
+    { href: '/', label: content.sidebar.settings },
+  ]
+
+  useEffect(() => {
+    if (!isSidebarOpen) {
+      return
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setSidebarOpen(false)
+        toggleButtonRef.current?.focus()
+      }
+    }
+
+    function handleClick(event: MouseEvent) {
+      const target = event.target as HTMLElement | null
+      if (target?.closest('.recruiter-sidebar__inner, .recruiter-topbar__toggle')) {
+        return
+      }
+      setSidebarOpen(false)
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('mousedown', handleClick)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('mousedown', handleClick)
+    }
+  }, [isSidebarOpen])
+
+  const handleLogout = () => {
+    void logout()
+    navigate('/login')
+  }
+
+  return (
+    <div className="recruiter-shell">
+      <aside
+        aria-label={content.routeLabel}
+        className={`recruiter-sidebar${isSidebarOpen ? ' is-open' : ''}`}
+        id="recruiter-sidebar"
+      >
+        <div className="recruiter-sidebar__inner">
+          <a className="recruiter-sidebar__brand" href="/home">
+            <BrandMark label={common.brandName} />
+          </a>
+
+          <nav aria-label={content.routeLabel} className="recruiter-sidebar__nav">
+            {navItems.map((item) => {
+              const isActive = item.href === '/recruiter' && currentPath.startsWith('/recruiter')
+
+              return (
+                <a
+                  aria-current={isActive ? 'page' : undefined}
+                  className={isActive ? 'is-active' : undefined}
+                  href={item.href}
+                  key={item.label}
+                >
+                  {item.label}
+                </a>
+              )
+            })}
+          </nav>
+
+          <div className="recruiter-sidebar__user">
+            {user?.logoUrl ? (
+              <img alt={user.companyName ? `${user.companyName} logo` : ''} src={user.logoUrl} />
+            ) : (
+              <span>{avatarLabel}</span>
+            )}
+            <div>
+              <strong>{displayName}</strong>
+              <small>{user?.companyName ?? content.sidebar.currentRole}</small>
+            </div>
+          </div>
+
+          <button
+            className="recruiter-sidebar__logout"
+            onClick={handleLogout}
+            type="button"
+          >
+            {content.sidebar.logout}
+          </button>
+        </div>
+      </aside>
+
+      <div className="recruiter-main">
+        <header className="recruiter-topbar">
+          <button
+            aria-controls="recruiter-sidebar"
+            aria-expanded={isSidebarOpen}
+            aria-label={content.topbar.toggleSidebarLabel}
+            className="recruiter-topbar__toggle"
+            onClick={() => setSidebarOpen((value) => !value)}
+            ref={toggleButtonRef}
+            type="button"
+          >
+            <MenuIcon />
+          </button>
+
+          <div className="recruiter-topbar__heading">
+            <h1>{content.pageTitle}</h1>
+            <p>{content.pageSubtitle}</p>
+          </div>
+
+          <label className="recruiter-topbar__search">
+            <span className="sr-only">{content.topbar.searchPlaceholder}</span>
+            <SearchIcon />
+            <input
+              aria-label={content.topbar.searchPlaceholder}
+              placeholder={content.topbar.searchPlaceholder}
+              type="search"
+            />
+          </label>
+
+          <button
+            aria-label={content.topbar.notificationsLabel}
+            className="recruiter-topbar__icon-button"
+            type="button"
+          >
+            <BellIcon />
+          </button>
+        </header>
+
+        <main className="recruiter-main__content">{children}</main>
+      </div>
+    </div>
+  )
+}
