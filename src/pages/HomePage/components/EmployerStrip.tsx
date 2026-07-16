@@ -1,5 +1,6 @@
 import type { HomeTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
+import { createCompanyDetailHref } from '../../_utils/jobRoutes'
 import { SectionHeading } from './SectionHeading'
 
 type EmployerStripProps = {
@@ -12,7 +13,7 @@ export function EmployerStrip({ content }: EmployerStripProps) {
       <SectionHeading action={content.viewAll} eyebrow={content.eyebrow} title={content.title} />
       <div className="home-employer-strip">
         {content.items.map((item) => (
-          <article className="home-employer-card home-hover-card" key={item.name}>
+          <a className="home-employer-card home-hover-card" href={createCompanyDetailHref(item.name)} key={item.name}>
             <CompanyLogoMark
               alt={item.logoAlt}
               fallbackText={item.logoText}
@@ -23,7 +24,7 @@ export function EmployerStrip({ content }: EmployerStripProps) {
               <strong>{item.name}</strong>
               <small>{item.openRoles}</small>
             </span>
-          </article>
+          </a>
         ))}
       </div>
     </section>

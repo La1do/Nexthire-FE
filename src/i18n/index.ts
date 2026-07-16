@@ -1,6 +1,7 @@
 import { common as enCommon } from './locales/en/common'
 import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
 import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
+import { companyDetail as enCompanyDetail } from './locales/en/pages/companyDetail'
 import { forgotPassword as enForgotPassword } from './locales/en/pages/forgotPassword'
 import { home as enHome } from './locales/en/pages/home'
 import { jobDetail as enJobDetail } from './locales/en/pages/jobDetail'
@@ -11,6 +12,7 @@ import { search as enSearch } from './locales/en/pages/search'
 import { common as jaCommon } from './locales/ja/common'
 import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
 import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
+import { companyDetail as jaCompanyDetail } from './locales/ja/pages/companyDetail'
 import { forgotPassword as jaForgotPassword } from './locales/ja/pages/forgotPassword'
 import { home as jaHome } from './locales/ja/pages/home'
 import { jobDetail as jaJobDetail } from './locales/ja/pages/jobDetail'
@@ -21,6 +23,7 @@ import { search as jaSearch } from './locales/ja/pages/search'
 import { common as viCommon } from './locales/vi/common'
 import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
 import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
+import { companyDetail as viCompanyDetail } from './locales/vi/pages/companyDetail'
 import { forgotPassword as viForgotPassword } from './locales/vi/pages/forgotPassword'
 import { home as viHome } from './locales/vi/pages/home'
 import { jobDetail as viJobDetail } from './locales/vi/pages/jobDetail'
@@ -38,6 +41,7 @@ export const translations = {
     pages: {
       adminCompanies: enAdminCompanies,
       adminUsers: enAdminUsers,
+      companyDetail: enCompanyDetail,
       forgotPassword: enForgotPassword,
       home: enHome,
       jobDetail: enJobDetail,
@@ -52,6 +56,7 @@ export const translations = {
     pages: {
       adminCompanies: viAdminCompanies,
       adminUsers: viAdminUsers,
+      companyDetail: viCompanyDetail,
       forgotPassword: viForgotPassword,
       home: viHome,
       jobDetail: viJobDetail,
@@ -66,6 +71,7 @@ export const translations = {
     pages: {
       adminCompanies: jaAdminCompanies,
       adminUsers: jaAdminUsers,
+      companyDetail: jaCompanyDetail,
       forgotPassword: jaForgotPassword,
       home: jaHome,
       jobDetail: jaJobDetail,

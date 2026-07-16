@@ -1,5 +1,6 @@
 import type { HomeJobItem, JobDetailTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
+import { createCompanyDetailHref } from '../../_utils/jobRoutes'
 
 type JobDetailHeroProps = {
   content: JobDetailTranslations['hero']
@@ -7,9 +8,11 @@ type JobDetailHeroProps = {
 }
 
 export function JobDetailHero({ content, job }: JobDetailHeroProps) {
+  const companyHref = createCompanyDetailHref(job.company)
+
   return (
     <section className="job-detail-hero job-detail-motion">
-      <div className={`job-detail-logo-panel job-detail-logo-panel-${job.companyLogo.tone}`}>
+      <a className={`job-detail-logo-panel job-detail-logo-panel-${job.companyLogo.tone}`} href={companyHref}>
         <CompanyLogoMark
           alt={job.companyLogo.alt}
           className="job-detail-hero-logo"
@@ -17,11 +20,11 @@ export function JobDetailHero({ content, job }: JobDetailHeroProps) {
           src={job.companyLogo.src}
           tone={job.companyLogo.tone}
         />
-      </div>
+      </a>
 
       <div className="job-detail-hero-copy">
         <div className="job-detail-company-line">
-          <span>{job.company}</span>
+          <a className="job-detail-company-link" href={companyHref}>{job.company}</a>
           {job.verified ? <small>{content.verifiedLabel}</small> : null}
         </div>
 

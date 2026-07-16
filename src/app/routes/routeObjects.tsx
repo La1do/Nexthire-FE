@@ -6,6 +6,7 @@ import { getTranslations } from '../../i18n'
 import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
+import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
 import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
 import { HomePage } from '../../pages/HomePage'
 import { JobDetailPage } from '../../pages/JobDetailPage'
@@ -40,6 +41,12 @@ export const routes: AppRoute[] = [
     path: '/jobs/:slug',
     label: pages.jobDetail.routeLabel,
     element: <JobDetailPage />,
+    layout: MainLayout,
+  },
+  {
+    path: '/companies/:slug',
+    label: pages.companyDetail.routeLabel,
+    element: <CompanyDetailPage />,
     layout: MainLayout,
   },
   {

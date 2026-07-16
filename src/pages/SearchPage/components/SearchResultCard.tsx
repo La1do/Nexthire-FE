@@ -1,6 +1,6 @@
 import type { HomeJobItem, SearchTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
-import { createJobDetailHref } from '../../_utils/jobRoutes'
+import { createCompanyDetailHref, createJobDetailHref } from '../../_utils/jobRoutes'
 
 type SearchResultCardProps = {
   job: HomeJobItem
@@ -16,19 +16,23 @@ function BookmarkIcon() {
 }
 
 export function SearchResultCard({ job, labels }: SearchResultCardProps) {
+  const companyHref = createCompanyDetailHref(job.company)
+
   return (
     <article className="search-result-card home-hover-card">
-      <CompanyLogoMark
-        alt={job.companyLogo.alt}
-        className="search-result-logo"
-        fallbackText={job.companyLogo.fallbackText}
-        src={job.companyLogo.src}
-        tone={job.companyLogo.tone}
-      />
+      <a aria-label={job.company} className="search-company-logo-link" href={companyHref}>
+        <CompanyLogoMark
+          alt={job.companyLogo.alt}
+          className="search-result-logo"
+          fallbackText={job.companyLogo.fallbackText}
+          src={job.companyLogo.src}
+          tone={job.companyLogo.tone}
+        />
+      </a>
 
       <div className="search-result-main">
         <div className="search-result-company">
-          <span>{job.company}</span>
+          <a href={companyHref}>{job.company}</a>
           {job.verified ? <small>{labels.verifiedLabel}</small> : null}
         </div>
 

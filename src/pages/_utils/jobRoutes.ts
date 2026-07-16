@@ -17,6 +17,19 @@ export function createJobDetailHref(job: HomeJobItem) {
   return `/jobs/${createJobSlug(job)}`
 }
 
+export function createCompanySlug(company: string) {
+  const slug = removeDiacritics(company)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+
+  return slug || 'company'
+}
+
+export function createCompanyDetailHref(company: string) {
+  return `/companies/${createCompanySlug(company)}`
+}
+
 export function getHomeJobList(home: HomeTranslations) {
   const jobs = [
     ...home.jobs.items,

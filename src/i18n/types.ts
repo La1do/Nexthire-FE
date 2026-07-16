@@ -512,6 +512,73 @@ export type JobDetailTranslations = {
   }
 }
 
+export type CompanyDetailProfile = {
+  culture: ReadonlyArray<{
+    description: string
+    title: string
+    tone: 'amber' | 'mint' | 'rose'
+  }>
+  description: string
+  founded: string
+  heroImage: string
+  industry: string
+  location: string
+  mission: string
+  name: string
+  perks: ReadonlyArray<string>
+  responseTime: string
+  size: string
+  values: ReadonlyArray<string>
+  website: string
+}
+
+export type CompanyDetailTranslations = {
+  routeLabel: string
+  backToSearch: string
+  verifiedLabel: string
+  hero: {
+    openJobs: string
+    follow: string
+    websiteLabel: string
+  }
+  snapshot: {
+    openJobs: string
+    size: string
+    responseTime: string
+    location: string
+  }
+  sections: {
+    about: string
+    mission: string
+    culture: string
+    openJobs: string
+    perks: string
+    values: string
+  }
+  sidebar: {
+    title: string
+    website: string
+    industry: string
+    founded: string
+    size: string
+    follow: string
+    viewJobs: string
+  }
+  openJobs: {
+    description: string
+    emptyTitle: string
+    emptyDescription: string
+    saveLabel: string
+  }
+  notFound: {
+    title: string
+    description: string
+    action: string
+  }
+  fallbackProfile: Omit<CompanyDetailProfile, 'heroImage' | 'name' | 'website'>
+  profiles: ReadonlyArray<CompanyDetailProfile>
+}
+
 export type ProfileTranslations = {
   routeLabel: string
   pageTitle: string
@@ -636,6 +703,7 @@ export type Translations = {
   pages: {
     adminCompanies: AdminCompaniesTranslations
     adminUsers: AdminUsersTranslations
+    companyDetail: CompanyDetailTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations
     jobDetail: JobDetailTranslations

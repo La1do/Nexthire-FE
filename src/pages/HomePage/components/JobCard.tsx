@@ -1,6 +1,6 @@
 import type { HomeJobItem } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
-import { createJobDetailHref } from '../../_utils/jobRoutes'
+import { createCompanyDetailHref, createJobDetailHref } from '../../_utils/jobRoutes'
 
 type JobCardProps = {
   job: HomeJobItem
@@ -27,26 +27,29 @@ function CheckIcon() {
 
 export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
   const classes = ['job-card', 'home-hover-card', variant === 'compact' ? 'job-card-compact' : ''].filter(Boolean).join(' ')
+  const companyHref = createCompanyDetailHref(job.company)
 
   return (
     <article className={classes}>
       <a aria-label={`${job.title} ${job.company}`} className="job-card-link-layer" href={createJobDetailHref(job)} />
 
       <div className={`job-card-media job-card-media-${job.companyLogo.tone}`}>
-        <CompanyLogoMark
-          alt={job.companyLogo.alt}
-          className="job-company-logo-image"
-          fallbackText={job.companyLogo.fallbackText}
-          src={job.companyLogo.src}
-          tone={job.companyLogo.tone}
-        />
+        <a aria-label={job.company} className="job-card-company-link" href={companyHref}>
+          <CompanyLogoMark
+            alt={job.companyLogo.alt}
+            className="job-company-logo-image"
+            fallbackText={job.companyLogo.fallbackText}
+            src={job.companyLogo.src}
+            tone={job.companyLogo.tone}
+          />
+        </a>
         <button aria-label={saveLabel} className="job-save-overlay" type="button">
           <BookmarkIcon />
         </button>
       </div>
 
       <div className="job-company-row">
-        <p className="job-company">{job.company}</p>
+        <a className="job-company job-company-link" href={companyHref}>{job.company}</a>
         {job.verified ? <CheckIcon /> : null}
       </div>
 

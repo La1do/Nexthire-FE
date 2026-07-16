@@ -1,5 +1,6 @@
 import type { HomeTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
+import { createCompanyDetailHref } from '../../_utils/jobRoutes'
 import { JobSearchBar } from './JobSearchBar'
 
 type HeroPanelProps = {
@@ -32,7 +33,7 @@ export function HeroPanel({ content }: HeroPanelProps) {
         </div>
         <div className="home-spotlight-list">
           {content.spotlight.items.map((company) => (
-            <article className="home-spotlight-card" key={company.name}>
+            <a className="home-spotlight-card" href={createCompanyDetailHref(company.name)} key={company.name}>
               <CompanyLogoMark
                 alt={company.logoAlt}
                 fallbackText={company.logoText}
@@ -43,7 +44,7 @@ export function HeroPanel({ content }: HeroPanelProps) {
                 <strong>{company.name}</strong>
                 <small>{company.openRoles}</small>
               </span>
-            </article>
+            </a>
           ))}
         </div>
       </div>
