@@ -1,9 +1,9 @@
-import type { HomeJobItem } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
-import { createCompanyDetailHref, createJobDetailHref } from '../../_utils/jobRoutes'
+import { createCompanyDetailHrefById, createJobDetailHrefById } from '../../_utils/jobRoutes'
+import type { JobCardView } from '../types'
 
 type JobCardProps = {
-  job: HomeJobItem
+  job: JobCardView
   saveLabel: string
   variant?: 'default' | 'compact'
 }
@@ -27,20 +27,20 @@ function CheckIcon() {
 
 export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
   const classes = ['job-card', 'home-hover-card', variant === 'compact' ? 'job-card-compact' : ''].filter(Boolean).join(' ')
-  const companyHref = createCompanyDetailHref(job.company)
+  const companyHref = createCompanyDetailHrefById(job.companyId)
 
   return (
     <article className={classes}>
-      <a aria-label={`${job.title} ${job.company}`} className="job-card-link-layer" href={createJobDetailHref(job)} />
+      <a aria-label={`${job.title} ${job.company}`} className="job-card-link-layer" href={createJobDetailHrefById(job.id)} />
 
-      <div className={`job-card-media job-card-media-${job.companyLogo.tone}`}>
+      <div className={`job-card-media job-card-media-${job.logo.tone}`}>
         <a aria-label={job.company} className="job-card-company-link" href={companyHref}>
           <CompanyLogoMark
-            alt={job.companyLogo.alt}
+            alt={job.logo.alt}
             className="job-company-logo-image"
-            fallbackText={job.companyLogo.fallbackText}
-            src={job.companyLogo.src}
-            tone={job.companyLogo.tone}
+            fallbackText={job.logo.fallbackText}
+            src={job.logo.src}
+            tone={job.logo.tone}
           />
         </a>
         <button aria-label={saveLabel} className="job-save-overlay" type="button">
@@ -60,8 +60,6 @@ export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
         <span>{job.workMode}</span>
         <span className={`job-salary job-salary-${job.badgeTone}`}>{job.salary}</span>
       </div>
-
-      <p className="job-description">{job.description}</p>
 
       <div className="job-card-footer">
         <div className="job-tag-row">

@@ -1,5 +1,18 @@
 export const common = {
   brandName: 'NexHire',
+  job: {
+    workingType: {
+      ONSITE: 'On-site',
+      REMOTE: 'Remote',
+      HYBRID: 'Hybrid',
+    },
+    salaryNegotiable: 'Negotiable',
+    jobsCountSuffix: 'jobs',
+    rolesCountSuffix: 'roles',
+    postedJustNow: 'Posted just now',
+    postedPrefix: 'Posted ',
+    postedSuffix: '',
+  },
   apiErrors: {
     default: 'Something went wrong. Please try again.',
     byCode: {

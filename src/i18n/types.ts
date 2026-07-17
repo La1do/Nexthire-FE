@@ -37,6 +37,19 @@ export type CommonTranslations = {
       links: ReadonlyArray<string>
     }>
   }
+  job: {
+    workingType: {
+      ONSITE: string
+      REMOTE: string
+      HYBRID: string
+    }
+    salaryNegotiable: string
+    jobsCountSuffix: string
+    rolesCountSuffix: string
+    postedJustNow: string
+    postedPrefix: string
+    postedSuffix: string
+  }
 }
 
 export type LoginTranslations = {
@@ -195,6 +208,13 @@ export type HomeCompanyItem = {
 }
 
 export type HomeTranslations = {
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    emptyTitle: string
+    emptyDescription: string
+  }
   hero: {
     eyebrow: string
     title: string
@@ -207,21 +227,20 @@ export type HomeTranslations = {
     filterLabel: string
     submit: string
     quickFilters: ReadonlyArray<string>
-    stats: ReadonlyArray<{
-      label: string
-      value: string
-    }>
+    stats: {
+      openRoles: string
+      companies: string
+      categories: string
+    }
     spotlight: {
       title: string
       subtitle: string
-      items: ReadonlyArray<HomeCompanyItem>
     }
   }
   employers: {
     eyebrow: string
     title: string
     viewAll: string
-    items: ReadonlyArray<HomeCompanyItem>
   }
   jobs: {
     eyebrow: string
@@ -229,16 +248,10 @@ export type HomeTranslations = {
     tabs: ReadonlyArray<string>
     loadMore: string
     saveLabel: string
-    items: ReadonlyArray<HomeJobItem>
   }
   categories: {
     eyebrow: string
     title: string
-    items: ReadonlyArray<{
-      icon: 'all' | 'briefcase' | 'code' | 'data' | 'design' | 'marketing' | 'support'
-      title: string
-      count: string
-    }>
   }
   industryJobs: {
     eyebrow: string
@@ -246,10 +259,6 @@ export type HomeTranslations = {
     viewAll: string
     viewMore: string
     saveLabel: string
-    groups: ReadonlyArray<{
-      title: string
-      jobs: ReadonlyArray<HomeJobItem>
-    }>
   }
   articles: {
     title: string

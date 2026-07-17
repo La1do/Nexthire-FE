@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react'
 import type { AdminCompaniesTranslations } from '../../../i18n/types'
+import { SelectField } from '../../_components'
 import type { CompanyReviewStatus } from '../types'
 
 type CompanyReviewFiltersProps = {
@@ -36,8 +37,8 @@ export function CompanyReviewFilters({
     onQueryChange(event.target.value)
   }
 
-  function handleStatusChange(event: ChangeEvent<HTMLSelectElement>) {
-    onStatusChange(event.target.value as CompanyReviewStatus | 'all')
+  function handleStatusChange(value: string) {
+    onStatusChange(value as CompanyReviewStatus | 'all')
   }
 
   return (
@@ -62,20 +63,18 @@ export function CompanyReviewFilters({
         />
       </label>
 
-      <label className="admin-filter">
-        <span className="admin-filter__label">{content.statusLabel}</span>
-        <select
-          aria-label={content.statusLabel}
-          className="admin-filter__select"
-          onChange={handleStatusChange}
-          value={status}
-        >
-          <option value="all">{content.statusAll}</option>
-          <option value="pending">{statusesLabel.pending}</option>
-          <option value="approved">{statusesLabel.approved}</option>
-          <option value="rejected">{statusesLabel.rejected}</option>
-        </select>
-      </label>
+      <SelectField
+        className="admin-filter admin-filter--select"
+        label={content.statusLabel}
+        onChange={handleStatusChange}
+        options={[
+          { label: content.statusAll, value: 'all' },
+          { label: statusesLabel.pending, value: 'pending' },
+          { label: statusesLabel.approved, value: 'approved' },
+          { label: statusesLabel.rejected, value: 'rejected' },
+        ]}
+        value={status}
+      />
 
       <button
         aria-label={content.clear}

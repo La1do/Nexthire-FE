@@ -1,12 +1,18 @@
 import type { HomeTranslations } from '../../../i18n/types'
+import type { CategoryIconKind, CategoryView } from '../types'
+import { HomeSectionState } from './HomeSectionState'
 import { SectionHeading } from './SectionHeading'
 
 type CategoryGridProps = {
   content: HomeTranslations['categories']
+  states: HomeTranslations['states']
+  categories: ReadonlyArray<CategoryView>
+  loading: boolean
+  error: unknown
 }
 
 type CategoryIconProps = {
-  icon: HomeTranslations['categories']['items'][number]['icon']
+  icon: CategoryIconKind
 }
 
 function CategoryIcon({ icon }: CategoryIconProps) {
@@ -68,25 +74,32 @@ function CategoryIcon({ icon }: CategoryIconProps) {
   )
 }
 
-export function CategoryGrid({ content }: CategoryGridProps) {
+export function CategoryGrid({ content, states, categories, loading, error }: CategoryGridProps) {
+  const isEmpty = !categories.length
+  const showPlaceholder = loading || Boolean(error) || isEmpty
+
   return (
     <section className="home-section home-reveal">
       <SectionHeading eyebrow={content.eyebrow} title={content.title} />
 
-      <div className="home-category-grid">
-        {content.items.map((item) => (
-          <article className="home-category-card home-hover-card" key={item.title}>
-            <span className="home-category-icon">
-              <CategoryIcon icon={item.icon} />
-            </span>
-            <span>
-              <strong>{item.title}</strong>
-              <small>{item.count}</small>
-            </span>
-            <small className="home-category-arrow" aria-hidden="true">→</small>
-          </article>
-        ))}
-      </div>
+      {showPlaceholder ? (
+        <HomeSectionState error={error} isEmpty={isEmpty} loading={loading} states={states} />
+      ) : (
+        <div className="home-category-grid">
+          {categories.map((item) => (
+            <a className="home-category-card home-hover-card" href={`/search?categoryId=${item.id}`} key={item.id}>
+              <span className="home-category-icon">
+                <CategoryIcon icon={item.icon} />
+              </span>
+              <span>
+                <strong>{item.title}</strong>
+                <small>{item.count}</small>
+              </span>
+              <small className="home-category-arrow" aria-hidden="true">→</small>
+            </a>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react'
 import type { AdminUsersTranslations } from '../../../i18n/types'
+import { SelectField } from '../../_components'
 import type { AdminUserRole, AdminUserStatus } from '../types'
 
 type AdminUserFiltersProps = {
@@ -44,12 +45,12 @@ export function AdminUserFilters({
     onQueryChange(event.target.value)
   }
 
-  function handleRoleChange(event: ChangeEvent<HTMLSelectElement>) {
-    onRoleChange(event.target.value as AdminUserRole | 'all')
+  function handleRoleChange(value: string) {
+    onRoleChange(value as AdminUserRole | 'all')
   }
 
-  function handleStatusChange(event: ChangeEvent<HTMLSelectElement>) {
-    onStatusChange(event.target.value as AdminUserStatus | 'all')
+  function handleStatusChange(value: string) {
+    onStatusChange(value as AdminUserStatus | 'all')
   }
 
   return (
@@ -74,35 +75,31 @@ export function AdminUserFilters({
         />
       </label>
 
-      <label className="admin-filter">
-        <span className="admin-filter__label">{content.roleLabel}</span>
-        <select
-          aria-label={content.roleLabel}
-          className="admin-filter__select"
-          onChange={handleRoleChange}
-          value={role}
-        >
-          <option value="all">{content.roleAll}</option>
-          <option value="admin">{rolesLabel.admin}</option>
-          <option value="employer">{rolesLabel.employer}</option>
-          <option value="candidate">{rolesLabel.candidate}</option>
-        </select>
-      </label>
+      <SelectField
+        className="admin-filter admin-filter--select"
+        label={content.roleLabel}
+        onChange={handleRoleChange}
+        options={[
+          { label: content.roleAll, value: 'all' },
+          { label: rolesLabel.admin, value: 'admin' },
+          { label: rolesLabel.employer, value: 'employer' },
+          { label: rolesLabel.candidate, value: 'candidate' },
+        ]}
+        value={role}
+      />
 
-      <label className="admin-filter">
-        <span className="admin-filter__label">{content.statusLabel}</span>
-        <select
-          aria-label={content.statusLabel}
-          className="admin-filter__select"
-          onChange={handleStatusChange}
-          value={status}
-        >
-          <option value="all">{content.statusAll}</option>
-          <option value="active">{statusLabel.active}</option>
-          <option value="locked">{statusLabel.locked}</option>
-          <option value="invited">{statusLabel.invited}</option>
-        </select>
-      </label>
+      <SelectField
+        className="admin-filter admin-filter--select"
+        label={content.statusLabel}
+        onChange={handleStatusChange}
+        options={[
+          { label: content.statusAll, value: 'all' },
+          { label: statusLabel.active, value: 'active' },
+          { label: statusLabel.locked, value: 'locked' },
+          { label: statusLabel.invited, value: 'invited' },
+        ]}
+        value={status}
+      />
 
       <button
         aria-label={content.clear}

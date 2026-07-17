@@ -1,4 +1,5 @@
 import type { HomeTranslations } from '../../../i18n/types'
+import { SelectField } from '../../_components'
 
 type JobSearchBarProps = {
   content: HomeTranslations['hero']
@@ -64,18 +65,19 @@ export function JobSearchBar({ content }: JobSearchBarProps) {
 
         <div className="job-search-divider" />
 
-        <label className="job-search-field job-search-field-location">
-          <span>{content.locationLabel}</span>
-          <LocationIcon />
-          <select defaultValue="" id="home-job-location" name="location">
-            <option value="">{content.locationPlaceholder}</option>
-            {content.locationOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectField
+          className="job-search-select-field"
+          defaultValue=""
+          hideLabel
+          icon={<LocationIcon />}
+          id="home-job-location"
+          label={content.locationLabel}
+          name="location"
+          options={[
+            { label: content.locationPlaceholder, value: '' },
+            ...content.locationOptions.map((option) => ({ label: option, value: option })),
+          ]}
+        />
 
         <button aria-label={content.filterLabel} className="job-search-filter" name="filters" type="submit" value="open">
           <FilterIcon />

@@ -1,13 +1,16 @@
 import type { HomeTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
-import { createCompanyDetailHref } from '../../_utils/jobRoutes'
+import { createCompanyDetailHrefById } from '../../_utils/jobRoutes'
+import type { FeaturedCompanyView, HeroStatView } from '../types'
 import { JobSearchBar } from './JobSearchBar'
 
 type HeroPanelProps = {
   content: HomeTranslations['hero']
+  stats: ReadonlyArray<HeroStatView>
+  spotlight: ReadonlyArray<FeaturedCompanyView>
 }
 
-export function HeroPanel({ content }: HeroPanelProps) {
+export function HeroPanel({ content, stats, spotlight }: HeroPanelProps) {
   return (
     <section className="home-hero home-reveal">
       <div className="home-hero-copy">
@@ -16,14 +19,16 @@ export function HeroPanel({ content }: HeroPanelProps) {
         <p className="home-hero-description">{content.description}</p>
         <JobSearchBar content={content} />
 
-        <div className="home-hero-stats">
-          {content.stats.map((stat) => (
-            <span key={stat.label}>
-              <strong>{stat.value}</strong>
-              <small>{stat.label}</small>
-            </span>
-          ))}
-        </div>
+        {stats.length ? (
+          <div className="home-hero-stats">
+            {stats.map((stat) => (
+              <span key={stat.label}>
+                <strong>{stat.value}</strong>
+                <small>{stat.label}</small>
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="home-hero-board">
@@ -31,22 +36,24 @@ export function HeroPanel({ content }: HeroPanelProps) {
           <p>{content.spotlight.title}</p>
           <span>{content.spotlight.subtitle}</span>
         </div>
-        <div className="home-spotlight-list">
-          {content.spotlight.items.map((company) => (
-            <a className="home-spotlight-card" href={createCompanyDetailHref(company.name)} key={company.name}>
-              <CompanyLogoMark
-                alt={company.logoAlt}
-                fallbackText={company.logoText}
-                src={company.logoSrc}
-                tone={company.tone}
-              />
-              <span>
-                <strong>{company.name}</strong>
-                <small>{company.openRoles}</small>
-              </span>
-            </a>
-          ))}
-        </div>
+        {spotlight.length ? (
+          <div className="home-spotlight-list">
+            {spotlight.map((company) => (
+              <a className="home-spotlight-card" href={createCompanyDetailHrefById(company.companyId)} key={company.companyId}>
+                <CompanyLogoMark
+                  alt={company.logo.alt}
+                  fallbackText={company.logo.fallbackText}
+                  src={company.logo.src}
+                  tone={company.logo.tone}
+                />
+                <span>
+                  <strong>{company.name}</strong>
+                  <small>{company.openRoles}</small>
+                </span>
+              </a>
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   )

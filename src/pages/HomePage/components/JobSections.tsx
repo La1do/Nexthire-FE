@@ -1,38 +1,34 @@
 import { type CSSProperties, useState } from 'react'
 import type { HomeTranslations } from '../../../i18n/types'
+import type { JobCardView } from '../types'
+import { HomeSectionState } from './HomeSectionState'
 import { JobCard } from './JobCard'
 import { SectionHeading } from './SectionHeading'
 
 type JobSectionsProps = {
   content: HomeTranslations['jobs']
+  states: HomeTranslations['states']
+  jobs: ReadonlyArray<JobCardView>
+  loading: boolean
+  error: unknown
 }
 
-function getPostedRank(postedAt: string) {
-  const normalized = postedAt.toLowerCase()
-
-  if (normalized.includes('giờ') || normalized.includes('hour') || normalized.includes('時間')) return 0
-  if (normalized.includes('hôm nay') || normalized.includes('today') || normalized.includes('本日')) return 1
-
-  const dayMatch = normalized.match(/(\d+)/)
-  return dayMatch ? Number(dayMatch[1]) + 1 : 99
-}
-
-function getSalaryRank(salary: string) {
-  const values = salary.match(/\d+/g)?.map(Number) ?? []
-  return Math.max(...values, 0)
-}
-
-export function JobSections({ content }: JobSectionsProps) {
+export function JobSections({ content, states, jobs, loading, error }: JobSectionsProps) {
   const [activeTab, setActiveTab] = useState(0)
-  const visibleJobs = [...content.items].sort((left, right) => {
-    if (activeTab === 1) return getPostedRank(left.postedAt) - getPostedRank(right.postedAt)
-    if (activeTab === 2) return getSalaryRank(right.salary) - getSalaryRank(left.salary)
+  const visibleJobs = [...jobs].sort((left, right) => {
+    // Tab 1 = newest, Tab 2 = highest salary. Sort on raw numeric fields
+    // instead of the locale-formatted strings so ordering stays correct.
+    if (activeTab === 1) return right.postedSortValue - left.postedSortValue
+    if (activeTab === 2) return right.salarySortValue - left.salarySortValue
     return 0
   })
   const tabStyle = {
     '--active-tab': activeTab,
     '--tab-count': content.tabs.length,
   } as CSSProperties
+
+  const isEmpty = !visibleJobs.length
+  const showPlaceholder = loading || Boolean(error) || isEmpty
 
   return (
     <section className="home-section home-reveal">
@@ -52,13 +48,19 @@ export function JobSections({ content }: JobSectionsProps) {
         </div>
       </div>
 
-      <div className="home-card-grid">
-        {visibleJobs.map((job) => (
-          <JobCard job={job} key={`${job.company}-${job.title}`} saveLabel={content.saveLabel} />
-        ))}
-      </div>
+      {showPlaceholder ? (
+        <HomeSectionState error={error} isEmpty={isEmpty} loading={loading} states={states} />
+      ) : (
+        <>
+          <div className="home-card-grid">
+            {visibleJobs.map((job) => (
+              <JobCard job={job} key={job.id} saveLabel={content.saveLabel} />
+            ))}
+          </div>
 
-      <button className="home-load-more" type="button">{content.loadMore}</button>
+          <button className="home-load-more" type="button">{content.loadMore}</button>
+        </>
+      )}
     </section>
   )
 }

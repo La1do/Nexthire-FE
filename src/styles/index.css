@@ -211,46 +211,214 @@ select {
   transform: translateY(0);
 }
 
-.language-switch {
-  display: inline-flex;
-  flex: 0 0 auto;
+.select-field {
+  display: grid;
+  gap: 0.42rem;
+  min-width: 0;
+  position: relative;
+  width: 100%;
 }
 
-.language-switch__select {
+.select-field__label {
+  color: var(--color-text-secondary);
+  font-size: 0.84rem;
+  font-weight: 850;
+}
+
+.select-field__button {
+  align-items: center;
   appearance: none;
-  background:
-    linear-gradient(45deg, transparent 50%, var(--color-text-muted) 50%) calc(100% - 13px) 50% / 5px 5px no-repeat,
-    linear-gradient(135deg, var(--color-text-muted) 50%, transparent 50%) calc(100% - 8px) 50% / 5px 5px no-repeat,
-    var(--color-surface-card);
+  background: var(--color-surface-card);
   border: 1px solid var(--color-border-default);
-  border-radius: 8px;
+  border-radius: 12px;
   color: var(--color-text-primary);
   cursor: pointer;
-  font-size: 0.875rem;
+  display: flex;
+  font: inherit;
+  font-size: 0.94rem;
   font-weight: 800;
-  height: 2.5rem;
-  max-width: 100%;
-  min-width: 8.25rem;
-  padding: 0 1.85rem 0 0.75rem;
+  gap: 0.62rem;
+  justify-content: space-between;
+  min-height: 3rem;
+  min-width: 0;
+  padding: 0 0.82rem;
+  text-align: left;
   transition:
+    background-color 180ms var(--motion-ease-standard),
     border-color 180ms var(--motion-ease-standard),
     box-shadow 180ms var(--motion-ease-standard),
+    color 180ms var(--motion-ease-standard),
     transform 180ms var(--motion-ease-standard);
+  width: 100%;
 }
 
-.language-switch--compact .language-switch__select {
-  min-width: 4.25rem;
-}
-
-.language-switch__select:hover {
+.select-field__button:hover:not(:disabled),
+.select-field.is-open .select-field__button {
   border-color: var(--color-border-brand-soft);
+  box-shadow: var(--shadow-control);
   transform: translateY(-1px);
 }
 
-.language-switch__select:focus-visible {
+.select-field__button:focus-visible {
   border-color: var(--color-brand-solid);
   box-shadow: 0 0 0 3px var(--color-brand-soft);
   outline: none;
+}
+
+.select-field__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.select-field__icon {
+  align-items: center;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 1.2rem;
+  justify-content: center;
+  width: 1.2rem;
+}
+
+.select-field__icon svg {
+  height: 1.2rem;
+  width: 1.2rem;
+}
+
+.select-field__value {
+  flex: 1 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-field__chevron {
+  border-bottom: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  color: var(--color-text-muted);
+  flex: 0 0 auto;
+  height: 0.44rem;
+  transform: rotate(45deg) translateY(-2px);
+  transform-origin: center;
+  transition:
+    transform 180ms var(--motion-ease-standard);
+  width: 0.44rem;
+}
+
+.select-field.is-open .select-field__chevron {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+
+.select-field--compact .select-field__button {
+  border-radius: 8px;
+  font-size: 0.875rem;
+  min-height: 2.5rem;
+  padding-inline: 0.72rem 0.68rem;
+}
+
+.select-field__menu {
+  animation: select-menu-enter 170ms var(--motion-ease-out) both;
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  box-shadow: 0 18px 45px rgba(17, 24, 39, 0.16);
+  display: grid;
+  gap: 0.18rem;
+  overflow: auto;
+  padding: 0.34rem;
+  position: fixed;
+  scrollbar-width: thin;
+  transform-origin: top center;
+  z-index: 90;
+}
+
+.select-field__menu--top {
+  transform-origin: bottom center;
+}
+
+.select-field__option {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 760;
+  gap: 0.75rem;
+  justify-content: space-between;
+  min-height: 2.35rem;
+  padding: 0.55rem 0.66rem;
+  text-align: left;
+  transition:
+    background-color 150ms var(--motion-ease-standard),
+    color 150ms var(--motion-ease-standard),
+    transform 150ms var(--motion-ease-standard);
+  width: 100%;
+}
+
+.select-field__option span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-field__option:hover,
+.select-field__option.is-active {
+  background: var(--color-brand-soft);
+  color: var(--color-brand-solid);
+  transform: translateY(-1px);
+}
+
+.select-field__option.is-selected {
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  font-weight: 900;
+}
+
+.select-field__check {
+  border-bottom: 2px solid var(--color-brand-solid);
+  border-right: 2px solid var(--color-brand-solid);
+  flex: 0 0 auto;
+  height: 0.68rem;
+  transform: rotate(45deg) translateY(-1px);
+  width: 0.38rem;
+}
+
+.language-switch {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.language-switch .select-field__button {
+  font-weight: 850;
+  min-width: 8.25rem;
+}
+
+.language-switch.select-field--compact .select-field__button {
+  min-width: 4.25rem;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: var(--motion-ease-standard);
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  animation-name: locale-view-fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: locale-view-fade-in;
 }
 
 .segmented-control {
@@ -896,6 +1064,27 @@ select {
   height: 1.25rem;
   margin-left: 0.85rem;
   width: 1.25rem;
+}
+
+.job-search-select-field {
+  min-width: 0;
+}
+
+.job-search-select-field .select-field__button {
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: none;
+  min-height: 3.5rem;
+  padding-inline: 0.85rem 0.75rem;
+}
+
+.job-search-select-field .select-field__button:hover,
+.job-search-select-field.is-open .select-field__button,
+.job-search-select-field .select-field__button:focus-visible {
+  background: var(--color-surface-subtle);
+  box-shadow: inset 0 0 0 1px var(--color-border-brand-soft);
+  transform: none;
 }
 
 .job-search-field input,
@@ -1847,16 +2036,22 @@ select {
 }
 
 .search-toolbar-form label,
+.search-toolbar-form .select-field,
 .search-filter-form label,
-.search-sort-form label {
+.search-filter-form .select-field,
+.search-sort-form label,
+.search-sort-form .select-field {
   display: grid;
   gap: 0.45rem;
   min-width: 0;
 }
 
 .search-toolbar-form label span,
+.search-toolbar-form .select-field__label,
 .search-filter-form label span,
-.search-sort-form label span {
+.search-filter-form .select-field__label,
+.search-sort-form label span,
+.search-sort-form .select-field__label {
   color: var(--color-text-secondary);
   font-size: 0.86rem;
   font-weight: 850;
@@ -1889,9 +2084,9 @@ select {
   outline: none;
 }
 
-.search-toolbar-form button,
+.search-toolbar-form > button,
 .search-filter-actions button,
-.search-sort-form button,
+.search-sort-form > button,
 .search-detail-link,
 .search-empty-state a {
   align-items: center;
@@ -1908,16 +2103,16 @@ select {
     transform 180ms var(--motion-ease-standard);
 }
 
-.search-toolbar-form button,
+.search-toolbar-form > button,
 .search-filter-actions button,
 .search-empty-state a {
   background: var(--color-brand-solid);
   color: var(--color-text-inverse);
 }
 
-.search-toolbar-form button:hover,
+.search-toolbar-form > button:hover,
 .search-filter-actions button:hover,
-.search-sort-form button:hover,
+.search-sort-form > button:hover,
 .search-detail-link:hover,
 .search-empty-state a:hover {
   filter: brightness(1.04);
@@ -1961,7 +2156,7 @@ select {
 }
 
 .search-filter-actions a,
-.search-sort-form button {
+.search-sort-form > button {
   align-items: center;
   background: var(--color-surface-muted);
   border-radius: 12px;
@@ -3774,6 +3969,38 @@ select {
   border-color: var(--color-text-danger);
 }
 
+@keyframes locale-view-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.82;
+  }
+}
+
+@keyframes locale-view-fade-in {
+  from {
+    opacity: 0.82;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes select-menu-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
 @keyframes auth-card-enter {
   from {
     filter: blur(8px);
@@ -4297,7 +4524,7 @@ select {
     top: 1rem;
   }
 
-  .auth-language-switch .language-switch__select {
+  .auth-language-switch .language-switch .select-field__button {
     min-width: 3.75rem;
     padding-left: 0.55rem;
   }
@@ -4311,7 +4538,7 @@ select {
     gap: 0.5rem;
   }
 
-  .candidate-topbar-actions .language-switch__select {
+  .candidate-topbar-actions .language-switch .select-field__button {
     min-width: 3.75rem;
     padding-left: 0.55rem;
   }
@@ -4353,7 +4580,7 @@ select {
     gap: 0.5rem;
   }
 
-  .main-header-actions .language-switch__select {
+  .main-header-actions .language-switch .select-field__button {
     min-width: 3.75rem;
     padding-left: 0.55rem;
   }
@@ -4398,8 +4625,8 @@ select {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
-  .search-toolbar-form button,
-  .search-sort-form button {
+  .search-toolbar-form > button,
+  .search-sort-form > button {
     width: 100%;
   }
 
@@ -4523,6 +4750,11 @@ select {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
+  }
+
   *,
   *::before,
   *::after {
@@ -4576,6 +4808,10 @@ select {
     transition: none;
   }
 
+  .select-field__menu {
+    animation-duration: 1ms;
+  }
+
   .otp-input:focus {
     transform: none;
   }
@@ -4603,8 +4839,10 @@ select {
   .search-detail-link:hover,
   .search-filter-actions button:hover,
   .search-save-button:hover,
-  .search-sort-form button:hover,
-  .search-toolbar-form button:hover,
+  .search-sort-form > button:hover,
+  .search-toolbar-form > button:hover,
+  .select-field__button:hover,
+  .select-field__option:hover,
   .home-newsletter-form button:hover,
   .main-employer-link:hover,
   .main-register-link:hover {
@@ -4995,6 +5233,26 @@ select {
   letter-spacing: 0.04em;
 }
 
+.admin-filter--select .select-field__label {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-filter--select .select-field__button {
+  border-radius: 10px;
+  font-size: 0.92rem;
+  min-height: 2.55rem;
+  padding-inline: 0.7rem;
+}
+
+.admin-filter--select .select-field__button:hover,
+.admin-filter--select.is-open .select-field__button {
+  box-shadow: 0 0 0 3px var(--color-brand-soft);
+}
+
 .admin-filter--query {
   position: relative;
 }
@@ -5021,8 +5279,7 @@ select {
   height: 18px;
 }
 
-.admin-filter__input,
-.admin-filter__select {
+.admin-filter__input {
   border: 1px solid var(--color-border-default);
   background: var(--color-surface-card);
   border-radius: 10px;
@@ -5034,8 +5291,7 @@ select {
     box-shadow 160ms var(--motion-ease-standard);
 }
 
-.admin-filter__input:focus,
-.admin-filter__select:focus {
+.admin-filter__input:focus {
   border-color: var(--color-brand-solid);
   box-shadow: 0 0 0 3px var(--color-brand-soft);
 }
@@ -6005,7 +6261,7 @@ select {
     gap: 0.35rem;
   }
 
-  .admin-topbar__actions .language-switch__select {
+  .admin-topbar__actions .language-switch .select-field__button {
     min-width: 3.75rem;
     padding-left: 0.55rem;
   }
@@ -7187,7 +7443,7 @@ select {
     gap: 0.35rem;
   }
 
-  .recruiter-topbar__actions .language-switch__select {
+  .recruiter-topbar__actions .language-switch .select-field__button {
     min-width: 3.75rem;
     padding-left: 0.55rem;
   }

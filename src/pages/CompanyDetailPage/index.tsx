@@ -11,9 +11,8 @@ import { findCompanyDetailBySlug } from './utils/companyDetailData'
 export function CompanyDetailPage() {
   const { slug = '' } = useParams()
   const { pages } = useTranslations()
-  const home = pages.home
   const content = pages.companyDetail
-  const company = findCompanyDetailBySlug(home, content, slug)
+  const company = findCompanyDetailBySlug(content, slug)
 
   if (!company) {
     return (

@@ -1,4 +1,5 @@
 import type { SearchTranslations } from '../../../i18n/types'
+import { SelectField } from '../../_components'
 import type { SearchQueryParams } from '../utils/searchParams'
 
 type SearchToolbarProps = {
@@ -32,17 +33,15 @@ export function SearchToolbar({ content, locationOptions, params }: SearchToolba
           />
         </label>
 
-        <label>
-          <span>{content.locationLabel}</span>
-          <select defaultValue={params.location} name="location">
-            <option value="">{content.locationPlaceholder}</option>
-            {locationOptions.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectField
+          defaultValue={params.location}
+          label={content.locationLabel}
+          name="location"
+          options={[
+            { label: content.locationPlaceholder, value: '' },
+            ...locationOptions.map((location) => ({ label: location, value: location })),
+          ]}
+        />
 
         <button type="submit">{content.submit}</button>
       </form>

@@ -3,8 +3,8 @@ import type {
   CompanyDetailTranslations,
   HomeCompanyItem,
   HomeJobItem,
-  HomeTranslations,
 } from '../../../i18n/types'
+import { homeSampleCompanies } from '../../_mock/homeSampleJobs'
 import { createCompanySlug, getHomeJobList } from '../../_utils/jobRoutes'
 
 export type CompanyDetailViewModel = CompanyDetailProfile & {
@@ -45,10 +45,10 @@ function createLogoFromName(name: string): HomeJobItem['companyLogo'] {
   }
 }
 
-function collectCompanyBases(home: HomeTranslations) {
+function collectCompanyBases() {
   const bases = new Map<string, CompanyBase>()
 
-  for (const job of getHomeJobList(home)) {
+  for (const job of getHomeJobList()) {
     const slug = createCompanySlug(job.company)
     const current = bases.get(slug)
 
@@ -59,7 +59,7 @@ function collectCompanyBases(home: HomeTranslations) {
     })
   }
 
-  for (const company of [...home.hero.spotlight.items, ...home.employers.items]) {
+  for (const company of homeSampleCompanies) {
     const slug = createCompanySlug(company.name)
 
     if (!bases.has(slug)) {
@@ -88,12 +88,11 @@ function createFallbackProfile(
 }
 
 export function findCompanyDetailBySlug(
-  home: HomeTranslations,
   content: CompanyDetailTranslations,
   slug: string,
 ): CompanyDetailViewModel | undefined {
   const normalizedSlug = slug || ''
-  const bases = collectCompanyBases(home)
+  const bases = collectCompanyBases()
   const profile = content.profiles.find((item) => createCompanySlug(item.name) === normalizedSlug)
   const base = bases.get(normalizedSlug) ?? (profile ? {
     isVerified: true,
@@ -106,7 +105,7 @@ export function findCompanyDetailBySlug(
   }
 
   const resolvedProfile = profile ?? createFallbackProfile(normalizedSlug, base, content.fallbackProfile)
-  const openJobs = getHomeJobList(home).filter((job) => createCompanySlug(job.company) === normalizedSlug)
+  const openJobs = getHomeJobList().filter((job) => createCompanySlug(job.company) === normalizedSlug)
 
   return {
     ...resolvedProfile,

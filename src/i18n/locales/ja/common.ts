@@ -1,5 +1,18 @@
 export const common = {
   brandName: 'NexHire',
+  job: {
+    workingType: {
+      ONSITE: '出社',
+      REMOTE: 'リモート',
+      HYBRID: 'ハイブリッド',
+    },
+    salaryNegotiable: '応相談',
+    jobsCountSuffix: '件',
+    rolesCountSuffix: '件',
+    postedJustNow: '先ほど掲載',
+    postedPrefix: '',
+    postedSuffix: '掲載',
+  },
   apiErrors: {
     default: 'エラーが発生しました。もう一度お試しください。',
     byCode: {

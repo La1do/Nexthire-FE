@@ -1,5 +1,18 @@
 export const common = {
   brandName: 'NexHire',
+  job: {
+    workingType: {
+      ONSITE: 'Tại văn phòng',
+      REMOTE: 'Remote',
+      HYBRID: 'Hybrid',
+    },
+    salaryNegotiable: 'Thỏa thuận',
+    jobsCountSuffix: 'việc làm',
+    rolesCountSuffix: 'việc làm',
+    postedJustNow: 'Vừa đăng',
+    postedPrefix: 'Đăng ',
+    postedSuffix: '',
+  },
   apiErrors: {
     default: 'Có lỗi xảy ra, vui lòng thử lại.',
     byCode: {

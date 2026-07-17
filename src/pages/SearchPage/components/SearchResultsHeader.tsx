@@ -1,4 +1,5 @@
 import type { SearchTranslations } from '../../../i18n/types'
+import { SelectField } from '../../_components'
 import type { SearchQueryParams } from '../utils/searchParams'
 import { getActiveSearchValues } from '../utils/searchParams'
 
@@ -26,16 +27,12 @@ export function SearchResultsHeader({ content, count, params }: SearchResultsHea
         <input name="location" type="hidden" value={params.location} />
         <input name="salary" type="hidden" value={params.salary} />
         <input name="workMode" type="hidden" value={params.workMode} />
-        <label>
-          <span>{content.sortLabel}</span>
-          <select defaultValue={params.sort} name="sort">
-            {content.sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectField
+          defaultValue={params.sort}
+          label={content.sortLabel}
+          name="sort"
+          options={content.sortOptions}
+        />
         <button type="submit">{content.sortLabel}</button>
       </form>
     </div>

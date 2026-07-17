@@ -22,9 +22,8 @@ function getCurrentJobSlug() {
 
 export function JobDetailPage() {
   const { pages } = useTranslations()
-  const home = pages.home
   const content = pages.jobDetail
-  const jobs = getHomeJobList(home)
+  const jobs = getHomeJobList()
   const slug = getCurrentJobSlug()
   const job = findJobBySlug(jobs, slug)
 

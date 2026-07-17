@@ -4,6 +4,7 @@ import { SearchFilterPanel } from './components/SearchFilterPanel'
 import { SearchResultCard } from './components/SearchResultCard'
 import { SearchResultsHeader } from './components/SearchResultsHeader'
 import { SearchToolbar } from './components/SearchToolbar'
+import { homeSampleJobs } from '../_mock/homeSampleJobs'
 import { filterSearchJobs, getUniqueJobs, sortSearchJobs } from './utils/searchFilters'
 import { getSearchParams } from './utils/searchParams'
 
@@ -16,10 +17,7 @@ export function SearchPage() {
   const home = pages.home
   const search = pages.search
   const params = getSearchParams(getSearchString())
-  const allJobs = getUniqueJobs([
-    ...home.jobs.items,
-    ...home.industryJobs.groups.flatMap((group) => group.jobs),
-  ])
+  const allJobs = getUniqueJobs([...homeSampleJobs])
   const locationOptions = Array.from(new Set([...home.hero.locationOptions, ...allJobs.map((job) => job.location)]))
   const filteredJobs = sortSearchJobs(filterSearchJobs(allJobs, params), params.sort)
 
