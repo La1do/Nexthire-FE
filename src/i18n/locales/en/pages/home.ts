@@ -107,7 +107,7 @@ export const home: HomeTranslations = {
   jobs: {
     eyebrow: 'Job list',
     title: 'Recommended roles today',
-    tabs: ['Featured', 'VIP', 'Headhunter'],
+    tabs: ['Recommended', 'Newest', 'High salary'],
     loadMore: 'Load more roles',
     saveLabel: 'Save job',
     items: [

@@ -107,7 +107,7 @@ export const home: HomeTranslations = {
   jobs: {
     eyebrow: 'Danh sách việc làm',
     title: 'Việc làm phù hợp hôm nay',
-    tabs: ['Nổi bật', 'VIP', 'Headhunter'],
+    tabs: ['Phù hợp', 'Mới đăng', 'Lương cao'],
     loadMore: 'Xem thêm việc làm',
     saveLabel: 'Lưu việc làm',
     items: [

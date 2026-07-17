@@ -107,7 +107,7 @@ export const home: HomeTranslations = {
   jobs: {
     eyebrow: '求人一覧',
     title: '今日おすすめの求人',
-    tabs: ['注目', 'VIP', 'ヘッドハンター'],
+    tabs: ['おすすめ', '新着', '高給与'],
     loadMore: '求人をもっと見る',
     saveLabel: '求人を保存',
     items: [
