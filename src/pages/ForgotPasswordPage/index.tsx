@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { AuthPageShell } from '../_components'
 import { BackToLogin } from './components/BackToLogin'
 import { EmailSentIllustration } from './components/EmailSentIllustration'
@@ -28,7 +28,7 @@ function renderTemplateWithEmail(template: string, email: string) {
 }
 
 export function ForgotPasswordPage() {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
   const forgotPassword = pages.forgotPassword
   const [step, setStep] = useState<ForgotPasswordStep>('request')
   const [email, setEmail] = useState('')

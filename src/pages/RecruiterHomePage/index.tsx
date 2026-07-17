@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { Button } from '../_components'
 import { CompanyVerificationCard } from './components/CompanyVerificationCard'
 import { CompanyVerificationDrawer } from './components/CompanyVerificationDrawer'
@@ -24,7 +24,7 @@ import {
 } from './utils/recruiterHomeData'
 
 export function RecruiterHomePage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const content = pages.recruiterHome
   const [company, setCompany] = useState(recruiterCompanyFixture)
   const [isVerificationOpen, setVerificationOpen] = useState(false)

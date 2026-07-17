@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { AdminPagination } from '../_components/admin/AdminPagination'
 import { AdminStatCard } from '../_components/admin/AdminStatCard'
 import { AdminUserFilters } from './components/AdminUserFilters'
@@ -50,7 +50,7 @@ function LockedIcon() {
 }
 
 export function AdminUsersPage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const content = pages.adminUsers
   const stats = useMemo(() => computeAdminStats(adminUsersFixture), [])
 

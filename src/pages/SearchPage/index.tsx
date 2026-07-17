@@ -1,4 +1,4 @@
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { SearchEmptyState } from './components/SearchEmptyState'
 import { SearchFilterPanel } from './components/SearchFilterPanel'
 import { SearchResultCard } from './components/SearchResultCard'
@@ -12,7 +12,7 @@ function getSearchString() {
 }
 
 export function SearchPage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const home = pages.home
   const search = pages.search
   const params = getSearchParams(getSearchString())

@@ -1,4 +1,4 @@
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { ArticleGrid } from './components/ArticleGrid'
 import { CategoryGrid } from './components/CategoryGrid'
 import { EmployerStrip } from './components/EmployerStrip'
@@ -8,7 +8,7 @@ import { JobSections } from './components/JobSections'
 import { NewsletterPanel } from './components/NewsletterPanel'
 
 export function HomePage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const home = pages.home
 
   return (

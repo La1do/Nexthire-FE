@@ -1,2 +1,2 @@
-export { routes } from './routeObjects'
+export { getRoutes } from './routeObjects'
 export type { AppRoute } from './routeTypes'

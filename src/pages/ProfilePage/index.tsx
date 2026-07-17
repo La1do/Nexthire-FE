@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { BasicInfoForm } from './components/BasicInfoForm'
 import { CompletionPanel } from './components/CompletionPanel'
 import { ContactInfoForm } from './components/ContactInfoForm'
@@ -18,7 +18,7 @@ function createId(prefix: string) {
 }
 
 export function ProfilePage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const content = pages.profile
   const [profile, setProfile] = useState(() => createCandidateProfile(content.profile))
   const [newSkill, setNewSkill] = useState('')

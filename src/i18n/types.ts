@@ -23,6 +23,11 @@ export type CommonTranslations = {
     recruiterRole: string
     adminRole: string
   }
+  languageSwitcher: {
+    label: string
+    options: Record<Locale, string>
+    shortOptions: Record<Locale, string>
+  }
   footer: {
     description: string
     legalLabel: string

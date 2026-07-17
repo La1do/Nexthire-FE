@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { AdminPagination } from '../_components/admin/AdminPagination'
 import { AdminStatCard } from '../_components/admin/AdminStatCard'
 import { CompanyReviewFilters } from './components/CompanyReviewFilters'
@@ -40,7 +40,7 @@ function RejectedIcon() {
 }
 
 export function AdminCompaniesPage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const content = pages.adminCompanies
 
   const [companies, setCompanies] = useState<ReadonlyArray<AdminCompany>>(() => [...adminCompaniesFixture])

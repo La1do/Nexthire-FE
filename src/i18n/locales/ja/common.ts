@@ -36,6 +36,19 @@ export const common = {
     recruiterRole: '採用担当者',
     adminRole: '管理者',
   },
+  languageSwitcher: {
+    label: '言語を変更',
+    options: {
+      vi: 'Tiếng Việt',
+      en: 'English',
+      ja: '日本語',
+    },
+    shortOptions: {
+      vi: 'VI',
+      en: 'EN',
+      ja: 'JA',
+    },
+  },
   footer: {
     description: '企業と候補者を、わかりやすく信頼できる採用体験でつなぎます。',
     legalLabel: '商工省登録済み',

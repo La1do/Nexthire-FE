@@ -1,9 +1,9 @@
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { AuthPageShell } from '../_components'
 import { RegisterForm } from './components/RegisterForm'
 
 export function RegisterPage() {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
   const register = pages.register
 
   return (

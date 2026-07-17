@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { getTranslations } from '../i18n'
+import { useTranslations } from '../i18n'
+import { LanguageSwitch } from '../pages/_components'
 
 function MenuIcon() {
   return (
@@ -53,7 +54,7 @@ function getInitials(name: string) {
 }
 
 export function AdminLayout({ children }: PropsWithChildren) {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
   const content = pages.adminUsers
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -182,21 +183,24 @@ export function AdminLayout({ children }: PropsWithChildren) {
             />
           </label>
 
-          <button
-            aria-label={content.topbar.notificationsLabel}
-            className="admin-topbar__icon-button"
-            type="button"
-          >
-            <BellIcon />
-          </button>
+          <div className="admin-topbar__actions">
+            <LanguageSwitch compact />
+            <button
+              aria-label={content.topbar.notificationsLabel}
+              className="admin-topbar__icon-button"
+              type="button"
+            >
+              <BellIcon />
+            </button>
 
-          <button
-            aria-label={content.topbar.profileLabel}
-            className="admin-topbar__icon-button"
-            type="button"
-          >
-            <UserIcon />
-          </button>
+            <button
+              aria-label={content.topbar.profileLabel}
+              className="admin-topbar__icon-button"
+              type="button"
+            >
+              <UserIcon />
+            </button>
+          </div>
         </header>
 
         <main className="admin-main__content">{children}</main>

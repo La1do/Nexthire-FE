@@ -2,8 +2,8 @@ import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuthUserDisplayName, getInitials, useAuth } from '../context'
-import { getTranslations } from '../i18n'
-import { BrandMark } from '../pages/_components'
+import { useTranslations } from '../i18n'
+import { BrandMark, LanguageSwitch } from '../pages/_components'
 
 function MenuIcon() {
   return (
@@ -34,7 +34,7 @@ function SearchIcon() {
 }
 
 export function RecruiterLayout({ children }: PropsWithChildren) {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
   const content = pages.recruiterHome
   const { logout, user } = useAuth()
   const navigate = useNavigate()
@@ -165,13 +165,16 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
             />
           </label>
 
-          <button
-            aria-label={content.topbar.notificationsLabel}
-            className="recruiter-topbar__icon-button"
-            type="button"
-          >
-            <BellIcon />
-          </button>
+          <div className="recruiter-topbar__actions">
+            <LanguageSwitch compact />
+            <button
+              aria-label={content.topbar.notificationsLabel}
+              className="recruiter-topbar__icon-button"
+              type="button"
+            >
+              <BellIcon />
+            </button>
+          </div>
         </header>
 
         <main className="recruiter-main__content">{children}</main>

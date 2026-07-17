@@ -37,6 +37,7 @@ import { search as viSearch } from './locales/vi/pages/search'
 import type { Locale, Translations } from './types'
 
 export const defaultLocale: Locale = 'vi'
+export const supportedLocales: readonly Locale[] = ['vi', 'en', 'ja']
 
 export const translations = {
   en: {
@@ -93,4 +94,10 @@ export function getTranslations(locale: Locale = defaultLocale) {
   return translations[locale]
 }
 
+export function isLocale(value: string | null | undefined): value is Locale {
+  return supportedLocales.includes(value as Locale)
+}
+
+export { useLocale } from './useLocale'
+export { useTranslations } from './useTranslations'
 export type { Locale, Translations }

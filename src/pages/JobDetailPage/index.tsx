@@ -1,4 +1,4 @@
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { createJobSlug, findJobBySlug, getHomeJobList } from '../_utils/jobRoutes'
 import { JobDetailHero } from './components/JobDetailHero'
 import { JobDetailSection } from './components/JobDetailSection'
@@ -21,7 +21,7 @@ function getCurrentJobSlug() {
 }
 
 export function JobDetailPage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const home = pages.home
   const content = pages.jobDetail
   const jobs = getHomeJobList(home)

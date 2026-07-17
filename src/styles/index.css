@@ -78,6 +78,14 @@ select {
 
 .auth-layout {
   padding: clamp(1rem, 4vw, 2.25rem);
+  position: relative;
+}
+
+.auth-language-switch {
+  position: absolute;
+  right: clamp(1rem, 4vw, 2.25rem);
+  top: clamp(1rem, 4vw, 2.25rem);
+  z-index: 2;
 }
 
 .auth-layout-inner {
@@ -201,6 +209,48 @@ select {
 
 .button-motion:active:not(:disabled) {
   transform: translateY(0);
+}
+
+.language-switch {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.language-switch__select {
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--color-text-muted) 50%) calc(100% - 13px) 50% / 5px 5px no-repeat,
+    linear-gradient(135deg, var(--color-text-muted) 50%, transparent 50%) calc(100% - 8px) 50% / 5px 5px no-repeat,
+    var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 800;
+  height: 2.5rem;
+  max-width: 100%;
+  min-width: 8.25rem;
+  padding: 0 1.85rem 0 0.75rem;
+  transition:
+    border-color 180ms var(--motion-ease-standard),
+    box-shadow 180ms var(--motion-ease-standard),
+    transform 180ms var(--motion-ease-standard);
+}
+
+.language-switch--compact .language-switch__select {
+  min-width: 4.25rem;
+}
+
+.language-switch__select:hover {
+  border-color: var(--color-border-brand-soft);
+  transform: translateY(-1px);
+}
+
+.language-switch__select:focus-visible {
+  border-color: var(--color-brand-solid);
+  box-shadow: 0 0 0 3px var(--color-brand-soft);
+  outline: none;
 }
 
 .segmented-control {
@@ -4242,9 +4292,28 @@ select {
 }
 
 @media (max-width: 700px) {
+  .auth-language-switch {
+    right: 1rem;
+    top: 1rem;
+  }
+
+  .auth-language-switch .language-switch__select {
+    min-width: 3.75rem;
+    padding-left: 0.55rem;
+  }
+
   .candidate-topbar {
     min-height: auto;
     padding: 0.85rem 1rem;
+  }
+
+  .candidate-topbar-actions {
+    gap: 0.5rem;
+  }
+
+  .candidate-topbar-actions .language-switch__select {
+    min-width: 3.75rem;
+    padding-left: 0.55rem;
   }
 
   .candidate-topbar-actions a {
@@ -4284,8 +4353,18 @@ select {
     gap: 0.5rem;
   }
 
+  .main-header-actions .language-switch__select {
+    min-width: 3.75rem;
+    padding-left: 0.55rem;
+  }
+
   .main-employer-link {
     display: none;
+  }
+
+  .main-login-link,
+  .main-register-link {
+    padding-inline: 0.65rem;
   }
 
   .main-user-meta strong {
@@ -4775,6 +4854,13 @@ select {
 .admin-topbar__icon-button:hover {
   border-color: var(--color-brand-solid);
   color: var(--color-brand-solid);
+}
+
+.admin-topbar__actions {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0.5rem;
 }
 
 .admin-main__content {
@@ -5907,10 +5993,26 @@ select {
   }
 
   .admin-topbar__title {
+    flex: 1;
     font-size: 0.95rem;
-    max-width: 40vw;
+    max-width: none;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .admin-topbar__actions {
+    gap: 0.35rem;
+  }
+
+  .admin-topbar__actions .language-switch__select {
+    min-width: 3.75rem;
+    padding-left: 0.55rem;
+  }
+
+  .admin-topbar__icon-button {
+    height: 36px;
+    width: 36px;
   }
 
   .admin-topbar__search {
@@ -6162,6 +6264,13 @@ select {
   min-width: 0;
   outline: none;
   width: 100%;
+}
+
+.recruiter-topbar__actions {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.55rem;
+  justify-self: end;
 }
 
 .recruiter-main__content {
@@ -7072,6 +7181,15 @@ select {
 
   .recruiter-topbar {
     padding: 0.75rem 1rem;
+  }
+
+  .recruiter-topbar__actions {
+    gap: 0.35rem;
+  }
+
+  .recruiter-topbar__actions .language-switch__select {
+    min-width: 3.75rem;
+    padding-left: 0.55rem;
   }
 
   .recruiter-topbar__heading h1 {

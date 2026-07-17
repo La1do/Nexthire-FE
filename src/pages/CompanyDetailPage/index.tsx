@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { CompanyAbout } from './components/CompanyAbout'
 import { CompanyCulturePanel } from './components/CompanyCulturePanel'
 import { CompanyHero } from './components/CompanyHero'
@@ -10,7 +10,7 @@ import { findCompanyDetailBySlug } from './utils/companyDetailData'
 
 export function CompanyDetailPage() {
   const { slug = '' } = useParams()
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const home = pages.home
   const content = pages.companyDetail
   const company = findCompanyDetailBySlug(home, content, slug)

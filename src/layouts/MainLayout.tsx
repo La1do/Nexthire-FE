@@ -8,7 +8,8 @@ import {
 } from '../context'
 import type { AuthApiRole } from '../lib/auth/authRole'
 import type { AuthUser } from '../services/auth.service'
-import { getTranslations } from '../i18n'
+import { useTranslations } from '../i18n'
+import { LanguageSwitch } from '../pages/_components'
 
 function getRoleLabel(
   role: AuthApiRole,
@@ -166,7 +167,7 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 }
 
 export function MainLayout({ children }: PropsWithChildren) {
-  const { common } = getTranslations()
+  const { common } = useTranslations()
   const { user, isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -194,6 +195,7 @@ export function MainLayout({ children }: PropsWithChildren) {
             </a>
           </nav>
           <div className="main-header-actions">
+            <LanguageSwitch className="main-language-switch" compact />
             {isAuthenticated && user ? (
               <MainUserMenu labels={common.authUser} onLogout={handleLogout} user={user} />
             ) : (

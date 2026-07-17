@@ -36,6 +36,19 @@ export const common = {
     recruiterRole: 'Nhà tuyển dụng',
     adminRole: 'Quản trị viên',
   },
+  languageSwitcher: {
+    label: 'Đổi ngôn ngữ',
+    options: {
+      vi: 'Tiếng Việt',
+      en: 'English',
+      ja: '日本語',
+    },
+    shortOptions: {
+      vi: 'VI',
+      en: 'EN',
+      ja: 'JA',
+    },
+  },
   footer: {
     description: 'Kết nối ứng viên và doanh nghiệp bằng trải nghiệm tuyển dụng rõ ràng, đáng tin cậy.',
     legalLabel: 'Đã đăng ký Bộ Công Thương',

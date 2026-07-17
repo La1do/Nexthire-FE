@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { CompanyDocumentsCard } from './components/CompanyDocumentsCard'
 import { CompanyOverviewCard } from './components/CompanyOverviewCard'
 import { CompanyQuickStats } from './components/CompanyQuickStats'
@@ -17,7 +17,7 @@ function getCompanyIdFromLocation() {
 }
 
 export function AdminCompanyDetailPage() {
-  const { pages } = getTranslations()
+  const { pages } = useTranslations()
   const content = pages.adminCompanies
   const companyId = getCompanyIdFromLocation()
 

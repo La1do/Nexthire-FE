@@ -1,9 +1,9 @@
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
 import { AuthPageShell } from '../_components'
 import { LoginForm } from './components/LoginForm'
 
 export function LoginPage() {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
   const login = pages.login
 
   return (

@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
-import { getTranslations } from '../i18n'
-import { BrandMark } from '../pages/_components'
+import { useTranslations } from '../i18n'
+import { BrandMark, LanguageSwitch } from '../pages/_components'
 
 function getInitials(name: string) {
   return name
@@ -13,7 +13,7 @@ function getInitials(name: string) {
 }
 
 export function CandidateLayout({ children }: PropsWithChildren) {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
   const profile = pages.profile
   const navItems = [
     { href: '/search', label: profile.sidebar.searchJobs },
@@ -50,6 +50,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
         <header className="candidate-topbar">
           <h1>{profile.pageTitle}</h1>
           <div className="candidate-topbar-actions">
+            <LanguageSwitch compact />
             <button aria-label={profile.topbar.notificationsLabel} className="candidate-icon-button" type="button" />
             <a href="/login">{profile.topbar.logout}</a>
           </div>

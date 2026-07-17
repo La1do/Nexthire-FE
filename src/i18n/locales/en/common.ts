@@ -36,6 +36,19 @@ export const common = {
     recruiterRole: 'Recruiter',
     adminRole: 'Administrator',
   },
+  languageSwitcher: {
+    label: 'Change language',
+    options: {
+      vi: 'Tiếng Việt',
+      en: 'English',
+      ja: '日本語',
+    },
+    shortOptions: {
+      vi: 'VI',
+      en: 'EN',
+      ja: 'JA',
+    },
+  },
   footer: {
     description: 'Connect with businesses through a modern, fast, and trustworthy hiring experience.',
     legalLabel: 'Registered with the Ministry of Labor',
