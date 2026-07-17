@@ -1,12 +1,23 @@
 export const login = {
-  title: 'おかえりなさい',
-  subtitle: 'NexHire を続けるにはログインしてください',
+  candidate: {
+    title: 'おかえりなさい',
+    subtitle: 'プロフィールに合う求人を探し続けるにはログインしてください。',
+    switchPrompt: '採用担当者ですか？',
+    switchAction: '採用担当者としてログイン',
+  },
+  recruiter: {
+    title: '採用担当者ログイン',
+    subtitle: '採用ワークスペース、会社プロフィール、候補者パイプラインにアクセスします。',
+    switchPrompt: '候補者ですか？',
+    switchAction: '候補者としてログイン',
+  },
+  admin: {
+    title: '管理者ログイン',
+    subtitle: '運用、ユーザー、会社確認を管理するためにログインします。',
+    switchPrompt: '候補者として利用しますか？',
+    switchAction: '候補者としてログイン',
+  },
   form: {
-    roleLabel: 'ログインする役割',
-    roleOptions: [
-      { value: 'candidate', label: '候補者' },
-      { value: 'employer', label: '採用担当者' },
-    ],
     emailLabel: 'メール',
     emailPlaceholder: 'name@company.com',
     passwordLabel: 'パスワード',

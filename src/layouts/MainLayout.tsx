@@ -200,7 +200,7 @@ export function MainLayout({ children }: PropsWithChildren) {
               <MainUserMenu labels={common.authUser} onLogout={handleLogout} user={user} />
             ) : (
               <>
-                <a className="main-employer-link" href="/">
+                <a className="main-employer-link" href="/recruiter/login">
                   {common.navigation.employerCta}
                 </a>
                 <a className="main-login-link" href="/login">

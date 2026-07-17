@@ -53,14 +53,25 @@ export type CommonTranslations = {
 }
 
 export type LoginTranslations = {
-  title: string
-  subtitle: string
+  candidate: {
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+  }
+  recruiter: {
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+  }
+  admin: {
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+  }
   form: {
-    roleLabel: string
-    roleOptions: ReadonlyArray<{
-      value: string
-      label: string
-    }>
     emailLabel: string
     emailPlaceholder: string
     passwordLabel: string

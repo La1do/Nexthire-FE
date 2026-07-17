@@ -10,7 +10,7 @@ import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
 import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
 import { HomePage } from '../../pages/HomePage'
 import { JobDetailPage } from '../../pages/JobDetailPage'
-import { LoginPage } from '../../pages/LoginPage'
+import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pages/LoginPage'
 import { ProfilePage } from '../../pages/ProfilePage'
 import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RegisterPage } from '../../pages/RegisterPage'
@@ -65,7 +65,19 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     {
       path: '/login',
       label: common.navigation.login,
-      element: <LoginPage />,
+      element: <CandidateLoginPage />,
+      layout: AuthLayout,
+    },
+    {
+      path: '/recruiter/login',
+      label: common.navigation.employerCta,
+      element: <RecruiterLoginPage />,
+      layout: AuthLayout,
+    },
+    {
+      path: '/admin/login',
+      label: pages.adminUsers.routeLabel,
+      element: <AdminLoginPage />,
       layout: AuthLayout,
     },
     {

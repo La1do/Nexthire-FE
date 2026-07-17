@@ -1,12 +1,23 @@
 export const login = {
-  title: 'Chào mừng trở lại',
-  subtitle: 'Đăng nhập để tiếp tục với NexHire',
+  candidate: {
+    title: 'Chào mừng trở lại',
+    subtitle: 'Đăng nhập để tiếp tục tìm việc phù hợp với hồ sơ của bạn.',
+    switchPrompt: 'Bạn là nhà tuyển dụng?',
+    switchAction: 'Đăng nhập nhà tuyển dụng',
+  },
+  recruiter: {
+    title: 'Đăng nhập nhà tuyển dụng',
+    subtitle: 'Truy cập không gian tuyển dụng, hồ sơ công ty và pipeline ứng viên.',
+    switchPrompt: 'Bạn là ứng viên?',
+    switchAction: 'Đăng nhập ứng viên',
+  },
+  admin: {
+    title: 'Đăng nhập quản trị',
+    subtitle: 'Đăng nhập để kiểm duyệt vận hành, người dùng và hồ sơ công ty.',
+    switchPrompt: 'Cần truy cập ứng viên?',
+    switchAction: 'Đăng nhập ứng viên',
+  },
   form: {
-    roleLabel: 'Đăng nhập với vai trò',
-    roleOptions: [
-      { value: 'candidate', label: 'Ứng viên' },
-      { value: 'employer', label: 'Nhà tuyển dụng' },
-    ],
     emailLabel: 'Email',
     emailPlaceholder: 'name@company.com',
     passwordLabel: 'Mật khẩu',

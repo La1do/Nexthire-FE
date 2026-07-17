@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Checkbox, Input, PasswordInput, SegmentedControl } from '../../_components'
+import { Button, Checkbox, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
 import { useAuth } from '../../../context'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
-import { isAuthFormRole, toAuthApiRole } from '../../../lib/auth/authRole'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, LoginTranslations } from '../../../i18n/types'
+import type { AuthApiRole } from '../../../lib/auth/authRole'
 import type { LoginFormValues } from '../types'
 import { validateLoginForm } from '../utils/loginValidation'
 
 type LoginFormProps = {
   apiErrors: CommonTranslations['apiErrors']
+  role: AuthApiRole
   translations: LoginTranslations
 }
 
@@ -19,27 +20,24 @@ const initialValues: LoginFormValues = {
   email: '',
   password: '',
   rememberMe: false,
-  role: 'candidate',
 }
 
-function getLoginRedirect(role: ReturnType<typeof toAuthApiRole>) {
+function getLoginRedirect(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/home'
   if (role === 'RECRUITER') return '/recruiter'
   return '/admin/users'
 }
 
-export function LoginForm({ apiErrors, translations }: LoginFormProps) {
+export function LoginForm({ apiErrors, role, translations }: LoginFormProps) {
   const { form, validation } = translations
   const navigate = useNavigate()
   const { login } = useAuth()
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
-  const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
+  const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, values } =
     useFormState<LoginFormValues>({
       initialValues,
       onSubmit: async (formValues) => {
-        const role = toAuthApiRole(formValues.role)
-
         setSubmitError(undefined)
         setSubmitting(true)
 
@@ -63,19 +61,6 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
 
   return (
     <form className="auth-form-grid grid" noValidate onSubmit={handleSubmit}>
-      <SegmentedControl
-        label={form.roleLabel}
-        name="login-role"
-        onChange={(role) => {
-          if (isAuthFormRole(role)) {
-            setSubmitError(undefined)
-            setFieldValue('role', role)
-          }
-        }}
-        options={form.roleOptions}
-        value={values.role}
-      />
-
       <Input
         autoComplete="email"
         disabled={isSubmitting}
