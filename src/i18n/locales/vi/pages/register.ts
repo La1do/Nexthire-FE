@@ -26,6 +26,17 @@ export const register = {
     prompt: 'Đã có tài khoản?',
     action: 'Đăng nhập',
   },
+  verification: {
+    sent: {
+      title: 'Xác thực email',
+      subtitle: 'Chúng tôi đã gửi mã xác thực 6 chữ số đến {{email}}.',
+    },
+    sentSubmit: 'Tôi đã có mã',
+    verify: {
+      title: 'Nhập mã xác thực',
+      subtitle: 'Xác nhận email để kích hoạt tài khoản NexHire của bạn.',
+    },
+  },
   validation: {
     emailRequired: 'Vui lòng nhập email.',
     emailInvalid: 'Email không hợp lệ.',

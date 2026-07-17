@@ -26,6 +26,17 @@ export const register = {
     prompt: 'Already have an account?',
     action: 'Log in',
   },
+  verification: {
+    sent: {
+      title: 'Verify your email',
+      subtitle: 'We sent a 6-digit verification code to {{email}}.',
+    },
+    sentSubmit: 'I have the code',
+    verify: {
+      title: 'Enter verification code',
+      subtitle: 'Confirm your email to activate your NexHire account.',
+    },
+  },
   validation: {
     emailRequired: 'Please enter your email.',
     emailInvalid: 'Please enter a valid email.',

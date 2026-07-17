@@ -122,6 +122,17 @@ export type RegisterTranslations = {
     prompt: string
     action: string
   }
+  verification: {
+    sent: {
+      title: string
+      subtitle: string
+    }
+    sentSubmit: string
+    verify: {
+      title: string
+      subtitle: string
+    }
+  }
   validation: {
     emailRequired: string
     emailInvalid: string

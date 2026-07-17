@@ -44,6 +44,18 @@ export type RegisterPayload = {
   role: AuthApiRole
 }
 
+export type VerifyEmailPayload = {
+  email: string
+  token: string
+}
+
+export type VerifyEmailResponse = {
+  message: string
+  emailVerified: boolean
+  email: string
+  verifiedAt: string
+}
+
 export const authService = {
   async login(payload: LoginPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/login', payload)
@@ -52,6 +64,11 @@ export const authService = {
 
   async register(payload: RegisterPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/register', payload)
+    return response.data.data
+  },
+
+  async verifyEmail(payload: VerifyEmailPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<VerifyEmailResponse>>('/auth/verify-email', payload)
     return response.data.data
   },
 

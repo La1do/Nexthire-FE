@@ -26,6 +26,17 @@ export const register = {
     prompt: 'すでにアカウントをお持ちですか？',
     action: 'ログイン',
   },
+  verification: {
+    sent: {
+      title: 'メールを確認',
+      subtitle: '{{email}} に6桁の確認コードを送信しました。',
+    },
+    sentSubmit: 'コードを入力する',
+    verify: {
+      title: '確認コードを入力',
+      subtitle: 'メールを確認して NexHire アカウントを有効化します。',
+    },
+  },
   validation: {
     emailRequired: 'メールを入力してください。',
     emailInvalid: '有効なメールを入力してください。',
