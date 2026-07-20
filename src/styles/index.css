@@ -3955,6 +3955,320 @@ select {
   font-weight: 900;
 }
 
+.profile-applications-page {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.profile-applications-hero,
+.profile-application-stats > div,
+.profile-application-card,
+.profile-application-empty {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 18px;
+  box-shadow: var(--shadow-home-card);
+}
+
+.profile-applications-hero {
+  align-items: center;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: clamp(1rem, 3vw, 1.45rem);
+}
+
+.profile-applications-hero span {
+  color: var(--color-brand-solid);
+  display: inline-flex;
+  font-size: 0.76rem;
+  font-weight: 950;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.profile-applications-hero h2 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.profile-applications-hero p {
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin-top: 0.35rem;
+  max-width: 44rem;
+}
+
+.profile-applications-hero a,
+.profile-application-card-side a,
+.profile-application-empty button {
+  align-items: center;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.86rem;
+  font-weight: 950;
+  justify-content: center;
+  min-height: 2.65rem;
+  padding: 0 1rem;
+  transition:
+    filter 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.profile-applications-hero a {
+  background: var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+}
+
+.profile-applications-hero a:hover,
+.profile-application-card-side a:hover,
+.profile-application-empty button:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+.profile-application-stats {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.profile-application-stats > div {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 1rem;
+}
+
+.profile-application-stats strong {
+  color: var(--color-text-primary);
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.profile-application-stats span {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.profile-applications-panel {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.profile-application-filters {
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+}
+
+.profile-application-filters button {
+  align-items: center;
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+  font-weight: 900;
+  gap: 0.45rem;
+  min-height: 2.4rem;
+  padding: 0 0.75rem;
+  transition:
+    border-color 160ms var(--motion-ease-standard),
+    color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.profile-application-filters button:hover,
+.profile-application-filters .profile-application-filter-active {
+  border-color: var(--color-border-brand-soft);
+  color: var(--color-brand-solid);
+  transform: translateY(-1px);
+}
+
+.profile-application-filters strong {
+  align-items: center;
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  display: inline-flex;
+  font-size: 0.74rem;
+  height: 1.45rem;
+  justify-content: center;
+  min-width: 1.45rem;
+  padding-inline: 0.35rem;
+}
+
+.profile-application-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.profile-application-card {
+  align-items: start;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.28fr);
+  padding: clamp(1rem, 3vw, 1.25rem);
+}
+
+.profile-application-card-main {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.profile-application-card h2 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.04rem, 2.4vw, 1.22rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.profile-application-card p {
+  color: var(--color-text-muted);
+  font-weight: 850;
+  margin-top: 0.18rem;
+}
+
+.profile-application-status {
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 950;
+  justify-self: start;
+  padding: 0.32rem 0.65rem;
+}
+
+.profile-application-status--submitted {
+  background: var(--color-brand-soft);
+  color: var(--color-brand-solid);
+}
+
+.profile-application-status--reviewing {
+  background: var(--color-home-salary-blue-bg);
+  color: var(--color-home-salary-blue-text);
+}
+
+.profile-application-status--interview {
+  background: var(--color-home-warning-soft);
+  color: var(--color-brand-end);
+}
+
+.profile-application-status--offered {
+  background: var(--color-home-accent-soft);
+  color: var(--color-home-accent);
+}
+
+.profile-application-status--rejected {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--color-text-danger);
+}
+
+.profile-application-status--withdrawn {
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.profile-application-details {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+
+.profile-application-details div,
+.profile-application-card-side dl div {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.profile-application-details dt,
+.profile-application-card-side dt {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.profile-application-details dd,
+.profile-application-card-side dd {
+  color: var(--color-text-secondary);
+  font-size: 0.84rem;
+  font-weight: 900;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-application-card-side {
+  align-items: end;
+  display: grid;
+  gap: 0.8rem;
+  justify-items: end;
+  min-width: 0;
+}
+
+.profile-application-card-side dl {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  text-align: right;
+}
+
+.profile-application-card-side a,
+.profile-application-empty button {
+  background: var(--color-surface-muted);
+  color: var(--color-brand-solid);
+}
+
+.profile-application-empty {
+  align-items: center;
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  text-align: center;
+}
+
+.profile-application-empty > span {
+  align-items: center;
+  background: var(--color-brand-soft);
+  border-radius: 999px;
+  color: var(--color-brand-solid);
+  display: inline-flex;
+  font-weight: 950;
+  height: 3.2rem;
+  justify-content: center;
+  width: 3.2rem;
+}
+
+.profile-application-empty h2 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.04rem, 3vw, 1.25rem);
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.profile-application-empty p {
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin-top: 0.25rem;
+}
+
 .form-control {
   border: 1px solid var(--color-border-default);
   color: var(--color-text-primary);
@@ -4431,6 +4745,22 @@ select {
     top: 5.6rem;
   }
 
+  .profile-application-card:nth-child(2) {
+    animation-delay: 70ms;
+  }
+
+  .profile-application-card:nth-child(3) {
+    animation-delay: 120ms;
+  }
+
+  .profile-application-card:nth-child(4) {
+    animation-delay: 170ms;
+  }
+
+  .profile-application-card:nth-child(5) {
+    animation-delay: 220ms;
+  }
+
   .job-detail-layout {
     align-items: start;
     grid-template-columns: minmax(0, 1fr) 20rem;
@@ -4584,6 +4914,34 @@ select {
 
   .profile-sticky-actions {
     display: grid;
+  }
+
+  .profile-applications-hero,
+  .profile-application-card {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-applications-hero a,
+  .profile-application-card-side a,
+  .profile-application-empty button {
+    width: 100%;
+  }
+
+  .profile-application-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-application-details {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-application-card-side {
+    align-items: start;
+    justify-items: stretch;
+  }
+
+  .profile-application-card-side dl {
+    text-align: left;
   }
 
   .profile-skill-entry {

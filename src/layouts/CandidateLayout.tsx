@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
 
@@ -14,13 +15,15 @@ function getInitials(name: string) {
 
 export function CandidateLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
+  const { pathname } = useLocation()
   const profile = pages.profile
   const navItems = [
     { href: '/search', label: profile.sidebar.searchJobs },
-    { href: '/', label: profile.sidebar.applications },
+    { href: '/profile/applications', label: profile.sidebar.applications },
     { href: '/profile', label: profile.sidebar.profile },
     { href: '/', label: profile.sidebar.messages },
   ]
+  const pageTitle = pathname === '/profile/applications' ? profile.applications.pageTitle : profile.pageTitle
 
   return (
     <div className="candidate-shell">
@@ -31,7 +34,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
 
         <nav aria-label={profile.routeLabel} className="candidate-nav">
           {navItems.map((item) => (
-            <a aria-current={item.href === '/profile' ? 'page' : undefined} href={item.href} key={item.label}>
+            <a aria-current={pathname === item.href ? 'page' : undefined} href={item.href} key={item.label}>
               {item.label}
             </a>
           ))}
@@ -48,7 +51,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
 
       <div className="candidate-main">
         <header className="candidate-topbar">
-          <h1>{profile.pageTitle}</h1>
+          <h1>{pageTitle}</h1>
           <div className="candidate-topbar-actions">
             <LanguageSwitch compact />
             <button aria-label={profile.topbar.notificationsLabel} className="candidate-icon-button" type="button" />

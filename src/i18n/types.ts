@@ -602,6 +602,8 @@ export type CompanyDetailTranslations = {
   profiles: ReadonlyArray<CompanyDetailProfile>
 }
 
+export type ProfileApplicationStatus = 'SUBMITTED' | 'REVIEWING' | 'INTERVIEW' | 'OFFERED' | 'REJECTED' | 'WITHDRAWN'
+
 export type ProfileTranslations = {
   routeLabel: string
   pageTitle: string
@@ -634,6 +636,52 @@ export type ProfileTranslations = {
       experience: string
       resume: string
     }
+  }
+  applications: {
+    routeLabel: string
+    pageTitle: string
+    title: string
+    description: string
+    primaryAction: string
+    stats: {
+      total: string
+      active: string
+      interviews: string
+      closed: string
+    }
+    filters: {
+      label: string
+      all: string
+    }
+    statusLabels: Record<ProfileApplicationStatus, string>
+    meta: {
+      company: string
+      location: string
+      workingType: string
+      salary: string
+      appliedAt: string
+      updatedAt: string
+    }
+    actions: {
+      viewJob: string
+    }
+    empty: {
+      title: string
+      description: string
+      reset: string
+    }
+    items: ReadonlyArray<{
+      id: string
+      jobId: string
+      jobTitle: string
+      companyName: string
+      location: string
+      workingType: string
+      salaryLabel: string
+      appliedAt: string
+      updatedAt: string
+      status: ProfileApplicationStatus
+    }>
   }
   sections: {
     basic: {

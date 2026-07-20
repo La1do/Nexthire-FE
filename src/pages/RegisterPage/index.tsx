@@ -10,7 +10,6 @@ import { EmailSentState } from '../ForgotPasswordPage/components/EmailSentState'
 import { VerificationCodeForm } from '../ForgotPasswordPage/components/VerificationCodeForm'
 import { RegisterForm } from './components/RegisterForm'
 import type { ReactNode } from 'react'
-import type { RegisterTranslations } from '../../i18n/types'
 import type { AuthApiRole, PublicAuthApiRole } from '../../lib/auth/authRole'
 import type { PendingRegistration } from './components/RegisterForm'
 
