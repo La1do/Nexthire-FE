@@ -1,20 +1,31 @@
 import { useParams } from 'react-router-dom'
 import { useTranslations } from '../../i18n'
+import { EmptyState, Loading } from '../_components'
 import { CompanyAbout } from './components/CompanyAbout'
 import { CompanyCulturePanel } from './components/CompanyCulturePanel'
 import { CompanyHero } from './components/CompanyHero'
 import { CompanyOpenJobs } from './components/CompanyOpenJobs'
 import { CompanySidebar } from './components/CompanySidebar'
 import { CompanySnapshot } from './components/CompanySnapshot'
-import { findCompanyDetailBySlug } from './utils/companyDetailData'
+import { useCompanyDetail } from './hooks/useCompanyDetail'
 
 export function CompanyDetailPage() {
-  const { slug = '' } = useParams()
+  const { id = '' } = useParams()
   const { pages } = useTranslations()
   const content = pages.companyDetail
-  const company = findCompanyDetailBySlug(content, slug)
+  const { company, loading, error, notFound } = useCompanyDetail(id)
 
-  if (!company) {
+  if (loading) {
+    return (
+      <div className="company-detail-page">
+        <div className="company-detail-state">
+          <Loading label={content.states.loading} />
+        </div>
+      </div>
+    )
+  }
+
+  if (notFound) {
     return (
       <div className="company-detail-page">
         <section className="company-detail-not-found company-detail-motion">
@@ -23,6 +34,19 @@ export function CompanyDetailPage() {
           <p>{content.notFound.description}</p>
           <a href="/search">{content.notFound.action}</a>
         </section>
+      </div>
+    )
+  }
+
+  if (error || !company) {
+    return (
+      <div className="company-detail-page">
+        <div className="company-detail-state">
+          <EmptyState
+            description={content.states.errorDescription}
+            title={content.states.errorTitle}
+          />
+        </div>
       </div>
     )
   }

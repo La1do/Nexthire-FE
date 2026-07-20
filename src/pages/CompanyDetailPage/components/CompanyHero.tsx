@@ -1,6 +1,6 @@
 import type { CompanyDetailTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
-import type { CompanyDetailViewModel } from '../utils/companyDetailData'
+import type { CompanyDetailViewModel } from '../utils/companyDetailMappers'
 
 type CompanyHeroProps = {
   company: CompanyDetailViewModel

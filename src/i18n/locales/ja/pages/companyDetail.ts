@@ -4,6 +4,11 @@ export const companyDetail: CompanyDetailTranslations = {
   routeLabel: '企業詳細',
   backToSearch: '検索に戻る',
   verifiedLabel: '認証済み',
+  states: {
+    loading: '会社情報を読み込み中...',
+    errorTitle: '会社情報を読み込めませんでした',
+    errorDescription: '会社情報の読み込み中にエラーが発生しました。もう一度お試しください。',
+  },
   hero: {
     openJobs: '募集中',
     follow: '企業をフォロー',

@@ -1,7 +1,6 @@
 import type { CompanyDetailTranslations } from '../../../i18n/types'
 import { JobCard } from '../../HomePage/components/JobCard'
-import { adaptHomeJobItemToCardView } from '../../_mock/homeSampleJobs'
-import type { CompanyDetailViewModel } from '../utils/companyDetailData'
+import type { CompanyDetailViewModel } from '../utils/companyDetailMappers'
 
 type CompanyOpenJobsProps = {
   company: CompanyDetailViewModel
@@ -23,8 +22,8 @@ export function CompanyOpenJobs({ company, content, title }: CompanyOpenJobsProp
         <div className="company-detail-job-grid">
           {company.openJobs.map((job) => (
             <JobCard
-              job={adaptHomeJobItemToCardView(job)}
-              key={`${job.company}-${job.title}`}
+              job={job}
+              key={job.id}
               saveLabel={content.saveLabel}
               variant="compact"
             />

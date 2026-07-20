@@ -4,6 +4,11 @@ export const companyDetail: CompanyDetailTranslations = {
   routeLabel: 'Company detail',
   backToSearch: 'Back to search',
   verifiedLabel: 'Verified',
+  states: {
+    loading: 'Loading company...',
+    errorTitle: 'Could not load company',
+    errorDescription: 'Something went wrong while loading this company. Please try again.',
+  },
   hero: {
     openJobs: 'open roles',
     follow: 'Follow company',

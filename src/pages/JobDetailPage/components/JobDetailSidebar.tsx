@@ -1,8 +1,9 @@
-import type { HomeJobItem, JobDetailTranslations } from '../../../i18n/types'
+import type { JobDetailTranslations } from '../../../i18n/types'
+import type { JobDetailView } from '../types'
 
 type JobDetailSidebarProps = {
   content: JobDetailTranslations['sidebar']
-  job: HomeJobItem
+  job: JobDetailView
 }
 
 export function JobDetailSidebar({ content, job }: JobDetailSidebarProps) {
@@ -10,9 +11,10 @@ export function JobDetailSidebar({ content, job }: JobDetailSidebarProps) {
     { label: content.salary, value: job.salary },
     { label: content.location, value: job.location },
     { label: content.workMode, value: job.workMode },
-    { label: content.field, value: job.field },
     { label: content.postedAt, value: job.postedAt },
-  ]
+    { label: content.deadline, value: job.deadline ?? content.noDeadline },
+    job.openings != null ? { label: content.openings, value: String(job.openings) } : null,
+  ].filter((item): item is { label: string; value: string } => item !== null)
 
   return (
     <aside className="job-detail-sidebar">

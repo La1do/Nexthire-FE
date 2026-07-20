@@ -5,6 +5,13 @@ import type {
   PublicJobListItem,
   JobWorkingType,
 } from '../../../types/job.types'
+import {
+  formatPostedAt,
+  formatSalary,
+  initials,
+  intlLocale,
+  pickTone,
+} from '../../_utils/jobFormat'
 import type {
   CategoryIconKind,
   CategoryView,
@@ -12,7 +19,6 @@ import type {
   HeroStatView,
   IndustryGroupView,
   JobCardView,
-  LogoTone,
 } from '../types'
 
 // Labels the mappers need from i18n so no user-facing text is hardcoded here.
@@ -24,94 +30,6 @@ export type JobLabels = {
   postedJustNow: string
   postedPrefix: string
   postedSuffix: string
-}
-
-const LOGO_TONES: ReadonlyArray<LogoTone> = ['blue', 'coral', 'green', 'violet']
-
-// Stable tone from an id/name so a company keeps the same colour across renders.
-function pickTone(seed: string): LogoTone {
-  let hash = 0
-  for (let index = 0; index < seed.length; index += 1) {
-    hash = (hash * 31 + seed.charCodeAt(index)) >>> 0
-  }
-  return LOGO_TONES[hash % LOGO_TONES.length]
-}
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((part) => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase() || 'NH'
-}
-
-const COMPACT_LOCALE: Record<string, string> = {
-  vi: 'vi-VN',
-  en: 'en-US',
-  ja: 'ja-JP',
-}
-
-function intlLocale(locale: string): string {
-  return COMPACT_LOCALE[locale] ?? locale
-}
-
-function formatSalary(
-  job: PublicJobListItem,
-  locale: string,
-  negotiable: string,
-): string {
-  if (!job.isSalaryVisible || job.salaryMin == null) {
-    return negotiable
-  }
-
-  const formatter = new Intl.NumberFormat(intlLocale(locale), {
-    notation: 'compact',
-    maximumFractionDigits: 1,
-  })
-  const min = formatter.format(job.salaryMin)
-
-  if (job.salaryMax == null || job.salaryMax === job.salaryMin) {
-    return `${min} ${job.salaryCurrency}`
-  }
-
-  return `${min}–${formatter.format(job.salaryMax)} ${job.salaryCurrency}`
-}
-
-const RELATIVE_UNITS: ReadonlyArray<{ unit: Intl.RelativeTimeFormatUnit; ms: number }> = [
-  { unit: 'day', ms: 86_400_000 },
-  { unit: 'hour', ms: 3_600_000 },
-  { unit: 'minute', ms: 60_000 },
-]
-
-function formatPostedAt(
-  publishedAt: string | null,
-  locale: string,
-  labels: JobLabels,
-): string {
-  if (!publishedAt) {
-    return labels.postedJustNow
-  }
-
-  const published = new Date(publishedAt).getTime()
-  if (Number.isNaN(published)) {
-    return labels.postedJustNow
-  }
-
-  const diff = published - Date.now()
-  const absDiff = Math.abs(diff)
-  const formatter = new Intl.RelativeTimeFormat(intlLocale(locale), { numeric: 'auto' })
-
-  for (const { unit, ms } of RELATIVE_UNITS) {
-    if (absDiff >= ms) {
-      const value = Math.round(diff / ms)
-      const relative = formatter.format(value, unit)
-      return `${labels.postedPrefix}${relative}${labels.postedSuffix}`.trim()
-    }
-  }
-
-  return labels.postedJustNow
 }
 
 const CATEGORY_ICON_BY_SLUG: Record<string, CategoryIconKind> = {

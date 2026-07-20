@@ -39,13 +39,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: MainLayout,
     },
     {
-      path: '/jobs/:slug',
+      path: '/jobs/:id',
       label: pages.jobDetail.routeLabel,
       element: <JobDetailPage />,
       layout: MainLayout,
     },
     {
-      path: '/companies/:slug',
+      path: '/companies/:id',
       label: pages.companyDetail.routeLabel,
       element: <CompanyDetailPage />,
       layout: MainLayout,

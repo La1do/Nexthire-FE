@@ -1,5 +1,5 @@
 import type { CompanyDetailTranslations } from '../../../i18n/types'
-import type { CompanyDetailViewModel } from '../utils/companyDetailData'
+import type { CompanyDetailViewModel } from '../utils/companyDetailMappers'
 
 type CompanyAboutProps = {
   company: CompanyDetailViewModel

@@ -1,10 +1,11 @@
-import type { HomeJobItem, JobDetailTranslations } from '../../../i18n/types'
+import type { JobDetailTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
-import { createCompanyDetailHref, createJobDetailHref } from '../../_utils/jobRoutes'
+import { createCompanyDetailHrefById, createJobDetailHrefById } from '../../_utils/jobRoutes'
+import type { RelatedJobView } from '../types'
 
 type RelatedJobsProps = {
   content: JobDetailTranslations['related']
-  jobs: ReadonlyArray<HomeJobItem>
+  jobs: ReadonlyArray<RelatedJobView>
 }
 
 export function RelatedJobs({ content, jobs }: RelatedJobsProps) {
@@ -21,17 +22,17 @@ export function RelatedJobs({ content, jobs }: RelatedJobsProps) {
 
       <div className="job-detail-related-grid">
         {jobs.map((job) => {
-          const companyHref = createCompanyDetailHref(job.company)
+          const companyHref = createCompanyDetailHrefById(job.companyId)
 
           return (
-            <article className="job-detail-related-card home-hover-card" key={`${job.company}-${job.title}`}>
+            <article className="job-detail-related-card home-hover-card" key={job.id}>
               <a aria-label={job.company} className="job-detail-related-logo-link" href={companyHref}>
                 <CompanyLogoMark
-                  alt={job.companyLogo.alt}
+                  alt={job.logo.alt}
                   className="job-detail-related-logo"
-                  fallbackText={job.companyLogo.fallbackText}
-                  src={job.companyLogo.src}
-                  tone={job.companyLogo.tone}
+                  fallbackText={job.logo.fallbackText}
+                  src={job.logo.src}
+                  tone={job.logo.tone}
                 />
               </a>
               <div>
@@ -39,7 +40,7 @@ export function RelatedJobs({ content, jobs }: RelatedJobsProps) {
                 <h3>{job.title}</h3>
                 <p>{job.location}</p>
               </div>
-              <a href={createJobDetailHref(job)}>{content.viewDetail}</a>
+              <a href={createJobDetailHrefById(job.id)}>{content.viewDetail}</a>
             </article>
           )
         })}

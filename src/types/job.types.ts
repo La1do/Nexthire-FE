@@ -44,6 +44,16 @@ export type PublicJobListItem = {
   publishedAt: string | null
 }
 
+// GET /api/v1/jobs/:id — full public detail. List item plus long-form fields.
+export type PublicJobDetail = PublicJobListItem & {
+  description: string
+  requirements: string
+  benefits: string | null
+  numberOfOpenings: number | null
+  createdAt: string
+  updatedAt: string
+}
+
 // GET /api/v1/jobs/featured-companies
 export type PublicFeaturedCompany = {
   companyId: string

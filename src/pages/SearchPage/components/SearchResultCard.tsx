@@ -1,9 +1,10 @@
-import type { HomeJobItem, SearchTranslations } from '../../../i18n/types'
+import type { SearchTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
-import { createCompanyDetailHref, createJobDetailHref } from '../../_utils/jobRoutes'
+import { createCompanyDetailHrefById, createJobDetailHrefById } from '../../_utils/jobRoutes'
+import type { JobCardView } from '../../HomePage/types'
 
 type SearchResultCardProps = {
-  job: HomeJobItem
+  job: JobCardView
   labels: SearchTranslations['results']
 }
 
@@ -16,17 +17,17 @@ function BookmarkIcon() {
 }
 
 export function SearchResultCard({ job, labels }: SearchResultCardProps) {
-  const companyHref = createCompanyDetailHref(job.company)
+  const companyHref = createCompanyDetailHrefById(job.companyId)
 
   return (
     <article className="search-result-card home-hover-card">
       <a aria-label={job.company} className="search-company-logo-link" href={companyHref}>
         <CompanyLogoMark
-          alt={job.companyLogo.alt}
+          alt={job.logo.alt}
           className="search-result-logo"
-          fallbackText={job.companyLogo.fallbackText}
-          src={job.companyLogo.src}
-          tone={job.companyLogo.tone}
+          fallbackText={job.logo.fallbackText}
+          src={job.logo.src}
+          tone={job.logo.tone}
         />
       </a>
 
@@ -37,7 +38,6 @@ export function SearchResultCard({ job, labels }: SearchResultCardProps) {
         </div>
 
         <h3>{job.title}</h3>
-        <p>{job.description}</p>
 
         <div className="search-result-meta">
           <span>{job.location}</span>
@@ -57,7 +57,7 @@ export function SearchResultCard({ job, labels }: SearchResultCardProps) {
         <BookmarkIcon />
       </button>
 
-      <a className="search-detail-link" href={createJobDetailHref(job)}>
+      <a className="search-detail-link" href={createJobDetailHrefById(job.id)}>
         {labels.detailLabel}
       </a>
     </article>

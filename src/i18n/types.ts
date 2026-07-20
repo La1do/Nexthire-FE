@@ -200,35 +200,6 @@ export type ForgotPasswordTranslations = {
   }
 }
 
-export type HomeJobItem = {
-  badgeTone: 'blue' | 'pink'
-  company: string
-  companyLogo: {
-    alt: string
-    fallbackText: string
-    src: string
-    tone: 'blue' | 'coral' | 'green' | 'violet'
-  }
-  description: string
-  field: string
-  location: string
-  postedAt: string
-  salary: string
-  tags: ReadonlyArray<string>
-  title: string
-  verified?: boolean
-  workMode: string
-}
-
-export type HomeCompanyItem = {
-  logoAlt: string
-  logoSrc: string
-  logoText: string
-  name: string
-  openRoles: string
-  tone: 'blue' | 'coral' | 'green' | 'violet'
-}
-
 export type HomeTranslations = {
   states: {
     loading: string
@@ -326,10 +297,6 @@ export type SearchTranslations = {
     allOption: string
     clear: string
     apply: string
-    fieldOptions: ReadonlyArray<{
-      label: string
-      value: string
-    }>
     salaryOptions: ReadonlyArray<{
       label: string
       value: string
@@ -352,6 +319,9 @@ export type SearchTranslations = {
     verifiedLabel: string
     detailLabel: string
     activeFiltersLabel: string
+    loading: string
+    errorTitle: string
+    errorDescription: string
   }
   empty: {
     title: string
@@ -512,6 +482,11 @@ export type AdminCompaniesTranslations = {
 export type JobDetailTranslations = {
   routeLabel: string
   backToSearch: string
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+  }
   hero: {
     metaLabel: string
     verifiedLabel: string
@@ -521,28 +496,17 @@ export type JobDetailTranslations = {
     salary: string
     location: string
     workMode: string
-    field: string
     postedAt: string
+    deadline: string
+    noDeadline: string
+    openings: string
     apply: string
     save: string
   }
   sections: {
-    overview: {
-      title: string
-      body: string
-    }
-    responsibilities: {
-      title: string
-      items: ReadonlyArray<string>
-    }
-    requirements: {
-      title: string
-      items: ReadonlyArray<string>
-    }
-    benefits: {
-      title: string
-      items: ReadonlyArray<string>
-    }
+    description: string
+    requirements: string
+    benefits: string
   }
   related: {
     title: string
@@ -580,6 +544,11 @@ export type CompanyDetailTranslations = {
   routeLabel: string
   backToSearch: string
   verifiedLabel: string
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+  }
   hero: {
     openJobs: string
     follow: string

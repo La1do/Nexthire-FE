@@ -1,33 +1,29 @@
+import { useParams } from 'react-router-dom'
 import { useTranslations } from '../../i18n'
-import { createJobSlug, findJobBySlug, getHomeJobList } from '../_utils/jobRoutes'
+import { EmptyState, Loading } from '../_components'
 import { JobDetailHero } from './components/JobDetailHero'
 import { JobDetailSection } from './components/JobDetailSection'
 import { JobDetailSidebar } from './components/JobDetailSidebar'
 import { RelatedJobs } from './components/RelatedJobs'
-import { getJobDetailSections } from './utils/jobDetailData'
-
-function getCurrentJobSlug() {
-  if (typeof window === 'undefined') {
-    return ''
-  }
-
-  const [, slug = ''] = window.location.pathname.match(/^\/jobs\/([^/]+)\/?$/) ?? []
-
-  try {
-    return decodeURIComponent(slug)
-  } catch {
-    return slug
-  }
-}
+import { useJobDetail } from './hooks/useJobDetail'
 
 export function JobDetailPage() {
   const { pages } = useTranslations()
   const content = pages.jobDetail
-  const jobs = getHomeJobList()
-  const slug = getCurrentJobSlug()
-  const job = findJobBySlug(jobs, slug)
+  const { id = '' } = useParams()
+  const { job, sections, related, loading, error, notFound } = useJobDetail(id)
 
-  if (!job) {
+  if (loading) {
+    return (
+      <div className="job-detail-page">
+        <div className="job-detail-state">
+          <Loading label={content.states.loading} />
+        </div>
+      </div>
+    )
+  }
+
+  if (notFound) {
     return (
       <div className="job-detail-page">
         <section className="job-detail-not-found job-detail-motion">
@@ -40,11 +36,18 @@ export function JobDetailPage() {
     )
   }
 
-  const sections = getJobDetailSections(job, content.sections)
-  const relatedJobs = jobs
-    .filter((relatedJob) => createJobSlug(relatedJob) !== slug)
-    .filter((relatedJob) => relatedJob.field === job.field || relatedJob.location === job.location)
-    .slice(0, 3)
+  if (error || !job) {
+    return (
+      <div className="job-detail-page">
+        <div className="job-detail-state">
+          <EmptyState
+            description={content.states.errorDescription}
+            title={content.states.errorTitle}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="job-detail-page">
@@ -64,7 +67,7 @@ export function JobDetailPage() {
         <JobDetailSidebar content={content.sidebar} job={job} />
       </div>
 
-      <RelatedJobs content={content.related} jobs={relatedJobs} />
+      <RelatedJobs content={content.related} jobs={related} />
     </div>
   )
 }

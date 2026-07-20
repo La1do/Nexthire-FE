@@ -1238,7 +1238,7 @@ select {
 }
 
 .home-hero-board {
-  align-self: center;
+  align-self: start;
   animation: home-soft-float 5s ease-in-out infinite;
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid var(--color-border-default);
@@ -1271,6 +1271,7 @@ select {
 .home-spotlight-list {
   display: grid;
   gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .home-spotlight-card,
@@ -4308,10 +4309,6 @@ select {
     grid-column: 1 / -1;
   }
 
-  .home-hero {
-    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
-  }
-
   .job-detail-hero {
     align-items: stretch;
     grid-template-columns: minmax(14rem, 0.42fr) minmax(0, 1fr);
@@ -4404,6 +4401,14 @@ select {
 }
 
 @media (min-width: 1024px) {
+  .home-hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(19rem, 0.85fr);
+  }
+
+  .home-spotlight-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .profile-layout {
     grid-template-columns: minmax(0, 1fr) 18rem;
   }

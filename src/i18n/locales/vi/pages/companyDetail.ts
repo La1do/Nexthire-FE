@@ -4,6 +4,11 @@ export const companyDetail: CompanyDetailTranslations = {
   routeLabel: 'Chi tiết công ty',
   backToSearch: 'Quay lại tìm kiếm',
   verifiedLabel: 'Đã xác thực',
+  states: {
+    loading: 'Đang tải công ty...',
+    errorTitle: 'Không tải được công ty',
+    errorDescription: 'Đã có lỗi khi tải thông tin công ty. Vui lòng thử lại.',
+  },
   hero: {
     openJobs: 'việc đang tuyển',
     follow: 'Theo dõi công ty',

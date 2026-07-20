@@ -1,14 +1,16 @@
 import type { SearchTranslations } from '../../../i18n/types'
 import { SelectField } from '../../_components'
+import type { SearchFieldOption } from '../hooks/useSearchJobs'
 import type { SearchQueryParams } from '../utils/searchParams'
 
 type SearchFilterPanelProps = {
   content: SearchTranslations['filters']
+  fieldOptions: ReadonlyArray<SearchFieldOption>
   locationOptions: ReadonlyArray<string>
   params: SearchQueryParams
 }
 
-export function SearchFilterPanel({ content, locationOptions, params }: SearchFilterPanelProps) {
+export function SearchFilterPanel({ content, fieldOptions, locationOptions, params }: SearchFilterPanelProps) {
   return (
     <aside className="search-filter-panel search-motion">
       <div className="search-filter-heading">
@@ -36,7 +38,7 @@ export function SearchFilterPanel({ content, locationOptions, params }: SearchFi
           name="field"
           options={[
             { label: content.allOption, value: '' },
-            ...content.fieldOptions,
+            ...fieldOptions,
           ]}
         />
 

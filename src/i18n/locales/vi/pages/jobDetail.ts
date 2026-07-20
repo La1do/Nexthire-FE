@@ -3,6 +3,11 @@ import type { JobDetailTranslations } from '../../../types'
 export const jobDetail: JobDetailTranslations = {
   routeLabel: 'Chi tiết việc làm',
   backToSearch: 'Quay lại kết quả tìm kiếm',
+  states: {
+    loading: 'Đang tải việc làm...',
+    errorTitle: 'Không tải được việc làm',
+    errorDescription: 'Đã có lỗi xảy ra khi tải tin tuyển dụng. Vui lòng thử lại.',
+  },
   hero: {
     metaLabel: 'Thông tin chính của việc làm',
     verifiedLabel: 'Công ty đã xác thực',
@@ -12,40 +17,17 @@ export const jobDetail: JobDetailTranslations = {
     salary: 'Mức lương',
     location: 'Địa điểm',
     workMode: 'Hình thức',
-    field: 'Nhóm nghề',
     postedAt: 'Thời gian đăng',
+    deadline: 'Hạn nộp hồ sơ',
+    noDeadline: 'Không giới hạn',
+    openings: 'Số lượng tuyển',
     apply: 'Ứng tuyển ngay',
     save: 'Lưu việc làm',
   },
   sections: {
-    overview: {
-      title: 'Tổng quan vai trò',
-      body: '{{company}} đang tìm {{title}} thuộc nhóm {{field}}. Vai trò này phù hợp với ứng viên muốn làm việc theo mô hình {{workMode}} tại {{location}} và ưu tiên tốc độ triển khai sản phẩm.',
-    },
-    responsibilities: {
-      title: 'Bạn sẽ phụ trách',
-      items: [
-        'Xây dựng và cải tiến các hạng mục chính liên quan đến {{tags}}.',
-        'Phối hợp cùng đội sản phẩm để chuyển yêu cầu tuyển dụng thành trải nghiệm rõ ràng cho người dùng.',
-        'Theo dõi chất lượng triển khai, ghi nhận phản hồi và tối ưu luồng làm việc sau mỗi vòng phát hành.',
-      ],
-    },
-    requirements: {
-      title: 'Yêu cầu phù hợp',
-      items: [
-        'Có kinh nghiệm thực tế với {{tags}} hoặc các kỹ năng tương đương trong nhóm {{field}}.',
-        'Giao tiếp rõ ràng khi làm việc theo mô hình {{workMode}}.',
-        'Chủ động phân tích vấn đề, đề xuất phương án và hoàn thành cam kết đúng nhịp đội nhóm.',
-      ],
-    },
-    benefits: {
-      title: 'Quyền lợi nổi bật',
-      items: [
-        'Dải lương tham khảo {{salary}} cùng quy trình phỏng vấn minh bạch.',
-        'Môi trường {{workMode}} tại {{location}} với đội ngũ đã quen cách làm sản phẩm hiện đại.',
-        'Hồ sơ từ NexHire được chuẩn hóa để nhà tuyển dụng phản hồi nhanh hơn.',
-      ],
-    },
+    description: 'Mô tả công việc',
+    requirements: 'Yêu cầu công việc',
+    benefits: 'Quyền lợi',
   },
   related: {
     title: 'Việc làm liên quan',
