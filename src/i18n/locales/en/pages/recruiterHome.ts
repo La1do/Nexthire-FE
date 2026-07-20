@@ -52,6 +52,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
       manageProfile: 'Manage profile',
       close: 'Close',
       submit: 'Submit verification',
+      submitLoading: 'Submitting...',
       cancel: 'Cancel',
     },
     form: {
@@ -71,6 +72,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
       descriptionPlaceholder: 'Describe your industry, scale, and hiring highlights.',
       documentsTitle: 'Verification documents',
       documentsDescription: 'Choose documents you will attach once the upload API is connected to this form.',
+      submitError: 'Could not save the company profile. Please try again.',
       documentOptions: [
         {
           id: 'business-license',
@@ -108,8 +110,32 @@ export const recruiterHome: RecruiterHomeTranslations = {
     primaryAction: 'Post a job',
     secondaryAction: 'View new candidates',
   },
+  states: {
+    loading: 'Loading recruiting data...',
+    errorTitle: 'Could not load the dashboard',
+    errorDescription: 'Check your connection or sign in again with a recruiter account, then retry.',
+    retry: 'Retry',
+  },
   stats: {
     title: 'Recruiting metrics',
+    cards: {
+      activeJobs: {
+        label: 'Active jobs',
+        delta: 'Visible publicly',
+      },
+      pendingJobs: {
+        label: 'Pending review',
+        delta: 'Needs tracking',
+      },
+      newApplications: {
+        label: 'New candidates',
+        delta: 'Waiting for response',
+      },
+      responseRate: {
+        label: 'Response rate',
+        delta: 'Applications handled',
+      },
+    },
   },
   quickActions: {
     title: 'Quick actions',
@@ -118,11 +144,25 @@ export const recruiterHome: RecruiterHomeTranslations = {
   pipeline: {
     title: 'Job pipeline',
     description: 'Draft, pending, active, and paused job posts at a glance.',
+    items: {
+      draft: 'Draft',
+      pending: 'Pending',
+      active: 'Active',
+      paused: 'Paused',
+    },
   },
   applications: {
     title: 'New candidates',
     description: 'Profiles that should be reviewed and answered soon.',
     viewAll: 'View all',
+    empty: 'No new candidates yet.',
+    statusLabels: {
+      SUBMITTED: 'New application',
+      OFFERED: 'Moved forward',
+      REJECTED: 'Rejected',
+      WITHDRAWN: 'Withdrawn',
+      CANCELLED: 'Cancelled',
+    },
   },
   performance: {
     title: 'This week performance',
@@ -132,5 +172,20 @@ export const recruiterHome: RecruiterHomeTranslations = {
   tasks: {
     title: 'To-dos',
     description: 'Important items to keep job posts and candidates moving.',
+    empty: 'No urgent items right now.',
+    items: {
+      verifyCompany: {
+        label: 'Verify company',
+        description: 'Complete verification to unlock job posting and candidate review.',
+      },
+      pendingJobs: {
+        label: 'Track pending jobs',
+        description: '{count} job posts are waiting for admin review.',
+      },
+      replyCandidates: {
+        label: 'Reply to candidates',
+        description: '{count} new candidates need a response.',
+      },
+    },
   },
 }

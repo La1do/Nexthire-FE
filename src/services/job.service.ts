@@ -7,6 +7,8 @@ import type {
   PublicHomeStats,
   PublicJobDetail,
   PublicJobListItem,
+  RecruiterJobListQuery,
+  RecruiterJobResponse,
 } from '../types/job.types'
 
 export const jobService = {
@@ -34,5 +36,9 @@ export const jobService = {
   async getHomeStats() {
     const response = await apiClient.get<Envelope<PublicHomeStats>>('/jobs/home/stats')
     return response.data.data
+  },
+  async getRecruiterJobs(params?: RecruiterJobListQuery) {
+    const response = await apiClient.get<ListEnvelope<RecruiterJobResponse>>('/recruiter/jobs', { params })
+    return response.data
   },
 }

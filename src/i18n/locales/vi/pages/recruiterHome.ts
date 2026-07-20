@@ -52,6 +52,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
       manageProfile: 'Quản lý hồ sơ',
       close: 'Đóng',
       submit: 'Gửi hồ sơ xác thực',
+      submitLoading: 'Đang gửi...',
       cancel: 'Hủy',
     },
     form: {
@@ -71,6 +72,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
       descriptionPlaceholder: 'Mô tả lĩnh vực, quy mô và điểm nổi bật của công ty.',
       documentsTitle: 'Tài liệu xác minh',
       documentsDescription: 'Chọn các tài liệu bạn sẽ gửi kèm khi API upload tài liệu được nối vào form.',
+      submitError: 'Chưa thể lưu hồ sơ công ty. Vui lòng thử lại.',
       documentOptions: [
         {
           id: 'business-license',
@@ -108,8 +110,32 @@ export const recruiterHome: RecruiterHomeTranslations = {
     primaryAction: 'Đăng tin tuyển dụng',
     secondaryAction: 'Xem ứng viên mới',
   },
+  states: {
+    loading: 'Đang tải dữ liệu tuyển dụng...',
+    errorTitle: 'Chưa tải được dashboard',
+    errorDescription: 'Kiểm tra kết nối hoặc đăng nhập lại bằng tài khoản nhà tuyển dụng rồi thử lần nữa.',
+    retry: 'Tải lại',
+  },
   stats: {
     title: 'Chỉ số tuyển dụng',
+    cards: {
+      activeJobs: {
+        label: 'Tin đang tuyển',
+        delta: 'Đang hiển thị công khai',
+      },
+      pendingJobs: {
+        label: 'Chờ duyệt',
+        delta: 'Cần theo dõi',
+      },
+      newApplications: {
+        label: 'Ứng viên mới',
+        delta: 'Đang chờ phản hồi',
+      },
+      responseRate: {
+        label: 'Tỷ lệ phản hồi',
+        delta: 'Đã xử lý hồ sơ',
+      },
+    },
   },
   quickActions: {
     title: 'Thao tác nhanh',
@@ -118,11 +144,25 @@ export const recruiterHome: RecruiterHomeTranslations = {
   pipeline: {
     title: 'Pipeline tin tuyển dụng',
     description: 'Tình trạng các tin đang soạn, chờ duyệt và đang tuyển.',
+    items: {
+      draft: 'Nháp',
+      pending: 'Chờ duyệt',
+      active: 'Đang tuyển',
+      paused: 'Tạm dừng',
+    },
   },
   applications: {
     title: 'Ứng viên mới',
     description: 'Các hồ sơ cần được xem và phản hồi sớm.',
     viewAll: 'Xem tất cả',
+    empty: 'Chưa có ứng viên mới.',
+    statusLabels: {
+      SUBMITTED: 'Mới ứng tuyển',
+      OFFERED: 'Đã mời bước tiếp',
+      REJECTED: 'Đã từ chối',
+      WITHDRAWN: 'Ứng viên đã rút',
+      CANCELLED: 'Đã hủy',
+    },
   },
   performance: {
     title: 'Hiệu suất tuần này',
@@ -132,5 +172,20 @@ export const recruiterHome: RecruiterHomeTranslations = {
   tasks: {
     title: 'Việc cần làm',
     description: 'Các điểm cần xử lý để không bỏ lỡ ứng viên và tin đăng.',
+    empty: 'Không có việc gấp cần xử lý.',
+    items: {
+      verifyCompany: {
+        label: 'Xác thực công ty',
+        description: 'Hoàn tất xác thực để mở khóa đăng tin và xem ứng viên.',
+      },
+      pendingJobs: {
+        label: 'Theo dõi tin chờ duyệt',
+        description: 'Có {count} tin đang chờ admin duyệt.',
+      },
+      replyCandidates: {
+        label: 'Phản hồi ứng viên',
+        description: 'Có {count} ứng viên mới cần được xử lý.',
+      },
+    },
   },
 }

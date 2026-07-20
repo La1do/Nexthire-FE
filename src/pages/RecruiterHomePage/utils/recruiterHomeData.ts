@@ -34,20 +34,20 @@ export const recruiterQuickActions: ReadonlyArray<RecruiterQuickAction> = [
     id: 'postJob',
     description: 'Tao tin tuyen dung moi va gui duyet nhanh.',
     disabledWhenUnverified: true,
-    href: '/',
+    href: '/recruiter/jobs',
     label: 'Dang tin moi',
   },
   {
     id: 'reviewCandidates',
     description: 'Loc ung vien moi theo diem phu hop.',
     disabledWhenUnverified: true,
-    href: '/',
+    href: '/recruiter/candidates',
     label: 'Xem ung vien',
   },
   {
     id: 'companyProfile',
     description: 'Cap nhat ho so, logo va tai lieu xac minh.',
-    href: '/',
+    href: '/recruiter/company',
     label: 'Ho so cong ty',
   },
 ]
@@ -66,6 +66,7 @@ export const recruiterApplications: ReadonlyArray<RecruiterApplication> = [
     role: 'Senior Frontend Engineer',
     score: '92%',
     stage: 'Moi ung tuyen',
+    status: 'SUBMITTED',
     submittedAt: 'Hom nay',
   },
   {
@@ -74,6 +75,7 @@ export const recruiterApplications: ReadonlyArray<RecruiterApplication> = [
     role: 'Backend Engineer',
     score: '86%',
     stage: 'Cho phong van',
+    status: 'OFFERED',
     submittedAt: 'Hom qua',
   },
   {
@@ -82,6 +84,7 @@ export const recruiterApplications: ReadonlyArray<RecruiterApplication> = [
     role: 'Product Designer',
     score: '78%',
     stage: 'Can phan hoi',
+    status: 'SUBMITTED',
     submittedAt: '2 ngay truoc',
   },
 ]

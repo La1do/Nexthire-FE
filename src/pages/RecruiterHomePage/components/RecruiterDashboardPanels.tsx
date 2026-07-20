@@ -118,22 +118,26 @@ export function RecruiterApplications({ applications, translations }: RecruiterA
           <h2>{translations.title}</h2>
           <p>{translations.description}</p>
         </div>
-        <a href="/">{translations.viewAll}</a>
+        <a href="/recruiter/candidates">{translations.viewAll}</a>
       </div>
-      <div className="recruiter-application-list">
-        {applications.map((application) => (
-          <article className="recruiter-application-card" key={application.id}>
-            <span aria-hidden="true">{application.candidateName.slice(0, 2).toUpperCase()}</span>
-            <div>
-              <strong>{application.candidateName}</strong>
-              <small>{application.role}</small>
-            </div>
-            <em>{application.score}</em>
-            <p>{application.stage}</p>
-            <time>{application.submittedAt}</time>
-          </article>
-        ))}
-      </div>
+      {applications.length ? (
+        <div className="recruiter-application-list">
+          {applications.map((application) => (
+            <article className="recruiter-application-card" key={application.id}>
+              <span aria-hidden="true">{application.candidateName.slice(0, 2).toUpperCase()}</span>
+              <div>
+                <strong>{application.candidateName}</strong>
+                <small>{application.role}</small>
+              </div>
+              <em>{application.score}</em>
+              <p>{application.stage}</p>
+              <time>{application.submittedAt}</time>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="recruiter-panel-empty">{translations.empty}</p>
+      )}
     </section>
   )
 }
@@ -155,7 +159,7 @@ export function RecruiterPerformance({ points, translations }: RecruiterPerforma
       <div className="recruiter-performance-chart">
         {points.map((point) => (
           <div key={point.id}>
-            <span aria-label={`${point.value} ${translations.applicationsLabel}`} style={{ height: `${point.value}%` }} />
+            <span aria-label={`${point.count ?? point.value} ${translations.applicationsLabel}`} style={{ height: `${point.value}%` }} />
             <small>{point.label}</small>
           </div>
         ))}
@@ -178,17 +182,21 @@ export function RecruiterTasks({ tasks, translations }: RecruiterTasksProps) {
           <p>{translations.description}</p>
         </div>
       </div>
-      <div className="recruiter-task-list">
-        {tasks.map((task) => (
-          <article className={`recruiter-task-card recruiter-task-card--${task.tone}`} key={task.id}>
-            <span aria-hidden="true" />
-            <div>
-              <strong>{task.label}</strong>
-              <small>{task.description}</small>
-            </div>
-          </article>
-        ))}
-      </div>
+      {tasks.length ? (
+        <div className="recruiter-task-list">
+          {tasks.map((task) => (
+            <article className={`recruiter-task-card recruiter-task-card--${task.tone}`} key={task.id}>
+              <span aria-hidden="true" />
+              <div>
+                <strong>{task.label}</strong>
+                <small>{task.description}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="recruiter-panel-empty">{translations.empty}</p>
+      )}
     </section>
   )
 }

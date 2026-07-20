@@ -3,6 +3,18 @@
 export type JobType = 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERNSHIP' | 'FREELANCE'
 export type JobWorkingType = 'ONSITE' | 'REMOTE' | 'HYBRID'
 export type JobExperienceLevel = 'INTERN' | 'FRESHER' | 'JUNIOR' | 'MIDDLE' | 'SENIOR' | 'LEAD'
+export type JobStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'NEEDS_REVIEW'
+  | 'SHOULD_REJECT'
+  | 'PUBLISHED'
+  | 'UNPUBLISHED'
+  | 'REJECTED'
+  | 'CLOSED'
+  | 'EXPIRED'
+export type JobModerationDecision = 'PENDING_REVIEW' | 'NEEDS_REVIEW' | 'SHOULD_REJECT'
+export type JobModerationRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 
 export type ApiMeta = {
   page: number
@@ -93,4 +105,26 @@ export type JobListQuery = {
   salaryMin?: number
   salaryMax?: number
   sort?: 'relevance' | 'latest' | 'deadline_asc' | 'salary_desc' | 'salary_asc'
+}
+
+export type RecruiterJobResponse = PublicJobDetail & {
+  status: JobStatus
+  version: number
+  applicationCount: number
+  closedAt: string | null
+  reviewedAt: string | null
+  reviewReason: string | null
+  unpublishedAt: string | null
+  unpublishReason: string | null
+  moderation: {
+    riskScore: number | null
+    riskLevel: JobModerationRiskLevel | null
+    decision: JobModerationDecision | null
+    reasons: string[]
+    matchedRules: string[]
+  }
+}
+
+export type RecruiterJobListQuery = JobListQuery & {
+  status?: JobStatus
 }

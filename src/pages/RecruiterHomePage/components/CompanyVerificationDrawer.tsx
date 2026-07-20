@@ -7,15 +7,19 @@ import type { CompanyVerificationFormValues } from '../types'
 
 type CompanyVerificationDrawerProps = {
   initialValues: CompanyVerificationFormValues
+  isSubmitting?: boolean
   onClose: () => void
   onSubmit: (values: CompanyVerificationFormValues) => void
+  submitError?: string
   translations: RecruiterHomeTranslations['verification']
 }
 
 export function CompanyVerificationDrawer({
   initialValues,
+  isSubmitting = false,
   onClose,
   onSubmit,
+  submitError,
   translations,
 }: CompanyVerificationDrawerProps) {
   const drawerRef = useRef<HTMLDivElement | null>(null)
@@ -173,10 +177,17 @@ export function CompanyVerificationDrawer({
           </fieldset>
 
           <div className="company-verification-form__actions">
-            <Button onClick={onClose} variant="secondary">
+            {submitError ? (
+              <p className="company-verification-form__submit-error" role="alert">
+                {submitError}
+              </p>
+            ) : null}
+            <Button disabled={isSubmitting} onClick={onClose} variant="secondary">
               {translations.actions.cancel}
             </Button>
-            <Button type="submit">{translations.actions.submit}</Button>
+            <Button disabled={isSubmitting} type="submit">
+              {isSubmitting ? translations.actions.submitLoading : translations.actions.submit}
+            </Button>
           </div>
         </form>
       </div>

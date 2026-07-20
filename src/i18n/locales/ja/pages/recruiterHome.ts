@@ -52,6 +52,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
       manageProfile: 'プロフィール管理',
       close: '閉じる',
       submit: '認証を送信',
+      submitLoading: '送信中...',
       cancel: 'キャンセル',
     },
     form: {
@@ -71,6 +72,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
       descriptionPlaceholder: '事業領域、規模、採用の特徴を入力してください。',
       documentsTitle: '確認書類',
       documentsDescription: 'アップロードAPI接続後に添付する書類を選択してください。',
+      submitError: '会社プロフィールを保存できませんでした。もう一度お試しください。',
       documentOptions: [
         {
           id: 'business-license',
@@ -108,8 +110,32 @@ export const recruiterHome: RecruiterHomeTranslations = {
     primaryAction: '求人を掲載',
     secondaryAction: '新着候補者を見る',
   },
+  states: {
+    loading: '採用データを読み込み中...',
+    errorTitle: 'ダッシュボードを読み込めませんでした',
+    errorDescription: '接続を確認するか、採用担当者アカウントで再ログインしてから再試行してください。',
+    retry: '再読み込み',
+  },
   stats: {
     title: '採用指標',
+    cards: {
+      activeJobs: {
+        label: '公開中の求人',
+        delta: '公開表示中',
+      },
+      pendingJobs: {
+        label: '審査待ち',
+        delta: '確認が必要',
+      },
+      newApplications: {
+        label: '新しい候補者',
+        delta: '返信待ち',
+      },
+      responseRate: {
+        label: '返信率',
+        delta: '処理済み応募',
+      },
+    },
   },
   quickActions: {
     title: 'クイック操作',
@@ -118,11 +144,25 @@ export const recruiterHome: RecruiterHomeTranslations = {
   pipeline: {
     title: '求人パイプライン',
     description: '下書き、審査待ち、公開中、一時停止中の求人を確認できます。',
+    items: {
+      draft: '下書き',
+      pending: '審査待ち',
+      active: '公開中',
+      paused: '一時停止',
+    },
   },
   applications: {
     title: '新着候補者',
     description: '早めに確認と返信が必要なプロフィールです。',
     viewAll: 'すべて見る',
+    empty: '新しい候補者はまだいません。',
+    statusLabels: {
+      SUBMITTED: '新規応募',
+      OFFERED: '次へ進行',
+      REJECTED: '不採用',
+      WITHDRAWN: '辞退',
+      CANCELLED: 'キャンセル',
+    },
   },
   performance: {
     title: '今週の成果',
@@ -132,5 +172,20 @@ export const recruiterHome: RecruiterHomeTranslations = {
   tasks: {
     title: 'やること',
     description: '求人と候補者対応を止めないための重要項目です。',
+    empty: '今すぐ対応が必要な項目はありません。',
+    items: {
+      verifyCompany: {
+        label: '会社確認',
+        description: '確認を完了して求人投稿と候補者確認を有効にしてください。',
+      },
+      pendingJobs: {
+        label: '審査待ち求人を確認',
+        description: '{count}件の求人が管理者審査を待っています。',
+      },
+      replyCandidates: {
+        label: '候補者へ返信',
+        description: '{count}人の新しい候補者に返信が必要です。',
+      },
+    },
   },
 }

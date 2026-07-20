@@ -822,6 +822,7 @@ export type RecruiterHomeTranslations = {
       manageProfile: string
       close: string
       submit: string
+      submitLoading: string
       cancel: string
     }
     form: {
@@ -841,6 +842,7 @@ export type RecruiterHomeTranslations = {
       descriptionPlaceholder: string
       documentsTitle: string
       documentsDescription: string
+      submitError: string
       documentOptions: ReadonlyArray<{
         id: string
         label: string
@@ -866,8 +868,32 @@ export type RecruiterHomeTranslations = {
     primaryAction: string
     secondaryAction: string
   }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+  }
   stats: {
     title: string
+    cards: {
+      activeJobs: {
+        label: string
+        delta: string
+      }
+      pendingJobs: {
+        label: string
+        delta: string
+      }
+      newApplications: {
+        label: string
+        delta: string
+      }
+      responseRate: {
+        label: string
+        delta: string
+      }
+    }
   }
   quickActions: {
     title: string
@@ -876,11 +902,19 @@ export type RecruiterHomeTranslations = {
   pipeline: {
     title: string
     description: string
+    items: {
+      draft: string
+      pending: string
+      active: string
+      paused: string
+    }
   }
   applications: {
     title: string
     description: string
     viewAll: string
+    empty: string
+    statusLabels: Record<'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'WITHDRAWN' | 'CANCELLED', string>
   }
   performance: {
     title: string
@@ -890,6 +924,21 @@ export type RecruiterHomeTranslations = {
   tasks: {
     title: string
     description: string
+    empty: string
+    items: {
+      verifyCompany: {
+        label: string
+        description: string
+      }
+      pendingJobs: {
+        label: string
+        description: string
+      }
+      replyCandidates: {
+        label: string
+        description: string
+      }
+    }
   }
 }
 

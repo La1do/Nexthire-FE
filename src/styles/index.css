@@ -7471,6 +7471,32 @@ select {
   flex: 0 0 auto;
 }
 
+.recruiter-dashboard-state {
+  align-content: start;
+  min-height: 12rem;
+}
+
+.recruiter-dashboard-state h2 {
+  color: var(--color-text-primary);
+  font-size: 1.2rem;
+  font-weight: 950;
+}
+
+.recruiter-dashboard-state p,
+.recruiter-panel-empty {
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.recruiter-panel-empty {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  font-weight: 850;
+  margin: 0;
+  padding: 1rem;
+}
+
 .recruiter-stat-grid {
   display: grid;
   gap: 0.85rem;
@@ -7970,10 +7996,21 @@ select {
 }
 
 .company-verification-form__actions {
+  align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: end;
   padding-top: 0.5rem;
+}
+
+.company-verification-form__submit-error {
+  color: var(--color-text-danger);
+  flex: 1 1 100%;
+  font-size: 0.9rem;
+  font-weight: 850;
+  margin: 0;
+  text-align: right;
 }
 
 @keyframes recruiter-panel-enter {
