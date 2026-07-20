@@ -56,8 +56,10 @@ export function ProfileApplicationsPage() {
           <ApplicationList
             actions={content.actions}
             applications={filteredApplications}
+            cvPreview={content.cvPreview}
             formatDate={formatDate}
             meta={content.meta}
+            profile={pages.profile.profile}
             statusLabels={content.statusLabels}
           />
         ) : (

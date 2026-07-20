@@ -4161,11 +4161,12 @@ select {
   font-weight: 900;
 }
 
-.profile-application-cv-inline strong {
+.profile-application-cv-link {
   background: var(--color-surface-muted);
   border: 1px solid var(--color-border-subtle);
   border-radius: 999px;
   color: var(--color-text-secondary);
+  cursor: pointer;
   display: inline-flex;
   font-size: 0.8rem;
   font-weight: 950;
@@ -4173,6 +4174,224 @@ select {
   min-width: 0;
   overflow-wrap: anywhere;
   padding: 0.28rem 0.62rem;
+  transition:
+    border-color 160ms var(--motion-ease-standard),
+    color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.profile-application-cv-link:hover,
+.profile-application-cv-link:focus-visible {
+  border-color: var(--color-border-brand-soft);
+  color: var(--color-brand-solid);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.profile-application-cv-backdrop {
+  align-items: center;
+  background: rgba(17, 24, 39, 0.48);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  position: fixed;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+}
+
+.profile-application-cv-modal {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.22);
+  display: grid;
+  max-height: min(88dvh, 58rem);
+  max-width: 58rem;
+  overflow: hidden;
+  width: min(100%, 58rem);
+}
+
+.profile-application-cv-modal-header {
+  align-items: start;
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: clamp(1rem, 3vw, 1.25rem);
+}
+
+.profile-application-cv-modal-header span {
+  color: var(--color-brand-solid);
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.profile-application-cv-modal-header h2 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.1rem, 3vw, 1.35rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  margin-top: 0.18rem;
+  overflow-wrap: anywhere;
+}
+
+.profile-application-cv-modal-header p {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-top: 0.25rem;
+}
+
+.profile-application-cv-modal-close {
+  align-items: center;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.05rem;
+  font-weight: 950;
+  height: 2.3rem;
+  justify-content: center;
+  width: 2.3rem;
+}
+
+.profile-application-cv-modal-close:hover,
+.profile-application-cv-modal-close:focus-visible {
+  border-color: var(--color-border-brand-soft);
+  color: var(--color-brand-solid);
+  outline: none;
+}
+
+.profile-application-cv-document {
+  display: grid;
+  gap: 1rem;
+  overflow: auto;
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.profile-application-cv-document-hero {
+  align-items: center;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 1rem;
+}
+
+.profile-application-cv-document-hero > span {
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+  border-radius: 999px;
+  color: var(--color-text-inverse);
+  display: inline-flex;
+  font-size: 1.05rem;
+  font-weight: 950;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.profile-application-cv-document-hero h3 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1.12;
+}
+
+.profile-application-cv-document-hero p {
+  color: var(--color-text-muted);
+  font-weight: 850;
+  line-height: 1.45;
+  margin-top: 0.24rem;
+}
+
+.profile-application-cv-section {
+  border-top: 1px solid var(--color-border-subtle);
+  display: grid;
+  gap: 0.7rem;
+  padding-top: 1rem;
+}
+
+.profile-application-cv-section h4 {
+  color: var(--color-text-primary);
+  font-size: 0.92rem;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.profile-application-cv-section > p,
+.profile-application-cv-timeline p {
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.62;
+  margin: 0;
+}
+
+.profile-application-cv-contact {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+
+.profile-application-cv-contact div {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.profile-application-cv-contact dt,
+.profile-application-cv-timeline span {
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.profile-application-cv-contact dd {
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  font-weight: 900;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-application-cv-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.profile-application-cv-skills span {
+  background: var(--color-brand-soft);
+  border-radius: 999px;
+  color: var(--color-brand-solid);
+  font-size: 0.8rem;
+  font-weight: 900;
+  padding: 0.35rem 0.65rem;
+}
+
+.profile-application-cv-timeline {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.profile-application-cv-timeline div {
+  display: grid;
+  gap: 0.28rem;
+  min-width: 0;
+}
+
+.profile-application-cv-timeline strong {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-weight: 950;
+  overflow-wrap: anywhere;
 }
 
 .profile-application-status {
@@ -5001,6 +5220,25 @@ select {
 
   .profile-application-card-side dl {
     text-align: left;
+  }
+
+  .profile-application-cv-backdrop {
+    align-items: stretch;
+    padding: 0.75rem;
+  }
+
+  .profile-application-cv-modal {
+    max-height: calc(100dvh - 1.5rem);
+  }
+
+  .profile-application-cv-document-hero,
+  .profile-application-cv-contact {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-application-cv-document-hero > span {
+    height: 2.75rem;
+    width: 2.75rem;
   }
 
   .profile-skill-entry {

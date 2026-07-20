@@ -70,6 +70,21 @@ export const profile: ProfileTranslations = {
     actions: {
       viewJob: '求人を見る',
     },
+    cvPreview: {
+      open: '提出したCVを見る',
+      title: '提出したCV',
+      subtitle: 'この応募と一緒に送信されたCVです。',
+      close: 'CVプレビューを閉じる',
+      contact: '連絡先',
+      email: 'メール',
+      phone: '電話',
+      location: '所在地',
+      summary: '概要',
+      skills: 'スキル',
+      experience: '職務経験',
+      education: '学歴',
+      present: '現在',
+    },
     empty: {
       title: '一致する応募はありません',
       description: '別の状態を選ぶか、すべての応募に戻してください。',

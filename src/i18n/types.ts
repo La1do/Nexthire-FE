@@ -667,6 +667,21 @@ export type ProfileTranslations = {
     actions: {
       viewJob: string
     }
+    cvPreview: {
+      open: string
+      title: string
+      subtitle: string
+      close: string
+      contact: string
+      email: string
+      phone: string
+      location: string
+      summary: string
+      skills: string
+      experience: string
+      education: string
+      present: string
+    }
     empty: {
       title: string
       description: string

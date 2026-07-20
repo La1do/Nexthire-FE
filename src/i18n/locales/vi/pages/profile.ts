@@ -70,6 +70,21 @@ export const profile: ProfileTranslations = {
     actions: {
       viewJob: 'Xem việc làm',
     },
+    cvPreview: {
+      open: 'Xem CV đã nộp',
+      title: 'CV đã nộp',
+      subtitle: 'Đây là bản CV được gửi cùng đơn ứng tuyển này.',
+      close: 'Đóng bản xem trước CV',
+      contact: 'Thông tin liên hệ',
+      email: 'Email',
+      phone: 'Điện thoại',
+      location: 'Địa điểm',
+      summary: 'Giới thiệu',
+      skills: 'Kỹ năng',
+      experience: 'Kinh nghiệm',
+      education: 'Học vấn',
+      present: 'Hiện tại',
+    },
     empty: {
       title: 'Chưa có đơn phù hợp',
       description: 'Thử chọn trạng thái khác hoặc quay lại tất cả đơn ứng tuyển.',

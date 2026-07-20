@@ -70,6 +70,21 @@ export const profile: ProfileTranslations = {
     actions: {
       viewJob: 'View job',
     },
+    cvPreview: {
+      open: 'View submitted CV',
+      title: 'Submitted CV',
+      subtitle: 'This is the CV version submitted with this application.',
+      close: 'Close CV preview',
+      contact: 'Contact',
+      email: 'Email',
+      phone: 'Phone',
+      location: 'Location',
+      summary: 'Summary',
+      skills: 'Skills',
+      experience: 'Experience',
+      education: 'Education',
+      present: 'Present',
+    },
     empty: {
       title: 'No matching applications',
       description: 'Try another status or return to all applications.',

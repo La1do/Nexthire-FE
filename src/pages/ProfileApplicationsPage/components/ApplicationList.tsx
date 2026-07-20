@@ -5,16 +5,20 @@ import { ApplicationCard } from './ApplicationCard'
 type ApplicationListProps = {
   actions: ProfileTranslations['applications']['actions']
   applications: ReadonlyArray<CandidateApplication>
+  cvPreview: ProfileTranslations['applications']['cvPreview']
   formatDate: (value: string) => string
   meta: ProfileTranslations['applications']['meta']
+  profile: ProfileTranslations['profile']
   statusLabels: ProfileTranslations['applications']['statusLabels']
 }
 
 export function ApplicationList({
   actions,
   applications,
+  cvPreview,
   formatDate,
   meta,
+  profile,
   statusLabels,
 }: ApplicationListProps) {
   return (
@@ -23,9 +27,11 @@ export function ApplicationList({
         <ApplicationCard
           actions={actions}
           application={application}
+          cvPreview={cvPreview}
           formatDate={formatDate}
           key={application.id}
           meta={meta}
+          profile={profile}
           statusLabels={statusLabels}
         />
       ))}
