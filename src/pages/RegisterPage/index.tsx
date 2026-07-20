@@ -10,10 +10,12 @@ import { EmailSentState } from '../ForgotPasswordPage/components/EmailSentState'
 import { VerificationCodeForm } from '../ForgotPasswordPage/components/VerificationCodeForm'
 import { RegisterForm } from './components/RegisterForm'
 import type { ReactNode } from 'react'
-import type { AuthApiRole } from '../../lib/auth/authRole'
+import type { RegisterTranslations } from '../../i18n/types'
+import type { AuthApiRole, PublicAuthApiRole } from '../../lib/auth/authRole'
 import type { PendingRegistration } from './components/RegisterForm'
 
 type RegisterStep = 'form' | 'sent' | 'verify'
+type RegisterRole = PublicAuthApiRole
 
 const centeredSteps: ReadonlyArray<RegisterStep> = ['sent', 'verify']
 
@@ -35,12 +37,19 @@ function renderTemplateWithEmail(template: string, email: string) {
   )
 }
 
-export function RegisterPage() {
+type RegisterPageProps = {
+  role: RegisterRole
+}
+
+export function RegisterPage({ role }: RegisterPageProps) {
   const { common, pages } = useTranslations()
   const navigate = useNavigate()
   const { login } = useAuth()
   const register = pages.register
   const forgotPassword = pages.forgotPassword
+  const roleContent = role === 'RECRUITER' ? register.recruiter : register.candidate
+  const switchHref = role === 'RECRUITER' ? '/register' : '/recruiter/register'
+  const loginHref = role === 'RECRUITER' ? '/recruiter/login' : '/login'
   const [step, setStep] = useState<RegisterStep>('form')
   const [pendingRegistration, setPendingRegistration] = useState<PendingRegistration | null>(null)
   const [verifyError, setVerifyError] = useState<string | undefined>()
@@ -49,12 +58,12 @@ export function RegisterPage() {
   const visualByStep: Partial<Record<RegisterStep, ReactNode>> = {
     sent: <EmailSentIllustration />,
   }
-  const title = step === 'form' ? register.title : register.verification[step].title
+  const title = step === 'form' ? roleContent.title : register.verification[step].title
   const subtitle =
     step === 'sent' && pendingRegistration
       ? renderTemplateWithEmail(register.verification.sent.subtitle, pendingRegistration.email)
       : step === 'form'
-        ? register.subtitle
+        ? roleContent.subtitle
         : register.verification[step].subtitle
 
   const handleRegistered = (registration: PendingRegistration) => {
@@ -98,10 +107,18 @@ export function RegisterPage() {
       brandName={common.brandName}
       footer={
         <>
-          <span>{register.footer.prompt}</span>{' '}
-          <a className="font-bold text-[var(--color-brand-solid)] transition hover:opacity-80" href="/login">
-            {register.footer.action}
-          </a>
+          <p>
+            <span>{roleContent.loginPrompt}</span>{' '}
+            <a className="font-bold text-[var(--color-brand-solid)] transition hover:opacity-80" href={loginHref}>
+              {roleContent.loginAction}
+            </a>
+          </p>
+          <p className="mt-2">
+            <span>{roleContent.switchPrompt}</span>{' '}
+            <a className="font-bold text-[var(--color-brand-solid)] transition hover:opacity-80" href={switchHref}>
+              {roleContent.switchAction}
+            </a>
+          </p>
         </>
       }
       subtitle={subtitle}
@@ -110,7 +127,12 @@ export function RegisterPage() {
     >
       <div className="auth-step-motion" key={step}>
         {step === 'form' ? (
-          <RegisterForm apiErrors={common.apiErrors} onRegistered={handleRegistered} translations={register} />
+          <RegisterForm
+            apiErrors={common.apiErrors}
+            onRegistered={handleRegistered}
+            role={role}
+            translations={{ form: roleContent.form, validation: register.validation }}
+          />
         ) : null}
         {step === 'sent' ? (
           <EmailSentState
@@ -132,4 +154,12 @@ export function RegisterPage() {
   )
 }
 
-export default RegisterPage
+export function CandidateRegisterPage() {
+  return <RegisterPage role="CANDIDATE" />
+}
+
+export function RecruiterRegisterPage() {
+  return <RegisterPage role="RECRUITER" />
+}
+
+export default CandidateRegisterPage

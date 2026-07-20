@@ -95,32 +95,25 @@ export type LoginTranslations = {
 }
 
 export type RegisterTranslations = {
-  title: string
-  subtitle: string
-  form: {
-    roleLabel: string
-    roleOptions: ReadonlyArray<{
-      value: string
-      label: string
-    }>
-    fullNameLabel: string
-    fullNamePlaceholder: string
-    phoneLabel: string
-    phonePlaceholder: string
-    emailLabel: string
-    emailPlaceholder: string
-    passwordLabel: string
-    passwordPlaceholder: string
-    confirmPasswordLabel: string
-    confirmPasswordPlaceholder: string
-    showPassword: string
-    hidePassword: string
-    submit: string
-    submitLoading: string
+  candidate: {
+    routeLabel: string
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+    loginPrompt: string
+    loginAction: string
+    form: RegisterFormCopy
   }
-  footer: {
-    prompt: string
-    action: string
+  recruiter: {
+    routeLabel: string
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+    loginPrompt: string
+    loginAction: string
+    form: RegisterFormCopy
   }
   verification: {
     sent: {
@@ -145,6 +138,23 @@ export type RegisterTranslations = {
     confirmPasswordRequired: string
     passwordMismatch: string
   }
+}
+
+type RegisterFormCopy = {
+  fullNameLabel: string
+  fullNamePlaceholder: string
+  phoneLabel: string
+  phonePlaceholder: string
+  emailLabel: string
+  emailPlaceholder: string
+  passwordLabel: string
+  passwordPlaceholder: string
+  confirmPasswordLabel: string
+  confirmPasswordPlaceholder: string
+  showPassword: string
+  hidePassword: string
+  submit: string
+  submitLoading: string
 }
 
 export type ForgotPasswordTranslations = {

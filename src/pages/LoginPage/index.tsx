@@ -10,6 +10,8 @@ function LoginPageForRole({ role }: { role: LoginPageRole }) {
   const login = pages.login
   const roleContent = login[role]
   const switchHref = role === 'candidate' ? '/recruiter/login' : '/login'
+  const registerHref =
+    role === 'recruiter' ? '/recruiter/register' : role === 'candidate' ? '/register' : '/admin/users'
   const apiRoleByPageRole: Record<LoginPageRole, AuthApiRole> = {
     admin: 'ADMIN',
     candidate: 'CANDIDATE',
@@ -24,7 +26,7 @@ function LoginPageForRole({ role }: { role: LoginPageRole }) {
           {role === 'admin' ? null : (
             <p>
               <span>{login.footer.prompt}</span>{' '}
-              <a className="font-bold text-[var(--color-brand-solid)] transition hover:opacity-80" href="/register">
+              <a className="font-bold text-[var(--color-brand-solid)] transition hover:opacity-80" href={registerHref}>
                 {login.footer.action}
               </a>
             </p>

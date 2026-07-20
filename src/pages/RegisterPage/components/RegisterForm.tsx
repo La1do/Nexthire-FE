@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { Button, Input, PasswordInput, SegmentedControl } from '../../_components'
+import { Button, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
-import { isAuthFormRole, toAuthApiRole } from '../../../lib/auth/authRole'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, RegisterTranslations } from '../../../i18n/types'
 import type { AuthApiRole } from '../../../lib/auth/authRole'
@@ -15,10 +14,16 @@ export type PendingRegistration = {
   role: AuthApiRole
 }
 
+type RegisterFormRoleCopy = {
+  form: RegisterTranslations['candidate']['form']
+  validation: RegisterTranslations['validation']
+}
+
 type RegisterFormProps = {
   apiErrors: CommonTranslations['apiErrors']
   onRegistered: (registration: PendingRegistration) => void
-  translations: RegisterTranslations
+  role: AuthApiRole
+  translations: RegisterFormRoleCopy
 }
 
 const initialValues: RegisterFormValues = {
@@ -27,64 +32,45 @@ const initialValues: RegisterFormValues = {
   fullName: '',
   password: '',
   phone: '',
-  role: 'candidate',
 }
 
-export function RegisterForm({ apiErrors, onRegistered, translations }: RegisterFormProps) {
+export function RegisterForm({ apiErrors, onRegistered, role, translations }: RegisterFormProps) {
   const { form, validation } = translations
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
-  const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
-    useFormState<RegisterFormValues>({
-      initialValues,
-      onSubmit: async (formValues) => {
-        const role = toAuthApiRole(formValues.role)
-
-        setSubmitError(undefined)
-        setSubmitting(true)
-
-        try {
-          const email = formValues.email.trim()
-
-          await authService.register({
-            fullName: formValues.fullName.trim(),
-            phone: formValues.phone.trim(),
-            email,
-            password: formValues.password,
-            role,
-          })
-
-          onRegistered({
-            email,
-            password: formValues.password,
-            role,
-          })
-        } catch (error) {
-          setSubmitError(getApiErrorMessage(error, apiErrors))
-        } finally {
-          setSubmitting(false)
-        }
-      },
-      validate: (formValues) => validateRegisterForm(formValues, validation),
-    })
-
-  const handleRoleChange = (role: string) => {
-    if (isAuthFormRole(role)) {
+  const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, values } = useFormState<RegisterFormValues>({
+    initialValues,
+    onSubmit: async (formValues) => {
       setSubmitError(undefined)
-      setFieldValue('role', role)
-    }
-  }
+      setSubmitting(true)
+
+      try {
+        const email = formValues.email.trim()
+
+        await authService.register({
+          fullName: formValues.fullName.trim(),
+          phone: formValues.phone.trim(),
+          email,
+          password: formValues.password,
+          role,
+        })
+
+        onRegistered({
+          email,
+          password: formValues.password,
+          role,
+        })
+      } catch (error) {
+        setSubmitError(getApiErrorMessage(error, apiErrors))
+      } finally {
+        setSubmitting(false)
+      }
+    },
+    validate: (formValues) => validateRegisterForm(formValues, validation),
+  })
 
   return (
     <form className="auth-form-grid grid" noValidate onSubmit={handleSubmit}>
-      <SegmentedControl
-        label={form.roleLabel}
-        name="role"
-        onChange={handleRoleChange}
-        options={form.roleOptions}
-        value={values.role}
-      />
-
       <Input
         autoComplete="name"
         disabled={isSubmitting}

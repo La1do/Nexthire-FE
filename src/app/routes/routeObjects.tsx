@@ -13,7 +13,7 @@ import { JobDetailPage } from '../../pages/JobDetailPage'
 import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pages/LoginPage'
 import { ProfilePage } from '../../pages/ProfilePage'
 import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
-import { RegisterPage } from '../../pages/RegisterPage'
+import { CandidateRegisterPage, RecruiterRegisterPage } from '../../pages/RegisterPage'
 import { SearchPage } from '../../pages/SearchPage'
 import type { AppRoute } from './routeTypes'
 import type { Translations } from '../../i18n'
@@ -82,8 +82,14 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     },
     {
       path: '/register',
-      label: common.navigation.register,
-      element: <RegisterPage />,
+      label: pages.register.candidate.routeLabel,
+      element: <CandidateRegisterPage />,
+      layout: AuthLayout,
+    },
+    {
+      path: '/recruiter/register',
+      label: pages.register.recruiter.routeLabel,
+      element: <RecruiterRegisterPage />,
       layout: AuthLayout,
     },
     {
