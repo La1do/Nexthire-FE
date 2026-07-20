@@ -942,6 +942,197 @@ export type RecruiterHomeTranslations = {
   }
 }
 
+export type RecruiterJobCreateTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+    backAction: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    categoryFallback: string
+  }
+  gate: {
+    loadingTitle: string
+    loadingDescription: string
+    lockedBadge: string
+    noCompanyTitle: string
+    noCompanyDescription: string
+    pendingTitle: string
+    pendingDescription: string
+    rejectedTitle: string
+    rejectedDescription: string
+    suspendedTitle: string
+    suspendedDescription: string
+    manageCompany: string
+    openDashboard: string
+  }
+  form: {
+    sections: {
+      basics: {
+        title: string
+        description: string
+      }
+      details: {
+        title: string
+        description: string
+      }
+      content: {
+        title: string
+        description: string
+      }
+    }
+    fields: {
+      title: {
+        label: string
+        placeholder: string
+      }
+      category: {
+        label: string
+      }
+      employmentType: {
+        label: string
+      }
+      workingType: {
+        label: string
+      }
+      experienceLevel: {
+        label: string
+      }
+      location: {
+        label: string
+        placeholder: string
+      }
+      salaryMin: {
+        label: string
+        placeholder: string
+      }
+      salaryMax: {
+        label: string
+        placeholder: string
+      }
+      salaryCurrency: {
+        label: string
+      }
+      isSalaryVisible: {
+        label: string
+      }
+      deadline: {
+        label: string
+      }
+      numberOfOpenings: {
+        label: string
+        placeholder: string
+      }
+      skills: {
+        label: string
+        placeholder: string
+        add: string
+        removeLabel: string
+        empty: string
+      }
+      description: {
+        label: string
+        placeholder: string
+      }
+      requirements: {
+        label: string
+        placeholder: string
+      }
+      benefits: {
+        label: string
+        placeholder: string
+      }
+    }
+    options: {
+      noCategory: string
+      employmentTypes: Record<'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERNSHIP' | 'FREELANCE', string>
+      workingTypes: Record<'ONSITE' | 'REMOTE' | 'HYBRID', string>
+      experienceLevels: Record<'INTERN' | 'FRESHER' | 'JUNIOR' | 'MIDDLE' | 'SENIOR' | 'LEAD', string>
+      currencies: Record<'VND' | 'USD' | 'JPY', string>
+    }
+    actions: {
+      saveDraft: string
+      savingDraft: string
+      submitReview: string
+      submittingReview: string
+      reset: string
+    }
+    submitError: string
+    successDraft: string
+    successSubmit: string
+    successDescription: string
+    viewJobs: string
+    createAnother: string
+  }
+  preview: {
+    title: string
+    emptyTitle: string
+    emptyDescription: string
+    labels: {
+      category: string
+      location: string
+      salary: string
+      openings: string
+      deadline: string
+      employmentType: string
+      workingType: string
+      experienceLevel: string
+      skills: string
+      description: string
+      requirements: string
+      benefits: string
+      company: string
+    }
+    salaryHidden: string
+    salaryNegotiable: string
+    noDeadline: string
+    noBenefits: string
+    checklistTitle: string
+    checklistItems: {
+      basics: string
+      salary: string
+      skills: string
+      content: string
+      deadline: string
+    }
+  }
+  statusLabels: Record<
+    | 'DRAFT'
+    | 'PENDING_REVIEW'
+    | 'NEEDS_REVIEW'
+    | 'SHOULD_REJECT'
+    | 'PUBLISHED'
+    | 'UNPUBLISHED'
+    | 'REJECTED'
+    | 'CLOSED'
+    | 'EXPIRED',
+    string
+  >
+  validation: {
+    titleRequired: string
+    employmentTypeRequired: string
+    workingTypeRequired: string
+    experienceLevelRequired: string
+    locationRequired: string
+    skillsRequired: string
+    descriptionRequired: string
+    requirementsRequired: string
+    salaryMinInvalid: string
+    salaryMaxInvalid: string
+    salaryRangeInvalid: string
+    openingsInvalid: string
+    deadlineInvalid: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -954,6 +1145,7 @@ export type Translations = {
     jobDetail: JobDetailTranslations
     login: LoginTranslations
     profile: ProfileTranslations
+    recruiterJobCreate: RecruiterJobCreateTranslations
     recruiterHome: RecruiterHomeTranslations
     register: RegisterTranslations
     search: SearchTranslations

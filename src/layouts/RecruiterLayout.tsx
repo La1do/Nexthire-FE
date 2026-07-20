@@ -41,6 +41,7 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
   const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
+  const topbarContent = currentPath.startsWith('/recruiter/jobs/new') ? pages.recruiterJobCreate : content
   const displayName = user ? getAuthUserDisplayName(user) : common.brandName
   const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
   const navItems = [
@@ -99,7 +100,10 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
 
           <nav aria-label={content.routeLabel} className="recruiter-sidebar__nav">
             {navItems.map((item) => {
-              const isActive = item.href === '/recruiter' && currentPath.startsWith('/recruiter')
+              const isActive =
+                item.href === '/recruiter'
+                  ? currentPath === item.href
+                  : currentPath.startsWith(item.href)
 
               return (
                 <a
@@ -151,8 +155,8 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
           </button>
 
           <div className="recruiter-topbar__heading">
-            <h1>{content.pageTitle}</h1>
-            <p>{content.pageSubtitle}</p>
+            <h1>{topbarContent.pageTitle}</h1>
+            <p>{topbarContent.pageSubtitle}</p>
           </div>
 
           <label className="recruiter-topbar__search">

@@ -34,7 +34,7 @@ export const recruiterQuickActions: ReadonlyArray<RecruiterQuickAction> = [
     id: 'postJob',
     description: 'Tao tin tuyen dung moi va gui duyet nhanh.',
     disabledWhenUnverified: true,
-    href: '/recruiter/jobs',
+    href: '/recruiter/jobs/new',
     label: 'Dang tin moi',
   },
   {

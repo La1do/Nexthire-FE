@@ -128,3 +128,22 @@ export type RecruiterJobResponse = PublicJobDetail & {
 export type RecruiterJobListQuery = JobListQuery & {
   status?: JobStatus
 }
+
+export type CreateRecruiterJobPayload = {
+  title: string
+  description: string
+  requirements: string
+  skills: string[]
+  benefits?: string | null
+  categoryId?: string | null
+  employmentType: JobType
+  workingType: JobWorkingType
+  experienceLevel: JobExperienceLevel
+  location: string
+  salaryMin?: number | null
+  salaryMax?: number | null
+  salaryCurrency?: string
+  isSalaryVisible?: boolean
+  deadline?: string | null
+  numberOfOpenings?: number | null
+}

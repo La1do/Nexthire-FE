@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { companyService } from '../../services/company.service'
@@ -40,6 +41,7 @@ function createCompanyPayload(values: CompanyVerificationFormValues): CreateComp
 export function RecruiterHomePage() {
   const { pages } = useTranslations()
   const content = pages.recruiterHome
+  const navigate = useNavigate()
   const { data, error, loading, refresh } = useRecruiterDashboardData()
   const [isVerificationOpen, setVerificationOpen] = useState(false)
   const [isCompanySubmitting, setCompanySubmitting] = useState(false)
@@ -106,8 +108,12 @@ export function RecruiterHomePage() {
           <p>{content.hero.description}</p>
         </div>
         <div className="recruiter-hero__actions">
-          <Button disabled={!isVerified}>{content.hero.primaryAction}</Button>
-          <Button variant="secondary">{content.hero.secondaryAction}</Button>
+          <Button disabled={!isVerified} onClick={() => navigate('/recruiter/jobs/new')}>
+            {content.hero.primaryAction}
+          </Button>
+          <Button onClick={() => navigate('/recruiter/candidates')} variant="secondary">
+            {content.hero.secondaryAction}
+          </Button>
         </div>
       </section>
 

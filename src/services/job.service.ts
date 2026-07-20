@@ -1,5 +1,6 @@
 import { apiClient } from '../lib/api'
 import type {
+  CreateRecruiterJobPayload,
   Envelope,
   JobListQuery,
   ListEnvelope,
@@ -40,5 +41,13 @@ export const jobService = {
   async getRecruiterJobs(params?: RecruiterJobListQuery) {
     const response = await apiClient.get<ListEnvelope<RecruiterJobResponse>>('/recruiter/jobs', { params })
     return response.data
+  },
+  async createRecruiterJob(payload: CreateRecruiterJobPayload) {
+    const response = await apiClient.post<Envelope<RecruiterJobResponse>>('/recruiter/jobs', payload)
+    return response.data.data
+  },
+  async submitRecruiterJob(id: string) {
+    const response = await apiClient.post<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}/submit`)
+    return response.data.data
   },
 }
