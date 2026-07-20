@@ -17,7 +17,8 @@ import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RegisterPage } from '../../pages/RegisterPage'
 import { SearchPage } from '../../pages/SearchPage'
 import type { AppRoute } from './routeTypes'
-
+import { CvTemplatesPage } from './../../pages/CvTemplatesPage'
+import { CvBuilderPage } from '../../pages/CvBuilderPage'
 const { common, pages } = getTranslations()
 
 export const routes: AppRoute[] = [
@@ -38,6 +39,18 @@ export const routes: AppRoute[] = [
     label: pages.search.routeLabel,
     element: <SearchPage />,
     layout: MainLayout,
+  },
+  {
+    path: '/cv-templates',
+    label: 'CV Templates',
+    element: <CvTemplatesPage />,
+    layout: MainLayout,
+  },
+  {
+  path: '/cv-builder/:templateId',
+  label: 'CV Builder',
+  element: <CvBuilderPage />,
+  layout: MainLayout,
   },
   {
     path: '/jobs/:slug',
