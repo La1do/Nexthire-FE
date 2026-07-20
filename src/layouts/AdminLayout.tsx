@@ -112,7 +112,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
           </a>
 
           <nav aria-label="Admin sections" className="admin-sidebar__nav">
-            <a className="admin-sidebar__link" href="/" tabIndex={sidebarOpen ? undefined : -1}>
+            <a className="admin-sidebar__link" href="/admin/dashboard" tabIndex={sidebarOpen ? undefined : -1}>
               {content.sidebar.dashboard}
             </a>
             <a
@@ -131,10 +131,10 @@ export function AdminLayout({ children }: PropsWithChildren) {
             >
               {common.navigation.companies}
             </a>
-            <a className="admin-sidebar__link" href="/" tabIndex={sidebarOpen ? undefined : -1}>
+            <a className="admin-sidebar__link" href="/admin/jobs" tabIndex={sidebarOpen ? undefined : -1}>
               {content.sidebar.jobs}
             </a>
-            <a className="admin-sidebar__link" href="/" tabIndex={sidebarOpen ? undefined : -1}>
+            <a className="admin-sidebar__link" href="/admin/settings" tabIndex={sidebarOpen ? undefined : -1}>
               {content.sidebar.settings}
             </a>
           </nav>

@@ -21,7 +21,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
     { href: '/search', label: profile.sidebar.searchJobs },
     { href: '/profile/applications', label: profile.sidebar.applications },
     { href: '/profile', label: profile.sidebar.profile },
-    { href: '/', label: profile.sidebar.messages },
+    { href: '/profile/messages', label: profile.sidebar.messages },
   ]
   const pageTitle = pathname === '/profile/applications' ? profile.applications.pageTitle : profile.pageTitle
 

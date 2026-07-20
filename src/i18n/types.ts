@@ -883,6 +883,7 @@ export type Translations = {
   pages: {
     adminCompanies: AdminCompaniesTranslations
     adminUsers: AdminUsersTranslations
+    comingSoon: ComingSoonTranslations
     companyDetail: CompanyDetailTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations
@@ -893,4 +894,33 @@ export type Translations = {
     register: RegisterTranslations
     search: SearchTranslations
   }
+}
+
+export type ComingSoonPageKey =
+  | 'adminDashboard'
+  | 'adminJobs'
+  | 'adminSettings'
+  | 'careerGuide'
+  | 'companies'
+  | 'profileMessages'
+  | 'recruiterCandidates'
+  | 'recruiterCompany'
+  | 'recruiterJobs'
+  | 'recruiterMessages'
+  | 'recruiterSettings'
+
+export type ComingSoonTranslations = {
+  badge: string
+  title: string
+  description: string
+  backAction: string
+  pages: Record<
+    ComingSoonPageKey,
+    {
+      title: string
+      description: string
+      backHref: string
+      backLabel: string
+    }
+  >
 }

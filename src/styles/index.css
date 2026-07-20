@@ -7909,3 +7909,109 @@ select {
     grid-template-columns: 1fr;
   }
 }
+
+.coming-soon-page {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 3rem 1.25rem;
+}
+
+.coming-soon-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+  max-width: 36rem;
+  padding: 2.5rem 2rem;
+  text-align: left;
+  width: 100%;
+}
+
+.coming-soon-badge {
+  align-items: center;
+  background: var(--color-brand-soft);
+  border-radius: 999px;
+  color: var(--color-brand-solid);
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.85rem;
+  text-transform: uppercase;
+}
+
+.coming-soon-title {
+  color: var(--color-text-primary);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.coming-soon-description {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.coming-soon-detail {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.coming-soon-action {
+  align-items: center;
+  background: var(--color-brand-solid);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.25rem;
+  text-decoration: none;
+  transition: opacity 0.2s var(--motion-ease-standard);
+}
+
+.coming-soon-action:hover {
+  opacity: 0.9;
+}
+
+.coming-soon-motion {
+  animation: coming-soon-rise 0.45s var(--motion-ease-out);
+}
+
+@keyframes coming-soon-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 560px) {
+  .coming-soon-page {
+    min-height: 50vh;
+    padding: 2rem 1rem;
+  }
+
+  .coming-soon-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .coming-soon-title {
+    font-size: 1.45rem;
+  }
+}

@@ -184,13 +184,13 @@ export function MainLayout({ children }: PropsWithChildren) {
             {common.brandName}
           </a>
           <nav className="main-nav">
-            <a href="/">
+            <a href="/search">
               {common.navigation.jobs}
             </a>
-            <a href="/">
+            <a href="/companies">
               {common.navigation.companies}
             </a>
-            <a href="/">
+            <a href="/career-guide">
               {common.navigation.guide}
             </a>
           </nav>

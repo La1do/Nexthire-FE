@@ -6,6 +6,7 @@ import { RecruiterLayout } from '../../layouts/RecruiterLayout'
 import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
+import { ComingSoonPage } from '../../pages/ComingSoonPage'
 import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
 import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
 import { HomePage } from '../../pages/HomePage'
@@ -20,6 +21,7 @@ import type { AppRoute } from './routeTypes'
 import type { Translations } from '../../i18n'
 
 export function getRoutes({ common, pages }: Translations): AppRoute[] {
+  const comingSoon = pages.comingSoon
   return [
     {
       path: '/',
@@ -46,6 +48,18 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: MainLayout,
     },
     {
+      path: '/companies',
+      label: comingSoon.pages.companies.title,
+      element: <ComingSoonPage pageKey="companies" />,
+      layout: MainLayout,
+    },
+    {
+      path: '/career-guide',
+      label: comingSoon.pages.careerGuide.title,
+      element: <ComingSoonPage pageKey="careerGuide" />,
+      layout: MainLayout,
+    },
+    {
       path: '/companies/:id',
       label: pages.companyDetail.routeLabel,
       element: <CompanyDetailPage />,
@@ -64,9 +78,45 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: CandidateLayout,
     },
     {
+      path: '/profile/messages',
+      label: comingSoon.pages.profileMessages.title,
+      element: <ComingSoonPage pageKey="profileMessages" />,
+      layout: CandidateLayout,
+    },
+    {
       path: '/recruiter',
       label: pages.recruiterHome.routeLabel,
       element: <RecruiterHomePage />,
+      layout: RecruiterLayout,
+    },
+    {
+      path: '/recruiter/jobs',
+      label: comingSoon.pages.recruiterJobs.title,
+      element: <ComingSoonPage pageKey="recruiterJobs" />,
+      layout: RecruiterLayout,
+    },
+    {
+      path: '/recruiter/candidates',
+      label: comingSoon.pages.recruiterCandidates.title,
+      element: <ComingSoonPage pageKey="recruiterCandidates" />,
+      layout: RecruiterLayout,
+    },
+    {
+      path: '/recruiter/company',
+      label: comingSoon.pages.recruiterCompany.title,
+      element: <ComingSoonPage pageKey="recruiterCompany" />,
+      layout: RecruiterLayout,
+    },
+    {
+      path: '/recruiter/messages',
+      label: comingSoon.pages.recruiterMessages.title,
+      element: <ComingSoonPage pageKey="recruiterMessages" />,
+      layout: RecruiterLayout,
+    },
+    {
+      path: '/recruiter/settings',
+      label: comingSoon.pages.recruiterSettings.title,
+      element: <ComingSoonPage pageKey="recruiterSettings" />,
       layout: RecruiterLayout,
     },
     {
@@ -104,6 +154,24 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       label: pages.forgotPassword.routeLabel,
       element: <ForgotPasswordPage />,
       layout: AuthLayout,
+    },
+    {
+      path: '/admin/dashboard',
+      label: comingSoon.pages.adminDashboard.title,
+      element: <ComingSoonPage pageKey="adminDashboard" />,
+      layout: AdminLayout,
+    },
+    {
+      path: '/admin/jobs',
+      label: comingSoon.pages.adminJobs.title,
+      element: <ComingSoonPage pageKey="adminJobs" />,
+      layout: AdminLayout,
+    },
+    {
+      path: '/admin/settings',
+      label: comingSoon.pages.adminSettings.title,
+      element: <ComingSoonPage pageKey="adminSettings" />,
+      layout: AdminLayout,
     },
     {
       path: '/admin/users',

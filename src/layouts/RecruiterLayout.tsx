@@ -45,11 +45,11 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
   const navItems = [
     { href: '/recruiter', label: content.sidebar.overview },
-    { href: '/', label: content.sidebar.jobs },
-    { href: '/', label: content.sidebar.candidates },
-    { href: '/', label: content.sidebar.company },
-    { href: '/', label: content.sidebar.messages },
-    { href: '/', label: content.sidebar.settings },
+    { href: '/recruiter/jobs', label: content.sidebar.jobs },
+    { href: '/recruiter/candidates', label: content.sidebar.candidates },
+    { href: '/recruiter/company', label: content.sidebar.company },
+    { href: '/recruiter/messages', label: content.sidebar.messages },
+    { href: '/recruiter/settings', label: content.sidebar.settings },
   ]
 
   useEffect(() => {
