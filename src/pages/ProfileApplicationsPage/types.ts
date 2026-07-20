@@ -10,6 +10,8 @@ export type CandidateApplication = {
   jobTitle: string
   location: string
   salaryLabel: string
+  cvFileName: string
+  coverLetter: string
   status: CandidateApplicationStatus
   updatedAt: string
   workingType: string

@@ -659,6 +659,8 @@ export type ProfileTranslations = {
       location: string
       workingType: string
       salary: string
+      cvFile: string
+      coverLetter: string
       appliedAt: string
       updatedAt: string
     }
@@ -678,6 +680,8 @@ export type ProfileTranslations = {
       location: string
       workingType: string
       salaryLabel: string
+      cvFileName: string
+      coverLetter: string
       appliedAt: string
       updatedAt: string
       status: ProfileApplicationStatus

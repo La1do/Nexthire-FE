@@ -27,6 +27,11 @@ export function ApplicationCard({
           <p>{application.companyName}</p>
         </div>
 
+        <p className="profile-application-cv-inline">
+          <span>{meta.cvFile}</span>
+          <strong>{application.cvFileName}</strong>
+        </p>
+
         <dl className="profile-application-details">
           <div>
             <dt>{meta.location}</dt>
@@ -41,6 +46,11 @@ export function ApplicationCard({
             <dd>{application.salaryLabel}</dd>
           </div>
         </dl>
+
+        <details className="profile-application-cover-letter">
+          <summary>{meta.coverLetter}</summary>
+          <p>{application.coverLetter}</p>
+        </details>
       </div>
 
       <div className="profile-application-card-side">
