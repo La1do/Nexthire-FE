@@ -9,4 +9,9 @@ export type PublicCompanyProfile = {
   description: string | null
   website: string | null
   address: string | null
+  mission: string | null
+  culture: string | null
+  values: string[]
+  perks: string[]
+  heroImageUrl: string | null
 }

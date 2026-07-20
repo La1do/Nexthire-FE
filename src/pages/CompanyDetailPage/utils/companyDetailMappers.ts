@@ -5,9 +5,12 @@ import type { JobCardView, LogoTone } from '../../HomePage/types'
 import { mapJobToCard, type JobLabels } from '../../HomePage/utils/homeMappers'
 import { initials, pickTone } from '../../_utils/jobFormat'
 
-// Fields the public company API cannot provide (culture, mission, size, ...)
-// fall back to the localized generic profile copy.
-export type CompanyDetailViewModel = CompanyDetailProfile & {
+export type CompanyDetailViewModel = Omit<
+  CompanyDetailProfile,
+  'culture' | 'heroImage' | 'mission' | 'perks' | 'values'
+> & {
+  culture: string | null
+  heroImageUrl: string | null
   isVerified: boolean
   logo: {
     alt: string
@@ -15,8 +18,21 @@ export type CompanyDetailViewModel = CompanyDetailProfile & {
     src: string
     tone: LogoTone
   }
+  mission: string | null
   openJobs: ReadonlyArray<JobCardView>
+  perks: ReadonlyArray<string>
+  values: ReadonlyArray<string>
   id: string
+}
+
+function cleanOptionalString(value: string | null | undefined) {
+  const nextValue = value?.trim()
+
+  return nextValue || null
+}
+
+function cleanList(values: ReadonlyArray<string> | null | undefined) {
+  return (values ?? []).map((value) => value.trim()).filter(Boolean)
 }
 
 export function mapCompanyDetail(
@@ -29,15 +45,18 @@ export function mapCompanyDetail(
   const openJobs = openJobsRaw.map((job) => mapJobToCard(job, locale, jobLabels))
 
   return {
-    // Non-API sections keep the generic localized copy.
+    // Generic copy fills legacy facts that the public endpoint does not expose yet.
     ...fallback,
     // Real data from the public company endpoint wins where available.
     name: profile.name,
-    description: profile.description ?? fallback.description,
-    website: profile.website ?? '',
-    location: profile.address ?? fallback.location,
-    // The API has no company imagery; keep a stable seeded placeholder.
-    heroImage: `https://picsum.photos/seed/${profile.id}-company-workspace/960/640`,
+    description: cleanOptionalString(profile.description) ?? fallback.description,
+    website: cleanOptionalString(profile.website) ?? '',
+    location: cleanOptionalString(profile.address) ?? fallback.location,
+    mission: cleanOptionalString(profile.mission),
+    culture: cleanOptionalString(profile.culture),
+    values: cleanList(profile.values),
+    perks: cleanList(profile.perks),
+    heroImageUrl: cleanOptionalString(profile.heroImageUrl),
     // Only approved companies are exposed by the public endpoint.
     isVerified: true,
     logo: {

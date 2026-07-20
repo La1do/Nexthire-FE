@@ -2871,6 +2871,15 @@ select {
   gap: 1.1rem;
 }
 
+.company-detail-hero.company-detail-hero-without-media {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.company-detail-hero-without-media .company-detail-hero-copy,
+.company-detail-culture-text p {
+  max-width: 58rem;
+}
+
 .company-detail-brand-row {
   align-items: center;
   display: grid;
@@ -3085,6 +3094,10 @@ select {
 }
 
 .company-detail-about {
+  grid-template-columns: 1fr;
+}
+
+.company-detail-about.company-detail-about-single {
   grid-template-columns: 1fr;
 }
 

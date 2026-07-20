@@ -7,20 +7,17 @@ type CompanyCulturePanelProps = {
 }
 
 export function CompanyCulturePanel({ company, content }: CompanyCulturePanelProps) {
+  if (!company.culture) {
+    return null
+  }
+
   return (
-    <section className="company-detail-panel company-detail-motion">
+    <section className="company-detail-panel company-detail-culture-text company-detail-motion">
       <div className="company-detail-section-heading">
         <h2>{content.culture}</h2>
       </div>
 
-      <div className="company-detail-culture-grid">
-        {company.culture.map((item) => (
-          <article className={`company-detail-culture-card company-detail-culture-card-${item.tone}`} key={item.title}>
-            <span>{item.title}</span>
-            <p>{item.description}</p>
-          </article>
-        ))}
-      </div>
+      <p>{company.culture}</p>
     </section>
   )
 }

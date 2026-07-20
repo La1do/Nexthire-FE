@@ -8,8 +8,15 @@ type CompanyHeroProps = {
 }
 
 export function CompanyHero({ company, content }: CompanyHeroProps) {
+  const heroClassName = company.heroImageUrl
+    ? 'company-detail-hero company-detail-motion'
+    : 'company-detail-hero company-detail-hero-without-media company-detail-motion'
+  const heroImage = company.heroImageUrl ? (
+    <img alt="" src={company.heroImageUrl} />
+  ) : null
+
   return (
-    <section className="company-detail-hero company-detail-motion">
+    <section className={heroClassName}>
       <div className="company-detail-hero-copy">
         <div className="company-detail-brand-row">
           <CompanyLogoMark
@@ -38,15 +45,20 @@ export function CompanyHero({ company, content }: CompanyHeroProps) {
         </div>
       </div>
 
-      <a
-        aria-label={content.hero.websiteLabel}
-        className="company-detail-hero-media"
-        href={company.website}
-        rel="noreferrer"
-        target="_blank"
-      >
-        <img alt="" src={company.heroImage} />
-      </a>
+      {company.heroImageUrl && company.website ? (
+        <a
+          aria-label={content.hero.websiteLabel}
+          className="company-detail-hero-media"
+          href={company.website}
+          rel="noreferrer"
+          target="_blank"
+        >
+          {heroImage}
+        </a>
+      ) : null}
+      {company.heroImageUrl && !company.website ? (
+        <div className="company-detail-hero-media">{heroImage}</div>
+      ) : null}
     </section>
   )
 }

@@ -24,7 +24,7 @@ export function CompanySidebar({ company, content }: CompanySidebarProps) {
       label: content.sidebar.size,
       value: company.size,
     },
-  ]
+  ].filter((fact) => fact.value)
 
   return (
     <aside className="company-detail-sidebar">
@@ -46,23 +46,27 @@ export function CompanySidebar({ company, content }: CompanySidebarProps) {
         </div>
       </div>
 
-      <div className="company-detail-panel company-detail-motion">
-        <h2>{content.sections.values}</h2>
-        <div className="company-detail-chip-list">
-          {company.values.map((value) => (
-            <span key={value}>{value}</span>
-          ))}
+      {company.values.length ? (
+        <div className="company-detail-panel company-detail-motion">
+          <h2>{content.sections.values}</h2>
+          <div className="company-detail-chip-list">
+            {company.values.map((value) => (
+              <span key={value}>{value}</span>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : null}
 
-      <div className="company-detail-panel company-detail-motion">
-        <h2>{content.sections.perks}</h2>
-        <ul className="company-detail-perk-list">
-          {company.perks.map((perk) => (
-            <li key={perk}>{perk}</li>
-          ))}
-        </ul>
-      </div>
+      {company.perks.length ? (
+        <div className="company-detail-panel company-detail-motion">
+          <h2>{content.sections.perks}</h2>
+          <ul className="company-detail-perk-list">
+            {company.perks.map((perk) => (
+              <li key={perk}>{perk}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </aside>
   )
 }
