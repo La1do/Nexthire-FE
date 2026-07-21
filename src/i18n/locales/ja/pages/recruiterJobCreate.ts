@@ -145,6 +145,9 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     actions: {
       saveDraft: '下書き保存',
       savingDraft: '保存中...',
+      saved: '保存済み',
+      notSavedYet: '未保存',
+      unsavedChanges: '未保存の変更あり',
       noDraftChanges: '変更なし',
       submitReview: 'レビューへ送信',
       submittingReview: '送信中...',
@@ -189,6 +192,8 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     salaryNegotiable: '応相談',
     noDeadline: '期限未設定',
     noBenefits: '福利厚生は未入力です。',
+    readinessLabel: '準備状況',
+    readinessProgress: '{done}/{total} 項目完了',
     checklistTitle: 'レビュー送信条件',
     checklistItems: {
       basics: '職種名、勤務地、分類が入力済み',

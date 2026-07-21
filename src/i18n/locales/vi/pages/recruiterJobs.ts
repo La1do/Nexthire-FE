@@ -11,6 +11,17 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     description: 'Mỗi dòng là một tin của công ty. Bấm vào tin để mở chi tiết theo đúng mã tin.',
     createAction: 'Đăng tin mới',
   },
+  summary: {
+    label: 'Tổng quan tin tuyển dụng',
+    total: 'Tất cả tin',
+    totalDescription: 'Tổng số tin trong workspace',
+    needsAction: 'Cần xử lý',
+    needsActionDescription: 'Nháp, bị từ chối hoặc cần kiểm tra',
+    published: 'Đang đăng',
+    publishedDescription: 'Tin đang hiển thị với ứng viên',
+    inactive: 'Không hoạt động',
+    inactiveDescription: 'Đã ẩn, đóng hoặc hết hạn',
+  },
   states: {
     loading: 'Đang tải danh sách tin...',
     errorTitle: 'Chưa tải được tin tuyển dụng',
@@ -107,5 +118,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     salaryHidden: 'Đang ẩn lương',
     salaryNegotiable: 'Thỏa thuận',
     noData: 'Chưa có',
+    deadlineOverdueAria: 'Hạn nộp hồ sơ đã qua',
+    deadlineSoonAria: 'Hạn nộp hồ sơ sắp đến',
   },
 }

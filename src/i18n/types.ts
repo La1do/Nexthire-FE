@@ -1109,6 +1109,9 @@ export type RecruiterJobCreateTranslations = {
     actions: {
       saveDraft: string
       savingDraft: string
+      saved: string
+      notSavedYet: string
+      unsavedChanges: string
       noDraftChanges: string
       submitReview: string
       submittingReview: string
@@ -1153,6 +1156,8 @@ export type RecruiterJobCreateTranslations = {
     salaryNegotiable: string
     noDeadline: string
     noBenefits: string
+    readinessLabel: string
+    readinessProgress: string
     checklistTitle: string
     checklistItems: {
       basics: string
@@ -1203,6 +1208,17 @@ export type RecruiterJobsTranslations = {
     title: string
     description: string
     createAction: string
+  }
+  summary: {
+    label: string
+    total: string
+    totalDescription: string
+    needsAction: string
+    needsActionDescription: string
+    published: string
+    publishedDescription: string
+    inactive: string
+    inactiveDescription: string
   }
   states: {
     loading: string
@@ -1295,6 +1311,8 @@ export type RecruiterJobsTranslations = {
     salaryHidden: string
     salaryNegotiable: string
     noData: string
+    deadlineOverdueAria: string
+    deadlineSoonAria: string
   }
 }
 

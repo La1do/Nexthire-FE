@@ -11,6 +11,17 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     description: 'Each row is one company job post. Select a job to open the detail page for that id.',
     createAction: 'Post a job',
   },
+  summary: {
+    label: 'Job post overview',
+    total: 'All jobs',
+    totalDescription: 'Total posts in the workspace',
+    needsAction: 'Needs action',
+    needsActionDescription: 'Drafts, rejected jobs, or posts needing review',
+    published: 'Published',
+    publishedDescription: 'Jobs visible to candidates',
+    inactive: 'Inactive',
+    inactiveDescription: 'Unpublished, closed, or expired jobs',
+  },
   states: {
     loading: 'Loading job posts...',
     errorTitle: 'Job posts could not be loaded',
@@ -107,5 +118,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     salaryHidden: 'Salary hidden',
     salaryNegotiable: 'Negotiable',
     noData: 'No data',
+    deadlineOverdueAria: 'Application deadline has passed',
+    deadlineSoonAria: 'Application deadline approaching',
   },
 }

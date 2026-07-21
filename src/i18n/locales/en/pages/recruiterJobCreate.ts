@@ -145,6 +145,9 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     actions: {
       saveDraft: 'Save draft',
       savingDraft: 'Saving...',
+      saved: 'Saved',
+      notSavedYet: 'Not saved yet',
+      unsavedChanges: 'Unsaved changes',
       noDraftChanges: 'No changes',
       submitReview: 'Submit review',
       submittingReview: 'Submitting...',
@@ -189,6 +192,8 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     salaryNegotiable: 'Negotiable',
     noDeadline: 'No deadline',
     noBenefits: 'No benefits added.',
+    readinessLabel: 'Readiness',
+    readinessProgress: '{done}/{total} items complete',
     checklistTitle: 'Review readiness',
     checklistItems: {
       basics: 'Title, location, and classifications are filled',

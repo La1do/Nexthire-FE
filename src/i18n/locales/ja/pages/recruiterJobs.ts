@@ -11,6 +11,17 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     description: '各行は会社の求人です。求人を選択すると、そのIDの詳細ページを開きます。',
     createAction: '求人を投稿',
   },
+  summary: {
+    label: '求人概要',
+    total: 'すべての求人',
+    totalDescription: 'ワークスペース内の求人総数',
+    needsAction: '対応が必要',
+    needsActionDescription: '下書き、却下、または確認が必要な求人',
+    published: '公開中',
+    publishedDescription: '候補者に表示中の求人',
+    inactive: '非アクティブ',
+    inactiveDescription: '非公開、終了、または期限切れの求人',
+  },
   states: {
     loading: '求人一覧を読み込んでいます...',
     errorTitle: '求人一覧を読み込めません',
@@ -107,5 +118,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     salaryHidden: '給与非表示',
     salaryNegotiable: '応相談',
     noData: 'データなし',
+    deadlineOverdueAria: '応募締切が過ぎています',
+    deadlineSoonAria: '応募締切が近づいています',
   },
 }

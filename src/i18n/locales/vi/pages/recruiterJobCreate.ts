@@ -145,6 +145,9 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     actions: {
       saveDraft: 'Lưu nháp',
       savingDraft: 'Đang lưu...',
+      saved: 'Đã lưu',
+      notSavedYet: 'Chưa lưu',
+      unsavedChanges: 'Có thay đổi chưa lưu',
       noDraftChanges: 'Chưa có thay đổi',
       submitReview: 'Gửi duyệt',
       submittingReview: 'Đang gửi...',
@@ -189,6 +192,8 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     salaryNegotiable: 'Thỏa thuận',
     noDeadline: 'Chưa đặt hạn',
     noBenefits: 'Chưa thêm quyền lợi.',
+    readinessLabel: 'Độ sẵn sàng',
+    readinessProgress: 'Hoàn tất {done}/{total} mục',
     checklistTitle: 'Điều kiện gửi duyệt',
     checklistItems: {
       basics: 'Đủ chức danh, địa điểm và phân loại',
