@@ -8596,6 +8596,7 @@ select {
   display: grid;
   gap: 0;
   margin: 0;
+  min-width: 0;
 }
 
 .job-post-preview-meta div {
@@ -8610,6 +8611,7 @@ select {
   color: var(--color-text-muted);
   font-size: 0.82rem;
   font-weight: 850;
+  overflow-wrap: anywhere;
 }
 
 .job-post-preview-meta dd {
@@ -8743,6 +8745,7 @@ select {
   display: flex;
   gap: 1rem;
   justify-content: space-between;
+  min-width: 0;
 }
 
 .job-post-review-dialog__header h2 {
@@ -8783,6 +8786,8 @@ select {
 
 .job-post-review-dialog__body {
   min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   padding-right: 0.15rem;
 }
