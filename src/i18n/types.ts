@@ -788,6 +788,11 @@ export type ProfileTranslations = {
       removeFileLabel: string
       uploadFileLabel: string
       uploadingFileLabel: string
+      pasteLabel: string
+      pastePlaceholder: string
+      parseDraftLabel: string
+      draftApplied: string
+      draftEmptyError: string
       portfolioLabel: string
       linkedinLabel: string
     }

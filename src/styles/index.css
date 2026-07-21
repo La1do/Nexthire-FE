@@ -3931,6 +3931,52 @@ select {
   font-weight: 950;
 }
 
+.profile-cv-draft-box {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 14px;
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem;
+}
+
+.profile-cv-draft-box textarea {
+  min-height: 9rem;
+}
+
+.profile-cv-draft-box > button {
+  align-items: center;
+  background: var(--color-brand-solid);
+  border: 0;
+  border-radius: 999px;
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.86rem;
+  font-weight: 950;
+  justify-content: center;
+  justify-self: start;
+  min-height: 2.65rem;
+  padding: 0 1rem;
+}
+
+.profile-cv-draft-box > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.profile-cv-draft-message {
+  color: var(--color-home-accent);
+  font-size: 0.86rem;
+  font-weight: 850;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.profile-cv-draft-message.is-error {
+  color: var(--color-text-danger);
+}
+
 .profile-completion-panel {
   display: grid;
   gap: 1rem;
