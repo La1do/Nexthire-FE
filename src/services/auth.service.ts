@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api'
-import type { AuthApiRole } from '../lib/auth/authRole'
+import type { AuthApiRole, PublicAuthApiRole } from '../lib/auth/authRole'
 
 type ApiSuccessEnvelope<TData> = {
   success: true
@@ -36,6 +36,12 @@ export type LoginPayload = {
   role: AuthApiRole
 }
 
+export type GoogleLoginPayload = {
+  idToken: string
+  role: PublicAuthApiRole
+  nonce?: string
+}
+
 export type RegisterPayload = {
   fullName: string
   phone: string
@@ -59,6 +65,11 @@ export type VerifyEmailResponse = {
 export const authService = {
   async login(payload: LoginPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/login', payload)
+    return response.data.data
+  },
+
+  async googleLogin(payload: GoogleLoginPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/google/login', payload)
     return response.data.data
   },
 

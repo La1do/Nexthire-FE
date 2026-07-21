@@ -82,6 +82,12 @@ export type LoginTranslations = {
     hidePassword: string
     submit: string
     submitLoading: string
+    orDivider: string
+    googleAriaLabel: string
+    googleCredentialMissing: string
+    googleLoadError: string
+    googleLoading: string
+    googleUnavailable: string
   }
   footer: {
     prompt: string

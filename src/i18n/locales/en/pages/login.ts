@@ -28,6 +28,12 @@ export const login = {
     hidePassword: 'Hide password',
     submit: 'Log in',
     submitLoading: 'Logging in...',
+    orDivider: 'Or',
+    googleAriaLabel: 'Continue with Google',
+    googleCredentialMissing: 'Google did not return a sign-in token. Please try again.',
+    googleLoadError: 'Google sign-in could not be loaded. Please try again later.',
+    googleLoading: 'Loading Google...',
+    googleUnavailable: 'Google sign-in is not configured',
   },
   footer: {
     prompt: 'No account yet?',

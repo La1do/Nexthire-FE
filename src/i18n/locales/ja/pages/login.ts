@@ -28,6 +28,12 @@ export const login = {
     hidePassword: 'パスワードを隠す',
     submit: 'ログイン',
     submitLoading: 'ログイン中...',
+    orDivider: 'または',
+    googleAriaLabel: 'Googleで続行',
+    googleCredentialMissing: 'Googleのログイントークンを取得できませんでした。もう一度お試しください。',
+    googleLoadError: 'Googleログインを読み込めませんでした。後でもう一度お試しください。',
+    googleLoading: 'Googleを読み込み中...',
+    googleUnavailable: 'Googleログインが設定されていません',
   },
   footer: {
     prompt: 'アカウントをお持ちでないですか？',

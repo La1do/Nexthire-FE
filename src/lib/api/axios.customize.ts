@@ -69,6 +69,7 @@ function clearStoredTokens() {
 function isPublicAuthRequest(url?: string) {
   return Boolean(
     url?.startsWith('/auth/login') ||
+      url?.startsWith('/auth/google/login') ||
       url?.startsWith('/auth/register') ||
       url?.startsWith('/auth/forgot-password') ||
       url?.startsWith('/auth/reset-password') ||

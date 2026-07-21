@@ -28,6 +28,12 @@ export const login = {
     hidePassword: 'Ẩn mật khẩu',
     submit: 'Đăng nhập',
     submitLoading: 'Đang đăng nhập...',
+    orDivider: 'Hoặc',
+    googleAriaLabel: 'Tiếp tục với Google',
+    googleCredentialMissing: 'Google chưa trả về mã đăng nhập. Vui lòng thử lại.',
+    googleLoadError: 'Không thể tải đăng nhập Google. Vui lòng thử lại sau.',
+    googleLoading: 'Đang tải Google...',
+    googleUnavailable: 'Chưa cấu hình đăng nhập Google',
   },
   footer: {
     prompt: 'Chưa có tài khoản?',
