@@ -11,6 +11,7 @@ import { Button } from '../_components'
 import { JobPostCompanyGate } from './components/JobPostCompanyGate'
 import { JobPostForm } from './components/JobPostForm'
 import { JobPostPreview } from './components/JobPostPreview'
+import { JobPostReviewDialog } from './components/JobPostReviewDialog'
 import type {
   JobPostAction,
   JobPostFieldErrors,
@@ -109,6 +110,7 @@ export function RecruiterJobCreatePage() {
   const [submitResult, setSubmitResult] = useState<JobPostSubmitResult | undefined>(undefined)
   const [draftJob, setDraftJob] = useState<RecruiterJobResponse | undefined>(undefined)
   const [draftPayloadKey, setDraftPayloadKey] = useState<string | undefined>(undefined)
+  const [isReviewDialogOpen, setReviewDialogOpen] = useState(false)
 
   const loadPageData = useCallback(async () => {
     setLoading(true)
@@ -259,7 +261,7 @@ export function RecruiterJobCreatePage() {
       if (Object.keys(nextErrors).length) {
         setErrors(nextErrors)
         setSubmitError(content.form.submitError)
-        return
+        return false
       }
 
       const payload = createJobPostPayload(values)
@@ -286,14 +288,45 @@ export function RecruiterJobCreatePage() {
         }
 
         setSubmitResult({ action, job })
+        return true
       } catch (error) {
         setSubmitError(getApiErrorEnvelope(error)?.error.message ?? content.form.submitError)
+        return false
       } finally {
         setSubmittingAction(undefined)
       }
     },
     [content.form.submitError, content.validation, draftJob, draftPayloadKey, values],
   )
+
+  const handleRequestReview = useCallback(() => {
+    const nextErrors = validateJobPostForm(values, content.validation)
+
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors)
+      setSubmitError(content.form.submitError)
+      return
+    }
+
+    setSubmitError(undefined)
+    setReviewDialogOpen(true)
+  }, [content.form.submitError, content.validation, values])
+
+  const handleSaveDraftFromReview = useCallback(async () => {
+    const isSaved = await handleSubmit('draft')
+
+    if (isSaved) {
+      setReviewDialogOpen(false)
+    }
+  }, [handleSubmit])
+
+  const handleSubmitFromReview = useCallback(async () => {
+    const isSubmitted = await handleSubmit('submit')
+
+    if (isSubmitted) {
+      setReviewDialogOpen(false)
+    }
+  }, [handleSubmit])
 
   if (loadError) {
     return (
@@ -348,6 +381,7 @@ export function RecruiterJobCreatePage() {
             onAddSkill={handleAddSkill}
             onChange={handleFieldChange}
             onRemoveSkill={handleRemoveSkill}
+            onRequestReview={handleRequestReview}
             onReset={handleReset}
             onSubmit={(action) => void handleSubmit(action)}
             submitError={submitError}
@@ -366,6 +400,21 @@ export function RecruiterJobCreatePage() {
             values={values}
           />
         </div>
+        <JobPostReviewDialog
+          categories={categories}
+          companyName={companyName}
+          emptySkillsLabel={content.form.fields.skills.empty}
+          isOpen={isReviewDialogOpen}
+          locale={locale}
+          noCategoryLabel={content.form.options.noCategory}
+          onClose={() => setReviewDialogOpen(false)}
+          onSaveDraft={() => void handleSaveDraftFromReview()}
+          onSubmitReview={() => void handleSubmitFromReview()}
+          optionLabels={content.form.options}
+          submittingAction={submittingAction}
+          translations={content}
+          values={values}
+        />
       </JobPostCompanyGate>
     </div>
   )

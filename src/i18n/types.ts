@@ -1114,6 +1114,15 @@ export type RecruiterJobCreateTranslations = {
       submittingReview: string
       reset: string
     }
+    reviewDialog: {
+      title: string
+      description: string
+      cancel: string
+      saveDraft: string
+      savingDraft: string
+      submitReview: string
+      submittingReview: string
+    }
     submitError: string
     successDraft: string
     successSubmit: string

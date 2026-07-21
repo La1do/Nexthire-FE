@@ -25,6 +25,7 @@ type JobPostFormProps = {
     value: JobPostFormValues[TField],
   ) => void
   onRemoveSkill: (skill: string) => void
+  onRequestReview: () => void
   onReset: () => void
   onSubmit: (action: JobPostAction) => void
   submitError?: string
@@ -140,6 +141,7 @@ export function JobPostForm({
   onAddSkill,
   onChange,
   onRemoveSkill,
+  onRequestReview,
   onReset,
   onSubmit,
   submitError,
@@ -415,7 +417,7 @@ export function JobPostForm({
               translations.form.actions.noDraftChanges
             )}
           </Button>
-          <Button disabled={isSubmitting} onClick={() => onSubmit('submit')} type="button">
+          <Button disabled={isSubmitting} onClick={onRequestReview} type="button">
             {submittingAction === 'submit'
               ? translations.form.actions.submittingReview
               : translations.form.actions.submitReview}

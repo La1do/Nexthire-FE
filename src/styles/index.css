@@ -8638,6 +8638,99 @@ select {
   padding: 1rem 1.25rem;
 }
 
+.job-post-review-dialog-backdrop {
+  align-items: center;
+  background: rgba(17, 24, 39, 0.48);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: clamp(0.85rem, 3vw, 1.6rem);
+  position: fixed;
+  z-index: 90;
+}
+
+.job-post-review-dialog {
+  background: var(--color-background-app);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 18px;
+  box-shadow: 0 30px 80px rgba(17, 24, 39, 0.24);
+  display: grid;
+  gap: 1rem;
+  max-height: min(92vh, 58rem);
+  max-width: 48rem;
+  overflow: hidden;
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+  width: min(100%, 48rem);
+}
+
+.job-post-review-dialog__header {
+  align-items: start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.job-post-review-dialog__header h2 {
+  font-size: clamp(1.2rem, 3vw, 1.55rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.12;
+  margin: 0.2rem 0 0;
+}
+
+.job-post-review-dialog__header p:not(.recruiter-eyebrow) {
+  color: var(--color-text-muted);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  margin: 0.45rem 0 0;
+}
+
+.job-post-review-dialog__header button {
+  align-items: center;
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 1rem;
+  font-weight: 900;
+  height: 2.15rem;
+  justify-content: center;
+  width: 2.15rem;
+}
+
+.job-post-review-dialog__header button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.job-post-review-dialog__body {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.15rem;
+}
+
+.job-post-review-dialog .job-post-preview {
+  box-shadow: none;
+  position: static;
+}
+
+.job-post-review-dialog__actions {
+  align-items: center;
+  border-top: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+.job-post-review-dialog__actions button {
+  gap: 0.48rem;
+}
+
 @keyframes recruiter-panel-enter {
   from {
     opacity: 0;
@@ -8749,6 +8842,14 @@ select {
   }
 
   .job-post-page-header,
+  .job-post-review-dialog__header,
+  .job-post-review-dialog__actions,
+  .job-post-success {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .job-post-page-header,
   .job-post-success {
     grid-template-columns: 1fr;
   }
@@ -8760,6 +8861,7 @@ select {
   .recruiter-hero__actions,
   .job-post-form-actions,
   .job-post-form-actions > div,
+  .job-post-review-dialog__actions,
   .job-post-page-header > .job-post-link-button,
   .job-post-success > div:last-child,
   .company-verification-form__actions {
@@ -8776,6 +8878,7 @@ select {
 
   .recruiter-hero__actions > *,
   .job-post-form-actions > div > *,
+  .job-post-review-dialog__actions > *,
   .job-post-page-header > .job-post-link-button,
   .job-post-success > div:last-child > *,
   .company-verification-form__actions > * {
