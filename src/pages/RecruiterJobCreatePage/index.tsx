@@ -117,6 +117,7 @@ export function RecruiterJobCreatePage() {
         return nextErrors
       })
       setSubmitError(undefined)
+      setSubmitResult(undefined)
     },
     [],
   )
@@ -152,6 +153,7 @@ export function RecruiterJobCreatePage() {
       return nextErrors
     })
     setSubmitError(undefined)
+    setSubmitResult(undefined)
   }, [])
 
   const handleRemoveSkill = useCallback((skill: string) => {
@@ -159,6 +161,7 @@ export function RecruiterJobCreatePage() {
       ...currentValues,
       skills: currentValues.skills.filter((currentSkill) => currentSkill !== skill),
     }))
+    setSubmitResult(undefined)
   }, [])
 
   const handleReset = useCallback(() => {
@@ -187,13 +190,16 @@ export function RecruiterJobCreatePage() {
       setSubmitError(undefined)
 
       try {
-        let job = draftJob && draftPayloadKey === payloadKey ? draftJob : undefined
+        let job = draftJob
 
         if (!job) {
           job = await jobService.createRecruiterJob(payload)
-          setDraftJob(job)
-          setDraftPayloadKey(payloadKey)
+        } else if (draftPayloadKey !== payloadKey) {
+          job = await jobService.updateRecruiterJob(job.id, payload)
         }
+
+        setDraftJob(job)
+        setDraftPayloadKey(payloadKey)
 
         if (action === 'submit') {
           job = await jobService.submitRecruiterJob(job.id)
