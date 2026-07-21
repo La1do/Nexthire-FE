@@ -18,6 +18,7 @@ type JobPostFormProps = {
   categories: ReadonlyArray<PublicCategory>
   categoryWarning?: string
   errors: JobPostFieldErrors
+  hasUnsavedChanges: boolean
   onAddSkill: () => void
   onChange: <TField extends keyof JobPostFormValues>(
     field: TField,
@@ -135,6 +136,7 @@ export function JobPostForm({
   categories,
   categoryWarning,
   errors,
+  hasUnsavedChanges,
   onAddSkill,
   onChange,
   onRemoveSkill,
@@ -147,6 +149,8 @@ export function JobPostForm({
 }: JobPostFormProps) {
   const { fields, options } = translations.form
   const isSubmitting = Boolean(submittingAction)
+  const isSavingDraft = submittingAction === 'draft'
+  const isSaveDraftDisabled = isSubmitting || !hasUnsavedChanges
   const categoryOptions = [
     { label: options.noCategory, value: '' },
     ...categories.map((category) => ({
@@ -393,8 +397,23 @@ export function JobPostForm({
           <Button disabled={isSubmitting} onClick={onReset} type="button" variant="ghost">
             {translations.form.actions.reset}
           </Button>
-          <Button disabled={isSubmitting} onClick={() => onSubmit('draft')} type="button" variant="secondary">
-            {submittingAction === 'draft' ? translations.form.actions.savingDraft : translations.form.actions.saveDraft}
+          <Button
+            className={`job-post-save-draft-button${hasUnsavedChanges ? ' is-dirty' : ''}${isSavingDraft ? ' is-saving' : ''}`}
+            disabled={isSaveDraftDisabled}
+            onClick={() => onSubmit('draft')}
+            type="button"
+            variant="secondary"
+          >
+            {isSavingDraft ? (
+              <>
+                <span aria-hidden="true" className="job-post-action-spinner" />
+                {translations.form.actions.savingDraft}
+              </>
+            ) : hasUnsavedChanges ? (
+              translations.form.actions.saveDraft
+            ) : (
+              translations.form.actions.noDraftChanges
+            )}
           </Button>
           <Button disabled={isSubmitting} onClick={() => onSubmit('submit')} type="button">
             {submittingAction === 'submit'

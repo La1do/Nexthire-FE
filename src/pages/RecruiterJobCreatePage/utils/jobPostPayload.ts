@@ -22,7 +22,13 @@ function createDeadlineIso(value: string) {
     return null
   }
 
-  return new Date(`${value}T17:00:00`).toISOString()
+  const deadline = new Date(`${value}T17:00:00`)
+
+  if (!Number.isFinite(deadline.getTime())) {
+    return null
+  }
+
+  return deadline.toISOString()
 }
 
 export function createJobPostPayload(values: JobPostFormValues): CreateRecruiterJobPayload {

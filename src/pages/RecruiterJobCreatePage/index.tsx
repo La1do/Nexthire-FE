@@ -84,6 +84,8 @@ function createPayloadKey(values: JobPostFormValues) {
   return JSON.stringify(createJobPostPayload(values))
 }
 
+const INITIAL_JOB_POST_PAYLOAD_KEY = createPayloadKey(createInitialJobPostValues())
+
 function isCompanyNotFound(error: unknown) {
   const code = getApiErrorEnvelope(error)?.error.code
   return code?.includes('NOT_FOUND') ?? false
@@ -165,6 +167,8 @@ export function RecruiterJobCreatePage() {
 
   const companyStatus: CompanyGateStatus = company?.status ?? 'NO_COMPANY'
   const companyName = company?.name ?? content.preview.labels.company
+  const currentPayloadKey = createPayloadKey(values)
+  const hasUnsavedChanges = currentPayloadKey !== (draftPayloadKey ?? INITIAL_JOB_POST_PAYLOAD_KEY)
 
   const handleFieldChange = useCallback(
     <TField extends keyof JobPostFormValues>(field: TField, value: JobPostFormValues[TField]) => {
@@ -340,6 +344,7 @@ export function RecruiterJobCreatePage() {
             categories={categories}
             categoryWarning={categoryWarning}
             errors={errors}
+            hasUnsavedChanges={hasUnsavedChanges}
             onAddSkill={handleAddSkill}
             onChange={handleFieldChange}
             onRemoveSkill={handleRemoveSkill}

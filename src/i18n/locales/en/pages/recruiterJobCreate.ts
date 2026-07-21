@@ -145,6 +145,7 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     actions: {
       saveDraft: 'Save draft',
       savingDraft: 'Saving...',
+      noDraftChanges: 'No changes',
       submitReview: 'Submit review',
       submittingReview: 'Submitting...',
       reset: 'Reset form',

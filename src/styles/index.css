@@ -8445,6 +8445,34 @@ select {
   justify-content: end;
 }
 
+.job-post-save-draft-button {
+  gap: 0.48rem;
+}
+
+.job-post-save-draft-button.is-dirty:not(:disabled) {
+  background: var(--color-brand-soft);
+  border-color: var(--color-border-brand-soft);
+  box-shadow: 0 8px 20px rgba(242, 85, 85, 0.16);
+  color: var(--color-brand-solid);
+}
+
+.job-post-save-draft-button.is-dirty:not(:disabled):hover {
+  box-shadow: var(--shadow-brand);
+}
+
+.job-post-save-draft-button.is-saving {
+  animation: job-post-save-pulse 850ms var(--motion-ease-standard) infinite alternate;
+}
+
+.job-post-action-spinner {
+  animation: job-post-spinner 720ms linear infinite;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  border-right-color: transparent;
+  height: 1rem;
+  width: 1rem;
+}
+
 .job-post-preview {
   align-content: start;
   position: sticky;
@@ -8619,6 +8647,22 @@ select {
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes job-post-save-pulse {
+  from {
+    box-shadow: 0 8px 20px rgba(242, 85, 85, 0.14);
+  }
+
+  to {
+    box-shadow: 0 12px 26px rgba(242, 85, 85, 0.26);
+  }
+}
+
+@keyframes job-post-spinner {
+  to {
+    transform: rotate(360deg);
   }
 }
 

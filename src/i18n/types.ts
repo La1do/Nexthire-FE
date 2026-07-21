@@ -1109,6 +1109,7 @@ export type RecruiterJobCreateTranslations = {
     actions: {
       saveDraft: string
       savingDraft: string
+      noDraftChanges: string
       submitReview: string
       submittingReview: string
       reset: string

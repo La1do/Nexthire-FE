@@ -145,6 +145,7 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     actions: {
       saveDraft: '下書き保存',
       savingDraft: '保存中...',
+      noDraftChanges: '変更なし',
       submitReview: 'レビューへ送信',
       submittingReview: '送信中...',
       reset: 'フォームをリセット',
