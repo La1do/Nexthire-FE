@@ -127,3 +127,10 @@ export function formatCompactNumber(value: number, locale: string) {
 export function formatJobCount(value: number, locale: string, suffix: string) {
   return `${formatCompactNumber(value, locale)} ${suffix}`
 }
+
+export function splitJobCount(value: number, locale: string, suffix: string) {
+  return {
+    number: formatCompactNumber(value, locale),
+    suffix,
+  }
+}

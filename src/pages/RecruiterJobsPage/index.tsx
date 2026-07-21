@@ -9,6 +9,7 @@ import { Button } from '../_components'
 import { RecruiterJobActions } from './components/RecruiterJobActions'
 import { RecruiterJobFilters } from './components/RecruiterJobFilters'
 import { RecruiterJobList } from './components/RecruiterJobList'
+import { RecruiterJobSummary } from './components/RecruiterJobSummary'
 import { RecruiterJobStatusBadge } from './components/RecruiterJobStatusBadge'
 import { RecruiterJobStatusTabs } from './components/RecruiterJobStatusTabs'
 import { useRecruiterJobs } from './hooks/useRecruiterJobs'
@@ -115,6 +116,15 @@ function JobDetailValue({ label, value }: { label: string; value: string }) {
   )
 }
 
+function JobDetailMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="recruiter-job-detail-metric">
+      <dt>{label}</dt>
+      <dd>{value}</dd>
+    </div>
+  )
+}
+
 export function RecruiterJobsPage() {
   const { locale } = useLocale()
   const { pages } = useTranslations()
@@ -180,6 +190,8 @@ export function RecruiterJobsPage() {
         onChange={setStatus}
         translations={content}
       />
+
+      <RecruiterJobSummary counts={counts} locale={locale} translations={content} />
 
       <RecruiterJobFilters
         filters={filters}
@@ -340,8 +352,13 @@ export function RecruiterJobDetailPage() {
           <h1>{job.title}</h1>
           <div className="recruiter-job-detail-heading-meta">
             <RecruiterJobStatusBadge label={statusLabel} status={job.status} />
-            <span>{job.id}</span>
+            <span>{content.detail.jobId}: {job.id}</span>
           </div>
+          <dl className="recruiter-job-detail-hero-metrics">
+            <JobDetailMetric label={content.detail.applications} value={applications} />
+            <JobDetailMetric label={content.detail.deadline} value={deadline} />
+            <JobDetailMetric label={content.detail.updatedAt} value={updatedAt} />
+          </dl>
         </div>
         <div className="recruiter-job-detail-header__actions">
           {job.status === 'PUBLISHED' ? (
@@ -368,15 +385,12 @@ export function RecruiterJobDetailPage() {
       ) : null}
 
       <div className="recruiter-job-detail-grid">
-        <section className="recruiter-job-detail-panel recruiter-panel">
+        <section className="recruiter-job-detail-panel recruiter-job-detail-panel--overview recruiter-panel">
           <h2>{content.detail.overview}</h2>
           <dl className="recruiter-job-detail-facts">
-            <JobDetailValue label={content.table.status} value={statusLabel} />
-            <JobDetailValue label={content.detail.applications} value={applications} />
             <JobDetailValue label={content.detail.location} value={job.location} />
             <JobDetailValue label={content.detail.salary} value={salary} />
             <JobDetailValue label={content.detail.openings} value={openings} />
-            <JobDetailValue label={content.detail.deadline} value={deadline} />
             <JobDetailValue
               label={content.detail.employmentType}
               value={createContent.form.options.employmentTypes[job.employmentType]}
@@ -390,7 +404,6 @@ export function RecruiterJobDetailPage() {
               value={createContent.form.options.experienceLevels[job.experienceLevel]}
             />
             <JobDetailValue label={content.detail.publishedAt} value={publishedAt} />
-            <JobDetailValue label={content.detail.updatedAt} value={updatedAt} />
             <JobDetailValue label={content.detail.version} value={String(job.version)} />
           </dl>
         </section>
@@ -418,58 +431,61 @@ export function RecruiterJobDetailPage() {
             <p>{job.benefits || content.detail.noBenefits}</p>
           </article>
         </section>
-
-        <aside className="recruiter-job-detail-panel recruiter-panel">
-          <h2>{content.detail.moderation}</h2>
-          {hasModeration ? (
-            <dl className="recruiter-job-detail-facts">
-              <JobDetailValue
-                label={content.detail.riskScore}
-                value={job.moderation.riskScore == null ? content.metrics.noData : String(job.moderation.riskScore)}
-              />
-              <JobDetailValue
-                label={content.detail.riskLevel}
-                value={job.moderation.riskLevel ?? content.metrics.noData}
-              />
-              <JobDetailValue
-                label={content.detail.moderationDecision}
-                value={job.moderation.decision ?? content.metrics.noData}
-              />
-            </dl>
-          ) : (
-            <p className="recruiter-job-detail-muted">{content.detail.noModeration}</p>
-          )}
-
-          <div className="recruiter-job-detail-notes">
-            <h3>{content.detail.adminReason}</h3>
-            <p>{job.reviewReason || content.detail.noReason}</p>
-            <h3>{content.detail.unpublishReason}</h3>
-            <p>{job.unpublishReason || content.detail.noReason}</p>
-          </div>
-
-          {job.moderation.reasons.length ? (
-            <div className="recruiter-job-detail-notes">
-              <h3>{content.detail.moderationReasons}</h3>
-              <ul>
-                {job.moderation.reasons.map((reason) => (
-                  <li key={reason}>{reason}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {job.moderation.matchedRules.length ? (
-            <div className="recruiter-job-detail-notes">
-              <h3>{content.detail.matchedRules}</h3>
-              <ul>
-                {job.moderation.matchedRules.map((rule) => (
-                  <li key={rule}>{rule}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </aside>
       </div>
+
+      <details
+        className="recruiter-job-detail-panel recruiter-job-detail-panel--moderation recruiter-panel"
+        open={hasModeration}
+      >
+        <summary className="recruiter-job-detail-panel__summary">{content.detail.moderation}</summary>
+        {hasModeration ? (
+          <dl className="recruiter-job-detail-facts">
+            <JobDetailValue
+              label={content.detail.riskScore}
+              value={job.moderation.riskScore == null ? content.metrics.noData : String(job.moderation.riskScore)}
+            />
+            <JobDetailValue
+              label={content.detail.riskLevel}
+              value={job.moderation.riskLevel ?? content.metrics.noData}
+            />
+            <JobDetailValue
+              label={content.detail.moderationDecision}
+              value={job.moderation.decision ?? content.metrics.noData}
+            />
+          </dl>
+        ) : (
+          <p className="recruiter-job-detail-muted">{content.detail.noModeration}</p>
+        )}
+
+        <div className="recruiter-job-detail-notes">
+          <h3>{content.detail.adminReason}</h3>
+          <p>{job.reviewReason || content.detail.noReason}</p>
+          <h3>{content.detail.unpublishReason}</h3>
+          <p>{job.unpublishReason || content.detail.noReason}</p>
+        </div>
+
+        {job.moderation.reasons.length ? (
+          <div className="recruiter-job-detail-notes">
+            <h3>{content.detail.moderationReasons}</h3>
+            <ul>
+              {job.moderation.reasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {job.moderation.matchedRules.length ? (
+          <div className="recruiter-job-detail-notes">
+            <h3>{content.detail.matchedRules}</h3>
+            <ul>
+              {job.moderation.matchedRules.map((rule) => (
+                <li key={rule}>{rule}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </details>
     </div>
   )
 }

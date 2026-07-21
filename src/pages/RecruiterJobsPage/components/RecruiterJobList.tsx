@@ -4,9 +4,9 @@ import type { RecruiterJobCreateTranslations, RecruiterJobsTranslations } from '
 import type { ApiMeta, RecruiterJobResponse } from '../../../types/job.types'
 import type { RecruiterJobAction, RecruiterJobActionState } from '../types'
 import {
-  formatJobCount,
   formatRecruiterJobDate,
   formatRecruiterJobSalary,
+  splitJobCount,
 } from '../utils/recruiterJobsData'
 import { RecruiterJobActions } from './RecruiterJobActions'
 import { RecruiterJobStatusBadge } from './RecruiterJobStatusBadge'
@@ -21,6 +21,38 @@ type RecruiterJobListProps = {
   onOpenJob: (jobId: string) => void
   onPageChange: (page: number) => void
   translations: RecruiterJobsTranslations
+}
+
+const DEADLINE_SOON_MS = 7 * 24 * 60 * 60 * 1000
+
+type DeadlineState = {
+  className: string
+  isOverdue: boolean
+  isSoon: boolean
+}
+
+function getDeadlineState(deadline: string | null): DeadlineState | null {
+  if (!deadline) {
+    return null
+  }
+
+  const deadlineDate = new Date(deadline)
+  const now = new Date()
+  const diffMs = deadlineDate.getTime() - now.getTime()
+
+  if (Number.isNaN(diffMs)) {
+    return null
+  }
+
+  if (diffMs < 0) {
+    return { className: 'is-deadline-overdue', isOverdue: true, isSoon: true }
+  }
+
+  if (diffMs <= DEADLINE_SOON_MS) {
+    return { className: 'is-deadline-soon', isOverdue: false, isSoon: true }
+  }
+
+  return null
 }
 
 function handleOpenKeyDown(
@@ -47,6 +79,13 @@ function renderJobMeta(
   ].filter(Boolean).join(' · ')
 }
 
+function hasPriorityStatus(job: RecruiterJobResponse) {
+  return job.status === 'DRAFT' ||
+    job.status === 'NEEDS_REVIEW' ||
+    job.status === 'SHOULD_REJECT' ||
+    job.status === 'REJECTED'
+}
+
 export function RecruiterJobList({
   actionState,
   createTranslations,
@@ -59,125 +98,98 @@ export function RecruiterJobList({
   translations,
 }: RecruiterJobListProps) {
   return (
-    <section className="recruiter-jobs-panel">
-      <div className="recruiter-jobs-table-shell">
-        <table className="recruiter-jobs-table">
-          <thead>
-            <tr>
-              <th>{translations.table.job}</th>
-              <th>{translations.table.status}</th>
-              <th>{translations.table.applications}</th>
-              <th>{translations.table.deadline}</th>
-              <th>{translations.table.updated}</th>
-              <th>{translations.table.actions}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {jobs.map((job) => (
-              <tr
-                className="recruiter-jobs-row"
-                key={job.id}
-                onClick={() => onOpenJob(job.id)}
-                onKeyDown={(event) => handleOpenKeyDown(event, job.id, onOpenJob)}
-                tabIndex={0}
-              >
-                <td>
-                  <div className="recruiter-job-title-cell">
-                    <Link
-                      onClick={(event) => event.stopPropagation()}
-                      to={`/recruiter/jobs/${job.id}`}
-                    >
-                      {job.title}
-                    </Link>
-                    <span>{renderJobMeta(job, createTranslations)}</span>
-                    <small>{job.location}</small>
-                  </div>
-                </td>
-                <td>
-                  <RecruiterJobStatusBadge
-                    label={createTranslations.statusLabels[job.status]}
-                    status={job.status}
-                  />
-                </td>
-                <td>
-                  {formatJobCount(job.applicationCount, locale, translations.metrics.applicationsSuffix)}
-                </td>
-                <td>
-                  {formatRecruiterJobDate(job.deadline, locale, translations.metrics.noDeadline)}
-                </td>
-                <td>
-                  {formatRecruiterJobDate(job.updatedAt, locale, translations.metrics.noData)}
-                </td>
-                <td>
-                  <RecruiterJobActions
-                    actionState={actionState}
-                    editHref={`/recruiter/jobs/${job.id}/edit`}
-                    job={job}
-                    onAction={onAction}
-                    translations={translations}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <section className="recruiter-jobs-panel" aria-label={translations.table.job}>
+      <div className="recruiter-jobs-list">
+        {jobs.map((job) => {
+          const deadlineState = getDeadlineState(job.deadline)
+          const baseClassName = `recruiter-job-row-card${hasPriorityStatus(job) ? ' is-priority' : ''}`
+          const cardClassName = deadlineState ? `${baseClassName} ${deadlineState.className}` : baseClassName
+          const deadlineClassName = deadlineState
+            ? `recruiter-job-row-card__deadline ${deadlineState.className}`
+            : 'recruiter-job-row-card__deadline'
+          const deadlineTitle = deadlineState && job.deadline
+            ? `${translations.table.deadline}: ${job.deadline}`
+            : undefined
 
-      <div className="recruiter-jobs-cards">
-        {jobs.map((job) => (
-          <article
-            className="recruiter-job-card-row"
-            key={job.id}
-            onClick={() => onOpenJob(job.id)}
-            onKeyDown={(event) => handleOpenKeyDown(event, job.id, onOpenJob)}
-            tabIndex={0}
-          >
-            <div className="recruiter-job-card-row__header">
-              <div>
-                <Link onClick={(event) => event.stopPropagation()} to={`/recruiter/jobs/${job.id}`}>
-                  {job.title}
-                </Link>
-                <p>{renderJobMeta(job, createTranslations)}</p>
+          return (
+            <article
+              className={cardClassName}
+              data-deadline-state={deadlineState?.className ?? 'normal'}
+              key={job.id}
+              onClick={() => onOpenJob(job.id)}
+              onKeyDown={(event) => handleOpenKeyDown(event, job.id, onOpenJob)}
+              tabIndex={0}
+            >
+              <div className="recruiter-job-row-card__main">
+                <RecruiterJobStatusBadge
+                  label={createTranslations.statusLabels[job.status]}
+                  status={job.status}
+                />
+                <div className="recruiter-job-title-cell">
+                  <Link
+                    onClick={(event) => event.stopPropagation()}
+                    to={`/recruiter/jobs/${job.id}`}
+                  >
+                    {job.title}
+                  </Link>
+                  <span>{renderJobMeta(job, createTranslations)}</span>
+                  <small>{job.location}</small>
+                </div>
               </div>
-              <RecruiterJobStatusBadge
-                label={createTranslations.statusLabels[job.status]}
-                status={job.status}
+
+              <dl className="recruiter-job-row-card__metrics">
+                <div>
+                  <dt>{translations.table.applications}</dt>
+                  <dd className="recruiter-job-row-card__applications">
+                    {(() => {
+                      const { number, suffix } = splitJobCount(
+                        job.applicationCount,
+                        locale,
+                        translations.metrics.applicationsSuffix,
+                      )
+                      return (
+                        <>
+                          <strong>{number}</strong>
+                          <span className="recruiter-job-row-card__applications-suffix">{suffix}</span>
+                        </>
+                      )
+                    })()}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{translations.table.deadline}</dt>
+                  <dd
+                    className={deadlineClassName}
+                    title={deadlineTitle}
+                  >
+                    {formatRecruiterJobDate(job.deadline, locale, translations.metrics.noDeadline)}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{translations.table.updated}</dt>
+                  <dd>{formatRecruiterJobDate(job.updatedAt, locale, translations.metrics.noData)}</dd>
+                </div>
+              </dl>
+
+              <p className="recruiter-job-row-card__salary">
+                {formatRecruiterJobSalary(
+                  job,
+                  locale,
+                  translations.metrics.salaryHidden,
+                  translations.metrics.salaryNegotiable,
+                )}
+              </p>
+
+              <RecruiterJobActions
+                actionState={actionState}
+                editHref={`/recruiter/jobs/${job.id}/edit`}
+                job={job}
+                onAction={onAction}
+                translations={translations}
               />
-            </div>
-            <dl>
-              <div>
-                <dt>{translations.table.applications}</dt>
-                <dd>{formatJobCount(job.applicationCount, locale, translations.metrics.applicationsSuffix)}</dd>
-              </div>
-              <div>
-                <dt>{translations.table.deadline}</dt>
-                <dd>{formatRecruiterJobDate(job.deadline, locale, translations.metrics.noDeadline)}</dd>
-              </div>
-              <div>
-                <dt>{translations.detail.salary}</dt>
-                <dd>
-                  {formatRecruiterJobSalary(
-                    job,
-                    locale,
-                    translations.metrics.salaryHidden,
-                    translations.metrics.salaryNegotiable,
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>{translations.detail.location}</dt>
-                <dd>{job.location}</dd>
-              </div>
-            </dl>
-            <RecruiterJobActions
-              actionState={actionState}
-              editHref={`/recruiter/jobs/${job.id}/edit`}
-              job={job}
-              onAction={onAction}
-              translations={translations}
-            />
-          </article>
-        ))}
+            </article>
+          )
+        })}
       </div>
 
       {meta.totalPages > 1 ? (
