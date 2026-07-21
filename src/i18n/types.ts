@@ -1176,6 +1176,112 @@ export type RecruiterJobCreateTranslations = {
   }
 }
 
+export type RecruiterJobSortOption = 'latest' | 'deadline_asc' | 'salary_desc' | 'salary_asc'
+
+export type RecruiterJobsTranslations = {
+  routeLabel: string
+  detailRouteLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+    createAction: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    emptyTitle: string
+    emptyDescription: string
+    detailLoading: string
+    detailErrorTitle: string
+    detailErrorDescription: string
+  }
+  filters: {
+    searchLabel: string
+    searchPlaceholder: string
+    sortLabel: string
+    statusLabel: string
+    allStatus: string
+    apply: string
+    clear: string
+  }
+  table: {
+    job: string
+    status: string
+    applications: string
+    deadline: string
+    updated: string
+    actions: string
+  }
+  sortOptions: Record<RecruiterJobSortOption, string>
+  actions: {
+    view: string
+    viewPublic: string
+    submit: string
+    submitting: string
+    delete: string
+    deleting: string
+    unpublish: string
+    unpublishing: string
+    republish: string
+    republishing: string
+    close: string
+    closing: string
+    none: string
+    actionError: string
+    confirmSubmit: string
+    confirmDelete: string
+    confirmRepublish: string
+    reasonUnpublishPrompt: string
+    reasonClosePrompt: string
+    backToList: string
+  }
+  detail: {
+    overview: string
+    content: string
+    moderation: string
+    jobId: string
+    version: string
+    salary: string
+    location: string
+    openings: string
+    employmentType: string
+    workingType: string
+    experienceLevel: string
+    deadline: string
+    publishedAt: string
+    updatedAt: string
+    applications: string
+    description: string
+    requirements: string
+    benefits: string
+    noBenefits: string
+    skills: string
+    adminReason: string
+    unpublishReason: string
+    noReason: string
+    riskScore: string
+    riskLevel: string
+    moderationDecision: string
+    moderationReasons: string
+    matchedRules: string
+    noModeration: string
+    publicLinkUnavailable: string
+  }
+  metrics: {
+    applicationsSuffix: string
+    openingsSuffix: string
+    noDeadline: string
+    salaryHidden: string
+    salaryNegotiable: string
+    noData: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -1189,6 +1295,7 @@ export type Translations = {
     login: LoginTranslations
     profile: ProfileTranslations
     recruiterJobCreate: RecruiterJobCreateTranslations
+    recruiterJobs: RecruiterJobsTranslations
     recruiterHome: RecruiterHomeTranslations
     register: RegisterTranslations
     search: SearchTranslations

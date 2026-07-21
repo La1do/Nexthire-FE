@@ -1,7 +1,9 @@
 import { apiClient } from '../lib/api'
 import type {
   CreateRecruiterJobPayload,
+  DeleteRecruiterJobResponse,
   Envelope,
+  JobActionReasonPayload,
   JobListQuery,
   ListEnvelope,
   PublicFeaturedCompany,
@@ -10,6 +12,7 @@ import type {
   PublicJobListItem,
   RecruiterJobListQuery,
   RecruiterJobResponse,
+  RecruiterJobStatusCounts,
 } from '../types/job.types'
 
 export const jobService = {
@@ -42,12 +45,40 @@ export const jobService = {
     const response = await apiClient.get<ListEnvelope<RecruiterJobResponse>>('/recruiter/jobs', { params })
     return response.data
   },
+  async getRecruiterJobStatusCounts() {
+    const response = await apiClient.get<Envelope<RecruiterJobStatusCounts>>('/recruiter/jobs/status-counts')
+    return response.data.data
+  },
+  async getRecruiterJobById(id: string) {
+    const response = await apiClient.get<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}`)
+    return response.data.data
+  },
   async createRecruiterJob(payload: CreateRecruiterJobPayload) {
     const response = await apiClient.post<Envelope<RecruiterJobResponse>>('/recruiter/jobs', payload)
     return response.data.data
   },
+  async updateRecruiterJob(id: string, payload: CreateRecruiterJobPayload) {
+    const response = await apiClient.patch<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}`, payload)
+    return response.data.data
+  },
   async submitRecruiterJob(id: string) {
     const response = await apiClient.post<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}/submit`)
+    return response.data.data
+  },
+  async deleteRecruiterJob(id: string) {
+    const response = await apiClient.delete<Envelope<DeleteRecruiterJobResponse>>(`/recruiter/jobs/${id}`)
+    return response.data.data
+  },
+  async unpublishRecruiterJob(id: string, payload: JobActionReasonPayload = {}) {
+    const response = await apiClient.post<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}/unpublish`, payload)
+    return response.data.data
+  },
+  async republishRecruiterJob(id: string) {
+    const response = await apiClient.post<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}/republish`)
+    return response.data.data
+  },
+  async closeRecruiterJob(id: string, payload: JobActionReasonPayload = {}) {
+    const response = await apiClient.post<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}/close`, payload)
     return response.data.data
   },
 }

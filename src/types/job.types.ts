@@ -15,6 +15,14 @@ export type JobStatus =
   | 'EXPIRED'
 export type JobModerationDecision = 'PENDING_REVIEW' | 'NEEDS_REVIEW' | 'SHOULD_REJECT'
 export type JobModerationRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+export type JobRevisionStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'NEEDS_REVIEW'
+  | 'SHOULD_REJECT'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'CANCELLED'
 
 export type ApiMeta = {
   page: number
@@ -127,6 +135,23 @@ export type RecruiterJobResponse = PublicJobDetail & {
 
 export type RecruiterJobListQuery = JobListQuery & {
   status?: JobStatus
+}
+
+export type RecruiterJobStatusCounts = Record<JobStatus, number>
+
+export type JobActionReasonPayload = {
+  reason?: string | null
+}
+
+export type DeleteRecruiterJobResponse = {
+  deleted: boolean
+}
+
+export type RecruiterJobRevisionResponse = Omit<RecruiterJobResponse, 'id' | 'status'> & {
+  id: string
+  jobId: string
+  changeSummary: string | null
+  status: JobRevisionStatus
 }
 
 export type CreateRecruiterJobPayload = {

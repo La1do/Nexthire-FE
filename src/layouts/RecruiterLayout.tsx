@@ -41,7 +41,11 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
   const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
-  const topbarContent = currentPath.startsWith('/recruiter/jobs/new') ? pages.recruiterJobCreate : content
+  const topbarContent = currentPath.startsWith('/recruiter/jobs/new')
+    ? pages.recruiterJobCreate
+    : currentPath.startsWith('/recruiter/jobs')
+      ? pages.recruiterJobs
+      : content
   const displayName = user ? getAuthUserDisplayName(user) : common.brandName
   const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
   const navItems = [
