@@ -1,4 +1,5 @@
 import type { ProfileTranslations } from '../../../i18n/types'
+import type { ApplicationCvDownloadResponse } from '../../../types/application.types'
 import type { CandidateApplication } from '../types'
 import { ApplicationCard } from './ApplicationCard'
 
@@ -8,7 +9,8 @@ type ApplicationListProps = {
   cvPreview: ProfileTranslations['applications']['cvPreview']
   formatDate: (value: string) => string
   meta: ProfileTranslations['applications']['meta']
-  profile: ProfileTranslations['profile']
+  onLoadCv: (applicationId: string) => Promise<ApplicationCvDownloadResponse>
+  onWithdraw: (application: CandidateApplication) => Promise<void>
   statusLabels: ProfileTranslations['applications']['statusLabels']
 }
 
@@ -18,7 +20,8 @@ export function ApplicationList({
   cvPreview,
   formatDate,
   meta,
-  profile,
+  onLoadCv,
+  onWithdraw,
   statusLabels,
 }: ApplicationListProps) {
   return (
@@ -31,7 +34,8 @@ export function ApplicationList({
           formatDate={formatDate}
           key={application.id}
           meta={meta}
-          profile={profile}
+          onLoadCv={onLoadCv}
+          onWithdraw={onWithdraw}
           statusLabels={statusLabels}
         />
       ))}

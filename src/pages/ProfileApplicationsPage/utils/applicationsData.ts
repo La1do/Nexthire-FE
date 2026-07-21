@@ -1,8 +1,8 @@
 import type { ProfileTranslations } from '../../../i18n/types'
 import type { ApplicationFilter, ApplicationStatsValue, CandidateApplication, CandidateApplicationStatus } from '../types'
 
-const activeStatuses = new Set<CandidateApplicationStatus>(['SUBMITTED', 'REVIEWING', 'INTERVIEW'])
-const closedStatuses = new Set<CandidateApplicationStatus>(['OFFERED', 'REJECTED', 'WITHDRAWN'])
+const activeStatuses = new Set<CandidateApplicationStatus>(['SUBMITTED', 'OFFERED'])
+const closedStatuses = new Set<CandidateApplicationStatus>(['REJECTED', 'WITHDRAWN', 'CANCELLED'])
 
 export function createCandidateApplications(
   source: ProfileTranslations['applications']['items'],
@@ -30,7 +30,7 @@ export function getApplicationStats(applications: ReadonlyArray<CandidateApplica
         stats.active += 1
       }
 
-      if (application.status === 'INTERVIEW') {
+      if (application.status === 'OFFERED') {
         stats.interviews += 1
       }
 

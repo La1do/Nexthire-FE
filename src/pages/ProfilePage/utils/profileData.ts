@@ -3,6 +3,8 @@ import type { CandidateProfile } from '../types'
 
 export function createCandidateProfile(source: ProfileTranslations['profile']): CandidateProfile {
   return {
+    avatarDocumentId: null,
+    defaultCvId: null,
     education: source.education.map((item) => ({ ...item })),
     email: source.email,
     experiences: source.experiences.map((item) => ({ ...item })),

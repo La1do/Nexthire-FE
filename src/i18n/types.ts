@@ -602,7 +602,14 @@ export type CompanyDetailTranslations = {
   profiles: ReadonlyArray<CompanyDetailProfile>
 }
 
-export type ProfileApplicationStatus = 'SUBMITTED' | 'REVIEWING' | 'INTERVIEW' | 'OFFERED' | 'REJECTED' | 'WITHDRAWN'
+export type ProfileApplicationStatus =
+  | 'SUBMITTED'
+  | 'REVIEWING'
+  | 'INTERVIEW'
+  | 'OFFERED'
+  | 'REJECTED'
+  | 'WITHDRAWN'
+  | 'CANCELLED'
 
 export type ProfileTranslations = {
   routeLabel: string
@@ -617,6 +624,17 @@ export type ProfileTranslations = {
   topbar: {
     notificationsLabel: string
     logout: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    saveError: string
+    avatarUploadError: string
+    cvUploadError: string
+    cvDeleteError: string
+    emptyResume: string
   }
   hero: {
     avatarAction: string
@@ -661,11 +679,15 @@ export type ProfileTranslations = {
       salary: string
       cvFile: string
       coverLetter: string
+      noCoverLetter: string
+      notAvailable: string
       appliedAt: string
       updatedAt: string
     }
     actions: {
       viewJob: string
+      withdraw: string
+      withdrawing: string
     }
     cvPreview: {
       open: string
@@ -681,6 +703,16 @@ export type ProfileTranslations = {
       experience: string
       education: string
       present: string
+      loading: string
+      error: string
+      openExternal: string
+    }
+    states: {
+      loading: string
+      errorTitle: string
+      errorDescription: string
+      retry: string
+      withdrawError: string
     }
     empty: {
       title: string
@@ -754,6 +786,8 @@ export type ProfileTranslations = {
       description: string
       fileLabel: string
       removeFileLabel: string
+      uploadFileLabel: string
+      uploadingFileLabel: string
       portfolioLabel: string
       linkedinLabel: string
     }

@@ -1,18 +1,25 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocale, useTranslations } from '../../i18n'
+import { getApiErrorEnvelope } from '../../lib/api/apiError'
+import { applicationService } from '../../services/application.service'
+import { Button } from '../_components'
 import { ApplicationEmptyState } from './components/ApplicationEmptyState'
 import { ApplicationFilters } from './components/ApplicationFilters'
 import { ApplicationList } from './components/ApplicationList'
 import { ApplicationStats } from './components/ApplicationStats'
-import type { ApplicationFilter } from './types'
-import { createCandidateApplications, filterCandidateApplications, getApplicationStats } from './utils/applicationsData'
+import type { ApplicationFilter, CandidateApplication } from './types'
+import { filterCandidateApplications, getApplicationStats } from './utils/applicationsData'
+import { createCandidateApplicationFromApi } from './utils/applicationApi'
 
 export function ProfileApplicationsPage() {
   const { locale } = useLocale()
   const { pages } = useTranslations()
   const content = pages.profile.applications
   const [activeFilter, setActiveFilter] = useState<ApplicationFilter>('all')
-  const applications = useMemo(() => createCandidateApplications(content.items), [content.items])
+  const [applications, setApplications] = useState<CandidateApplication[]>([])
+  const [isLoading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | undefined>(undefined)
+  const [actionError, setActionError] = useState<string | undefined>(undefined)
   const filteredApplications = useMemo(
     () => filterCandidateApplications(applications, activeFilter),
     [activeFilter, applications],
@@ -28,7 +35,77 @@ export function ProfileApplicationsPage() {
     [locale],
   )
 
-  const formatDate = (value: string) => dateFormatter.format(new Date(`${value}T00:00:00`))
+  const loadApplications = useCallback(async () => {
+    setLoading(true)
+    setLoadError(undefined)
+    setActionError(undefined)
+
+    try {
+      const response = await applicationService.getMyApplications({ limit: 50, page: 1 })
+      setApplications(
+        response.data.map((application) =>
+          createCandidateApplicationFromApi(
+            application,
+            content.meta.notAvailable,
+            content.meta.noCoverLetter,
+          ),
+        ),
+      )
+    } catch (error) {
+      setLoadError(getApiErrorEnvelope(error)?.error.message ?? content.states.errorDescription)
+    } finally {
+      setLoading(false)
+    }
+  }, [content.meta.noCoverLetter, content.meta.notAvailable, content.states.errorDescription])
+
+  useEffect(() => {
+    void loadApplications()
+  }, [loadApplications])
+
+  const formatDate = (value: string) => dateFormatter.format(new Date(value))
+
+  async function withdrawApplication(application: CandidateApplication) {
+    setActionError(undefined)
+
+    try {
+      const updatedApplication = await applicationService.withdrawMyApplication(application.id)
+      const nextApplication = createCandidateApplicationFromApi(
+        updatedApplication,
+        content.meta.notAvailable,
+        content.meta.noCoverLetter,
+      )
+
+      setApplications((currentApplications) =>
+        currentApplications.map((currentApplication) =>
+          currentApplication.id === application.id ? nextApplication : currentApplication,
+        ),
+      )
+    } catch (error) {
+      setActionError(getApiErrorEnvelope(error)?.error.message ?? content.states.withdrawError)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="profile-applications-page">
+        <section className="profile-application-state profile-card-motion">
+          <p>{content.states.loading}</p>
+        </section>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="profile-applications-page">
+        <section className="profile-application-state profile-card-motion">
+          <h2>{content.states.errorTitle}</h2>
+          <p>{loadError}</p>
+          <Button onClick={() => void loadApplications()}>{content.states.retry}</Button>
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="profile-applications-page">
@@ -42,6 +119,8 @@ export function ProfileApplicationsPage() {
       </section>
 
       <ApplicationStats labels={content.stats} stats={stats} />
+
+      {actionError ? <p className="profile-api-message profile-api-message-error">{actionError}</p> : null}
 
       <section className="profile-applications-panel">
         <ApplicationFilters
@@ -59,7 +138,8 @@ export function ProfileApplicationsPage() {
             cvPreview={content.cvPreview}
             formatDate={formatDate}
             meta={content.meta}
-            profile={pages.profile.profile}
+            onLoadCv={applicationService.getMyApplicationCv}
+            onWithdraw={withdrawApplication}
             statusLabels={content.statusLabels}
           />
         ) : (

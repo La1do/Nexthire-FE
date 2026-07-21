@@ -17,6 +17,8 @@ export type CandidateEducation = {
 }
 
 export type CandidateProfile = {
+  avatarDocumentId: string | null
+  defaultCvId: string | null
   education: CandidateEducation[]
   email: string
   experiences: CandidateExperience[]

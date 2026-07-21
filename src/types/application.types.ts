@@ -48,3 +48,24 @@ export type RecruiterApplicationListResponse = {
   data: ApplicationResponse[]
   meta: ApiMeta
 }
+
+export type CandidateApplicationQuery = {
+  page?: number
+  limit?: number
+  status?: ApplicationStatus
+}
+
+export type CandidateApplicationListResponse = {
+  success: true
+  data: ApplicationResponse[]
+  meta: ApiMeta
+}
+
+export type ApplicationCvDownloadResponse = {
+  documentId: string
+  fileName: string
+  mimeType: string
+  size: number
+  url: string
+  expiresInSeconds: number
+}

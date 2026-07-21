@@ -3454,7 +3454,9 @@ select {
 
 .profile-hero,
 .profile-section,
-.profile-completion-panel {
+.profile-completion-panel,
+.profile-state-card,
+.profile-application-state {
   background: var(--color-surface-card);
   border: 1px solid var(--color-border-default);
   border-radius: 18px;
@@ -3623,6 +3625,14 @@ select {
     transform 160ms var(--motion-ease-standard);
 }
 
+.profile-hero-actions button:disabled,
+.profile-sticky-actions button:disabled,
+.profile-avatar-action:disabled,
+.profile-resume-file button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .profile-hero-actions button:hover,
 .profile-hero-actions a:hover,
 .profile-sticky-actions button:hover,
@@ -3636,6 +3646,43 @@ select {
   display: grid;
   gap: 1rem;
   padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.profile-state-card,
+.profile-application-state {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: start;
+  min-height: 10rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.profile-state-card h2,
+.profile-application-state h2 {
+  color: var(--color-text-primary);
+  font-size: 1.15rem;
+  font-weight: 950;
+}
+
+.profile-state-card p,
+.profile-application-state p {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.profile-api-message {
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 850;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0.85rem 1rem;
+}
+
+.profile-api-message-error {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.16);
+  color: var(--color-text-danger);
 }
 
 .profile-form-stack > :nth-child(2) {
@@ -3865,6 +3912,13 @@ select {
   text-align: center;
 }
 
+.profile-resume-file div > span {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: center;
+}
+
 .profile-resume-file strong {
   overflow-wrap: anywhere;
 }
@@ -4004,6 +4058,7 @@ select {
 
 .profile-applications-hero a,
 .profile-application-card-side a,
+.profile-application-card-side button,
 .profile-application-empty button {
   align-items: center;
   border: 0;
@@ -4028,6 +4083,7 @@ select {
 
 .profile-applications-hero a:hover,
 .profile-application-card-side a:hover,
+.profile-application-card-side button:hover,
 .profile-application-empty button:hover {
   filter: brightness(1.04);
   transform: translateY(-1px);
@@ -4333,6 +4389,37 @@ select {
   margin: 0;
 }
 
+.profile-application-cv-file-frame {
+  background: var(--color-surface-muted);
+  display: grid;
+  min-height: min(62dvh, 42rem);
+  overflow: hidden;
+}
+
+.profile-application-cv-file-frame iframe {
+  border: 0;
+  height: min(62dvh, 42rem);
+  width: 100%;
+}
+
+.profile-application-cv-file-frame > a,
+.profile-application-cv-state {
+  align-self: center;
+  color: var(--color-brand-solid);
+  font-weight: 950;
+  justify-self: center;
+  padding: 1.5rem;
+}
+
+.profile-application-cv-state {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.profile-application-cv-state.is-error {
+  color: var(--color-text-danger);
+}
+
 .profile-application-cv-contact {
   display: grid;
   gap: 0.7rem;
@@ -4432,6 +4519,11 @@ select {
   color: var(--color-text-muted);
 }
 
+.profile-application-status--cancelled {
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
 .profile-application-details {
   display: grid;
   gap: 0.65rem;
@@ -4508,9 +4600,22 @@ select {
 }
 
 .profile-application-card-side a,
+.profile-application-card-side button,
 .profile-application-empty button {
   background: var(--color-surface-muted);
+  border: 0;
+  border-radius: 999px;
   color: var(--color-brand-solid);
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 950;
+  min-height: 2.45rem;
+  padding: 0.65rem 0.9rem;
+}
+
+.profile-application-card-side button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .profile-application-empty {
@@ -5201,6 +5306,7 @@ select {
 
   .profile-applications-hero a,
   .profile-application-card-side a,
+  .profile-application-card-side button,
   .profile-application-empty button {
     width: 100%;
   }

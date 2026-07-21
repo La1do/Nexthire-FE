@@ -4,11 +4,10 @@ import type { ApplicationFilter, CandidateApplication } from '../types'
 const filterOptions: readonly ApplicationFilter[] = [
   'all',
   'SUBMITTED',
-  'REVIEWING',
-  'INTERVIEW',
   'OFFERED',
   'REJECTED',
   'WITHDRAWN',
+  'CANCELLED',
 ]
 
 type ApplicationFiltersProps = {
