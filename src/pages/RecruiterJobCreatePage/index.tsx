@@ -171,6 +171,13 @@ export function RecruiterJobCreatePage() {
   const companyName = company?.name ?? content.preview.labels.company
   const currentPayloadKey = createPayloadKey(values)
   const hasUnsavedChanges = currentPayloadKey !== (draftPayloadKey ?? INITIAL_JOB_POST_PAYLOAD_KEY)
+  const previewSaveStateLabel = submittingAction === 'draft'
+    ? content.form.actions.savingDraft
+    : !draftJob
+      ? content.form.actions.notSavedYet
+      : hasUnsavedChanges
+      ? content.form.actions.unsavedChanges
+      : content.form.actions.saved
 
   const handleFieldChange = useCallback(
     <TField extends keyof JobPostFormValues>(field: TField, value: JobPostFormValues[TField]) => {
@@ -393,9 +400,13 @@ export function RecruiterJobCreatePage() {
             categories={categories}
             companyName={companyName}
             emptySkillsLabel={content.form.fields.skills.empty}
+            hasSavedDraft={Boolean(draftJob)}
+            hasUnsavedChanges={hasUnsavedChanges}
             locale={locale}
             noCategoryLabel={content.form.options.noCategory}
             optionLabels={content.form.options}
+            saveStateLabel={previewSaveStateLabel}
+            submittingAction={submittingAction}
             translations={content.preview}
             values={values}
           />

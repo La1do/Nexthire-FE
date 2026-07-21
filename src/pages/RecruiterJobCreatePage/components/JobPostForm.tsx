@@ -396,9 +396,6 @@ export function JobPostForm({
       <div className="job-post-form-actions recruiter-panel">
         {submitError ? <p>{submitError}</p> : null}
         <div>
-          <Button disabled={isSubmitting} onClick={onReset} type="button" variant="ghost">
-            {translations.form.actions.reset}
-          </Button>
           <Button
             className={`job-post-save-draft-button${hasUnsavedChanges ? ' is-dirty' : ''}${isSavingDraft ? ' is-saving' : ''}`}
             disabled={isSaveDraftDisabled}
@@ -421,6 +418,9 @@ export function JobPostForm({
             {submittingAction === 'submit'
               ? translations.form.actions.submittingReview
               : translations.form.actions.submitReview}
+          </Button>
+          <Button disabled={isSubmitting} onClick={onReset} type="button" variant="ghost">
+            {translations.form.actions.reset}
           </Button>
         </div>
       </div>

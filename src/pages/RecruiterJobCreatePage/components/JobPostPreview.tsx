@@ -8,9 +8,13 @@ type JobPostPreviewProps = {
   categories: ReadonlyArray<PublicCategory>
   companyName: string
   emptySkillsLabel: string
+  hasSavedDraft?: boolean
+  hasUnsavedChanges?: boolean
   noCategoryLabel: string
   locale: Locale
   optionLabels: RecruiterJobCreateTranslations['form']['options']
+  saveStateLabel?: string
+  submittingAction?: string
   translations: RecruiterJobCreateTranslations['preview']
   values: JobPostFormValues
 }
@@ -64,7 +68,18 @@ function createSalaryLabel(
 
 function createSummary(text: string) {
   const compactText = text.trim().replace(/\s+/g, ' ')
-  return compactText.length > 148 ? `${compactText.slice(0, 145)}...` : compactText
+  return compactText.length > 112 ? `${compactText.slice(0, 109)}...` : compactText
+}
+
+function getChecklistProgress(checklist: JobPostChecklist) {
+  const total = Object.keys(checklist).length
+  const done = Object.values(checklist).filter(Boolean).length
+
+  return {
+    done,
+    total,
+    value: Math.round((done / total) * 100),
+  }
 }
 
 function ChecklistRow({
@@ -107,18 +122,30 @@ export function JobPostPreview({
   categories,
   companyName,
   emptySkillsLabel,
+  hasSavedDraft = true,
+  hasUnsavedChanges = false,
   locale,
   noCategoryLabel,
   optionLabels,
+  saveStateLabel,
+  submittingAction,
   translations,
   values,
 }: JobPostPreviewProps) {
   const checklist = getJobPostChecklist(values)
+  const progress = getChecklistProgress(checklist)
   const title = values.title.trim() || translations.emptyTitle
   const selectedCategory = categories.find((category) => category.id === values.categoryId)
   const deadline = formatDate(values.deadline, locale)
   const openings = parseOptionalNumber(values.numberOfOpenings)
   const hasContent = values.description.trim() || values.requirements.trim() || values.benefits.trim()
+  const saveStateClass = submittingAction
+    ? 'is-saving'
+    : !hasSavedDraft
+      ? 'is-unsaved'
+    : hasUnsavedChanges
+      ? 'is-dirty'
+      : 'is-saved'
 
   return (
     <aside className="job-post-preview recruiter-panel" aria-label={translations.title}>
@@ -128,6 +155,30 @@ export function JobPostPreview({
           <p>{hasContent ? title : translations.emptyDescription}</p>
         </div>
       </div>
+
+      {saveStateLabel ? (
+        <div
+          aria-live="polite"
+          className={`job-post-save-state ${saveStateClass}`}
+          role="status"
+        >
+          <span aria-hidden="true" />
+          <p>{saveStateLabel}</p>
+        </div>
+      ) : null}
+
+      <div className="job-post-readiness">
+        <div>
+          <span>{translations.readinessLabel}</span>
+          <strong>{progress.value}%</strong>
+        </div>
+        <div className="job-post-readiness__bar">
+          <span style={{ width: `${progress.value}%` }} />
+        </div>
+        <p>{translations.readinessProgress.replace('{done}', String(progress.done)).replace('{total}', String(progress.total))}</p>
+      </div>
+
+      <Checklist checklist={checklist} translations={translations} />
 
       <article className="job-post-preview-card">
         <div className="job-post-preview-card__header">
@@ -151,32 +202,28 @@ export function JobPostPreview({
             <dt>{translations.labels.salary}</dt>
             <dd>{createSalaryLabel(values, translations, locale)}</dd>
           </div>
-          {openings ? (
-            <div>
-              <dt>{translations.labels.openings}</dt>
-              <dd>{formatNumber(openings, locale)}</dd>
-            </div>
-          ) : null}
           <div>
             <dt>{translations.labels.deadline}</dt>
             <dd>{deadline ?? translations.noDeadline}</dd>
           </div>
-          {values.employmentType ? (
-            <div>
-              <dt>{translations.labels.employmentType}</dt>
-              <dd>{optionLabels.employmentTypes[values.employmentType]}</dd>
-            </div>
-          ) : null}
           {values.workingType ? (
             <div>
               <dt>{translations.labels.workingType}</dt>
               <dd>{optionLabels.workingTypes[values.workingType]}</dd>
             </div>
           ) : null}
-          {values.experienceLevel ? (
+          {values.employmentType && values.experienceLevel ? (
             <div>
-              <dt>{translations.labels.experienceLevel}</dt>
-              <dd>{optionLabels.experienceLevels[values.experienceLevel]}</dd>
+              <dt>{translations.labels.employmentType}</dt>
+              <dd>
+                {optionLabels.employmentTypes[values.employmentType]} · {optionLabels.experienceLevels[values.experienceLevel]}
+              </dd>
+            </div>
+          ) : null}
+          {openings ? (
+            <div>
+              <dt>{translations.labels.openings}</dt>
+              <dd>{formatNumber(openings, locale)}</dd>
             </div>
           ) : null}
         </dl>
@@ -211,8 +258,6 @@ export function JobPostPreview({
           <p>{values.benefits.trim() ? createSummary(values.benefits) : translations.noBenefits}</p>
         </section>
       </article>
-
-      <Checklist checklist={checklist} translations={translations} />
     </aside>
   )
 }
