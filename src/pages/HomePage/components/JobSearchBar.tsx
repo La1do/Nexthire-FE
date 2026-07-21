@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { HomeTranslations } from '../../../i18n/types'
 import { SelectField } from '../../_components'
 
@@ -14,19 +15,6 @@ function SearchIcon() {
   )
 }
 
-function FilterIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M4 7h10" />
-      <path d="M18 7h2" />
-      <path d="M4 17h2" />
-      <path d="M10 17h10" />
-      <circle cx="16" cy="7" r="2" />
-      <circle cx="8" cy="17" r="2" />
-    </svg>
-  )
-}
-
 function LocationIcon() {
   return (
     <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
@@ -36,65 +24,131 @@ function LocationIcon() {
   )
 }
 
-function getQuickFilterHref(filter: string) {
-  const params = new URLSearchParams()
-  const normalizedFilter = filter.toLowerCase()
+type QuickFilterKey = 'remote' | 'hybrid' | 'senior' | 'salary25'
 
-  if (normalizedFilter.includes('remote') || filter.includes('リモート')) {
-    params.set('workMode', filter.includes('リモート') ? 'リモート' : 'Remote')
-  } else if (normalizedFilter.includes('hybrid') || filter.includes('ハイブリッド')) {
-    params.set('workMode', filter.includes('ハイブリッド') ? 'ハイブリッド' : 'Hybrid')
-  } else if (normalizedFilter.includes('25')) {
-    params.set('salary', '25')
-  } else {
-    params.set('keyword', filter)
+function detectQuickFilterKey(filter: string): QuickFilterKey | null {
+  const lower = filter.toLowerCase()
+  if (lower.includes('remote') || filter.includes('リモート')) return 'remote'
+  if (lower.includes('hybrid') || filter.includes('ハイブリッド')) return 'hybrid'
+  if (lower.includes('senior')) return 'senior'
+  if (lower.includes('25')) return 'salary25'
+  return null
+}
+
+function buildSearchParams(
+  keyword: string,
+  location: string,
+  activeFilters: ReadonlySet<QuickFilterKey>,
+) {
+  const params = new URLSearchParams()
+
+  if (keyword.trim()) {
+    params.set('keyword', keyword.trim())
   }
 
-  return `/search?${params.toString()}`
+  if (location.trim()) {
+    params.set('location', location)
+  }
+
+  if (activeFilters.has('remote')) {
+    params.set('workMode', 'Remote')
+  } else if (activeFilters.has('hybrid')) {
+    params.set('workMode', 'Hybrid')
+  }
+
+  if (activeFilters.has('senior')) {
+    params.set('level', 'Senior')
+  }
+
+  if (activeFilters.has('salary25')) {
+    params.set('salary', '25')
+  }
+
+  return params
 }
 
 export function JobSearchBar({ content }: JobSearchBarProps) {
+  const [keyword, setKeyword] = useState('')
+  const [location, setLocation] = useState('')
+  const [activeFilters, setActiveFilters] = useState<ReadonlySet<QuickFilterKey>>(() => new Set())
+
+  function toggleFilter(key: QuickFilterKey) {
+    setActiveFilters((current) => {
+      const next = new Set(current)
+
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.add(key)
+      }
+
+      return next
+    })
+  }
+
+  const params = buildSearchParams(keyword, location, activeFilters)
+  const action = params.toString() ? `/search?${params.toString()}` : '/search'
+
   return (
     <div className="job-search-shell">
-      <form action="/search" className="job-search-bar" method="get">
+      <form action={action} className="job-search-bar" method="get">
         <label className="job-search-field job-search-field-main">
           <span>{content.keywordLabel}</span>
           <SearchIcon />
-          <input autoComplete="off" id="home-job-keyword" name="keyword" placeholder={content.keywordPlaceholder} type="search" />
+          <input
+            autoComplete="off"
+            id="home-job-keyword"
+            name="keyword"
+            onChange={(event) => setKeyword(event.target.value)}
+            placeholder={content.keywordPlaceholder}
+            type="search"
+            value={keyword}
+          />
         </label>
-
-        <div className="job-search-divider" />
-
-        <SelectField
-          className="job-search-select-field"
-          defaultValue=""
-          hideLabel
-          icon={<LocationIcon />}
-          id="home-job-location"
-          label={content.locationLabel}
-          name="location"
-          options={[
-            { label: content.locationPlaceholder, value: '' },
-            ...content.locationOptions.map((option) => ({ label: option, value: option })),
-          ]}
-        />
-
-        <button aria-label={content.filterLabel} className="job-search-filter" name="filters" type="submit" value="open">
-          <FilterIcon />
-        </button>
 
         <button className="job-search-submit" type="submit">
           {content.submit}
         </button>
-      </form>
 
-      <div className="job-search-chips" aria-label={content.filterLabel}>
-        {content.quickFilters.map((filter) => (
-          <a href={getQuickFilterHref(filter)} key={filter}>
-            {filter}
-          </a>
-        ))}
-      </div>
+        <div className="job-search-chips" aria-label={content.filterLabel}>
+          <SelectField
+            className="job-search-select-field"
+            hideLabel
+            icon={<LocationIcon />}
+            id="home-job-location"
+            label={content.locationLabel}
+            name="location"
+            onChange={setLocation}
+            options={[
+              { label: content.locationPlaceholder, value: '' },
+              ...content.locationOptions.map((option) => ({ label: option, value: option })),
+            ]}
+            value={location}
+          />
+
+          {content.quickFilters.map((filter) => {
+            const key = detectQuickFilterKey(filter)
+
+            if (!key) {
+              return null
+            }
+
+            const isActive = activeFilters.has(key)
+
+            return (
+              <button
+                aria-pressed={isActive}
+                className={`job-search-chip${isActive ? ' is-active' : ''}`}
+                key={key}
+                onClick={() => toggleFilter(key)}
+                type="button"
+              >
+                {filter}
+              </button>
+            )
+          })}
+        </div>
+      </form>
     </div>
   )
 }
