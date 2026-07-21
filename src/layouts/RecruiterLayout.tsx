@@ -125,12 +125,14 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
           </nav>
 
           <div className="recruiter-sidebar__user">
-            {user?.logoUrl ? (
-              <img alt={user.companyName ? `${user.companyName} logo` : ''} src={user.logoUrl} />
-            ) : (
-              <span>{avatarLabel}</span>
-            )}
-            <div>
+            <div className="recruiter-sidebar__user-avatar">
+              {user?.logoUrl ? (
+                <img alt={user.companyName ? `${user.companyName} logo` : ''} src={user.logoUrl} />
+              ) : (
+                <span>{avatarLabel}</span>
+              )}
+            </div>
+            <div className="recruiter-sidebar__user-info">
               <strong>{displayName}</strong>
               <small>{user?.companyName ?? content.sidebar.currentRole}</small>
             </div>
@@ -180,6 +182,7 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
             <button
               aria-label={content.topbar.notificationsLabel}
               className="recruiter-topbar__icon-button"
+              title={content.topbar.notificationsLabel}
               type="button"
             >
               <BellIcon />
