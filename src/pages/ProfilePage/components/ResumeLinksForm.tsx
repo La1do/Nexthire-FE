@@ -8,13 +8,10 @@ import { ProfileSection } from './ProfileSection'
 type ResumeLinksFormProps = {
   cvDraftError?: string
   cvDraftMessage?: string
-  cvDraftText: string
   content: ProfileTranslations['sections']['resume']
   emptyResumeLabel: string
   isUploadingResume: boolean
   onChange: (field: 'linkedin' | 'portfolio', value: string) => void
-  onCvDraftTextChange: (value: string) => void
-  onParseCvDraft: () => void
   onUploadResume: (file: File) => void
   onRemoveResume: () => void
   profile: CandidateProfile
@@ -23,14 +20,11 @@ type ResumeLinksFormProps = {
 export function ResumeLinksForm({
   cvDraftError,
   cvDraftMessage,
-  cvDraftText,
   content,
   emptyResumeLabel,
   isUploadingResume,
   onChange,
-  onCvDraftTextChange,
   onRemoveResume,
-  onParseCvDraft,
   onUploadResume,
   profile,
 }: ResumeLinksFormProps) {
@@ -76,20 +70,6 @@ export function ResumeLinksForm({
             type="file"
           />
         </div>
-      </div>
-
-      <div className="profile-cv-draft-box">
-        <ProfileField label={content.pasteLabel}>
-          <textarea
-            className="profile-control profile-textarea"
-            onChange={(event) => onCvDraftTextChange(event.target.value)}
-            placeholder={content.pastePlaceholder}
-            value={cvDraftText}
-          />
-        </ProfileField>
-        <button disabled={!cvDraftText.trim()} onClick={onParseCvDraft} type="button">
-          {content.parseDraftLabel}
-        </button>
         {cvDraftMessage ? <p className="profile-cv-draft-message">{cvDraftMessage}</p> : null}
         {cvDraftError ? <p className="profile-cv-draft-message is-error">{cvDraftError}</p> : null}
       </div>

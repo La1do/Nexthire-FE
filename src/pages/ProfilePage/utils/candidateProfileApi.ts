@@ -2,6 +2,7 @@ import type {
   CandidateEducationPayload,
   CandidateExperiencePayload,
   CandidateMeResponse,
+  CandidateParsedCvDraftResponse,
   CandidateUpdatePayload,
 } from '../../../types/candidate.types'
 import type { CandidateEducation, CandidateExperience, CandidateProfile } from '../types'
@@ -53,6 +54,10 @@ function parseMonthYear(value: string) {
 function parseYear(value: string) {
   const parsedValue = Number(value.trim())
   return Number.isInteger(parsedValue) ? parsedValue : null
+}
+
+function hasText(value: string | null | undefined) {
+  return Boolean(value?.trim())
 }
 
 export function createProfileFromCandidateAggregate(data: CandidateMeResponse): CandidateProfile {
@@ -151,5 +156,111 @@ export function createCandidateUpdatePayload(profile: CandidateProfile): Candida
     educations: profile.education
       .map(createEducationPayload)
       .filter((education): education is CandidateEducationPayload => Boolean(education)),
+  }
+}
+
+function createExperienceFromDraft(
+  experience: CandidateExperiencePayload,
+  index: number,
+  timestamp: number,
+): CandidateExperience | null {
+  const company = experience.companyName?.trim() ?? ''
+  const position = experience.position?.trim() ?? ''
+
+  if (!company && !position) {
+    return null
+  }
+
+  return {
+    company,
+    description: experience.description ?? '',
+    endDate: experience.isCurrent ? '' : formatMonthYear(experience.endMonth ?? null, experience.endYear ?? null),
+    id: `cv-exp-${timestamp}-${index}`,
+    isCurrent: Boolean(experience.isCurrent),
+    position,
+    startDate: formatMonthYear(experience.startMonth ?? null, experience.startYear ?? null),
+  }
+}
+
+function createEducationFromDraft(
+  education: CandidateEducationPayload,
+  index: number,
+  timestamp: number,
+): CandidateEducation | null {
+  const degree = education.degree?.trim() ?? education.fieldOfStudy?.trim() ?? ''
+  const school = education.schoolName?.trim() ?? ''
+
+  if (!degree && !school) {
+    return null
+  }
+
+  return {
+    degree,
+    endYear: education.endYear ? String(education.endYear) : '',
+    id: `cv-edu-${timestamp}-${index}`,
+    school,
+    startYear: education.startYear ? String(education.startYear) : '',
+  }
+}
+
+export function hasCandidateParsedCvDraft(draft: CandidateParsedCvDraftResponse) {
+  const profile = draft.profile ?? {}
+
+  return Boolean(
+    hasText(profile.fullName) ||
+      hasText(profile.phone) ||
+      hasText(profile.contactEmail) ||
+      hasText(profile.headline) ||
+      hasText(profile.summary) ||
+      hasText(profile.location) ||
+      hasText(profile.portfolioUrl) ||
+      hasText(profile.linkedinUrl) ||
+      draft.skills?.some((skill) => hasText(skill.name)) ||
+      draft.experiences?.length ||
+      draft.educations?.length,
+  )
+}
+
+export function applyParsedCvDraftToProfile(
+  currentProfile: CandidateProfile,
+  draft: CandidateParsedCvDraftResponse,
+): CandidateProfile {
+  const timestamp = Date.now()
+  const profile = draft.profile ?? {}
+  const draftSkills = (draft.skills ?? [])
+    .map((skill) => skill.name.trim())
+    .filter(Boolean)
+    .filter(
+      (skill, index, skills) =>
+        skills.findIndex((currentSkill) => currentSkill.toLowerCase() === skill.toLowerCase()) === index,
+    )
+  const experiences = (draft.experiences ?? [])
+    .map((experience, index) => createExperienceFromDraft(experience, index, timestamp))
+    .filter((experience): experience is CandidateExperience => Boolean(experience))
+  const education = (draft.educations ?? [])
+    .map((educationItem, index) => createEducationFromDraft(educationItem, index, timestamp))
+    .filter((educationItem): educationItem is CandidateEducation => Boolean(educationItem))
+
+  return {
+    ...currentProfile,
+    email: currentProfile.email || profile.contactEmail || currentProfile.email,
+    headline: profile.headline ?? currentProfile.headline,
+    linkedin: profile.linkedinUrl ?? currentProfile.linkedin,
+    location: profile.location ?? currentProfile.location,
+    name: profile.fullName ?? currentProfile.name,
+    phone: profile.phone ?? currentProfile.phone,
+    portfolio: profile.portfolioUrl ?? currentProfile.portfolio,
+    summary: profile.summary ?? currentProfile.summary,
+    education: education.length ? education : currentProfile.education,
+    experiences: experiences.length ? experiences : currentProfile.experiences,
+    skills: draftSkills.length
+      ? [
+          ...currentProfile.skills,
+          ...draftSkills.filter(
+            (skill) =>
+              !currentProfile.skills.some((currentSkill) => currentSkill.toLowerCase() === skill.toLowerCase()),
+          ),
+        ]
+      : currentProfile.skills,
   }
 }

@@ -2,6 +2,7 @@ import { apiClient } from '../lib/api'
 import type {
   CandidateCvResponse,
   CandidateMeResponse,
+  CandidateParsedCvDraftResponse,
   CandidateUpdatePayload,
 } from '../types/candidate.types'
 import type { Envelope } from '../types/job.types'
@@ -35,6 +36,16 @@ export const candidateService = {
     }
 
     const response = await apiClient.post<Envelope<CandidateCvResponse>>('/cvs/upload', formData)
+    return response.data.data
+  },
+  async parseCvFileDraft(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await apiClient.post<Envelope<CandidateParsedCvDraftResponse>>(
+      '/candidates/me/parse-cv-file',
+      formData,
+    )
     return response.data.data
   },
   async deleteCv(id: string) {

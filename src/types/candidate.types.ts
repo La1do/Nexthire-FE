@@ -146,3 +146,12 @@ export type CandidateUpdatePayload = {
   experiences?: CandidateExperiencePayload[]
   educations?: CandidateEducationPayload[]
 }
+
+export type CandidateParsedCvDraftResponse = {
+  profile?: CandidateProfilePayload | null
+  skills?: CandidateSkillPayload[]
+  experiences?: CandidateExperiencePayload[]
+  educations?: CandidateEducationPayload[]
+  certifications?: CandidateCertificationResponse[]
+  projects?: CandidateProjectResponse[]
+}

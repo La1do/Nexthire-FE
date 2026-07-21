@@ -14,11 +14,11 @@ import { SkillsEditor } from './components/SkillsEditor'
 import { StickyProfileActions } from './components/StickyProfileActions'
 import type { CandidateEducation, CandidateExperience, CandidateProfile } from './types'
 import {
+  applyParsedCvDraftToProfile,
   createCandidateUpdatePayload,
   createProfileFromCandidateAggregate,
+  hasCandidateParsedCvDraft,
 } from './utils/candidateProfileApi'
-import { hasParsedCvDraft, parseCvTextToProfileDraft } from './utils/cvDraftParser'
-import type { ParsedCvDraft } from './utils/cvDraftParser'
 import { createCandidateProfile } from './utils/profileData'
 import { getProfileCompletion } from './utils/profileCompletion'
 
@@ -38,7 +38,6 @@ export function ProfilePage() {
   const [isSaving, setSaving] = useState(false)
   const [isUploadingAvatar, setUploadingAvatar] = useState(false)
   const [isUploadingResume, setUploadingResume] = useState(false)
-  const [cvDraftText, setCvDraftText] = useState('')
   const [cvDraftMessage, setCvDraftMessage] = useState<string | undefined>(undefined)
   const [cvDraftError, setCvDraftError] = useState<string | undefined>(undefined)
   const completion = useMemo(() => getProfileCompletion(profile), [profile])
@@ -66,52 +65,6 @@ export function ProfilePage() {
     setProfile((currentProfile) => ({ ...currentProfile, ...patch }))
     setHasUnsavedChanges(true)
     setSaveError(undefined)
-  }
-
-  function mergeParsedCvDraft(currentProfile: CandidateProfile, draft: ParsedCvDraft): CandidateProfile {
-    return {
-      ...currentProfile,
-      email: currentProfile.email || draft.profile.email || currentProfile.email,
-      headline: draft.profile.headline ?? currentProfile.headline,
-      linkedin: draft.profile.linkedin ?? currentProfile.linkedin,
-      location: draft.profile.location ?? currentProfile.location,
-      name: draft.profile.name ?? currentProfile.name,
-      phone: draft.profile.phone ?? currentProfile.phone,
-      portfolio: draft.profile.portfolio ?? currentProfile.portfolio,
-      summary: draft.profile.summary ?? currentProfile.summary,
-      education: draft.education.length ? draft.education : currentProfile.education,
-      experiences: draft.experiences.length ? draft.experiences : currentProfile.experiences,
-      skills: draft.skills.length
-        ? [
-            ...currentProfile.skills,
-            ...draft.skills.filter(
-              (skill) => !currentProfile.skills.some((currentSkill) => currentSkill.toLowerCase() === skill.toLowerCase()),
-            ),
-          ]
-        : currentProfile.skills,
-    }
-  }
-
-  function parseCvDraftFromText(text: string) {
-    const draft = parseCvTextToProfileDraft(text)
-
-    if (!hasParsedCvDraft(draft)) {
-      setCvDraftMessage(undefined)
-      setCvDraftError(content.sections.resume.draftEmptyError)
-      return
-    }
-
-    setProfile((currentProfile) => mergeParsedCvDraft(currentProfile, draft))
-    setHasUnsavedChanges(true)
-    setSaveError(undefined)
-    setCvDraftError(undefined)
-    setCvDraftMessage(content.sections.resume.draftApplied)
-  }
-
-  function updateCvDraftText(value: string) {
-    setCvDraftText(value)
-    setCvDraftError(undefined)
-    setCvDraftMessage(undefined)
   }
 
   function addSkill() {
@@ -216,6 +169,8 @@ export function ProfilePage() {
   async function uploadResume(file: File) {
     setUploadingResume(true)
     setSaveError(undefined)
+    setCvDraftError(undefined)
+    setCvDraftMessage(undefined)
 
     try {
       const cv = await candidateService.uploadCv(file, {
@@ -227,6 +182,21 @@ export function ProfilePage() {
         defaultCvId: cv.id,
         resumeFile: cv.title,
       }))
+
+      try {
+        const draft = await candidateService.parseCvFileDraft(file)
+
+        if (!hasCandidateParsedCvDraft(draft)) {
+          setCvDraftError(content.sections.resume.draftFileEmpty)
+          return
+        }
+
+        setProfile((currentProfile) => applyParsedCvDraftToProfile(currentProfile, draft))
+        setHasUnsavedChanges(true)
+        setCvDraftMessage(content.sections.resume.draftFileApplied)
+      } catch (parseError) {
+        setCvDraftError(getApiErrorEnvelope(parseError)?.error.message ?? content.sections.resume.draftFileUnsupported)
+      }
     } catch (error) {
       setSaveError(getApiErrorEnvelope(error)?.error.message ?? content.states.cvUploadError)
     } finally {
@@ -327,13 +297,10 @@ export function ProfilePage() {
           <ResumeLinksForm
             cvDraftError={cvDraftError}
             cvDraftMessage={cvDraftMessage}
-            cvDraftText={cvDraftText}
             content={content.sections.resume}
             emptyResumeLabel={content.states.emptyResume}
             isUploadingResume={isUploadingResume}
             onChange={(field, value) => updateProfile({ [field]: value })}
-            onCvDraftTextChange={updateCvDraftText}
-            onParseCvDraft={() => parseCvDraftFromText(cvDraftText)}
             onRemoveResume={() => void removeResume()}
             onUploadResume={(file) => void uploadResume(file)}
             profile={profile}
