@@ -8787,7 +8787,7 @@ select {
 }
 
 .job-post-review-dialog__body {
-  flex: 1 1 0;
+  flex: 1 1 auto;
   min-height: 0;
   min-width: 0;
   overflow-x: hidden;
