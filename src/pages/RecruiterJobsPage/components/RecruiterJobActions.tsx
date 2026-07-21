@@ -1,4 +1,5 @@
 import { Button } from '../../_components'
+import { Link } from 'react-router-dom'
 import type { RecruiterJobsTranslations } from '../../../i18n/types'
 import type { RecruiterJobResponse } from '../../../types/job.types'
 import type { RecruiterJobAction, RecruiterJobActionState } from '../types'
@@ -6,6 +7,7 @@ import { getAvailableJobActions } from '../utils/recruiterJobsData'
 
 type RecruiterJobActionsProps = {
   actionState: RecruiterJobActionState
+  editHref?: string
   job: RecruiterJobResponse
   onAction: (job: RecruiterJobResponse, action: RecruiterJobAction) => void
   translations: RecruiterJobsTranslations
@@ -29,18 +31,28 @@ const ACTION_LABELS: Record<RecruiterJobAction, keyof RecruiterJobsTranslations[
 
 export function RecruiterJobActions({
   actionState,
+  editHref,
   job,
   onAction,
   translations,
 }: RecruiterJobActionsProps) {
   const actions = getAvailableJobActions(job)
 
-  if (!actions.length) {
+  if (!actions.length && !(job.status === 'DRAFT' && editHref)) {
     return <span className="recruiter-job-actions-empty">{translations.actions.none}</span>
   }
 
   return (
     <div className="recruiter-job-actions">
+      {job.status === 'DRAFT' && editHref ? (
+        <Link
+          className="recruiter-job-edit-link recruiter-job-action"
+          onClick={(event) => event.stopPropagation()}
+          to={editHref}
+        >
+          {translations.actions.edit}
+        </Link>
+      ) : null}
       {actions.map((action) => {
         const isLoading = actionState?.jobId === job.id && actionState.action === action
         const label = isLoading

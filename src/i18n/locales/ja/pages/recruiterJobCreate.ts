@@ -7,13 +7,18 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
   hero: {
     eyebrow: '求人',
     title: '新しい求人を作成',
+    editTitle: '下書きを編集',
     description: '候補者が最初に確認する職種、スキル、勤務形態、募集内容を整理します。',
+    editDescription: '保存または管理者レビューへ送信する前に下書きを更新します。',
     backAction: 'ダッシュボードへ',
+    backToDetail: '求人詳細へ戻る',
   },
   states: {
     loading: '求人作成データを読み込んでいます...',
     errorTitle: '求人作成ページを開けません',
     errorDescription: '接続を確認するか、採用担当者アカウントで再ログインしてからお試しください。',
+    editErrorDescription: '下書きを読み込めませんでした。権限を確認するか、後でもう一度お試しください。',
+    editDraftOnly: 'このフォームで編集できるのは下書き求人のみです。',
     retry: '再読み込み',
     categoryFallback: 'カテゴリを読み込めませんでした。カテゴリ未選択でも保存できます。',
   },

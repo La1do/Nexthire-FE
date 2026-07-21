@@ -47,6 +47,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
   },
   actions: {
     view: '表示',
+    edit: '編集',
     viewPublic: '公開ページ',
     submit: '送信',
     submitting: '送信中...',

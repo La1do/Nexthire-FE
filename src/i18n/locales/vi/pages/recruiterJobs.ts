@@ -47,6 +47,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
   },
   actions: {
     view: 'Xem',
+    edit: 'Sửa',
     viewPublic: 'Xem public',
     submit: 'Gửi duyệt',
     submitting: 'Đang gửi...',

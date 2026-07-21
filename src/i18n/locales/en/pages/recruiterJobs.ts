@@ -47,6 +47,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
   },
   actions: {
     view: 'View',
+    edit: 'Edit',
     viewPublic: 'View public',
     submit: 'Submit',
     submitting: 'Submitting...',

@@ -41,7 +41,9 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
   const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
-  const topbarContent = currentPath.startsWith('/recruiter/jobs/new')
+  const isJobFormPath = currentPath.startsWith('/recruiter/jobs/new') ||
+    (currentPath.startsWith('/recruiter/jobs/') && currentPath.endsWith('/edit'))
+  const topbarContent = isJobFormPath
     ? pages.recruiterJobCreate
     : currentPath.startsWith('/recruiter/jobs')
       ? pages.recruiterJobs

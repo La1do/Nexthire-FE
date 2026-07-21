@@ -7,13 +7,18 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
   hero: {
     eyebrow: 'Tin tuyển dụng',
     title: 'Tạo tin tuyển dụng mới',
+    editTitle: 'Chỉnh sửa bản nháp',
     description: 'Tập trung vào thông tin ứng viên cần đọc trước: vai trò, kỹ năng, chế độ làm việc và nội dung tuyển dụng.',
+    editDescription: 'Cập nhật nội dung bản nháp trước khi lưu lại hoặc gửi admin duyệt.',
     backAction: 'Về dashboard',
+    backToDetail: 'Về chi tiết tin',
   },
   states: {
     loading: 'Đang tải dữ liệu tạo tin...',
     errorTitle: 'Chưa mở được trang đăng tin',
     errorDescription: 'Kiểm tra kết nối hoặc đăng nhập lại bằng tài khoản nhà tuyển dụng rồi thử lại.',
+    editErrorDescription: 'Chưa tải được bản nháp. Kiểm tra quyền truy cập hoặc thử lại sau.',
+    editDraftOnly: 'Chỉ bản nháp mới có thể chỉnh sửa ở form này.',
     retry: 'Tải lại',
     categoryFallback: 'Chưa tải được danh mục. Bạn vẫn có thể lưu tin không chọn danh mục.',
   },

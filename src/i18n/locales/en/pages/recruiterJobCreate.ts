@@ -7,13 +7,18 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
   hero: {
     eyebrow: 'Job post',
     title: 'Create a new job post',
+    editTitle: 'Edit draft job',
     description: 'Lead with the details candidates scan first: role, skills, work model, and the hiring brief.',
+    editDescription: 'Update the draft before saving changes or submitting it for admin review.',
     backAction: 'Back to dashboard',
+    backToDetail: 'Back to job detail',
   },
   states: {
     loading: 'Loading job post data...',
     errorTitle: 'Job posting is unavailable',
     errorDescription: 'Check your connection or sign in again with a recruiter account, then try again.',
+    editErrorDescription: 'The draft could not be loaded. Check access or try again later.',
+    editDraftOnly: 'Only draft jobs can be edited in this form.',
     retry: 'Retry',
     categoryFallback: 'Categories could not be loaded. You can still save this job without a category.',
   },

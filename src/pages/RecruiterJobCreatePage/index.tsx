@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { categoryService } from '../../services/category.service'
@@ -44,15 +44,57 @@ function createInitialJobPostValues(): JobPostFormValues {
   }
 }
 
+function formatDateInputValue(value: string | null) {
+  if (!value) {
+    return ''
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return ''
+  }
+
+  return date.toISOString().slice(0, 10)
+}
+
+function mapJobToPostValues(job: RecruiterJobResponse): JobPostFormValues {
+  return {
+    title: job.title,
+    categoryId: job.categoryId ?? '',
+    employmentType: job.employmentType,
+    workingType: job.workingType,
+    experienceLevel: job.experienceLevel,
+    location: job.location,
+    salaryMin: job.salaryMin == null ? '' : String(job.salaryMin),
+    salaryMax: job.salaryMax == null ? '' : String(job.salaryMax),
+    salaryCurrency: job.salaryCurrency === 'USD' || job.salaryCurrency === 'JPY' ? job.salaryCurrency : 'VND',
+    isSalaryVisible: job.isSalaryVisible,
+    deadline: formatDateInputValue(job.deadline),
+    numberOfOpenings: job.numberOfOpenings == null ? '' : String(job.numberOfOpenings),
+    skills: job.skills,
+    skillInput: '',
+    description: job.description,
+    requirements: job.requirements,
+    benefits: job.benefits ?? '',
+  }
+}
+
+function createPayloadKey(values: JobPostFormValues) {
+  return JSON.stringify(createJobPostPayload(values))
+}
+
 function isCompanyNotFound(error: unknown) {
   const code = getApiErrorEnvelope(error)?.error.code
   return code?.includes('NOT_FOUND') ?? false
 }
 
 export function RecruiterJobCreatePage() {
+  const { id: editJobId } = useParams()
   const { locale } = useLocale()
   const { pages } = useTranslations()
   const content = pages.recruiterJobCreate
+  const isEditMode = Boolean(editJobId)
   const [categories, setCategories] = useState<PublicCategory[]>([])
   const [categoryWarning, setCategoryWarning] = useState<string | undefined>(undefined)
   const [company, setCompany] = useState<CompanyResponse | null>(null)
@@ -91,8 +133,31 @@ export function RecruiterJobCreatePage() {
       setCategoryWarning(content.states.categoryFallback)
     }
 
+    if (editJobId) {
+      try {
+        const job = await jobService.getRecruiterJobById(editJobId)
+
+        if (job.status !== 'DRAFT') {
+          setLoadError(content.states.editDraftOnly)
+        } else {
+          const nextValues = mapJobToPostValues(job)
+          setValues(nextValues)
+          setDraftJob(job)
+          setDraftPayloadKey(createPayloadKey(nextValues))
+        }
+      } catch (error) {
+        setLoadError(getApiErrorEnvelope(error)?.error.message ?? content.states.editErrorDescription)
+      }
+    }
+
     setLoading(false)
-  }, [content.states.categoryFallback, content.states.errorDescription])
+  }, [
+    content.states.categoryFallback,
+    content.states.editDraftOnly,
+    content.states.editErrorDescription,
+    content.states.errorDescription,
+    editJobId,
+  ])
 
   useEffect(() => {
     void loadPageData()
@@ -165,13 +230,23 @@ export function RecruiterJobCreatePage() {
   }, [])
 
   const handleReset = useCallback(() => {
+    if (isEditMode && draftJob) {
+      const nextValues = mapJobToPostValues(draftJob)
+      setValues(nextValues)
+      setErrors({})
+      setSubmitError(undefined)
+      setSubmitResult(undefined)
+      setDraftPayloadKey(createPayloadKey(nextValues))
+      return
+    }
+
     setValues(createInitialJobPostValues())
     setErrors({})
     setSubmitError(undefined)
     setSubmitResult(undefined)
     setDraftJob(undefined)
     setDraftPayloadKey(undefined)
-  }, [])
+  }, [draftJob, isEditMode])
 
   const handleSubmit = useCallback(
     async (action: JobPostAction) => {
@@ -233,11 +308,11 @@ export function RecruiterJobCreatePage() {
       <section className="job-post-page-header">
         <div>
           <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
-          <h1>{content.hero.title}</h1>
-          <p>{content.hero.description}</p>
+          <h1>{isEditMode ? content.hero.editTitle : content.hero.title}</h1>
+          <p>{isEditMode ? content.hero.editDescription : content.hero.description}</p>
         </div>
-        <Link className="job-post-link-button" to="/recruiter">
-          {content.hero.backAction}
+        <Link className="job-post-link-button" to={isEditMode && editJobId ? `/recruiter/jobs/${editJobId}` : '/recruiter'}>
+          {isEditMode ? content.hero.backToDetail : content.hero.backAction}
         </Link>
       </section>
 

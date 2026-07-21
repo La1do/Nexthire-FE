@@ -992,13 +992,18 @@ export type RecruiterJobCreateTranslations = {
   hero: {
     eyebrow: string
     title: string
+    editTitle: string
     description: string
+    editDescription: string
     backAction: string
+    backToDetail: string
   }
   states: {
     loading: string
     errorTitle: string
     errorDescription: string
+    editErrorDescription: string
+    editDraftOnly: string
     retry: string
     categoryFallback: string
   }
@@ -1220,6 +1225,7 @@ export type RecruiterJobsTranslations = {
   sortOptions: Record<RecruiterJobSortOption, string>
   actions: {
     view: string
+    edit: string
     viewPublic: string
     submit: string
     submitting: string

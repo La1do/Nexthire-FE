@@ -9202,9 +9202,24 @@ select {
 }
 
 .recruiter-job-action {
+  align-items: center;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 760;
+  justify-content: center;
   min-height: 2.2rem;
   padding-inline: 0.7rem;
   white-space: nowrap;
+}
+
+.recruiter-job-edit-link {
+  background: var(--color-brand-soft);
+  color: var(--color-brand-solid);
+}
+
+.recruiter-job-edit-link:hover {
+  filter: brightness(0.98);
 }
 
 .recruiter-job-action--delete,

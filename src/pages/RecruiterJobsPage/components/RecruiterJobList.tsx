@@ -111,6 +111,7 @@ export function RecruiterJobList({
                 <td>
                   <RecruiterJobActions
                     actionState={actionState}
+                    editHref={`/recruiter/jobs/${job.id}/edit`}
                     job={job}
                     onAction={onAction}
                     translations={translations}
@@ -170,6 +171,7 @@ export function RecruiterJobList({
             </dl>
             <RecruiterJobActions
               actionState={actionState}
+              editHref={`/recruiter/jobs/${job.id}/edit`}
               job={job}
               onAction={onAction}
               translations={translations}

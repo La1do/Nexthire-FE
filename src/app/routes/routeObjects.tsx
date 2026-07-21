@@ -104,6 +104,12 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: RecruiterLayout,
     },
     {
+      path: '/recruiter/jobs/:id/edit',
+      label: pages.recruiterJobCreate.routeLabel,
+      element: <RecruiterJobCreatePage />,
+      layout: RecruiterLayout,
+    },
+    {
       path: '/recruiter/jobs/:id',
       label: pages.recruiterJobs.detailRouteLabel,
       element: <RecruiterJobDetailPage />,

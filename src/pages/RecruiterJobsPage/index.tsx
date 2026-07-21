@@ -353,6 +353,7 @@ export function RecruiterJobDetailPage() {
           )}
           <RecruiterJobActions
             actionState={actionState}
+            editHref={`/recruiter/jobs/${job.id}/edit`}
             job={job}
             onAction={handleAction}
             translations={content}
