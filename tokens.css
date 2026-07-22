@@ -68,6 +68,11 @@
   --dur-micro: 120ms;
   --dur-short: 220ms;
   --dur-long: 420ms;
+  --dur-home-delay-1: 60ms;
+  --dur-home-delay-2: 120ms;
+  --dur-home-delay-3: 180ms;
+  --dur-home-delay-4: 240ms;
+  --dur-home-marquee: 36s;
 
   --rule-home-hair: 1px;
   --radius-home-xs: 4px;

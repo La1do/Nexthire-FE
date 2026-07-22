@@ -10,8 +10,9 @@ export function useHomeReveal() {
 
     const targets = Array.from(root.querySelectorAll<HTMLElement>('[data-home-reveal]'))
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isCompactViewport = window.matchMedia('(max-width: 39.999rem)').matches
 
-    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+    if (prefersReducedMotion || isCompactViewport || !('IntersectionObserver' in window)) {
       targets.forEach((target) => target.classList.add('is-visible'))
       return
     }

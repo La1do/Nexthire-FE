@@ -16,6 +16,7 @@ type EmployerStripProps = {
 export function EmployerStrip({ content, states, companies, loading, error }: EmployerStripProps) {
   const isEmpty = !companies.length
   const showPlaceholder = loading || Boolean(error) || isEmpty
+  const marqueeCompanies = [...companies, ...companies]
 
   return (
     <section className="home-section home-employer-section" data-home-reveal>
@@ -23,22 +24,34 @@ export function EmployerStrip({ content, states, companies, loading, error }: Em
       {showPlaceholder ? (
         <HomeSectionState error={error} isEmpty={isEmpty} loading={loading} states={states} />
       ) : (
-        <div className="home-employer-strip">
-          {companies.map((item) => (
-            <a className="home-employer-card" href={createCompanyDetailHrefById(item.companyId)} key={item.companyId}>
-              <CompanyLogoMark
-                alt={item.logo.alt}
-                fallbackText={item.logo.fallbackText}
-                src={item.logo.src}
-                tone={item.logo.tone}
-              />
-              <span>
-                <strong>{item.name}</strong>
-                <small>{item.openRoles}</small>
-              </span>
-              <span aria-hidden="true" className="home-employer-arrow">↗</span>
-            </a>
-          ))}
+        <div className="home-employer-marquee">
+          <div className="home-employer-strip">
+            {marqueeCompanies.map((item, index) => {
+              const isCopy = index >= companies.length
+
+              return (
+                <a
+                  aria-hidden={isCopy || undefined}
+                  className={`home-employer-card${isCopy ? ' is-copy' : ''}`}
+                  href={createCompanyDetailHrefById(item.companyId)}
+                  key={`${item.companyId}-${isCopy ? 'copy' : 'source'}`}
+                  tabIndex={isCopy ? -1 : undefined}
+                >
+                  <CompanyLogoMark
+                    alt={isCopy ? '' : item.logo.alt}
+                    fallbackText={item.logo.fallbackText}
+                    src={item.logo.src}
+                    tone={item.logo.tone}
+                  />
+                  <span>
+                    <strong>{item.name}</strong>
+                    <small>{item.openRoles}</small>
+                  </span>
+                  <span aria-hidden="true" className="home-employer-arrow">↗</span>
+                </a>
+              )
+            })}
+          </div>
         </div>
       )}
     </section>

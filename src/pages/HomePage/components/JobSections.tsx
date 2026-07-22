@@ -31,7 +31,7 @@ export function JobSections({ content, states, jobs, loading, error }: JobSectio
   const showPlaceholder = loading || Boolean(error) || isEmpty
 
   return (
-    <section className="home-section home-jobs-section">
+    <section className="home-section home-jobs-section" data-home-reveal>
       <div className="home-jobs-heading">
         <SectionHeading title={content.title} />
         <div className="home-tabs" style={tabStyle}>

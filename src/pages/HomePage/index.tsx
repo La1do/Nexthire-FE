@@ -31,7 +31,7 @@ export function HomePage() {
         loading={data.companies.loading}
         states={states}
       />
-      <div className="home-discovery-grid" data-home-reveal>
+      <div className="home-discovery-grid">
         <JobSections
           content={home.jobs}
           error={data.jobs.error}

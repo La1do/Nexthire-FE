@@ -79,7 +79,7 @@ export function CategoryGrid({ content, states, categories, loading, error }: Ca
   const showPlaceholder = loading || Boolean(error) || isEmpty
 
   return (
-    <section className="home-section home-category-section">
+    <section className="home-section home-category-section" data-home-reveal>
       <SectionHeading title={content.title} />
 
       {showPlaceholder ? (
