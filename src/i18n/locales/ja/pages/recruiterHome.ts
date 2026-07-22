@@ -108,7 +108,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     title: '採用の進捗をわかりやすく管理',
     description: '求人の成果、候補者対応、企業認証をまとめて確認し、採用ワークフローを進められます。',
     primaryAction: '求人を掲載',
-    secondaryAction: '新着候補者を見る',
+    secondaryAction: '応募を確認',
   },
   states: {
     loading: '採用データを読み込み中...',

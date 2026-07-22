@@ -8,6 +8,7 @@ import { home as enHome } from './locales/en/pages/home'
 import { jobDetail as enJobDetail } from './locales/en/pages/jobDetail'
 import { login as enLogin } from './locales/en/pages/login'
 import { profile as enProfile } from './locales/en/pages/profile'
+import { recruiterApplications as enRecruiterApplications } from './locales/en/pages/recruiterApplications'
 import { recruiterHome as enRecruiterHome } from './locales/en/pages/recruiterHome'
 import { recruiterJobCreate as enRecruiterJobCreate } from './locales/en/pages/recruiterJobCreate'
 import { recruiterJobs as enRecruiterJobs } from './locales/en/pages/recruiterJobs'
@@ -23,6 +24,7 @@ import { home as jaHome } from './locales/ja/pages/home'
 import { jobDetail as jaJobDetail } from './locales/ja/pages/jobDetail'
 import { login as jaLogin } from './locales/ja/pages/login'
 import { profile as jaProfile } from './locales/ja/pages/profile'
+import { recruiterApplications as jaRecruiterApplications } from './locales/ja/pages/recruiterApplications'
 import { recruiterHome as jaRecruiterHome } from './locales/ja/pages/recruiterHome'
 import { recruiterJobCreate as jaRecruiterJobCreate } from './locales/ja/pages/recruiterJobCreate'
 import { recruiterJobs as jaRecruiterJobs } from './locales/ja/pages/recruiterJobs'
@@ -38,6 +40,7 @@ import { home as viHome } from './locales/vi/pages/home'
 import { jobDetail as viJobDetail } from './locales/vi/pages/jobDetail'
 import { login as viLogin } from './locales/vi/pages/login'
 import { profile as viProfile } from './locales/vi/pages/profile'
+import { recruiterApplications as viRecruiterApplications } from './locales/vi/pages/recruiterApplications'
 import { recruiterHome as viRecruiterHome } from './locales/vi/pages/recruiterHome'
 import { recruiterJobCreate as viRecruiterJobCreate } from './locales/vi/pages/recruiterJobCreate'
 import { recruiterJobs as viRecruiterJobs } from './locales/vi/pages/recruiterJobs'
@@ -61,6 +64,7 @@ export const translations = {
       jobDetail: enJobDetail,
       login: enLogin,
       profile: enProfile,
+      recruiterApplications: enRecruiterApplications,
       recruiterHome: enRecruiterHome,
       recruiterJobCreate: enRecruiterJobCreate,
       recruiterJobs: enRecruiterJobs,
@@ -80,6 +84,7 @@ export const translations = {
       jobDetail: viJobDetail,
       login: viLogin,
       profile: viProfile,
+      recruiterApplications: viRecruiterApplications,
       recruiterHome: viRecruiterHome,
       recruiterJobCreate: viRecruiterJobCreate,
       recruiterJobs: viRecruiterJobs,
@@ -99,6 +104,7 @@ export const translations = {
       jobDetail: jaJobDetail,
       login: jaLogin,
       profile: jaProfile,
+      recruiterApplications: jaRecruiterApplications,
       recruiterHome: jaRecruiterHome,
       recruiterJobCreate: jaRecruiterJobCreate,
       recruiterJobs: jaRecruiterJobs,

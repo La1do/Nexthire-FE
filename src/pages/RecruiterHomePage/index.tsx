@@ -111,7 +111,7 @@ export function RecruiterHomePage() {
           <Button disabled={!isVerified} onClick={() => navigate('/recruiter/jobs/new')}>
             {content.hero.primaryAction}
           </Button>
-          <Button onClick={() => navigate('/recruiter/candidates')} variant="secondary">
+          <Button onClick={() => navigate('/recruiter/applications')} variant="secondary">
             {content.hero.secondaryAction}
           </Button>
         </div>

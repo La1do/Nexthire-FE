@@ -43,16 +43,20 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
   const isJobFormPath = currentPath.startsWith('/recruiter/jobs/new') ||
     (currentPath.startsWith('/recruiter/jobs/') && currentPath.endsWith('/edit'))
+  const isApplicationsPath = currentPath.startsWith('/recruiter/applications')
   const topbarContent = isJobFormPath
     ? pages.recruiterJobCreate
     : currentPath.startsWith('/recruiter/jobs')
       ? pages.recruiterJobs
-      : content
+      : isApplicationsPath
+        ? pages.recruiterApplications
+        : content
   const displayName = user ? getAuthUserDisplayName(user) : common.brandName
   const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
   const navItems = [
     { href: '/recruiter', label: content.sidebar.overview },
     { href: '/recruiter/jobs', label: content.sidebar.jobs },
+    { href: '/recruiter/applications', label: pages.recruiterApplications.routeLabel },
     { href: '/recruiter/candidates', label: content.sidebar.candidates },
     { href: '/recruiter/company', label: content.sidebar.company },
     { href: '/recruiter/messages', label: content.sidebar.messages },

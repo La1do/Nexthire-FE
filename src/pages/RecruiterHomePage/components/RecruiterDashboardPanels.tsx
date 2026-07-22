@@ -127,7 +127,7 @@ export function RecruiterApplications({ applications, translations }: RecruiterA
           <h2>{translations.title}</h2>
           <p>{translations.description}</p>
         </div>
-        <a href="/recruiter/candidates">{translations.viewAll}</a>
+        <a href="/recruiter/applications">{translations.viewAll}</a>
       </div>
       {applications.length ? (
         <div className="recruiter-application-list">

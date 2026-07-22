@@ -41,7 +41,7 @@ export const recruiterQuickActions: ReadonlyArray<RecruiterQuickAction> = [
     id: 'reviewCandidates',
     description: 'Loc ung vien moi theo diem phu hop.',
     disabledWhenUnverified: true,
-    href: '/recruiter/candidates',
+    href: '/recruiter/applications',
     label: 'Xem ung vien',
   },
   {

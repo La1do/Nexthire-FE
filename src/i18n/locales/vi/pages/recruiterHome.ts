@@ -108,7 +108,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     title: 'Quản lý tuyển dụng gọn hơn, rõ trạng thái hơn',
     description: 'Theo dõi hiệu suất tin đăng, xử lý ứng viên mới và hoàn tất xác thực công ty để mở khóa toàn bộ workflow tuyển dụng.',
     primaryAction: 'Đăng tin tuyển dụng',
-    secondaryAction: 'Xem ứng viên mới',
+    secondaryAction: 'Xem đơn ứng tuyển',
   },
   states: {
     loading: 'Đang tải dữ liệu tuyển dụng...',

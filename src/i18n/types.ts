@@ -1316,6 +1316,98 @@ export type RecruiterJobsTranslations = {
   }
 }
 
+export type RecruiterApplicationsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+  }
+  stats: {
+    title: string
+    totalLabel: string
+    newLabel: string
+    interviewLabel: string
+    responseRateLabel: string
+    totalDelta: string
+    newDelta: string
+    interviewDelta: string
+    responseRateDelta: string
+  }
+  tabs: {
+    label: string
+    all: string
+  }
+  filters: {
+    queryLabel: string
+    queryPlaceholder: string
+    jobLabel: string
+    jobAll: string
+    sortLabel: string
+    sortOptions: {
+      newest: string
+      scoreDesc: string
+      scoreAsc: string
+    }
+    clear: string
+  }
+  results: {
+    caption: string
+    countLabel: string
+    emptyTitle: string
+    emptyDescription: string
+    columns: {
+      candidate: string
+      job: string
+      status: string
+      score: string
+      submittedAt: string
+      actions: string
+    }
+    actionView: string
+    actionEmail: string
+    actionDownload: string
+  }
+  statusLabels: {
+    new: string
+    screening: string
+    interview: string
+    offer: string
+    hired: string
+    rejected: string
+  }
+  drawer: {
+    title: string
+    close: string
+    statusLabel: string
+    candidateTitle: string
+    applicationTitle: string
+    contactTitle: string
+    skillsTitle: string
+    coverLetterTitle: string
+    activityTitle: string
+    emailLabel: string
+    phoneLabel: string
+    locationLabel: string
+    experienceLabel: string
+    expectedSalaryLabel: string
+    resumeAction: string
+    emailAction: string
+    portfolioAction: string
+    appliedJobLabel: string
+    submittedLabel: string
+    updatedLabel: string
+    scoreLabel: string
+  }
+  pagination: {
+    prev: string
+    next: string
+    pageOf: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -1328,6 +1420,7 @@ export type Translations = {
     jobDetail: JobDetailTranslations
     login: LoginTranslations
     profile: ProfileTranslations
+    recruiterApplications: RecruiterApplicationsTranslations
     recruiterJobCreate: RecruiterJobCreateTranslations
     recruiterJobs: RecruiterJobsTranslations
     recruiterHome: RecruiterHomeTranslations

@@ -108,7 +108,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     title: 'Run recruiting with clearer momentum',
     description: 'Track job performance, respond to new candidates, and finish company verification to unlock the full recruiting workflow.',
     primaryAction: 'Post a job',
-    secondaryAction: 'View new candidates',
+    secondaryAction: 'Review applications',
   },
   states: {
     loading: 'Loading recruiting data...',

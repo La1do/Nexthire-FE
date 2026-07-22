@@ -14,6 +14,7 @@ import { JobDetailPage } from '../../pages/JobDetailPage'
 import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pages/LoginPage'
 import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
+import { RecruiterApplicationsPage } from '../../pages/RecruiterApplicationsPage'
 import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RecruiterJobCreatePage } from '../../pages/RecruiterJobCreatePage'
 import { RecruiterJobDetailPage, RecruiterJobsPage } from '../../pages/RecruiterJobsPage'
@@ -113,6 +114,12 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/recruiter/jobs/:id',
       label: pages.recruiterJobs.detailRouteLabel,
       element: <RecruiterJobDetailPage />,
+      layout: RecruiterLayout,
+    },
+    {
+      path: '/recruiter/applications',
+      label: pages.recruiterApplications.routeLabel,
+      element: <RecruiterApplicationsPage />,
       layout: RecruiterLayout,
     },
     {
