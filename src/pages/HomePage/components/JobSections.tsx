@@ -31,9 +31,9 @@ export function JobSections({ content, states, jobs, loading, error }: JobSectio
   const showPlaceholder = loading || Boolean(error) || isEmpty
 
   return (
-    <section className="home-section home-reveal">
+    <section className="home-section home-jobs-section">
       <div className="home-jobs-heading">
-        <SectionHeading eyebrow={content.eyebrow} title={content.title} />
+        <SectionHeading title={content.title} />
         <div className="home-tabs" style={tabStyle}>
           {content.tabs.map((tab, index) => (
             <button
@@ -58,7 +58,10 @@ export function JobSections({ content, states, jobs, loading, error }: JobSectio
             ))}
           </div>
 
-          <button className="home-load-more" type="button">{content.loadMore}</button>
+          <a className="home-load-more" href="/search">
+            <span>{content.loadMore}</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </>
       )}
     </section>

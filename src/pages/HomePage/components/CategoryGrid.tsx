@@ -79,15 +79,15 @@ export function CategoryGrid({ content, states, categories, loading, error }: Ca
   const showPlaceholder = loading || Boolean(error) || isEmpty
 
   return (
-    <section className="home-section home-reveal">
-      <SectionHeading eyebrow={content.eyebrow} title={content.title} />
+    <section className="home-section home-category-section">
+      <SectionHeading title={content.title} />
 
       {showPlaceholder ? (
         <HomeSectionState error={error} isEmpty={isEmpty} loading={loading} states={states} />
       ) : (
         <div className="home-category-grid">
           {categories.map((item) => (
-            <a className="home-category-card home-hover-card" href={`/search?categoryId=${item.id}`} key={item.id}>
+            <a className="home-category-card" href={`/search?categoryId=${item.id}`} key={item.id}>
               <span className="home-category-icon">
                 <CategoryIcon icon={item.icon} />
               </span>
@@ -95,7 +95,7 @@ export function CategoryGrid({ content, states, categories, loading, error }: Ca
                 <strong>{item.title}</strong>
                 <small>{item.count}</small>
               </span>
-              <small className="home-category-arrow" aria-hidden="true">→</small>
+              <small className="home-category-arrow" aria-hidden="true">↗</small>
             </a>
           ))}
         </div>

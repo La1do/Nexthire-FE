@@ -83,6 +83,7 @@ export const home: HomeTranslations = {
     description: 'Nhận email hằng tuần về việc làm mới, lương tốt và nội dung nghề nghiệp hữu ích.',
     emailLabel: 'Email nhận thông báo',
     emailPlaceholder: 'Email của bạn',
+    emailHelper: 'Mỗi tuần một email. Bạn có thể hủy bất cứ lúc nào.',
     submit: 'Đăng ký',
     chips: ['Engineering', 'Remote', '25M+', 'Senior'],
     mockTitle: 'Bản tin phù hợp',

@@ -285,6 +285,7 @@ export type HomeTranslations = {
     description: string
     emailLabel: string
     emailPlaceholder: string
+    emailHelper: string
     submit: string
     chips: ReadonlyArray<string>
     mockTitle: string

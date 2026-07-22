@@ -92,40 +92,48 @@ export function JobSearchBar({ content }: JobSearchBarProps) {
   return (
     <div className="job-search-shell">
       <form action={action} className="job-search-bar" method="get">
-        <label className="job-search-field job-search-field-main">
-          <span>{content.keywordLabel}</span>
-          <SearchIcon />
-          <input
-            autoComplete="off"
-            id="home-job-keyword"
-            name="keyword"
-            onChange={(event) => setKeyword(event.target.value)}
-            placeholder={content.keywordPlaceholder}
-            type="search"
-            value={keyword}
-          />
-        </label>
+        <div className="job-search-fields">
+          <label className="job-search-field job-search-field-main">
+            <span>{content.keywordLabel}</span>
+            <span className="job-search-input-row">
+              <SearchIcon />
+              <input
+                autoComplete="off"
+                id="home-job-keyword"
+                name="keyword"
+                onChange={(event) => setKeyword(event.target.value)}
+                placeholder={content.keywordPlaceholder}
+                type="search"
+                value={keyword}
+              />
+            </span>
+          </label>
 
-        <button className="job-search-submit" type="submit">
-          {content.submit}
-        </button>
+          <div className="job-search-location-field">
+            <span className="job-search-location-label">{content.locationLabel}</span>
+            <SelectField
+              className="job-search-select-field"
+              hideLabel
+              icon={<LocationIcon />}
+              id="home-job-location"
+              label={content.locationLabel}
+              name="location"
+              onChange={setLocation}
+              options={[
+                { label: content.locationPlaceholder, value: '' },
+                ...content.locationOptions.map((option) => ({ label: option, value: option })),
+              ]}
+              value={location}
+            />
+          </div>
+
+          <button className="job-search-submit" type="submit">
+            <SearchIcon />
+            <span>{content.submit}</span>
+          </button>
+        </div>
 
         <div className="job-search-chips" aria-label={content.filterLabel}>
-          <SelectField
-            className="job-search-select-field"
-            hideLabel
-            icon={<LocationIcon />}
-            id="home-job-location"
-            label={content.locationLabel}
-            name="location"
-            onChange={setLocation}
-            options={[
-              { label: content.locationPlaceholder, value: '' },
-              ...content.locationOptions.map((option) => ({ label: option, value: option })),
-            ]}
-            value={location}
-          />
-
           {content.quickFilters.map((filter) => {
             const key = detectQuickFilterKey(filter)
 

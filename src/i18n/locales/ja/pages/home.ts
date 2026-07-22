@@ -83,6 +83,7 @@ export const home: HomeTranslations = {
     description: '新着求人、給与情報、キャリアに役立つ内容を毎週メールで受け取れます。',
     emailLabel: '通知用メール',
     emailPlaceholder: 'メールアドレス',
+    emailHelper: '週1回のメールです。いつでも配信停止できます。',
     submit: '登録',
     chips: ['Engineering', 'Remote', '25M+', 'Senior'],
     mockTitle: 'マッチした求人',

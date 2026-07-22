@@ -1,0 +1,78 @@
+/* Hallmark tokens · Nexhire Home · modern-minimal */
+
+@font-face {
+  font-display: swap;
+  font-family: "Nexhire Display";
+  font-style: normal;
+  font-weight: 700;
+  src: url("/fonts/NotoSansDisplay-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Nexhire Text";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/NotoSans-Regular.ttf") format("truetype");
+}
+
+:root {
+  --color-home-paper: oklch(97.5% 0.008 45);
+  --color-home-paper-2: oklch(94.5% 0.012 45);
+  --color-home-surface: oklch(99% 0.004 45);
+  --color-home-ink: oklch(20% 0.018 35);
+  --color-home-ink-2: oklch(34% 0.016 35);
+  --color-home-muted: oklch(46% 0.014 35);
+  --color-home-rule: oklch(84% 0.012 45);
+  --color-home-rule-strong: oklch(68% 0.018 40);
+  --color-home-accent: oklch(53% 0.2 28);
+  --color-home-accent-soft: oklch(93% 0.04 28);
+  --color-home-accent-ink: oklch(98% 0.008 45);
+  --color-home-focus: oklch(42% 0.18 28);
+  --color-home-success: oklch(45% 0.12 158);
+  --color-home-success-soft: oklch(93% 0.035 158);
+  --color-home-info: oklch(46% 0.1 245);
+  --color-home-info-soft: oklch(94% 0.025 245);
+  --color-home-ink-surface: oklch(25% 0.022 35);
+  --color-home-ink-surface-2: oklch(30% 0.024 35);
+  --color-home-on-ink: oklch(96% 0.01 45);
+  --color-home-on-ink-muted: oklch(78% 0.018 45);
+
+  --font-home-display: "Nexhire Display", "Noto Sans Display", sans-serif;
+  --font-home-body: "Nexhire Text", "Noto Sans", sans-serif;
+
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5rem;
+  --text-xl: 2rem;
+  --text-2xl: 2.5rem;
+  --text-3xl: 3.25rem;
+  --text-display: 4.75rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+
+  --rule-home-hair: 1px;
+  --radius-home-xs: 4px;
+  --radius-home-sm: 6px;
+  --radius-home-md: 8px;
+  --radius-home-pill: 999px;
+  --size-home-touch: 2.75rem;
+}

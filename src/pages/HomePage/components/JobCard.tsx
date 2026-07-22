@@ -26,7 +26,7 @@ function CheckIcon() {
 }
 
 export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
-  const classes = ['job-card', 'home-hover-card', variant === 'compact' ? 'job-card-compact' : ''].filter(Boolean).join(' ')
+  const classes = ['job-card', variant === 'compact' ? 'job-card-compact' : ''].filter(Boolean).join(' ')
   const companyHref = createCompanyDetailHrefById(job.companyId)
 
   return (

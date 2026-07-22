@@ -18,14 +18,14 @@ export function EmployerStrip({ content, states, companies, loading, error }: Em
   const showPlaceholder = loading || Boolean(error) || isEmpty
 
   return (
-    <section className="home-section home-reveal">
-      <SectionHeading action={content.viewAll} eyebrow={content.eyebrow} title={content.title} />
+    <section className="home-section home-employer-section" data-home-reveal>
+      <SectionHeading action={content.viewAll} actionHref="/companies" title={content.title} />
       {showPlaceholder ? (
         <HomeSectionState error={error} isEmpty={isEmpty} loading={loading} states={states} />
       ) : (
         <div className="home-employer-strip">
           {companies.map((item) => (
-            <a className="home-employer-card home-hover-card" href={createCompanyDetailHrefById(item.companyId)} key={item.companyId}>
+            <a className="home-employer-card" href={createCompanyDetailHrefById(item.companyId)} key={item.companyId}>
               <CompanyLogoMark
                 alt={item.logo.alt}
                 fallbackText={item.logo.fallbackText}
@@ -36,6 +36,7 @@ export function EmployerStrip({ content, states, companies, loading, error }: Em
                 <strong>{item.name}</strong>
                 <small>{item.openRoles}</small>
               </span>
+              <span aria-hidden="true" className="home-employer-arrow">↗</span>
             </a>
           ))}
         </div>

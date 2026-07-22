@@ -17,8 +17,8 @@ export function IndustryJobs({ content, states, groups, loading, error }: Indust
   const showPlaceholder = loading || Boolean(error) || isEmpty
 
   return (
-    <section className="home-section home-reveal">
-      <SectionHeading action={content.viewAll} eyebrow={content.eyebrow} title={content.title} />
+    <section className="home-section home-industry-section">
+      <SectionHeading action={content.viewAll} title={content.title} />
 
       {showPlaceholder ? (
         <HomeSectionState error={error} isEmpty={isEmpty} loading={loading} states={states} />

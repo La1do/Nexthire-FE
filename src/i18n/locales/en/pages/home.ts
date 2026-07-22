@@ -83,6 +83,7 @@ export const home: HomeTranslations = {
     description: 'Get weekly emails with new roles, salary insights, and practical career content.',
     emailLabel: 'Notification email',
     emailPlaceholder: 'Your email',
+    emailHelper: 'One email a week. Unsubscribe at any time.',
     submit: 'Subscribe',
     chips: ['Engineering', 'Remote', '25M+', 'Senior'],
     mockTitle: 'Matched brief',

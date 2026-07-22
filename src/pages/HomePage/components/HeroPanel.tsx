@@ -12,12 +12,10 @@ type HeroPanelProps = {
 
 export function HeroPanel({ content, stats, spotlight }: HeroPanelProps) {
   return (
-    <section className="home-hero home-reveal">
+    <section className="home-hero">
       <div className="home-hero-copy">
-        <p className="home-pill">{content.eyebrow}</p>
         <h1>{content.title}</h1>
         <p className="home-hero-description">{content.description}</p>
-        <JobSearchBar content={content} />
 
         {stats.length ? (
           <div className="home-hero-stats">
@@ -31,7 +29,7 @@ export function HeroPanel({ content, stats, spotlight }: HeroPanelProps) {
         ) : null}
       </div>
 
-      <div className="home-hero-board">
+      <aside aria-label={content.spotlight.title} className="home-hero-board">
         <div className="home-hero-board-header">
           <p>{content.spotlight.title}</p>
           <span>{content.spotlight.subtitle}</span>
@@ -50,10 +48,15 @@ export function HeroPanel({ content, stats, spotlight }: HeroPanelProps) {
                   <strong>{company.name}</strong>
                   <small>{company.openRoles}</small>
                 </span>
+                <span aria-hidden="true" className="home-spotlight-arrow">↗</span>
               </a>
             ))}
           </div>
         ) : null}
+      </aside>
+
+      <div className="home-hero-search">
+        <JobSearchBar content={content} />
       </div>
     </section>
   )

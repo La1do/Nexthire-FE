@@ -7,15 +7,18 @@ import { IndustryJobs } from './components/IndustryJobs'
 import { JobSections } from './components/JobSections'
 import { NewsletterPanel } from './components/NewsletterPanel'
 import { useHomeData } from './hooks/useHomeData'
+import { useHomeReveal } from './hooks/useHomeReveal'
+import './home.css'
 
 export function HomePage() {
   const { pages } = useTranslations()
   const home = pages.home
   const states = home.states
   const data = useHomeData()
+  const homeRef = useHomeReveal()
 
   return (
-    <div className="home-page">
+    <div className="home-page" ref={homeRef}>
       <HeroPanel
         content={home.hero}
         spotlight={data.companies.data.slice(0, 3)}
@@ -28,7 +31,7 @@ export function HomePage() {
         loading={data.companies.loading}
         states={states}
       />
-      <div className="home-discovery-grid">
+      <div className="home-discovery-grid" data-home-reveal>
         <JobSections
           content={home.jobs}
           error={data.jobs.error}
