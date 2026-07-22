@@ -12,7 +12,7 @@ export type CompanyVerificationFormValues = {
   address: string
   logo: string
   description: string
-  documents: ReadonlyArray<string>
+  documents: string[]
 }
 
 export type RecruiterCompany = {
@@ -65,10 +65,9 @@ export type RecruiterApplication = {
 }
 
 export type RecruiterPerformancePoint = {
-  count?: number
+  count: number
   id: string
   label: string
-  value: number
 }
 
 export type RecruiterTask = {

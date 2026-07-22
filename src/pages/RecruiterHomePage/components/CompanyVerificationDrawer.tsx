@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useMemo, useRef } from 'react'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import type { RecruiterHomeTranslations } from '../../../i18n/types'
 import { Button, Input } from '../../_components'
-import { useFormState } from '../../../hooks/useFormState'
-import { validateCompanyVerificationForm } from '../utils/companyVerificationValidation'
+import { createCompanyVerificationSchema } from '../utils/companyVerificationValidation'
 import type { CompanyVerificationFormValues } from '../types'
 
 type CompanyVerificationDrawerProps = {
@@ -24,12 +25,21 @@ export function CompanyVerificationDrawer({
 }: CompanyVerificationDrawerProps) {
   const drawerRef = useRef<HTMLDivElement | null>(null)
   const form = translations.form
-  const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
-    useFormState<CompanyVerificationFormValues>({
-      initialValues,
-      onSubmit,
-      validate: (formValues) => validateCompanyVerificationForm(formValues, form.validation),
-    })
+  const schema = useMemo(
+    () => createCompanyVerificationSchema(form.validation),
+    [form.validation],
+  )
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+  } = useForm<CompanyVerificationFormValues>({
+    defaultValues: initialValues,
+    mode: 'onBlur',
+    resolver: zodResolver(schema),
+  })
+  const documents = useWatch({ control, name: 'documents' }) ?? []
 
   useEffect(() => {
     const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
@@ -48,14 +58,14 @@ export function CompanyVerificationDrawer({
   }, [onClose])
 
   const handleDocumentToggle = (id: string) => {
-    const nextDocuments = values.documents.includes(id)
-      ? values.documents.filter((documentId) => documentId !== id)
-      : [...values.documents, id]
+    const nextDocuments = documents.includes(id)
+      ? documents.filter((documentId) => documentId !== id)
+      : [...documents, id]
 
-    setFieldValue('documents', nextDocuments)
+    setValue('documents', nextDocuments, { shouldDirty: true, shouldValidate: true })
   }
 
-  const documentsError = getFieldError('documents')
+  const documentsError = errors.documents?.message
 
   return (
     <div className="company-verification-backdrop" onMouseDown={onClose}>
@@ -78,79 +88,104 @@ export function CompanyVerificationDrawer({
           </button>
         </div>
 
-        <form className="company-verification-form" noValidate onSubmit={handleSubmit}>
+        <form className="company-verification-form" noValidate onSubmit={handleSubmit(onSubmit)}>
           <div className="company-verification-form__grid">
-            <Input
-              autoComplete="organization"
-              error={getFieldError('name')}
-              label={form.nameLabel}
-              onBlur={() => setFieldTouched('name')}
-              onChange={handleFieldChange('name')}
-              placeholder={form.namePlaceholder}
-              value={values.name}
+            <Controller
+              control={control}
+              name="name"
+              render={({ field, fieldState }) => (
+                <Input
+                  {...field}
+                  autoComplete="organization"
+                  error={fieldState.error?.message}
+                  label={form.nameLabel}
+                  placeholder={form.namePlaceholder}
+                />
+              )}
             />
-            <Input
-              error={getFieldError('taxCode')}
-              label={form.taxCodeLabel}
-              onBlur={() => setFieldTouched('taxCode')}
-              onChange={handleFieldChange('taxCode')}
-              placeholder={form.taxCodePlaceholder}
-              value={values.taxCode}
+            <Controller
+              control={control}
+              name="taxCode"
+              render={({ field, fieldState }) => (
+                <Input
+                  {...field}
+                  error={fieldState.error?.message}
+                  label={form.taxCodeLabel}
+                  placeholder={form.taxCodePlaceholder}
+                />
+              )}
             />
-            <Input
-              autoComplete="url"
-              error={getFieldError('website')}
-              label={form.websiteLabel}
-              onBlur={() => setFieldTouched('website')}
-              onChange={handleFieldChange('website')}
-              placeholder={form.websitePlaceholder}
-              type="url"
-              value={values.website}
+            <Controller
+              control={control}
+              name="website"
+              render={({ field, fieldState }) => (
+                <Input
+                  {...field}
+                  autoComplete="url"
+                  error={fieldState.error?.message}
+                  label={form.websiteLabel}
+                  placeholder={form.websitePlaceholder}
+                  type="url"
+                />
+              )}
             />
-            <Input
-              autoComplete="url"
-              label={form.logoLabel}
-              onChange={handleFieldChange('logo')}
-              placeholder={form.logoPlaceholder}
-              type="url"
-              value={values.logo}
+            <Controller
+              control={control}
+              name="logo"
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  autoComplete="url"
+                  label={form.logoLabel}
+                  placeholder={form.logoPlaceholder}
+                  type="url"
+                />
+              )}
             />
           </div>
 
-          <Input
-            autoComplete="street-address"
-            error={getFieldError('address')}
-            label={form.addressLabel}
-            onBlur={() => setFieldTouched('address')}
-            onChange={handleFieldChange('address')}
-            placeholder={form.addressPlaceholder}
-            value={values.address}
+          <Controller
+            control={control}
+            name="address"
+            render={({ field, fieldState }) => (
+              <Input
+                {...field}
+                autoComplete="street-address"
+                error={fieldState.error?.message}
+                label={form.addressLabel}
+                placeholder={form.addressPlaceholder}
+              />
+            )}
           />
 
-          <label className="company-verification-textarea" htmlFor="company-description">
-            <span>{form.descriptionLabel}</span>
-            <textarea
-              aria-describedby={getFieldError('description') ? 'company-description-error' : undefined}
-              aria-invalid={Boolean(getFieldError('description'))}
-              id="company-description"
-              onBlur={() => setFieldTouched('description')}
-              onChange={(event) => setFieldValue('description', event.target.value)}
-              placeholder={form.descriptionPlaceholder}
-              value={values.description}
-            />
-            {getFieldError('description') ? (
-              <small id="company-description-error" role="alert">
-                {getFieldError('description')}
-              </small>
-            ) : null}
-          </label>
+          <Controller
+            control={control}
+            name="description"
+            render={({ field, fieldState }) => (
+              <label className="company-verification-textarea" htmlFor="company-description">
+                <span>{form.descriptionLabel}</span>
+                <textarea
+                  {...field}
+                  aria-describedby={fieldState.error ? 'company-description-error' : undefined}
+                  aria-invalid={Boolean(fieldState.error)}
+                  id="company-description"
+                  placeholder={form.descriptionPlaceholder}
+                />
+                {fieldState.error?.message ? (
+                  <small id="company-description-error" role="alert">
+                    {fieldState.error.message}
+                  </small>
+                ) : null}
+              </label>
+            )}
+          />
 
           <fieldset className="company-document-options">
             <legend>{form.documentsTitle}</legend>
             <p>{form.documentsDescription}</p>
             <div>
               {form.documentOptions.map((option) => {
-                const isSelected = values.documents.includes(option.id)
+                const isSelected = documents.includes(option.id)
 
                 return (
                   <button

@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useAuth } from '../../../context'
 import { useLocale } from '../../../i18n'
+import type { RecruiterHomeTranslations } from '../../../i18n/types'
 import { getApiErrorCode } from '../../../lib/api/apiError'
 import { applicationService } from '../../../services/application.service'
 import { companyService } from '../../../services/company.service'
@@ -24,12 +26,6 @@ const JOB_COUNT_STATUSES: readonly JobStatus[] = [
 ]
 
 const APPLICATION_COUNT_STATUSES: readonly ApplicationStatus[] = ['SUBMITTED', 'OFFERED', 'REJECTED']
-
-type RecruiterDashboardState = {
-  data: RecruiterDashboardData | undefined
-  error: unknown
-  loading: boolean
-}
 
 async function getMyCompanyOrNull(): Promise<CompanyResponse | null> {
   try {
@@ -71,73 +67,55 @@ async function getApplicationCounts(total: number): Promise<RecruiterApplication
   }
 }
 
+async function getRecruiterDashboardData(
+  content: RecruiterHomeTranslations,
+  locale: string,
+): Promise<RecruiterDashboardData> {
+  const company = await getMyCompanyOrNull()
+
+  if (!company) {
+    return mapRecruiterDashboardData({
+      applicationCounts: { offered: 0, rejected: 0, submitted: 0, total: 0 },
+      chartApplications: [],
+      company,
+      content,
+      jobStatusCounts: {},
+      locale,
+      recentApplications: [],
+    })
+  }
+
+  const [jobStatusCounts, recentApplications, chartApplications] = await Promise.all([
+    getJobStatusCounts(),
+    applicationService.getRecruiterApplications({ limit: 3 }),
+    applicationService.getRecruiterApplications({ limit: 100 }),
+  ])
+  const applicationCounts = await getApplicationCounts(chartApplications.meta.total)
+
+  return mapRecruiterDashboardData({
+    applicationCounts,
+    chartApplications: chartApplications.data,
+    company,
+    content,
+    jobStatusCounts,
+    locale,
+    recentApplications: recentApplications.data,
+  })
+}
+
 export function useRecruiterDashboardData() {
+  const { user } = useAuth()
   const { locale, translations } = useLocale()
   const content = translations.pages.recruiterHome
-  const requestIdRef = useRef(0)
-  const [state, setState] = useState<RecruiterDashboardState>({
-    data: undefined,
-    error: undefined,
-    loading: true,
+  const query = useQuery({
+    queryFn: () => getRecruiterDashboardData(content, locale),
+    queryKey: ['recruiter-dashboard', user?.id ?? 'anonymous', locale],
   })
 
-  const refresh = useCallback(async () => {
-    const requestId = requestIdRef.current + 1
-    requestIdRef.current = requestId
-    setState((current) => ({ ...current, error: undefined, loading: true }))
-
-    try {
-      const company = await getMyCompanyOrNull()
-
-      if (!company) {
-        const data = mapRecruiterDashboardData({
-          applicationCounts: { offered: 0, rejected: 0, submitted: 0, total: 0 },
-          chartApplications: [],
-          company,
-          content,
-          jobStatusCounts: {},
-          locale,
-          recentApplications: [],
-        })
-
-        if (requestIdRef.current === requestId) {
-          setState({ data, error: undefined, loading: false })
-        }
-        return
-      }
-
-      const [jobStatusCounts, recentApplications, chartApplications] = await Promise.all([
-        getJobStatusCounts(),
-        applicationService.getRecruiterApplications({ limit: 3 }),
-        applicationService.getRecruiterApplications({ limit: 100 }),
-      ])
-      const applicationCounts = await getApplicationCounts(chartApplications.meta.total)
-      const data = mapRecruiterDashboardData({
-        applicationCounts,
-        chartApplications: chartApplications.data,
-        company,
-        content,
-        jobStatusCounts,
-        locale,
-        recentApplications: recentApplications.data,
-      })
-
-      if (requestIdRef.current === requestId) {
-        setState({ data, error: undefined, loading: false })
-      }
-    } catch (error) {
-      if (requestIdRef.current === requestId) {
-        setState({ data: undefined, error, loading: false })
-      }
-    }
-  }, [content, locale])
-
-  useEffect(() => {
-    void refresh()
-  }, [refresh])
-
   return {
-    ...state,
-    refresh,
+    data: query.data,
+    error: query.error,
+    loading: query.isPending || query.isFetching,
+    refresh: query.refetch,
   }
 }

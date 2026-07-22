@@ -7932,34 +7932,13 @@ select {
 }
 
 .recruiter-performance-chart {
-  align-items: end;
-  display: grid;
-  gap: 0.7rem;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  min-height: 11rem;
-}
-
-.recruiter-performance-chart div {
-  align-items: center;
-  display: grid;
-  gap: 0.5rem;
-  grid-template-rows: minmax(8rem, 1fr) auto;
-}
-
-.recruiter-performance-chart span {
-  align-self: end;
-  background: linear-gradient(180deg, rgba(242, 59, 148, 0.88), rgba(255, 106, 33, 0.78));
-  border-radius: 999px 999px 10px 10px;
-  display: block;
-  min-height: 1.5rem;
+  height: 13rem;
+  min-width: 0;
   width: 100%;
 }
 
-.recruiter-performance-chart small {
-  color: var(--color-text-muted);
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-align: center;
+.recruiter-performance-chart .recharts-responsive-container {
+  min-width: 0;
 }
 
 .recruiter-task-card {

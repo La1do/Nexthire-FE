@@ -218,18 +218,15 @@ function mapPerformance(
     }
   }
 
-  const maxCount = Math.max(...Array.from(countsByDay.values()), 1)
   const dayFormatter = new Intl.DateTimeFormat(locale, { weekday: 'short' })
 
   return days.map((date) => {
     const count = countsByDay.get(getDayKey(date)) ?? 0
-    const height = count > 0 ? Math.max(Math.round((count / maxCount) * 100), 8) : 4
 
     return {
       id: getDayKey(date),
       count,
       label: dayFormatter.format(date),
-      value: height,
     }
   })
 }

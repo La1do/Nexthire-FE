@@ -1,7 +1,9 @@
+import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '../context'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { useTranslations } from '../i18n'
+import { queryClient } from './queryClient'
 import { getRoutes } from './routes'
 
 function AppRoutes() {
@@ -24,13 +26,15 @@ function AppRoutes() {
 
 export function App() {
   return (
-    <LocaleProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </AuthProvider>
-    </LocaleProvider>
+    <QueryClientProvider client={queryClient}>
+      <LocaleProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </AuthProvider>
+      </LocaleProvider>
+    </QueryClientProvider>
   )
 }
 
