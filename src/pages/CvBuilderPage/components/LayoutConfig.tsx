@@ -45,8 +45,6 @@ export const LayoutConfig = () => {
       </div>
 
       <p className="mt-4 text-xs text-[#6b7280]">
-        * Template cần đọc `settings.layout` / `settings.photoPosition` để áp dụng đúng — hiện tại
-        `StandardTemplate`/`ProfessionalTemplate`/`ModernTemplate` chưa xử lý field này.
       </p>
     </div>
   );

@@ -19,7 +19,6 @@ import {
 } from '../../../constants/TemplateCVsections';
 
 export type BuilderTab =
-  | 'content'
   | 'design'
   | 'layout'
   | 'sections'
@@ -237,7 +236,7 @@ const snapshot = (state: CvBuilderState): HistorySnapshot => ({
 export const useCvBuilderStore = create<CvBuilderState>((set, get) => ({
   cvName: 'CV chưa đặt tên',
   templateId: 'standard-01',
-  activeTab: 'content',
+  activeTab: 'design',
   data: initialData,
   settings: initialSettings,
   sections: DEFAULT_SECTIONS,

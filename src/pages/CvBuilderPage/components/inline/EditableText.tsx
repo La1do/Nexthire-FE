@@ -1,4 +1,4 @@
-import { useRef, useEffect, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect } from 'react';
 import type { KeyboardEvent, ElementType } from 'react';
 
 interface EditableTextProps {

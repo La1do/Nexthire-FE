@@ -1,353 +1,607 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useCvBuilderStore } from '../../store/useCvBuilderStore';
-import { CvRenderer } from '../../../_components/cv-templates/CvRenderer';
-import type { SectionKey } from './../../../../constants/TemplateCVsections';
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-const PAGE_WIDTH = 794;
-const PAGE_HEIGHT = 1123;
-const PAGE_TOP_GAP = 24;
 
-type SectionGaps = Partial<Record<SectionKey, number>>;
+import {
+  useCvBuilderStore,
+} from '../../store/useCvBuilderStore';
 
-const areGapsEqual = (
-  current: SectionGaps,
-  next: SectionGaps,
-) => {
-  const keys = new Set<SectionKey>([
-    ...(Object.keys(current) as SectionKey[]),
-    ...(Object.keys(next) as SectionKey[]),
-  ]);
+import {
+  buildCvBlocks,
+} from '../../../_components/cv-templates/pagination/buildCvBlocks';
 
-  for (const key of keys) {
-    if ((current[key] ?? 0) !== (next[key] ?? 0)) {
-      return false;
-    }
-  }
+import {
+  paginateCvBlocks,
+} from '../../../_components/cv-templates/pagination/paginateCvBlocks';
 
-  return true;
-};
+import {
+  getPaginatedTemplate,
+} from '../../../_components/cv-templates/pagination/PaginatedTemplateRegistry';
 
-export const PaginatedPreview = () => {
-  const templateId = useCvBuilderStore(
-    (state) => state.templateId,
-  );
-  const data = useCvBuilderStore((state) => state.data);
-  const settings = useCvBuilderStore(
-    (state) => state.settings,
-  );
-  const sections = useCvBuilderStore(
-    (state) => state.sections,
-  );
+import {
+  CV_PAGE_HEIGHT,
+  CV_PAGE_WIDTH,
+} from './../../../../types/cvPagination.types';
 
-  const updatePersonalInfo = useCvBuilderStore(
-    (state) => state.updatePersonalInfo,
-  );
-  const updateSummary = useCvBuilderStore(
-    (state) => state.updateSummary,
-  );
-  const updateExperience = useCvBuilderStore(
-    (state) => state.updateExperience,
-  );
-  const updateEducation = useCvBuilderStore(
-    (state) => state.updateEducation,
-  );
-  const updateSkill = useCvBuilderStore(
-    (state) => state.updateSkill,
-  );
-  const updateActivity = useCvBuilderStore(
-    (state) => state.updateActivity,
-  );
-  const updateCertification = useCvBuilderStore(
-    (state) => state.updateCertification,
-  );
-  const updateAward = useCvBuilderStore(
-    (state) => state.updateAward,
-  );
-  const updateReference = useCvBuilderStore(
-    (state) => state.updateReference,
-  );
-  const updateInterest = useCvBuilderStore(
-    (state) => state.updateInterest,
-  );
+import type {
+  CvActions,
+  CvMeasuredBlock,
+  CvPage,
+} from './../../../../types/cvPagination.types';
 
-  const measureRef = useRef<HTMLDivElement>(null);
+export const PaginatedPreview =
+  () => {
+    const templateId =
+      useCvBuilderStore(
+        (state) =>
+          state.templateId,
+      );
 
-  const [pageCount, setPageCount] = useState(1);
-  const [sectionGaps, setSectionGaps] =
-    useState<SectionGaps>({});
+    const data =
+      useCvBuilderStore(
+        (state) => state.data,
+      );
 
-  const visibleSections = useMemo(
-    () => sections.filter((section) => section.visible),
-    [sections],
-  );
+    const settings =
+      useCvBuilderStore(
+        (state) =>
+          state.settings,
+      );
 
-  const paginationCss = useMemo(() => {
-    const gapRules = visibleSections
-      .map((section) => {
-        const gap = sectionGaps[section.key] ?? 0;
+    const sections =
+      useCvBuilderStore(
+        (state) =>
+          state.sections,
+      );
 
-        if (gap <= 0) {
-          return '';
-        }
+    const updatePersonalInfo =
+      useCvBuilderStore(
+        (state) =>
+          state.updatePersonalInfo,
+      );
 
-        return `
-          .cv-pagination-preview [data-section="${section.key}"] {
-            padding-top: ${gap + PAGE_TOP_GAP}px;
-          }
-        `;
-      })
-      .join('\n');
+    const updateSummary =
+      useCvBuilderStore(
+        (state) =>
+          state.updateSummary,
+      );
 
-    return `
-      .cv-pagination-document [data-section] {
-        display: flow-root;
-        box-sizing: border-box;
+    const addExperience =
+      useCvBuilderStore(
+        (state) =>
+          state.addExperience,
+      );
+
+    const updateExperience =
+      useCvBuilderStore(
+        (state) =>
+          state.updateExperience,
+      );
+
+    const removeExperience =
+      useCvBuilderStore(
+        (state) =>
+          state.removeExperience,
+      );
+
+    const addEducation =
+      useCvBuilderStore(
+        (state) =>
+          state.addEducation,
+      );
+
+    const updateEducation =
+      useCvBuilderStore(
+        (state) =>
+          state.updateEducation,
+      );
+
+    const removeEducation =
+      useCvBuilderStore(
+        (state) =>
+          state.removeEducation,
+      );
+
+    const addSkill =
+      useCvBuilderStore(
+        (state) =>
+          state.addSkill,
+      );
+
+    const updateSkill =
+      useCvBuilderStore(
+        (state) =>
+          state.updateSkill,
+      );
+
+    const removeSkill =
+      useCvBuilderStore(
+        (state) =>
+          state.removeSkill,
+      );
+
+    const addActivity =
+      useCvBuilderStore(
+        (state) =>
+          state.addActivity,
+      );
+
+    const updateActivity =
+      useCvBuilderStore(
+        (state) =>
+          state.updateActivity,
+      );
+
+    const removeActivity =
+      useCvBuilderStore(
+        (state) =>
+          state.removeActivity,
+      );
+
+    const addCertification =
+      useCvBuilderStore(
+        (state) =>
+          state.addCertification,
+      );
+
+    const updateCertification =
+      useCvBuilderStore(
+        (state) =>
+          state.updateCertification,
+      );
+
+    const removeCertification =
+      useCvBuilderStore(
+        (state) =>
+          state.removeCertification,
+      );
+
+    const addAward =
+      useCvBuilderStore(
+        (state) =>
+          state.addAward,
+      );
+
+    const updateAward =
+      useCvBuilderStore(
+        (state) =>
+          state.updateAward,
+      );
+
+    const removeAward =
+      useCvBuilderStore(
+        (state) =>
+          state.removeAward,
+      );
+
+    const addReference =
+      useCvBuilderStore(
+        (state) =>
+          state.addReference,
+      );
+
+    const updateReference =
+      useCvBuilderStore(
+        (state) =>
+          state.updateReference,
+      );
+
+    const removeReference =
+      useCvBuilderStore(
+        (state) =>
+          state.removeReference,
+      );
+
+    const addInterest =
+      useCvBuilderStore(
+        (state) =>
+          state.addInterest,
+      );
+
+    const updateInterest =
+      useCvBuilderStore(
+        (state) =>
+          state.updateInterest,
+      );
+
+    const removeInterest =
+      useCvBuilderStore(
+        (state) =>
+          state.removeInterest,
+      );
+
+    const actions =
+      useMemo<CvActions>(
+        () => ({
+          updatePersonalInfo,
+          updateSummary,
+
+          addExperience,
+          updateExperience,
+          removeExperience,
+
+          addEducation,
+          updateEducation,
+          removeEducation,
+
+          addSkill,
+          updateSkill,
+          removeSkill,
+
+          addActivity,
+          updateActivity,
+          removeActivity,
+
+          addCertification,
+          updateCertification,
+          removeCertification,
+
+          addAward,
+          updateAward,
+          removeAward,
+
+          addReference,
+          updateReference,
+          removeReference,
+
+          addInterest,
+          updateInterest,
+          removeInterest,
+        }),
+        [
+          updatePersonalInfo,
+          updateSummary,
+
+          addExperience,
+          updateExperience,
+          removeExperience,
+
+          addEducation,
+          updateEducation,
+          removeEducation,
+
+          addSkill,
+          updateSkill,
+          removeSkill,
+
+          addActivity,
+          updateActivity,
+          removeActivity,
+
+          addCertification,
+          updateCertification,
+          removeCertification,
+
+          addAward,
+          updateAward,
+          removeAward,
+
+          addReference,
+          updateReference,
+          removeReference,
+
+          addInterest,
+          updateInterest,
+          removeInterest,
+        ],
+      );
+
+    const measureRef =
+      useRef<HTMLDivElement>(
+        null,
+      );
+
+    const [
+      measurements,
+      setMeasurements,
+    ] = useState<
+      CvMeasuredBlock[]
+    >([]);
+    
+    const template =
+      useMemo(
+        () =>
+          getPaginatedTemplate(
+            templateId,
+          ),
+        [templateId],
+      );
+
+    const blocks =
+      useMemo(
+        () =>
+          buildCvBlocks({
+            data,
+            sections,
+            editable: true,
+          }),
+        [data, sections],
+      );
+
+    const blockSignature =
+      useMemo(
+        () =>
+          blocks
+            .map(
+              (block) =>
+                block.id,
+            )
+            .join('|'),
+        [blocks],
+      );
+
+    useLayoutEffect(() => {
+      const container =
+        measureRef.current;
+
+      if (!container) {
+        return;
       }
 
-      ${gapRules}
-    `;
-  }, [sectionGaps, visibleSections]);
+      let firstFrame = 0;
+      let secondFrame = 0;
 
-  useLayoutEffect(() => {
-    const measureContainer = measureRef.current;
-
-    if (!measureContainer) {
-      return;
-    }
-
-    let animationFrameId = 0;
-
-    const calculatePagination = () => {
-      cancelAnimationFrame(animationFrameId);
-
-      animationFrameId = requestAnimationFrame(() => {
-        const documentElement =
-          measureContainer.firstElementChild as HTMLElement | null;
-
-        if (!documentElement) {
-          setSectionGaps({});
-          setPageCount(1);
-          return;
-        }
-
-        const documentRect =
-          documentElement.getBoundingClientRect();
-
-        const sectionElements = Array.from(
-          documentElement.querySelectorAll<HTMLElement>(
-            '[data-section]',
-          ),
+      const measure = () => {
+        cancelAnimationFrame(
+          firstFrame,
         );
 
-        const nextGaps: SectionGaps = {};
+        cancelAnimationFrame(
+          secondFrame,
+        );
 
-        let accumulatedGap = 0;
+        firstFrame =
+          requestAnimationFrame(
+            () => {
+              secondFrame =
+                requestAnimationFrame(
+                  () => {
+                    const elements =
+                      Array.from(
+                        container.querySelectorAll<HTMLElement>(
+                          '[data-cv-block-id]',
+                        ),
+                      );
 
-        sectionElements.forEach((sectionElement) => {
-          const sectionKey = sectionElement.dataset
-            .section as SectionKey | undefined;
+                    const nextMeasurements =
+                      elements.map(
+                        (element) => ({
+                          id:
+                            element
+                              .dataset
+                              .cvBlockId ??
+                            '',
 
-          if (!sectionKey) {
-            return;
-          }
+                          height:
+                            Math.ceil(
+                              Math.max(
+                                element.getBoundingClientRect()
+                                  .height,
 
-          const sectionRect =
-            sectionElement.getBoundingClientRect();
+                                element
+                                  .offsetHeight,
 
-          const originalTop =
-            sectionRect.top - documentRect.top;
+                                element
+                                  .scrollHeight,
+                              ),
+                            ),
+                        }),
+                      );
 
-          const adjustedTop =
-            originalTop + accumulatedGap;
-
-          const sectionHeight = Math.ceil(
-            sectionRect.height,
+                    setMeasurements(
+                      nextMeasurements,
+                    );
+                  },
+                );
+            },
           );
+      };
 
-          const positionInPage =
-            ((adjustedTop % PAGE_HEIGHT) + PAGE_HEIGHT) %
-            PAGE_HEIGHT;
+      measure();
 
-          const remainingHeight =
-            positionInPage === 0
-              ? PAGE_HEIGHT
-              : PAGE_HEIGHT - positionInPage;
+      const resizeObserver =
+        new ResizeObserver(
+          measure,
+        );
 
-          let gap = 0;
+      resizeObserver.observe(
+        container,
+      );
 
-          /*
-           * Section vừa một trang nhưng không còn đủ chỗ
-           * ở trang hiện tại thì đẩy nguyên section sang
-           * đầu trang tiếp theo.
-           *
-           * Section lớn hơn PAGE_HEIGHT vẫn phải cho phép
-           * bị chia vì không thể đặt trọn trong một trang.
-           */
-          if (
-            positionInPage > 0 &&
-            sectionHeight <= PAGE_HEIGHT &&
-            sectionHeight > remainingHeight
-          ) {
-            gap = remainingHeight;
-          }
+      const mutationObserver =
+        new MutationObserver(
+          measure,
+        );
 
-          nextGaps[sectionKey] = gap;
-          accumulatedGap += gap;
+      mutationObserver.observe(
+        container,
+        {
+          childList: true,
+          subtree: true,
+          characterData: true,
+        },
+      );
+
+      container
+        .querySelectorAll<HTMLElement>(
+          '[data-cv-block-id]',
+        )
+        .forEach((element) => {
+          resizeObserver.observe(
+            element,
+          );
         });
 
-        const totalHeight =
-          documentElement.scrollHeight + accumulatedGap;
+      void document.fonts?.ready.then(
+        measure,
+      );
 
-        const nextPageCount = Math.max(
-          1,
-          Math.ceil(totalHeight / PAGE_HEIGHT),
+      return () => {
+        cancelAnimationFrame(
+          firstFrame,
         );
 
-        setSectionGaps((currentGaps) =>
-          areGapsEqual(currentGaps, nextGaps)
-            ? currentGaps
-            : nextGaps,
+        cancelAnimationFrame(
+          secondFrame,
         );
 
-        setPageCount((currentPageCount) =>
-          currentPageCount === nextPageCount
-            ? currentPageCount
-            : nextPageCount,
-        );
-      });
-    };
+        resizeObserver.disconnect();
+        mutationObserver.disconnect();
+      };
+    }, [
+      blockSignature,
+      template,
+      settings,
+    ]);
 
-    calculatePagination();
+    const paginationResult =
+      useMemo(
+        () =>
+          paginateCvBlocks({
+            blocks,
+            measurements,
+          }),
+        [blocks, measurements],
+      );
 
-    const resizeObserver = new ResizeObserver(
-      calculatePagination,
+    const [
+      stablePages,
+      setStablePages,
+    ] = useState<CvPage[]>(
+      [],
     );
 
-    const documentElement =
-      measureContainer.firstElementChild as HTMLElement | null;
-
-    resizeObserver.observe(measureContainer);
-
-    if (documentElement) {
-      resizeObserver.observe(documentElement);
-
-      documentElement
-        .querySelectorAll<HTMLElement>('[data-section]')
-        .forEach((sectionElement) => {
-          resizeObserver.observe(sectionElement);
-        });
-    }
-
-    void document.fonts?.ready.then(calculatePagination);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
-    };
-  }, [templateId, data, settings, sections]);
-
-  const renderCv = (editable: boolean) => (
-    <CvRenderer
-      templateId={templateId}
-      data={data}
-      settings={settings}
-      sections={sections}
-      editable={editable}
-      onUpdatePersonalInfo={
-        editable ? updatePersonalInfo : undefined
+    useLayoutEffect(() => {
+      if (
+        paginationResult
+          .unresolvedBlockIds
+          .length > 0
+      ) {
+        return;
       }
-      onUpdateSummary={
-        editable ? updateSummary : undefined
-      }
-      onUpdateExperience={
-        editable ? updateExperience : undefined
-      }
-      onUpdateEducation={
-        editable ? updateEducation : undefined
-      }
-      onUpdateSkill={
-        editable ? updateSkill : undefined
-      }
-      onUpdateActivity={
-        editable ? updateActivity : undefined
-      }
-      onUpdateCertification={
-        editable ? updateCertification : undefined
-      }
-      onUpdateAward={
-        editable ? updateAward : undefined
-      }
-      onUpdateReference={
-        editable ? updateReference : undefined
-      }
-      onUpdateInterest={
-        editable ? updateInterest : undefined
-      }
-    />
-  );
 
-  return (
-    <>
-      <style>{paginationCss}</style>
+      if (
+        paginationResult.pages
+          .length === 0
+      ) {
+        return;
+      }
 
-      {/* CV ẩn dùng để đo kích thước thật */}
-      <div
-        ref={measureRef}
-        className="cv-pagination-document pointer-events-none absolute left-0 top-0 -z-10"
-        style={{
-          width: PAGE_WIDTH,
-          visibility: 'hidden',
-        }}
-        aria-hidden
-      >
-        {renderCv(false)}
-      </div>
+      setStablePages(
+        paginationResult.pages,
+      );
+    }, [paginationResult]);
 
-      {/* Danh sách trang */}
-      <div
-  id="cv-pdf-pages"
-  className="flex flex-col items-center gap-8"
->
-  {Array.from({ length: pageCount }).map(
-    (_, pageIndex) => (
-      <div
-        key={pageIndex}
-        className="relative"
-      >
-        <span
-          data-html2canvas-ignore="true"
-          className="absolute -top-6 right-0 rounded-full bg-[#10b981] px-2 py-0.5 text-xs font-medium text-white shadow-sm"
-        >
-          Trang {pageIndex + 1}
-        </span>
+    const displayedPages =
+      stablePages.length > 0
+        ? stablePages
+        : paginationResult.pages;
 
+    const {
+      PageRenderer,
+      MeasureRenderer,
+    } = template;
+
+    return (
+      <>
         <div
-          data-cv-page-content
-          data-cv-page-id={`cv-page-${pageIndex}`}
-          className="relative overflow-hidden bg-white shadow-2xl"
+          ref={measureRef}
+          aria-hidden
+          className="
+            pointer-events-none
+            fixed
+            left-[-100000px]
+            top-0
+            opacity-0
+          "
           style={{
-            width: PAGE_WIDTH,
-            height: PAGE_HEIGHT,
+            width: CV_PAGE_WIDTH,
           }}
         >
-          <div
-            className="cv-pagination-document cv-pagination-preview absolute left-0 top-0"
-            style={{
-              width: PAGE_WIDTH,
-              transform: `translateY(-${
-                pageIndex * PAGE_HEIGHT
-              }px)`,
-            }}
-          >
-            {renderCv(false)}
-          </div>
+          <MeasureRenderer
+            blocks={blocks}
+            data={data}
+            settings={settings}
+            sections={sections}
+            editable
+            mode="measure"
+            actions={{}}
+          />
         </div>
-      </div>
-    ),
-  )}
-</div>
-    </>
-  );
-};
+
+        <div
+          id="cv-pdf-pages"
+          className="
+            flex
+            flex-col
+            items-center
+            gap-8
+          "
+        >
+          {displayedPages.map(
+            (page) => (
+              <div
+                key={page.id}
+                className="relative"
+              >
+                <span
+                  data-html2canvas-ignore="true"
+                  className="
+                    absolute
+                    -top-6
+                    right-0
+                    rounded-full
+                    bg-[#10b981]
+                    px-2
+                    py-0.5
+                    text-xs
+                    font-medium
+                    text-white
+                    shadow-sm
+                  "
+                >
+                  Trang{' '}
+                  {page.index + 1}
+                </span>
+
+                <div
+                  data-cv-page-content
+                  data-cv-page-id={
+                    page.id
+                  }
+                  className="
+                    overflow-hidden
+                    bg-white
+                    shadow-2xl
+                  "
+                  style={{
+                    width:
+                      CV_PAGE_WIDTH,
+
+                    height:
+                      CV_PAGE_HEIGHT,
+                  }}
+                >
+                  <PageRenderer
+                    page={page}
+                    data={data}
+                    settings={settings}
+                    sections={sections}
+                    editable
+                    mode="edit"
+                    actions={actions}
+                  />
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+      </>
+    );
+  };
 
 export default PaginatedPreview;

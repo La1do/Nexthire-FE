@@ -1,43 +1,146 @@
-import { useNavigate } from 'react-router-dom';
-import type { CvTemplate } from './../../../types/cv.types';
+import {
+  useNavigate,
+} from 'react-router-dom';
+
+import type {
+  CvTemplateCatalogItem,
+} from './../../_components/cv-templates/TemplateCatalog';
 
 interface TemplateCardProps {
-  template: CvTemplate;
+  template: CvTemplateCatalogItem;
 }
 
-export const TemplateCard = ({ template }: TemplateCardProps) => {
-  const navigate = useNavigate();
+export const TemplateCard = ({
+  template,
+}: TemplateCardProps) => {
+  const navigate =
+    useNavigate();
 
-  const handleSelect = () => {
-    navigate(`/cv-builder/${template.id}`);
-  };
+  const handleUseTemplate =
+    () => {
+      navigate(
+        `/cv-builder/${template.id}`,
+      );
+    };
 
   return (
-    <div
-      onClick={handleSelect}
-      className="group cursor-pointer overflow-hidden rounded-[8px] border border-[#d9d9e3] bg-[#ffffff] shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+    <article
+      className="
+        group
+        overflow-hidden
+        rounded-xl
+        border
+        border-[#d9d9e3]
+        bg-white
+        shadow-sm
+        transition-all
+        hover:-translate-y-1
+        hover:shadow-lg
+      "
     >
-      <div className="aspect-[3/4] w-full overflow-hidden bg-[#f7f6fb]">
+      <div
+        className="
+          relative
+          overflow-hidden
+          bg-[#f3f4f6]
+        "
+      >
         <img
           src={template.thumbnail}
           alt={template.name}
-          className="h-full w-full object-cover object-top transition-transform group-hover:scale-105"
+          className="
+            aspect-[3/4]
+            w-full
+            object-cover
+            transition-transform
+            duration-300
+            group-hover:scale-[1.02]
+          "
         />
+
+        <div
+          className="
+            absolute
+            inset-0
+            flex
+            items-center
+            justify-center
+            bg-black/0
+            opacity-0
+            transition-all
+            group-hover:bg-black/30
+            group-hover:opacity-100
+          "
+        >
+          <button
+            type="button"
+            onClick={
+              handleUseTemplate
+            }
+            className="
+              rounded-lg
+              bg-white
+              px-5
+              py-2.5
+              text-sm
+              font-semibold
+              text-[#111827]
+              shadow-lg
+              transition-transform
+              hover:scale-105
+            "
+          >
+            Dùng mẫu này
+          </button>
+        </div>
       </div>
 
-      <div className="flex items-center justify-between p-4">
-        <span className="text-sm font-medium text-[#111827]">{template.name}</span>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSelect();
-          }}
-          className="rounded-[8px] px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:opacity-90"
-          style={{ background: 'linear-gradient(to right, #f23b94, #ff6a21)' }}
+      <div className="p-4">
+        <h3
+          className="
+            mb-1
+            text-base
+            font-bold
+            text-[#111827]
+          "
         >
-          Dùng mẫu này
+          {template.name}
+        </h3>
+
+        <p
+          className="
+            line-clamp-2
+            text-sm
+            text-[#6b7280]
+          "
+        >
+          {template.description}
+        </p>
+
+        <button
+          type="button"
+          onClick={
+            handleUseTemplate
+          }
+          className="
+            mt-4
+            w-full
+            rounded-lg
+            bg-[#f23b94]
+            px-4
+            py-2
+            text-sm
+            font-medium
+            text-white
+            transition-colors
+            hover:bg-[#db2777]
+          "
+        >
+          Tạo CV
         </button>
       </div>
-    </div>
+    </article>
   );
 };
+
+export default TemplateCard;
