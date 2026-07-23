@@ -15,6 +15,16 @@ export function HeroPanel({ content, stats, spotlight }: HeroPanelProps) {
 
   return (
     <section className="home-hero">
+      <img
+        alt=""
+        aria-hidden="true"
+        className="home-hero-media"
+        decoding="async"
+        fetchPriority="high"
+        height="1067"
+        src="/images/home-career-team.jpg"
+        width="1600"
+      />
       <div className="home-hero-stage">
         <div className="home-hero-copy">
           <p className="home-hero-eyebrow">
@@ -40,18 +50,18 @@ export function HeroPanel({ content, stats, spotlight }: HeroPanelProps) {
           <JobSearchBar content={content} />
         </div>
 
-        <aside aria-label={content.spotlight.title} className="home-hero-board">
-          <div className="home-hero-board-header">
-            <span className="home-live-signal">
-              <span aria-hidden="true" />
-              {content.spotlight.title}
-            </span>
-            <span aria-hidden="true" className="home-board-index">
-              {spotlight.length ? `01 / ${spotlightCount}` : '00 / 00'}
-            </span>
-          </div>
+        {spotlight.length ? (
+          <aside aria-label={content.spotlight.title} className="home-hero-board">
+            <div className="home-hero-board-header">
+              <span className="home-live-signal">
+                <span aria-hidden="true" />
+                {content.spotlight.title}
+              </span>
+              <span aria-hidden="true" className="home-board-index">
+                01 / {spotlightCount}
+              </span>
+            </div>
 
-          {spotlight.length ? (
             <div className="home-opportunity-grid">
               {spotlight.map((company, index) => (
                 <a
@@ -74,13 +84,13 @@ export function HeroPanel({ content, stats, spotlight }: HeroPanelProps) {
                 </a>
               ))}
             </div>
-          ) : null}
 
-          <div className="home-hero-board-footer">
-            <p>{content.spotlight.subtitle}</p>
-            <span aria-hidden="true">→</span>
-          </div>
-        </aside>
+            <div className="home-hero-board-footer">
+              <p>{content.spotlight.subtitle}</p>
+              <span aria-hidden="true">→</span>
+            </div>
+          </aside>
+        ) : null}
       </div>
     </section>
   )
