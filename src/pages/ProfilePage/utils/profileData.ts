@@ -4,9 +4,9 @@ import type { CandidateProfile } from '../types'
 export function createCandidateProfile(source: ProfileTranslations['profile']): CandidateProfile {
   return {
     avatarDocumentId: null,
+    contactEmail: source.contactEmail,
     defaultCvId: null,
     education: source.education.map((item) => ({ ...item })),
-    email: source.email,
     experiences: source.experiences.map((item) => ({ ...item })),
     headline: source.headline,
     linkedin: source.linkedin,

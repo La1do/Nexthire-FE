@@ -65,6 +65,7 @@ export function createProfileFromCandidateAggregate(data: CandidateMeResponse): 
 
   return {
     avatarDocumentId: data.profile.avatarDocumentId,
+    contactEmail: data.profile.contactEmail ?? '',
     defaultCvId: defaultCv?.id ?? null,
     education: data.educations.map((education): CandidateEducation => ({
       degree: education.degree ?? education.fieldOfStudy ?? '',
@@ -73,7 +74,6 @@ export function createProfileFromCandidateAggregate(data: CandidateMeResponse): 
       school: education.schoolName,
       startYear: education.startYear ? String(education.startYear) : '',
     })),
-    email: data.profile.contactEmail ?? '',
     experiences: data.experiences.map((experience): CandidateExperience => ({
       company: experience.companyName,
       description: experience.description ?? '',
@@ -137,7 +137,7 @@ export function createCandidateUpdatePayload(profile: CandidateProfile): Candida
   return {
     profile: {
       avatarDocumentId: profile.avatarDocumentId,
-      contactEmail: compact(profile.email),
+      contactEmail: compact(profile.contactEmail),
       fullName: compact(profile.name),
       headline: compact(profile.headline),
       linkedinUrl: compact(profile.linkedin),
@@ -243,7 +243,7 @@ export function applyParsedCvDraftToProfile(
 
   return {
     ...currentProfile,
-    email: currentProfile.email || profile.contactEmail || currentProfile.email,
+    contactEmail: currentProfile.contactEmail || profile.contactEmail || '',
     headline: profile.headline ?? currentProfile.headline,
     linkedin: profile.linkedinUrl ?? currentProfile.linkedin,
     location: profile.location ?? currentProfile.location,

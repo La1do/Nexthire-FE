@@ -202,9 +202,9 @@ export const profile: ProfileTranslations = {
     contact: {
       title: '連絡先',
       description: '返信を逃さないよう、メールと電話番号を正確に保ちます。',
-      emailLabel: 'メール',
+      emailLabel: '連絡用メール',
       phoneLabel: '電話番号',
-      lockedHint: 'メールは変更できません',
+      lockedHint: 'このメールは採用企業からの連絡用で、ログインメールとは別に設定できます。',
     },
     skills: {
       title: 'スキル',
@@ -255,7 +255,7 @@ export const profile: ProfileTranslations = {
     headline: 'Senior Frontend Engineer · 経験5年',
     location: 'ハノイ, ベトナム',
     summary: '高性能なWebプロダクトを作るFrontendエンジニアです。UX、デザインシステム、クリーンコードを大切にしています。',
-    email: 'khoa.nguyen@gmail.com',
+    contactEmail: 'khoa.contact@example.com',
     phone: '0912 345 678',
     skills: ['React', 'TypeScript', 'Node.js', 'Figma', 'Tailwind CSS', 'GraphQL'],
     resumeFile: 'CV_NguyenMinhKhoa_2025.pdf',

@@ -5,7 +5,7 @@ import { ProfileSection } from './ProfileSection'
 
 type ContactInfoFormProps = {
   content: ProfileTranslations['sections']['contact']
-  onChange: (field: 'phone', value: string) => void
+  onChange: (field: 'contactEmail' | 'phone', value: string) => void
   profile: CandidateProfile
 }
 
@@ -14,7 +14,12 @@ export function ContactInfoForm({ content, onChange, profile }: ContactInfoFormP
     <ProfileSection description={content.description} title={content.title}>
       <div className="profile-form-grid">
         <ProfileField hint={content.lockedHint} label={content.emailLabel}>
-          <input className="profile-control" disabled value={profile.email} />
+          <input
+            className="profile-control"
+            onChange={(event) => onChange('contactEmail', event.target.value)}
+            type="email"
+            value={profile.contactEmail}
+          />
         </ProfileField>
         <ProfileField label={content.phoneLabel}>
           <input className="profile-control" onChange={(event) => onChange('phone', event.target.value)} value={profile.phone} />

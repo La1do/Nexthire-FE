@@ -807,7 +807,7 @@ export type ProfileTranslations = {
     headline: string
     location: string
     summary: string
-    email: string
+    contactEmail: string
     phone: string
     skills: ReadonlyArray<string>
     resumeFile: string

@@ -18,9 +18,9 @@ export type CandidateEducation = {
 
 export type CandidateProfile = {
   avatarDocumentId: string | null
+  contactEmail: string
   defaultCvId: string | null
   education: CandidateEducation[]
-  email: string
   experiences: CandidateExperience[]
   headline: string
   linkedin: string

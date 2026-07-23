@@ -202,9 +202,9 @@ export const profile: ProfileTranslations = {
     contact: {
       title: 'Thông tin liên hệ',
       description: 'Giữ email và số điện thoại chính xác để không bỏ lỡ phản hồi.',
-      emailLabel: 'Email',
+      emailLabel: 'Email liên hệ',
       phoneLabel: 'Số điện thoại',
-      lockedHint: 'Email không thể thay đổi',
+      lockedHint: 'Email này dùng để nhà tuyển dụng liên hệ và có thể khác email đăng nhập.',
     },
     skills: {
       title: 'Kỹ năng',
@@ -255,7 +255,7 @@ export const profile: ProfileTranslations = {
     headline: 'Senior Frontend Engineer · 5 năm kinh nghiệm',
     location: 'Hà Nội, Việt Nam',
     summary: 'Tôi là lập trình viên Frontend với 5 năm kinh nghiệm xây dựng sản phẩm web hiệu suất cao. Đam mê UX, design system và clean code.',
-    email: 'khoa.nguyen@gmail.com',
+    contactEmail: 'khoa.contact@example.com',
     phone: '0912 345 678',
     skills: ['React', 'TypeScript', 'Node.js', 'Figma', 'Tailwind CSS', 'GraphQL'],
     resumeFile: 'CV_NguyenMinhKhoa_2025.pdf',
