@@ -5,6 +5,8 @@ import type { FeaturedCompanyView } from '../types'
 import { HomeSectionState } from './HomeSectionState'
 import { SectionHeading } from './SectionHeading'
 
+const employerTones = ['is-coral', 'is-green', 'is-blue', 'is-gold'] as const
+
 type EmployerStripProps = {
   content: HomeTranslations['employers']
   states: HomeTranslations['states']
@@ -28,11 +30,12 @@ export function EmployerStrip({ content, states, companies, loading, error }: Em
           <div className="home-employer-strip">
             {marqueeCompanies.map((item, index) => {
               const isCopy = index >= companies.length
+              const sourceIndex = index % companies.length
 
               return (
                 <a
                   aria-hidden={isCopy || undefined}
-                  className={`home-employer-card${isCopy ? ' is-copy' : ''}`}
+                  className={`home-employer-card ${employerTones[sourceIndex % employerTones.length]}${isCopy ? ' is-copy' : ''}`}
                   href={createCompanyDetailHrefById(item.companyId)}
                   key={`${item.companyId}-${isCopy ? 'copy' : 'source'}`}
                   tabIndex={isCopy ? -1 : undefined}
@@ -47,7 +50,14 @@ export function EmployerStrip({ content, states, companies, loading, error }: Em
                     <strong>{item.name}</strong>
                     <small>{item.openRoles}</small>
                   </span>
-                  <span aria-hidden="true" className="home-employer-arrow">↗</span>
+                  <span aria-hidden="true" className="home-employer-card-tail">
+                    <span className="home-employer-momentum">
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                    <span className="home-employer-arrow">↗</span>
+                  </span>
                 </a>
               )
             })}

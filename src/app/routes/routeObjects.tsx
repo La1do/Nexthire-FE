@@ -7,6 +7,7 @@ import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
 import { ComingSoonPage } from '../../pages/ComingSoonPage'
+import { CareerGuidePage } from '../../pages/CareerGuidePage'
 import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
 import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
 import { HomePage } from '../../pages/HomePage'
@@ -59,7 +60,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     {
       path: '/career-guide',
       label: comingSoon.pages.careerGuide.title,
-      element: <ComingSoonPage pageKey="careerGuide" />,
+      element: <CareerGuidePage />,
       layout: MainLayout,
     },
     {

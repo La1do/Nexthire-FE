@@ -1,6 +1,24 @@
 [
   {
     "date": "2026-07-23",
+    "macrostructure": "Workbench",
+    "theme": "custom",
+    "theme_axes": "light / geometric-sans / cool",
+    "vibe": "professional, clear, energetic career marketplace",
+    "enrichment": "live search UI + self-hosted workplace photography",
+    "brief": "Redesign the Nexhire Home palette, typography, hero opportunity board, and category icons"
+  },
+  {
+    "date": "2026-07-23",
+    "macrostructure": "Index-First",
+    "theme": "custom",
+    "theme_axes": "warm paper / editorial sans / coral",
+    "vibe": "useful, editorial, career-focused",
+    "enrichment": "self-hosted editorial photography",
+    "brief": "Redesign the home career-guide section and replace the placeholder career-guide route"
+  },
+  {
+    "date": "2026-07-23",
     "macrostructure": "Photographic",
     "theme": "custom",
     "theme_axes": "warm paper / confident sans / coral",
