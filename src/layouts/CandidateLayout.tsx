@@ -1,22 +1,15 @@
 import type { PropsWithChildren } from 'react'
 import { useLocation } from 'react-router-dom'
+import { getAuthUserDisplayName, getInitials, useAuth } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(-2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-}
 
 export function CandidateLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
   const { pathname } = useLocation()
+  const { user } = useAuth()
   const profile = pages.profile
+  const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
   const navItems = [
     { href: '/search', label: profile.sidebar.searchJobs },
     { href: '/profile/applications', label: profile.sidebar.applications },
@@ -41,9 +34,9 @@ export function CandidateLayout({ children }: PropsWithChildren) {
         </nav>
 
         <div className="candidate-sidebar-user">
-          <span>{getInitials(profile.profile.name)}</span>
+          <span>{getInitials(userDisplayName)}</span>
           <div>
-            <strong>{profile.profile.name}</strong>
+            <strong>{userDisplayName}</strong>
             <small>{profile.sidebar.currentRole}</small>
           </div>
         </div>
