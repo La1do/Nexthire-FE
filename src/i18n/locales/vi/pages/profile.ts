@@ -6,6 +6,7 @@ export const profile: ProfileTranslations = {
   sidebar: {
     searchJobs: 'Tìm việc',
     applications: 'Đơn ứng tuyển',
+    savedJobs: 'Việc đã lưu',
     profile: 'Hồ sơ của tôi',
     messages: 'Tin nhắn',
     currentRole: 'Ứng viên',
@@ -248,6 +249,39 @@ export const profile: ProfileTranslations = {
       draftFileUnsupported: 'CV đã tải lên, nhưng BE chưa hỗ trợ parse draft từ file.',
       portfolioLabel: 'Portfolio / Website',
       linkedinLabel: 'LinkedIn',
+    },
+  },
+  savedJobs: {
+    routeLabel: 'Việc đã lưu',
+    pageTitle: 'Việc đã lưu',
+    title: 'Danh sách việc đã lưu',
+    description: 'Giữ lại những việc làm bạn quan tâm để quay lại dễ dàng khi sẵn sàng ứng tuyển.',
+    primaryAction: 'Tìm việc mới',
+    states: {
+      loading: 'Đang tải danh sách việc đã lưu...',
+      errorTitle: 'Không tải được việc đã lưu',
+      errorDescription: 'Kiểm tra kết nối hoặc đăng nhập lại để xem danh sách.',
+      retry: 'Thử lại',
+    },
+    empty: {
+      title: 'Chưa có việc làm nào được lưu',
+      description: 'Bấm lưu trên bất kỳ job card nào để giữ lại ở đây.',
+      action: 'Khám phá việc làm',
+    },
+    card: {
+      savedAtLabel: 'Đã lưu',
+      removeAriaLabel: 'Bỏ lưu',
+      removingAriaLabel: 'Đang bỏ lưu...',
+      statusLabel: 'Trạng thái',
+      statusValues: {
+        published: 'Đang mở',
+        unpublished: 'Tạm dừng',
+        closed: 'Đã đóng',
+        expired: 'Hết hạn',
+        rejected: 'Bị từ chối',
+      },
+      viewJobLabel: 'Xem việc làm',
+      notAvailable: 'Không có',
     },
   },
   profile: {

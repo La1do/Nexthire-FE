@@ -1,4 +1,6 @@
+import { useMemo } from 'react'
 import { useTranslations } from '../../i18n'
+import { useSavedJobsHydrate } from '../../hooks/useSavedJobsHydrate'
 import { ArticleGrid } from './components/ArticleGrid'
 import { CategoryGrid } from './components/CategoryGrid'
 import { EmployerStrip } from './components/EmployerStrip'
@@ -16,6 +18,21 @@ export function HomePage() {
   const states = home.states
   const data = useHomeData()
   const homeRef = useHomeReveal()
+
+  const homeJobIds = useMemo(() => {
+    const ids = new Set<string>()
+    for (const job of data.jobs.data) {
+      ids.add(job.id)
+    }
+    for (const group of data.industryGroups.data) {
+      for (const job of group.jobs) {
+        ids.add(job.id)
+      }
+    }
+    return Array.from(ids)
+  }, [data.jobs.data, data.industryGroups.data])
+
+  useSavedJobsHydrate(homeJobIds)
 
   return (
     <div className="home-page" ref={homeRef}>

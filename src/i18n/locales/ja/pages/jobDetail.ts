@@ -23,6 +23,10 @@ export const jobDetail: JobDetailTranslations = {
     openings: '募集人数',
     apply: '応募する',
     save: '求人を保存',
+    saved: '保存済み',
+    saveError: '求人を保存できませんでした。もう一度お試しください。',
+    jobNotPublic: 'この求人は現在公開されていないため、保存できません。',
+    loginHint: 'ログインして求人を保存し、自分のリストから確認できます。',
   },
   sections: {
     description: '仕事内容',

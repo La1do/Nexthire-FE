@@ -6,6 +6,7 @@ export const profile: ProfileTranslations = {
   sidebar: {
     searchJobs: 'Find jobs',
     applications: 'Applications',
+    savedJobs: 'Saved jobs',
     profile: 'My profile',
     messages: 'Messages',
     currentRole: 'Candidate',
@@ -248,6 +249,39 @@ export const profile: ProfileTranslations = {
       draftFileUnsupported: 'The CV was uploaded, but the backend does not support file draft parsing yet.',
       portfolioLabel: 'Portfolio / Website',
       linkedinLabel: 'LinkedIn',
+    },
+  },
+  savedJobs: {
+    routeLabel: 'Saved jobs',
+    pageTitle: 'Saved jobs',
+    title: 'Your saved jobs',
+    description: 'Keep the roles you like here so you can return to them quickly when you are ready to apply.',
+    primaryAction: 'Find new jobs',
+    states: {
+      loading: 'Loading your saved jobs...',
+      errorTitle: 'Saved jobs could not be loaded',
+      errorDescription: 'Check your connection or sign in again to load your saved list.',
+      retry: 'Retry',
+    },
+    empty: {
+      title: 'No saved jobs yet',
+      description: 'Tap the bookmark on any job card to keep it here for later.',
+      action: 'Browse jobs',
+    },
+    card: {
+      savedAtLabel: 'Saved',
+      removeAriaLabel: 'Remove from saved',
+      removingAriaLabel: 'Removing...',
+      statusLabel: 'Status',
+      statusValues: {
+        published: 'Active',
+        unpublished: 'Paused',
+        closed: 'Closed',
+        expired: 'Expired',
+        rejected: 'Rejected',
+      },
+      viewJobLabel: 'View job',
+      notAvailable: 'Not available',
     },
   },
   profile: {

@@ -54,7 +54,15 @@ export function JobSections({ content, states, jobs, loading, error }: JobSectio
         <>
           <div className="home-card-grid">
             {visibleJobs.map((job) => (
-              <JobCard job={job} key={job.id} saveLabel={content.saveLabel} />
+              <JobCard
+                job={job}
+                key={job.id}
+                labels={{
+                  loginAriaLabel: content.saveLabel,
+                  saveAriaLabel: content.saveLabel,
+                  savedAriaLabel: content.saveLabel,
+                }}
+              />
             ))}
           </div>
 

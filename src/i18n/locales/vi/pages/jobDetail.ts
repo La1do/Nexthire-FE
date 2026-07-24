@@ -23,6 +23,10 @@ export const jobDetail: JobDetailTranslations = {
     openings: 'Số lượng tuyển',
     apply: 'Ứng tuyển ngay',
     save: 'Lưu việc làm',
+    saved: 'Đã lưu',
+    saveError: 'Không thể lưu việc làm này lúc này. Vui lòng thử lại.',
+    jobNotPublic: 'Việc làm này đã ngừng công khai và không thể lưu.',
+    loginHint: 'Đăng nhập để lưu việc làm và xem lại trong danh sách của bạn.',
   },
   sections: {
     description: 'Mô tả công việc',

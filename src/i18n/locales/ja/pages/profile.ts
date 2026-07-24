@@ -6,6 +6,7 @@ export const profile: ProfileTranslations = {
   sidebar: {
     searchJobs: '求人を探す',
     applications: '応募一覧',
+    savedJobs: '保存した求人',
     profile: 'マイプロフィール',
     messages: 'メッセージ',
     currentRole: '候補者',
@@ -248,6 +249,39 @@ export const profile: ProfileTranslations = {
       draftFileUnsupported: 'CVはアップロードされましたが、バックエンドはファイルからの下書き解析にまだ対応していません。',
       portfolioLabel: 'Portfolio / Website',
       linkedinLabel: 'LinkedIn',
+    },
+  },
+  savedJobs: {
+    routeLabel: '保存済みの求人',
+    pageTitle: '保存済みの求人',
+    title: '保存した求人一覧',
+    description: '気になる求人をここに保存しておけば、応募の準備が整った時にすぐに戻れます。',
+    primaryAction: '新しい求人を探す',
+    states: {
+      loading: '保存済みの求人を読み込み中...',
+      errorTitle: '保存済みの求人を読み込めませんでした',
+      errorDescription: '通信状況を確認するか、ログインし直してから再度お試しください。',
+      retry: '再試行',
+    },
+    empty: {
+      title: '保存済みの求人はまだありません',
+      description: '求人カードのブックマークをタップすると、ここに保存されます。',
+      action: '求人を探す',
+    },
+    card: {
+      savedAtLabel: '保存日',
+      removeAriaLabel: '保存を解除',
+      removingAriaLabel: '解除中...',
+      statusLabel: 'ステータス',
+      statusValues: {
+        published: '募集中',
+        unpublished: '一時停止',
+        closed: '終了',
+        expired: '期限切れ',
+        rejected: '却下',
+      },
+      viewJobLabel: '求人を見る',
+      notAvailable: '情報なし',
     },
   },
   profile: {
