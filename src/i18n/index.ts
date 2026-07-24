@@ -1,6 +1,7 @@
 import { common as enCommon } from './locales/en/common'
 import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
 import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
+import { candidateSettings as enCandidateSettings } from './locales/en/pages/candidateSettings'
 import { comingSoon as enComingSoon } from './locales/en/pages/comingSoon'
 import { companyDetail as enCompanyDetail } from './locales/en/pages/companyDetail'
 import { forgotPassword as enForgotPassword } from './locales/en/pages/forgotPassword'
@@ -17,6 +18,7 @@ import { search as enSearch } from './locales/en/pages/search'
 import { common as jaCommon } from './locales/ja/common'
 import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
 import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
+import { candidateSettings as jaCandidateSettings } from './locales/ja/pages/candidateSettings'
 import { comingSoon as jaComingSoon } from './locales/ja/pages/comingSoon'
 import { companyDetail as jaCompanyDetail } from './locales/ja/pages/companyDetail'
 import { forgotPassword as jaForgotPassword } from './locales/ja/pages/forgotPassword'
@@ -33,6 +35,7 @@ import { search as jaSearch } from './locales/ja/pages/search'
 import { common as viCommon } from './locales/vi/common'
 import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
 import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
+import { candidateSettings as viCandidateSettings } from './locales/vi/pages/candidateSettings'
 import { comingSoon as viComingSoon } from './locales/vi/pages/comingSoon'
 import { companyDetail as viCompanyDetail } from './locales/vi/pages/companyDetail'
 import { forgotPassword as viForgotPassword } from './locales/vi/pages/forgotPassword'
@@ -57,6 +60,7 @@ export const translations = {
     pages: {
       adminCompanies: enAdminCompanies,
       adminUsers: enAdminUsers,
+      candidateSettings: enCandidateSettings,
       comingSoon: enComingSoon,
       companyDetail: enCompanyDetail,
       forgotPassword: enForgotPassword,
@@ -77,6 +81,7 @@ export const translations = {
     pages: {
       adminCompanies: viAdminCompanies,
       adminUsers: viAdminUsers,
+      candidateSettings: viCandidateSettings,
       comingSoon: viComingSoon,
       companyDetail: viCompanyDetail,
       forgotPassword: viForgotPassword,
@@ -97,6 +102,7 @@ export const translations = {
     pages: {
       adminCompanies: jaAdminCompanies,
       adminUsers: jaAdminUsers,
+      candidateSettings: jaCandidateSettings,
       comingSoon: jaComingSoon,
       companyDetail: jaCompanyDetail,
       forgotPassword: jaForgotPassword,

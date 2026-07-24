@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-07-24",
+    "macrostructure": "Split Studio",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral",
+    "vibe": "quiet, focused candidate account security",
+    "enrichment": "none",
+    "brief": "Build a candidate settings page focused on password security"
+  },
+  {
     "date": "2026-07-23",
     "macrostructure": "Workbench",
     "theme": "custom",

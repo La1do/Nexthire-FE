@@ -1520,12 +1520,46 @@ export type RecruiterSettingsTranslations = {
   }
 }
 
+export type CandidateSettingsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  security: {
+    title: string
+    description: string
+    currentPasswordLabel: string
+    newPasswordLabel: string
+    confirmPasswordLabel: string
+    showPassword: string
+    hidePassword: string
+    submit: string
+    submitLoading: string
+    submitSuccess: string
+    submitError: string
+    validation: {
+      currentRequired: string
+      newRequired: string
+      confirmRequired: string
+      passwordMinLength: string
+      passwordMaxLength: string
+      passwordMismatch: string
+      passwordReuse: string
+    }
+    apiErrors: {
+      invalidCredentials: string
+      passwordReuse: string
+      credentialMissing: string
+    }
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
     adminCompanies: AdminCompaniesTranslations
     adminUsers: AdminUsersTranslations
     comingSoon: ComingSoonTranslations
+    candidateSettings: CandidateSettingsTranslations
     companyDetail: CompanyDetailTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations

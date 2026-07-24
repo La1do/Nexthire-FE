@@ -16,6 +16,7 @@ import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pa
 import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
 import { ProfileSavedJobsPage } from '../../pages/ProfileSavedJobsPage'
+import { CandidateSettingsPage } from '../../pages/CandidateSettingsPage'
 import { RecruiterApplicationsPage } from '../../pages/RecruiterApplicationsPage'
 import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RecruiterJobCreatePage } from '../../pages/RecruiterJobCreatePage'
@@ -93,6 +94,12 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/profile/messages',
       label: comingSoon.pages.profileMessages.title,
       element: <ComingSoonPage pageKey="profileMessages" />,
+      layout: CandidateLayout,
+    },
+    {
+      path: '/profile/settings',
+      label: pages.candidateSettings.routeLabel,
+      element: <CandidateSettingsPage />,
       layout: CandidateLayout,
     },
     {
