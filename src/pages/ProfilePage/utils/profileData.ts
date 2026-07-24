@@ -6,6 +6,7 @@ export function createCandidateProfile(source: ProfileTranslations['profile']): 
     avatarDocumentId: null,
     contactEmail: source.contactEmail,
     defaultCvId: null,
+    defaultCvParseStatus: null,
     education: source.education.map((item) => ({ ...item })),
     experiences: source.experiences.map((item) => ({ ...item })),
     headline: source.headline,

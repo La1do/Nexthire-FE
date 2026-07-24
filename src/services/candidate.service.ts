@@ -2,7 +2,6 @@ import { apiClient } from '../lib/api'
 import type {
   CandidateCvResponse,
   CandidateMeResponse,
-  CandidateParsedCvDraftResponse,
   CandidateUpdatePayload,
 } from '../types/candidate.types'
 import type { Envelope } from '../types/job.types'
@@ -23,7 +22,7 @@ export const candidateService = {
     const response = await apiClient.patch<Envelope<CandidateMeResponse>>('/candidates/me/avatar', formData)
     return response.data.data
   },
-  async uploadCv(file: File, options?: { isDefault?: boolean; title?: string }) {
+  async uploadCv(file: File, options?: { isDefault?: boolean; parse?: boolean; title?: string }) {
     const formData = new FormData()
     formData.append('file', file)
 
@@ -35,17 +34,15 @@ export const candidateService = {
       formData.append('isDefault', String(options.isDefault))
     }
 
+    if (options?.parse !== undefined) {
+      formData.append('parse', String(options.parse))
+    }
+
     const response = await apiClient.post<Envelope<CandidateCvResponse>>('/cvs/upload', formData)
     return response.data.data
   },
-  async parseCvFileDraft(file: File) {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    const response = await apiClient.post<Envelope<CandidateParsedCvDraftResponse>>(
-      '/candidates/me/parse-cv-file',
-      formData,
-    )
+  async parseCv(id: string) {
+    const response = await apiClient.post<Envelope<CandidateCvResponse>>(`/cvs/${id}/parse`)
     return response.data.data
   },
   async deleteCv(id: string) {

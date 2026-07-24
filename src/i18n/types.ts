@@ -837,10 +837,26 @@ export type ProfileTranslations = {
       fileLabel: string
       removeFileLabel: string
       uploadFileLabel: string
+      replaceFileLabel: string
       uploadingFileLabel: string
-      draftFileApplied: string
-      draftFileEmpty: string
-      draftFileUnsupported: string
+      dropTitle: string
+      dropHint: string
+      parseAction: string
+      retryParseAction: string
+      parsingLabel: string
+      parseHint: string
+      pdfRecommended: string
+      statusLabel: string
+      status: Record<'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED', string>
+      uploadSuccess: string
+      parseStarted: string
+      parseSuccess: string
+      parseSuccessWithLocalChanges: string
+      parseFailed: string
+      parseTimeout: string
+      invalidFileType: string
+      fileTooLarge: string
+      saveBeforeParseError: string
       portfolioLabel: string
       linkedinLabel: string
     }

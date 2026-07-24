@@ -1,3 +1,5 @@
+import type { CandidateCvParseStatus } from '../../types/candidate.types'
+
 export type CandidateExperience = {
   company: string
   description: string
@@ -20,6 +22,7 @@ export type CandidateProfile = {
   avatarDocumentId: string | null
   contactEmail: string
   defaultCvId: string | null
+  defaultCvParseStatus: CandidateCvParseStatus | null
   education: CandidateEducation[]
   experiences: CandidateExperience[]
   headline: string

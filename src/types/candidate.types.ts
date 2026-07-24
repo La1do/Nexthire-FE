@@ -2,7 +2,7 @@ import type { JobType } from './job.types'
 
 export type CandidateProfileVisibility = 'PUBLIC' | 'PRIVATE'
 export type CandidateSkillLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT'
-export type CandidateCvParseStatus = 'PENDING' | 'PARSING' | 'PARSED' | 'FAILED' | string
+export type CandidateCvParseStatus = 'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED'
 
 export type CandidateProfileResponse = {
   id: string
@@ -78,7 +78,7 @@ export type CandidateProjectResponse = {
 export type CandidateCvResponse = {
   id: string
   documentId: string
-  title: string
+  title: string | null
   isDefault: boolean
   parseStatus: CandidateCvParseStatus
   parsedAt: string | null
@@ -145,13 +145,4 @@ export type CandidateUpdatePayload = {
   skills?: CandidateSkillPayload[]
   experiences?: CandidateExperiencePayload[]
   educations?: CandidateEducationPayload[]
-}
-
-export type CandidateParsedCvDraftResponse = {
-  profile?: CandidateProfilePayload | null
-  skills?: CandidateSkillPayload[]
-  experiences?: CandidateExperiencePayload[]
-  educations?: CandidateEducationPayload[]
-  certifications?: CandidateCertificationResponse[]
-  projects?: CandidateProjectResponse[]
 }
