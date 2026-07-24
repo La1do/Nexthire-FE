@@ -13,6 +13,13 @@ export const common = {
     postedPrefix: '',
     postedSuffix: '掲載',
   },
+  savedJobs: {
+    saving: '求人を保存しています',
+    removing: '保存を解除しています',
+    remove: '求人の保存を解除',
+    saveError: '保存状態を更新できませんでした。もう一度お試しください。',
+    candidateOnly: '求人を保存できるのは候補者アカウントのみです。',
+  },
   apiErrors: {
     default: 'エラーが発生しました。もう一度お試しください。',
     byCode: {

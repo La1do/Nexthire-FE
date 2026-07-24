@@ -30,6 +30,26 @@ export type AuthResponse = {
   tokens: AuthTokens
 }
 
+export type AuthProfile = {
+  id: string
+  email: string
+  fullName: string | null
+  phone: string | null
+  role: AuthApiRole
+  logoUrl?: string | null
+  logoDocumentId?: string | null
+}
+
+export type UpdateAuthProfilePayload = {
+  fullName?: string | null
+  phone?: string | null
+}
+
+export type ChangePasswordPayload = {
+  currentPassword: string
+  newPassword: string
+}
+
 export type LoginPayload = {
   email: string
   password: string
@@ -63,6 +83,21 @@ export type VerifyEmailResponse = {
 }
 
 export const authService = {
+  async getMe() {
+    const response = await apiClient.get<ApiSuccessEnvelope<AuthProfile>>('/auth/me')
+    return response.data.data
+  },
+
+  async updateMe(payload: UpdateAuthProfilePayload) {
+    const response = await apiClient.patch<ApiSuccessEnvelope<AuthProfile>>('/auth/me', payload)
+    return response.data.data
+  },
+
+  async changePassword(payload: ChangePasswordPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<{ message: string }>>('/auth/change-password', payload)
+    return response.data.data
+  },
+
   async login(payload: LoginPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/login', payload)
     return response.data.data

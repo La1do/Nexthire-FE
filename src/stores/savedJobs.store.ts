@@ -3,6 +3,7 @@ import { create } from 'zustand'
 type SavedJobsState = {
   savedJobIds: ReadonlySet<string>
   hydrate: (ids: ReadonlyArray<string>) => void
+  sync: (checkedIds: ReadonlyArray<string>, savedIds: ReadonlyArray<string>) => void
   has: (jobId: string) => boolean
   add: (jobId: string) => void
   remove: (jobId: string) => void
@@ -30,6 +31,34 @@ export const useSavedJobsStore = create<SavedJobsState>((set, get) => ({
       }
 
       return { savedJobIds: draft }
+    }),
+
+  sync: (checkedIds, savedIds) =>
+    set((state) => {
+      const savedSet = new Set(savedIds)
+      let changed = false
+
+      for (const id of checkedIds) {
+        if (state.savedJobIds.has(id) !== savedSet.has(id)) {
+          changed = true
+          break
+        }
+      }
+
+      if (!changed) {
+        return state
+      }
+
+      const savedJobIds = nextSet(state.savedJobIds, (draft) => {
+        for (const id of checkedIds) {
+          draft.delete(id)
+        }
+        for (const id of savedIds) {
+          draft.add(id)
+        }
+      })
+
+      return { savedJobIds }
     }),
 
   has: (jobId) => get().savedJobIds.has(jobId),

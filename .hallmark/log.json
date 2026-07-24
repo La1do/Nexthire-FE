@@ -9,6 +9,13 @@
     "brief": "Build a candidate settings page focused on password security"
   },
   {
+    "date": "2026-07-24",
+    "macrostructure": "Feature Stack",
+    "theme": "Coral",
+    "enrichment": "none",
+    "brief": "Build a recruiter account, language, and security settings workspace"
+  },
+  {
     "date": "2026-07-23",
     "macrostructure": "Workbench",
     "theme": "custom",

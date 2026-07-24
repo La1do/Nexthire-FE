@@ -24,7 +24,11 @@ export function CompanyOpenJobs({ company, content, title }: CompanyOpenJobsProp
             <JobCard
               job={job}
               key={job.id}
-              saveLabel={content.saveLabel}
+              labels={{
+                loginAriaLabel: content.saveLabel,
+                saveAriaLabel: content.saveLabel,
+                savedAriaLabel: content.saveLabel,
+              }}
               variant="compact"
             />
           ))}

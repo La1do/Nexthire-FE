@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuthGuard } from '../../hooks/useAuthGuard'
 import { useToggleSavedJob } from '../../hooks/useToggleSavedJob'
+import { useTranslations } from '../../i18n'
 
 type SaveJobBookmarkButtonProps = {
   className?: string
@@ -49,8 +50,9 @@ function LoadingIcon() {
 }
 
 export function SaveJobBookmarkButton({ className, jobId, labels }: SaveJobBookmarkButtonProps) {
-  const { isAuthenticated, loginHref } = useAuthGuard()
-  const { isSaved, pending, toggle } = useToggleSavedJob(jobId)
+  const { common } = useTranslations()
+  const { canSaveJobs, isAuthenticated, loginHref } = useAuthGuard()
+  const { isSaved, pending, errorCode, toggle } = useToggleSavedJob(jobId)
 
   if (!isAuthenticated) {
     return (
@@ -59,20 +61,45 @@ export function SaveJobBookmarkButton({ className, jobId, labels }: SaveJobBookm
         className={`save-job-bookmark save-job-bookmark-idle ${className ?? ''}`}
         to={loginHref}
       >
-        <BookmarkIcon filled={false} />
+        <span className="save-job-bookmark__icon">
+          <BookmarkIcon filled={false} />
+        </span>
       </Link>
     )
   }
 
-  const aria = isSaved ? labels.savedAriaLabel : labels.saveAriaLabel
-  const stateClass = pending
-    ? 'save-job-bookmark-loading'
-    : isSaved
-      ? 'save-job-bookmark-saved'
-      : 'save-job-bookmark-idle'
+  if (!canSaveJobs) {
+    return (
+      <button
+        aria-label={common.savedJobs.candidateOnly}
+        className={`save-job-bookmark save-job-bookmark-disabled ${className ?? ''}`}
+        disabled
+        title={common.savedJobs.candidateOnly}
+        type="button"
+      >
+        <span className="save-job-bookmark__icon">
+          <BookmarkIcon filled={false} />
+        </span>
+      </button>
+    )
+  }
+
+  const pendingLabel = isSaved ? common.savedJobs.saving : common.savedJobs.removing
+  const removeLabel = labels.savedAriaLabel === labels.saveAriaLabel
+    ? common.savedJobs.remove
+    : labels.savedAriaLabel
+  const aria = pending ? pendingLabel : isSaved ? removeLabel : labels.saveAriaLabel
+  const stateClass = [
+    isSaved ? 'save-job-bookmark-saved' : 'save-job-bookmark-idle',
+    pending ? 'save-job-bookmark-loading' : '',
+    errorCode ? 'save-job-bookmark-error' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <button
+      aria-busy={pending}
       aria-label={aria}
       aria-pressed={isSaved}
       className={`save-job-bookmark ${stateClass} ${className ?? ''}`}
@@ -82,9 +109,19 @@ export function SaveJobBookmarkButton({ className, jobId, labels }: SaveJobBookm
         event.stopPropagation()
         void toggle()
       }}
+      title={errorCode ? common.savedJobs.saveError : aria}
       type="button"
     >
-      {pending ? <LoadingIcon /> : <BookmarkIcon filled={isSaved} />}
+      <span className="save-job-bookmark__icon">
+        <BookmarkIcon filled={isSaved} />
+      </span>
+      {pending ? <LoadingIcon /> : null}
+      {errorCode ? (
+        <>
+          <span aria-hidden="true" className="save-job-bookmark__error-mark">!</span>
+          <span aria-live="assertive" className="sr-only">{common.savedJobs.saveError}</span>
+        </>
+      ) : null}
     </button>
   )
 }

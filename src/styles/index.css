@@ -11488,3 +11488,248 @@ select {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Hallmark · component: save-job bookmark · genre: modern-minimal · theme: Nexhire Home
+ * pre-emit critique: P5 H5 E5 S5 R5 V5 · states: default · hover · focus · active · disabled · loading · error · success
+ * contrast: pass (40–41) · tokens: pass (48) · responsive: pass (34, 49) · icons: pass (30)
+ */
+.save-job-bookmark {
+  isolation: isolate;
+  position: relative;
+  touch-action: manipulation;
+}
+
+.job-card .job-card-media {
+  pointer-events: none;
+  z-index: 2;
+}
+
+.job-card .job-card-company-link,
+.job-card .job-save-overlay {
+  pointer-events: auto;
+}
+
+.save-job-bookmark__icon {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  transform-origin: 50% 82%;
+}
+
+.save-job-bookmark__icon svg {
+  display: block;
+}
+
+.job-save-overlay.save-job-bookmark,
+.search-save-button.save-job-bookmark {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-muted);
+  height: 2.75rem;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  pointer-events: auto;
+  width: 2.75rem;
+}
+
+.job-save-overlay.save-job-bookmark-saved,
+.search-save-button.save-job-bookmark-saved {
+  background: var(--color-surface-card);
+  border-color: var(--color-border-brand-soft);
+  color: var(--color-brand-solid);
+}
+
+.job-detail-save-cta.save-job-bookmark-saved {
+  background: var(--color-brand-soft);
+  border-color: var(--color-border-brand-soft);
+  color: var(--color-text-primary);
+}
+
+.job-save-overlay.save-job-bookmark-error,
+.search-save-button.save-job-bookmark-error,
+.job-detail-save-cta.save-job-bookmark-error {
+  background: var(--color-surface-card);
+  border-color: var(--color-text-danger);
+  color: var(--color-text-danger);
+}
+
+.save-job-bookmark:hover:not(:disabled) {
+  filter: none;
+  transform: translateY(-1px);
+}
+
+.job-save-overlay.save-job-bookmark-idle:hover,
+.search-save-button.save-job-bookmark-idle:hover {
+  background: var(--color-surface-card);
+  color: var(--color-text-muted);
+}
+
+.job-save-overlay.save-job-bookmark-saved:hover,
+.search-save-button.save-job-bookmark-saved:hover {
+  background: var(--color-surface-card);
+  color: var(--color-brand-solid);
+}
+
+.job-detail-save-cta.save-job-bookmark-saved:hover {
+  background: var(--color-brand-soft);
+  color: var(--color-text-primary);
+}
+
+.save-job-bookmark:focus-visible {
+  box-shadow: none;
+  outline: 2px solid var(--color-brand-solid);
+  outline-offset: 2px;
+}
+
+.save-job-bookmark:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.save-job-bookmark:disabled,
+.save-job-bookmark-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.save-job-bookmark-loading:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.save-job-bookmark-saved .save-job-bookmark__icon {
+  animation: save-job-seat 220ms var(--motion-ease-out) both;
+}
+
+.save-job-bookmark-loading .save-job-bookmark__icon {
+  opacity: 0.62;
+}
+
+.save-job-bookmark-spin {
+  animation: save-job-spin 720ms linear infinite;
+  flex: 0 0 auto;
+  height: 1rem;
+  width: 1rem;
+}
+
+.job-save-overlay .save-job-bookmark-spin,
+.search-save-button .save-job-bookmark-spin {
+  bottom: 0.25rem;
+  height: 0.75rem;
+  position: absolute;
+  right: 0.25rem;
+  width: 0.75rem;
+}
+
+.save-job-bookmark__error-mark {
+  align-items: center;
+  background: var(--color-text-danger);
+  border: 1px solid var(--color-surface-card);
+  border-radius: 999px;
+  color: var(--color-text-inverse);
+  display: inline-flex;
+  font-size: 0.625rem;
+  font-weight: 900;
+  height: 0.875rem;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: 0.25rem;
+  top: 0.25rem;
+  width: 0.875rem;
+}
+
+.job-detail-save-block {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.job-detail-actions .job-detail-save-cta {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-default);
+  box-shadow: none;
+  color: var(--color-text-secondary);
+  gap: 0.5rem;
+  line-height: 1;
+  min-width: 0;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.job-detail-actions .job-detail-save-cta:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+  filter: none;
+}
+
+.job-detail-actions .job-detail-save-cta.save-job-bookmark-saved {
+  background: var(--color-brand-soft);
+  border-color: var(--color-border-brand-soft);
+  color: var(--color-text-primary);
+}
+
+.job-detail-actions .job-detail-save-cta.save-job-bookmark-error {
+  background: var(--color-surface-card);
+  border-color: var(--color-text-danger);
+  color: var(--color-text-danger);
+}
+
+.job-detail-actions .job-detail-save-cta.save-job-bookmark-saved:hover:not(:disabled) {
+  background: var(--color-brand-soft);
+  color: var(--color-text-primary);
+}
+
+.job-detail-actions .job-detail-save-cta.save-job-bookmark-error:hover:not(:disabled) {
+  background: var(--color-surface-card);
+  color: var(--color-text-danger);
+}
+
+.job-detail-save-cta svg {
+  height: 1.125rem;
+  width: 1.125rem;
+}
+
+.job-detail-save-hint {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  margin: 0;
+  min-height: 1lh;
+}
+
+@keyframes save-job-seat {
+  from {
+    opacity: 0.45;
+    transform: translateY(-0.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes save-job-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .save-job-bookmark,
+  .save-job-bookmark__icon {
+    animation: none;
+    transition-duration: 100ms;
+  }
+
+  .save-job-bookmark:hover:not(:disabled),
+  .save-job-bookmark:active:not(:disabled) {
+    transform: none;
+  }
+
+  .save-job-bookmark-spin {
+    animation-duration: 1440ms;
+  }
+}

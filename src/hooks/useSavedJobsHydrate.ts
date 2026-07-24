@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
+import { AuthContext } from '../context/authContextValue'
 import { savedJobService } from '../services/savedJob.service'
 import { useSavedJobsStore } from '../stores/savedJobs.store'
 
@@ -13,9 +14,17 @@ function chunk<T>(items: ReadonlyArray<T>, size: number): T[][] {
 }
 
 export function useSavedJobsHydrate(jobIds: ReadonlyArray<string>) {
-  const hydrate = useSavedJobsStore((s) => s.hydrate)
+  const auth = useContext(AuthContext)
+  const reset = useSavedJobsStore((s) => s.reset)
+  const sync = useSavedJobsStore((s) => s.sync)
+  const isCandidate = auth?.isAuthenticated === true && auth.user?.role === 'CANDIDATE'
 
   useEffect(() => {
+    if (!isCandidate) {
+      reset()
+      return
+    }
+
     if (jobIds.length === 0) {
       return
     }
@@ -34,7 +43,7 @@ export function useSavedJobsHydrate(jobIds: ReadonlyArray<string>) {
             merged.push(id)
           }
         }
-        hydrate(merged)
+        sync(jobIds, merged)
       })
       .catch(() => {
         // Batch status is best-effort; card-level toggle will still hydrate on user interaction.
@@ -44,5 +53,5 @@ export function useSavedJobsHydrate(jobIds: ReadonlyArray<string>) {
       isActive = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobIds.join('|')])
+  }, [isCandidate, jobIds.join('|'), reset, sync])
 }

@@ -50,6 +50,13 @@ export type CommonTranslations = {
     postedPrefix: string
     postedSuffix: string
   }
+  savedJobs: {
+    saving: string
+    removing: string
+    remove: string
+    saveError: string
+    candidateOnly: string
+  }
 }
 
 export type LoginTranslations = {

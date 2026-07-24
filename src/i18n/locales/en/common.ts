@@ -13,6 +13,13 @@ export const common = {
     postedPrefix: 'Posted ',
     postedSuffix: '',
   },
+  savedJobs: {
+    saving: 'Saving job',
+    removing: 'Removing saved job',
+    remove: 'Remove saved job',
+    saveError: 'Could not update saved jobs. Try again.',
+    candidateOnly: 'Only candidate accounts can save jobs.',
+  },
   apiErrors: {
     default: 'Something went wrong. Please try again.',
     byCode: {

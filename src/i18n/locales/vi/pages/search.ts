@@ -44,7 +44,7 @@ export const search: SearchTranslations = {
       { label: 'Lương cao', value: 'salary_desc' },
     ],
     saveLabel: 'Lưu việc làm',
-    unsaveLabel: 'Đã lưu',
+    unsaveLabel: 'Bỏ lưu việc làm',
     verifiedLabel: 'Đã xác thực',
     detailLabel: 'Xem chi tiết',
     activeFiltersLabel: 'Bộ lọc đang dùng',

@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { useSavedJobsHydrate } from '../../hooks/useSavedJobsHydrate'
 import { useTranslations } from '../../i18n'
 import { EmptyState, Loading } from '../_components'
 import { JobDetailHero } from './components/JobDetailHero'
@@ -11,6 +12,7 @@ export function JobDetailPage() {
   const { pages } = useTranslations()
   const content = pages.jobDetail
   const { id = '' } = useParams()
+  useSavedJobsHydrate(id ? [id] : [])
   const { job, sections, related, loading, error, notFound } = useJobDetail(id)
 
   if (loading) {

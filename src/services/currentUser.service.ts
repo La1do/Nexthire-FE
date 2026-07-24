@@ -1,4 +1,6 @@
+import axios from 'axios'
 import { apiClient } from '../lib/api'
+import { authService } from './auth.service'
 import type { AuthUser } from './auth.service'
 
 type ApiSuccessEnvelope<TData> = {
@@ -45,13 +47,25 @@ async function getCandidateUser(user: AuthUser) {
 }
 
 async function getRecruiterUser(user: AuthUser) {
-  const response = await apiClient.get<ApiSuccessEnvelope<CompanyMeResponse>>('/companies/me')
-  const company = response.data.data
+  const account = await authService.getMe()
+  let company: CompanyMeResponse | undefined
+
+  try {
+    const response = await apiClient.get<ApiSuccessEnvelope<CompanyMeResponse>>('/companies/me')
+    company = response.data.data
+  } catch (error) {
+    if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+      throw error
+    }
+  }
 
   return mergeDefinedUserFields(user, {
-    companyId: company.id,
-    companyName: company.name,
-    logoUrl: company.logo,
+    email: account.email,
+    fullName: account.fullName,
+    phone: account.phone,
+    companyId: company?.id ?? null,
+    companyName: company?.name ?? null,
+    logoUrl: company ? company.logo : account.logoUrl ?? null,
   })
 }
 

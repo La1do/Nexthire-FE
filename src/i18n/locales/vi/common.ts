@@ -13,6 +13,13 @@ export const common = {
     postedPrefix: 'Đăng ',
     postedSuffix: '',
   },
+  savedJobs: {
+    saving: 'Đang lưu việc làm',
+    removing: 'Đang bỏ lưu việc làm',
+    remove: 'Bỏ lưu việc làm',
+    saveError: 'Không thể cập nhật việc làm đã lưu. Thử lại.',
+    candidateOnly: 'Chỉ tài khoản ứng viên mới có thể lưu việc làm.',
+  },
   apiErrors: {
     default: 'Có lỗi xảy ra, vui lòng thử lại.',
     byCode: {
