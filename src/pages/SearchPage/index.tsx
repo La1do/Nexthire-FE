@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslations } from '../../i18n'
+import { useSavedJobsHydrate } from '../../hooks/useSavedJobsHydrate'
 import { EmptyState, Loading } from '../_components'
 import { SearchEmptyState } from './components/SearchEmptyState'
 import { SearchFilterPanel } from './components/SearchFilterPanel'
@@ -23,6 +24,9 @@ export function SearchPage() {
 
   const { jobs, total, loading, error, fieldOptions } = useSearchJobs(params)
   const locationOptions = home.hero.locationOptions
+
+  const savedJobIds = useMemo(() => jobs.map((job) => job.id), [jobs])
+  useSavedJobsHydrate(savedJobIds)
 
   return (
     <div className="search-page">

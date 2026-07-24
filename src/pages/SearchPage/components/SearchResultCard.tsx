@@ -1,19 +1,11 @@
 import type { SearchTranslations } from '../../../i18n/types'
-import { CompanyLogoMark } from '../../_components'
+import { CompanyLogoMark, SaveJobBookmarkButton } from '../../_components'
 import { createCompanyDetailHrefById, createJobDetailHrefById } from '../../_utils/jobRoutes'
 import type { JobCardView } from '../../HomePage/types'
 
 type SearchResultCardProps = {
   job: JobCardView
   labels: SearchTranslations['results']
-}
-
-function BookmarkIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z" />
-    </svg>
-  )
 }
 
 export function SearchResultCard({ job, labels }: SearchResultCardProps) {
@@ -53,9 +45,15 @@ export function SearchResultCard({ job, labels }: SearchResultCardProps) {
         </div>
       </div>
 
-      <button aria-label={labels.saveLabel} className="search-save-button" type="button">
-        <BookmarkIcon />
-      </button>
+      <SaveJobBookmarkButton
+        className="search-save-button"
+        jobId={job.id}
+        labels={{
+          loginAriaLabel: labels.saveLabel,
+          saveAriaLabel: labels.saveLabel,
+          savedAriaLabel: labels.unsaveLabel,
+        }}
+      />
 
       <a className="search-detail-link" href={createJobDetailHrefById(job.id)}>
         {labels.detailLabel}

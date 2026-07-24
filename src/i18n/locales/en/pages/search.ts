@@ -44,6 +44,7 @@ export const search: SearchTranslations = {
       { label: 'Highest salary', value: 'salary_desc' },
     ],
     saveLabel: 'Save job',
+    unsaveLabel: 'Saved',
     verifiedLabel: 'Verified',
     detailLabel: 'View details',
     activeFiltersLabel: 'Active filters',

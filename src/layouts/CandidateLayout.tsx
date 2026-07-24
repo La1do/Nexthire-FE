@@ -13,10 +13,16 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const navItems = [
     { href: '/search', label: profile.sidebar.searchJobs },
     { href: '/profile/applications', label: profile.sidebar.applications },
+    { href: '/profile/saved-jobs', label: profile.sidebar.savedJobs },
     { href: '/profile', label: profile.sidebar.profile },
     { href: '/profile/messages', label: profile.sidebar.messages },
   ]
-  const pageTitle = pathname === '/profile/applications' ? profile.applications.pageTitle : profile.pageTitle
+  const pageTitle =
+    pathname === '/profile/applications'
+      ? profile.applications.pageTitle
+      : pathname === '/profile/saved-jobs'
+        ? profile.savedJobs.pageTitle
+        : profile.pageTitle
 
   return (
     <div className="candidate-shell">

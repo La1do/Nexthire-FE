@@ -1,19 +1,15 @@
-import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
+import { CompanyLogoMark, SaveJobBookmarkButton } from '../../_components'
 import { createCompanyDetailHrefById, createJobDetailHrefById } from '../../_utils/jobRoutes'
 import type { JobCardView } from '../types'
 
 type JobCardProps = {
   job: JobCardView
-  saveLabel: string
+  labels: {
+    loginAriaLabel: string
+    saveAriaLabel: string
+    savedAriaLabel: string
+  }
   variant?: 'default' | 'compact'
-}
-
-function BookmarkIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z" />
-    </svg>
-  )
 }
 
 function CheckIcon() {
@@ -25,7 +21,7 @@ function CheckIcon() {
   )
 }
 
-export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
+export function JobCard({ job, labels, variant = 'default' }: JobCardProps) {
   const classes = ['job-card', variant === 'compact' ? 'job-card-compact' : ''].filter(Boolean).join(' ')
   const companyHref = createCompanyDetailHrefById(job.companyId)
 
@@ -43,9 +39,11 @@ export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
             tone={job.logo.tone}
           />
         </a>
-        <button aria-label={saveLabel} className="job-save-overlay" type="button">
-          <BookmarkIcon />
-        </button>
+        <SaveJobBookmarkButton
+          className="job-save-overlay"
+          jobId={job.id}
+          labels={labels}
+        />
       </div>
 
       <div className="job-company-row">

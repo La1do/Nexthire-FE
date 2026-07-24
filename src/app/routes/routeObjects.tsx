@@ -15,10 +15,12 @@ import { JobDetailPage } from '../../pages/JobDetailPage'
 import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pages/LoginPage'
 import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
+import { ProfileSavedJobsPage } from '../../pages/ProfileSavedJobsPage'
 import { RecruiterApplicationsPage } from '../../pages/RecruiterApplicationsPage'
 import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RecruiterJobCreatePage } from '../../pages/RecruiterJobCreatePage'
 import { RecruiterJobDetailPage, RecruiterJobsPage } from '../../pages/RecruiterJobsPage'
+import { RecruiterSettingsPage } from '../../pages/RecruiterSettingsPage'
 import { CandidateRegisterPage, RecruiterRegisterPage } from '../../pages/RegisterPage'
 import { SearchPage } from '../../pages/SearchPage'
 import type { AppRoute } from './routeTypes'
@@ -79,6 +81,12 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/profile/applications',
       label: pages.profile.applications.routeLabel,
       element: <ProfileApplicationsPage />,
+      layout: CandidateLayout,
+    },
+    {
+      path: '/profile/saved-jobs',
+      label: pages.profile.savedJobs.routeLabel,
+      element: <ProfileSavedJobsPage />,
       layout: CandidateLayout,
     },
     {
@@ -143,8 +151,8 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     },
     {
       path: '/recruiter/settings',
-      label: comingSoon.pages.recruiterSettings.title,
-      element: <ComingSoonPage pageKey="recruiterSettings" />,
+      label: pages.recruiterSettings.routeLabel,
+      element: <RecruiterSettingsPage />,
       layout: RecruiterLayout,
     },
     {

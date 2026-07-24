@@ -23,6 +23,10 @@ export const jobDetail: JobDetailTranslations = {
     openings: 'Openings',
     apply: 'Apply now',
     save: 'Save job',
+    saved: 'Saved',
+    saveError: 'Could not save this job right now. Please try again.',
+    jobNotPublic: 'This job is no longer public and cannot be saved.',
+    loginHint: 'Sign in to save jobs and keep them in your list.',
   },
   sections: {
     description: 'Job description',

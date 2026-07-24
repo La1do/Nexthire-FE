@@ -333,6 +333,7 @@ export type SearchTranslations = {
       value: string
     }>
     saveLabel: string
+    unsaveLabel: string
     verifiedLabel: string
     detailLabel: string
     activeFiltersLabel: string
@@ -519,6 +520,10 @@ export type JobDetailTranslations = {
     openings: string
     apply: string
     save: string
+    saved: string
+    saveError: string
+    jobNotPublic: string
+    loginHint: string
   }
   sections: {
     description: string
@@ -624,6 +629,7 @@ export type ProfileTranslations = {
   sidebar: {
     searchJobs: string
     applications: string
+    savedJobs: string
     profile: string
     messages: string
     currentRole: string
@@ -740,6 +746,36 @@ export type ProfileTranslations = {
       updatedAt: string
       status: ProfileApplicationStatus
     }>
+  }
+  savedJobs: {
+    routeLabel: string
+    pageTitle: string
+    title: string
+    description: string
+    primaryAction: string
+    states: {
+      loading: string
+      errorTitle: string
+      errorDescription: string
+      retry: string
+    }
+    empty: {
+      title: string
+      description: string
+      action: string
+    }
+    card: {
+      savedAtLabel: string
+      removeAriaLabel: string
+      removingAriaLabel: string
+      statusLabel: string
+      statusValues: Record<
+        'published' | 'unpublished' | 'closed' | 'expired' | 'rejected',
+        string
+      >
+      viewJobLabel: string
+      notAvailable: string
+    }
   }
   sections: {
     basic: {
@@ -1409,6 +1445,81 @@ export type RecruiterApplicationsTranslations = {
   }
 }
 
+export type RecruiterSettingsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  navigation: {
+    label: string
+    account: string
+    language: string
+    security: string
+  }
+  account: {
+    title: string
+    description: string
+    fullNameLabel: string
+    fullNamePlaceholder: string
+    emailLabel: string
+    emailHint: string
+    phoneLabel: string
+    phonePlaceholder: string
+    phoneHint: string
+    roleLabel: string
+    companyLabel: string
+    recruiterRole: string
+    noCompany: string
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    save: string
+    saveLoading: string
+    reset: string
+    saveSuccess: string
+    saveError: string
+    validation: {
+      fullNameRequired: string
+      fullNameMinLength: string
+      fullNameMaxLength: string
+      phoneMaxLength: string
+    }
+  }
+  language: {
+    title: string
+    description: string
+    controlLabel: string
+    helper: string
+  }
+  security: {
+    title: string
+    description: string
+    currentPasswordLabel: string
+    newPasswordLabel: string
+    confirmPasswordLabel: string
+    showPassword: string
+    hidePassword: string
+    submit: string
+    submitLoading: string
+    submitSuccess: string
+    submitError: string
+    validation: {
+      currentRequired: string
+      newRequired: string
+      confirmRequired: string
+      passwordMinLength: string
+      passwordMaxLength: string
+      passwordMismatch: string
+      passwordReuse: string
+    }
+    apiErrors: {
+      invalidCredentials: string
+      passwordReuse: string
+      credentialMissing: string
+    }
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -1425,6 +1536,7 @@ export type Translations = {
     recruiterJobCreate: RecruiterJobCreateTranslations
     recruiterJobs: RecruiterJobsTranslations
     recruiterHome: RecruiterHomeTranslations
+    recruiterSettings: RecruiterSettingsTranslations
     register: RegisterTranslations
     search: SearchTranslations
   }

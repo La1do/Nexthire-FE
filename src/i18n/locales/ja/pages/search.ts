@@ -44,6 +44,7 @@ export const search: SearchTranslations = {
       { label: '給与が高い順', value: 'salary_desc' },
     ],
     saveLabel: '求人を保存',
+    unsaveLabel: '保存済み',
     verifiedLabel: '認証済み',
     detailLabel: '詳細を見る',
     activeFiltersLabel: '適用中のフィルター',

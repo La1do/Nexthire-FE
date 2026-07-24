@@ -37,7 +37,11 @@ export function IndustryJobs({ content, states, groups, loading, error }: Indust
                   <JobCard
                     job={job}
                     key={job.id}
-                    saveLabel={content.saveLabel}
+                    labels={{
+                      loginAriaLabel: content.saveLabel,
+                      saveAriaLabel: content.saveLabel,
+                      savedAriaLabel: content.saveLabel,
+                    }}
                     variant="compact"
                   />
                 ))}
