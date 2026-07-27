@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { ComponentPropsWithoutRef } from 'react'
 import { z } from 'zod'
+import { useToast } from '../../../context'
 import type { RecruiterSettingsTranslations } from '../../../i18n/types'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { authService } from '../../../services/auth.service'
@@ -77,6 +78,7 @@ export function AccountSettingsForm({
   profile,
   translations,
 }: AccountSettingsFormProps) {
+  const toast = useToast()
   const [submitMessage, setSubmitMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
   const schema = useMemo(
     () => z.object({
@@ -152,12 +154,15 @@ export function AccountSettingsForm({
         contactEmail: updatedCompany?.contactEmail ?? '',
       })
       setSubmitMessage({ tone: 'success', text: translations.saveSuccess })
+      toast.success(translations.saveSuccess)
       onSaved(updatedProfile, updatedCompany)
     } catch (submitError) {
+      const message = getApiErrorEnvelope(submitError)?.error.message ?? translations.saveError
       setSubmitMessage({
         tone: 'error',
-        text: getApiErrorEnvelope(submitError)?.error.message ?? translations.saveError,
+        text: message,
       })
+      toast.error(message)
     }
   })
 

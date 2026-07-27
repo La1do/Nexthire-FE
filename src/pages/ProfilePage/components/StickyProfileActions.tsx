@@ -8,8 +8,12 @@ type StickyProfileActionsProps = {
 }
 
 export function StickyProfileActions({ content, hasUnsavedChanges, isSaving, onSave }: StickyProfileActionsProps) {
+  if (!hasUnsavedChanges && !isSaving) {
+    return null
+  }
+
   return (
-    <div className="profile-sticky-actions">
+    <div className="profile-sticky-actions" aria-live="polite">
       <span>{hasUnsavedChanges ? content.unsaved : content.saved}</span>
       <button disabled={isSaving} onClick={onSave} type="button">{content.save}</button>
     </div>

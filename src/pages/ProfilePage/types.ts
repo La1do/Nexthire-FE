@@ -20,6 +20,7 @@ export type CandidateEducation = {
 
 export type CandidateProfile = {
   avatarDocumentId: string | null
+  avatarUrl: string | null
   contactEmail: string
   defaultCvId: string | null
   defaultCvParseStatus: CandidateCvParseStatus | null

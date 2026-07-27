@@ -33,8 +33,8 @@ type CandidateManagedJobsState = {
 
 type CandidateManagedJobsActions = {
   reload: () => Promise<void>
-  removeSavedJob: (jobId: string, errorMessage: string) => Promise<void>
-  withdrawApplication: (job: CandidateManagedJob, errorMessage: string) => Promise<void>
+  removeSavedJob: (jobId: string, errorMessage: string) => Promise<boolean>
+  withdrawApplication: (job: CandidateManagedJob, errorMessage: string) => Promise<boolean>
 }
 
 const PAGE_LIMIT = 100
@@ -333,10 +333,12 @@ export function useCandidateManagedJobs(
 
       try {
         await savedJobService.remove(jobId)
+        return true
       } catch (removeError) {
         setSavedJobs(previousSavedJobs)
         addSavedJob(jobId)
         setActionError(getApiErrorEnvelope(removeError)?.error.message ?? errorMessage)
+        return false
       } finally {
         setRemovingSavedJobId(undefined)
       }
@@ -345,7 +347,7 @@ export function useCandidateManagedJobs(
   )
 
   const withdrawApplication = useCallback(async (job: CandidateManagedJob, errorMessage: string) => {
-    if (!job.applicationId) return
+    if (!job.applicationId) return false
 
     setActionError(undefined)
     setWithdrawingApplicationId(job.applicationId)
@@ -357,8 +359,10 @@ export function useCandidateManagedJobs(
           application.id === updatedApplication.id ? updatedApplication : application,
         ),
       )
+      return true
     } catch (withdrawError) {
       setActionError(getApiErrorEnvelope(withdrawError)?.error.message ?? errorMessage)
+      return false
     } finally {
       setWithdrawingApplicationId(undefined)
     }

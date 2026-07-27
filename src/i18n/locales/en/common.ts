@@ -17,8 +17,20 @@ export const common = {
     saving: 'Saving job',
     removing: 'Removing saved job',
     remove: 'Remove saved job',
+    saveSuccess: 'Job saved.',
+    removeSuccess: 'Job removed from saved jobs.',
     saveError: 'Could not update saved jobs. Try again.',
     candidateOnly: 'Only candidate accounts can save jobs.',
+  },
+  toast: {
+    regionLabel: 'Notifications',
+    closeLabel: 'Close notification',
+    statusLabels: {
+      success: 'Success',
+      error: 'Error',
+      warning: 'Heads up',
+      info: 'Info',
+    },
   },
   apiErrors: {
     default: 'Something went wrong. Please try again.',
@@ -61,6 +73,16 @@ export const common = {
     candidateRole: 'Candidate',
     recruiterRole: 'Recruiter',
     adminRole: 'Administrator',
+  },
+  authFeedback: {
+    loginSuccess: 'Signed in successfully.',
+    googleLoginSuccess: 'Signed in with Google.',
+    logoutSuccess: 'Signed out.',
+    registerSuccess: 'Account created. Check your email for the verification code.',
+    emailVerifiedSuccess: 'Email verified. Taking you into NexHire.',
+    passwordResetEmailSent: 'Password reset instructions sent.',
+    passwordResetVerified: 'Verification code accepted.',
+    passwordResetSuccess: 'Your new password has been saved.',
   },
   languageSwitcher: {
     label: 'Change language',

@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getAuthUserDisplayName, getInitials, useAuth } from '../context'
+import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
 
@@ -37,6 +37,7 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
   const content = pages.recruiterHome
   const { logout, user } = useAuth()
+  const toast = useToast()
   const navigate = useNavigate()
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -98,8 +99,10 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   }, [isSidebarOpen])
 
   const handleLogout = () => {
-    void logout()
-    navigate('/login')
+    void logout().then(() => {
+      toast.success(common.authFeedback.logoutSuccess)
+      navigate('/login')
+    })
   }
 
   return (
@@ -111,7 +114,7 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
       >
         <div className="recruiter-sidebar__inner">
           <a className="recruiter-sidebar__brand" href="/home">
-            <BrandMark label={common.brandName} />
+            <BrandMark compact label={common.brandName} />
           </a>
 
           <nav aria-label={content.routeLabel} className="recruiter-sidebar__nav">

@@ -60,6 +60,7 @@ export function createProfileFromCandidateAggregate(data: CandidateMeResponse): 
 
   return {
     avatarDocumentId: data.profile.avatarDocumentId,
+    avatarUrl: data.profile.avatarUrl,
     contactEmail: data.profile.contactEmail ?? '',
     defaultCvId: defaultCv?.id ?? null,
     defaultCvParseStatus: defaultCv?.parseStatus ?? null,

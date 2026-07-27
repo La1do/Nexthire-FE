@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslations } from '../../i18n'
-import { useAuth } from '../../context'
+import { useAuth, useToast } from '../../context'
 import { getApiErrorMessage } from '../../i18n/apiErrors'
 import { authService } from '../../services/auth.service'
 import { AuthPageShell } from '../_components'
@@ -44,6 +44,7 @@ export function RegisterPage({ role }: RegisterPageProps) {
   const { common, pages } = useTranslations()
   const navigate = useNavigate()
   const { login } = useAuth()
+  const toast = useToast()
   const register = pages.register
   const forgotPassword = pages.forgotPassword
   const roleContent = role === 'RECRUITER' ? register.recruiter : register.candidate
@@ -69,6 +70,7 @@ export function RegisterPage({ role }: RegisterPageProps) {
     setPendingRegistration(registration)
     setVerifyError(undefined)
     setStep('sent')
+    toast.success(common.authFeedback.registerSuccess)
   }
 
   const handleVerifyEmail = async (token: string) => {
@@ -92,9 +94,12 @@ export function RegisterPage({ role }: RegisterPageProps) {
       })
 
       login(auth, 'session')
+      toast.success(common.authFeedback.emailVerifiedSuccess)
       navigate(getRegisterRedirect(pendingRegistration.role))
     } catch (error) {
-      setVerifyError(getApiErrorMessage(error, common.apiErrors))
+      const message = getApiErrorMessage(error, common.apiErrors)
+      setVerifyError(message)
+      toast.error(message)
     } finally {
       setVerifying(false)
     }

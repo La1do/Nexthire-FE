@@ -11,6 +11,7 @@ export type CandidateProfileResponse = {
   phone: string | null
   contactEmail: string | null
   avatarDocumentId: string | null
+  avatarUrl: string | null
   headline: string | null
   summary: string | null
   location: string | null

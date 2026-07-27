@@ -4,6 +4,7 @@ import type { CandidateProfile } from '../types'
 export function createCandidateProfile(source: ProfileTranslations['profile']): CandidateProfile {
   return {
     avatarDocumentId: null,
+    avatarUrl: null,
     contactEmail: source.contactEmail,
     defaultCvId: null,
     defaultCvParseStatus: null,

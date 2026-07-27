@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
+import { authTokenStorage } from '../../lib/api'
 import type { AuthApiRole } from '../../lib/auth/authRole'
 import type { RouteAccess } from './routeTypes'
 
@@ -27,36 +28,25 @@ function getCurrentRedirect(location: ReturnType<typeof useLocation>) {
   return `${location.pathname}${location.search}${location.hash}`
 }
 
-function RouteGuardLoading() {
-  return (
-    <div className="route-guard-state" aria-live="polite">
-      Đang kiểm tra phiên đăng nhập…
-    </div>
-  )
-}
-
 export function RouteGuard({ access, children }: RouteGuardProps) {
-  const { isAuthenticated, isHydratingUser, user } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const location = useLocation()
   const routeAccess = access ?? { kind: 'public' }
+  const hasAccessToken = Boolean(authTokenStorage.getAccessToken())
 
   if (routeAccess.kind === 'public') {
     return <>{children}</>
   }
 
-  if (isHydratingUser) {
-    return <RouteGuardLoading />
-  }
-
   if (routeAccess.kind === 'guest-only') {
-    if (isAuthenticated && user) {
+    if (hasAccessToken && user) {
       return <Navigate replace to={getRoleHomePath(user.role)} />
     }
 
     return <>{children}</>
   }
 
-  if (!isAuthenticated || !user) {
+  if (!hasAccessToken) {
     const firstAllowedRole = routeAccess.roles[0]
     const loginPath = routeAccess.loginPath ?? getLoginPathForRole(firstAllowedRole)
     const redirect = encodeURIComponent(getCurrentRedirect(location))
@@ -64,7 +54,7 @@ export function RouteGuard({ access, children }: RouteGuardProps) {
     return <Navigate replace to={`${loginPath}?redirect=${redirect}`} />
   }
 
-  if (!routeAccess.roles.includes(user.role)) {
+  if (isAuthenticated && user && !routeAccess.roles.includes(user.role)) {
     return <Navigate replace to={getRoleHomePath(user.role)} />
   }
 

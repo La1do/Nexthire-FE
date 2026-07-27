@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useToast } from '../../context'
 import { useAuthGuard } from '../../hooks/useAuthGuard'
 import { useToggleSavedJob } from '../../hooks/useToggleSavedJob'
 import { useTranslations } from '../../i18n'
@@ -51,6 +52,7 @@ function LoadingIcon() {
 
 export function SaveJobBookmarkButton({ className, jobId, labels }: SaveJobBookmarkButtonProps) {
   const { common } = useTranslations()
+  const toast = useToast()
   const { canSaveJobs, isAuthenticated, loginHref } = useAuthGuard()
   const { isSaved, pending, errorCode, toggle } = useToggleSavedJob(jobId)
 
@@ -84,7 +86,7 @@ export function SaveJobBookmarkButton({ className, jobId, labels }: SaveJobBookm
     )
   }
 
-  const pendingLabel = isSaved ? common.savedJobs.saving : common.savedJobs.removing
+  const pendingLabel = isSaved ? common.savedJobs.removing : common.savedJobs.saving
   const removeLabel = labels.savedAriaLabel === labels.saveAriaLabel
     ? common.savedJobs.remove
     : labels.savedAriaLabel
@@ -107,7 +109,16 @@ export function SaveJobBookmarkButton({ className, jobId, labels }: SaveJobBookm
       onClick={(event) => {
         event.preventDefault()
         event.stopPropagation()
-        void toggle()
+        const wasSaved = isSaved
+
+        void toggle().then((didUpdate) => {
+          if (didUpdate) {
+            toast.success(wasSaved ? common.savedJobs.removeSuccess : common.savedJobs.saveSuccess)
+            return
+          }
+
+          toast.error(common.savedJobs.saveError)
+        })
       }}
       title={errorCode ? common.savedJobs.saveError : aria}
       type="button"

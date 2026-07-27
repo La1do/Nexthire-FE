@@ -17,8 +17,20 @@ export const common = {
     saving: 'Đang lưu việc làm',
     removing: 'Đang bỏ lưu việc làm',
     remove: 'Bỏ lưu việc làm',
+    saveSuccess: 'Đã lưu việc làm.',
+    removeSuccess: 'Đã bỏ lưu việc làm.',
     saveError: 'Không thể cập nhật việc làm đã lưu. Thử lại.',
     candidateOnly: 'Chỉ tài khoản ứng viên mới có thể lưu việc làm.',
+  },
+  toast: {
+    regionLabel: 'Thông báo',
+    closeLabel: 'Đóng thông báo',
+    statusLabels: {
+      success: 'Thành công',
+      error: 'Có lỗi',
+      warning: 'Cần chú ý',
+      info: 'Thông tin',
+    },
   },
   apiErrors: {
     default: 'Có lỗi xảy ra, vui lòng thử lại.',
@@ -61,6 +73,16 @@ export const common = {
     candidateRole: 'Ứng viên',
     recruiterRole: 'Nhà tuyển dụng',
     adminRole: 'Quản trị viên',
+  },
+  authFeedback: {
+    loginSuccess: 'Đăng nhập thành công.',
+    googleLoginSuccess: 'Đăng nhập Google thành công.',
+    logoutSuccess: 'Đã đăng xuất.',
+    registerSuccess: 'Đã tạo tài khoản. Kiểm tra email để lấy mã xác thực.',
+    emailVerifiedSuccess: 'Email đã được xác thực. Đang vào NexHire.',
+    passwordResetEmailSent: 'Đã gửi hướng dẫn đặt lại mật khẩu.',
+    passwordResetVerified: 'Mã xác thực hợp lệ.',
+    passwordResetSuccess: 'Đã cập nhật mật khẩu mới.',
   },
   languageSwitcher: {
     label: 'Đổi ngôn ngữ',

@@ -1,7 +1,9 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
-import { LanguageSwitch } from '../pages/_components'
+import { BrandMark, LanguageSwitch } from '../pages/_components'
 
 function MenuIcon() {
   return (
@@ -31,21 +33,6 @@ function UserIcon() {
   )
 }
 
-function BrandMark() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 32 32">
-      <defs>
-        <linearGradient id="admin-brand" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="var(--color-brand-start)" />
-          <stop offset="100%" stopColor="var(--color-brand-end)" />
-        </linearGradient>
-      </defs>
-      <rect fill="url(#admin-brand)" height="32" rx="9" width="32" />
-      <path d="M9 22V10h3.6c2.5 0 4 1.4 4 3.6 0 1.6-.9 2.7-2.2 3.2L18 22h-3.4l-2.7-4.6H12V22H9Zm3-7.2h1c1.1 0 1.7-.5 1.7-1.5s-.6-1.5-1.7-1.5h-1v3Z" fill="white" />
-    </svg>
-  )
-}
-
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/)
   const first = parts[0]?.[0] ?? ''
@@ -55,6 +42,9 @@ function getInitials(name: string) {
 
 export function AdminLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
+  const { logout } = useAuth()
+  const toast = useToast()
+  const navigate = useNavigate()
   const content = pages.adminUsers
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -94,6 +84,12 @@ export function AdminLayout({ children }: PropsWithChildren) {
   }, [isSidebarOpen])
 
   const sidebarOpen = isSidebarOpen
+  const handleLogout = () => {
+    void logout().then(() => {
+      toast.success(common.authFeedback.logoutSuccess)
+      navigate('/login')
+    })
+  }
 
   return (
     <div className="admin-shell">
@@ -105,10 +101,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
       >
         <div className="admin-sidebar__inner">
           <a className="admin-sidebar__brand" href="/">
-            <span aria-hidden="true" className="admin-sidebar__brand-mark">
-              <BrandMark />
-            </span>
-            <span>{common.brandName}</span>
+            <BrandMark compact label={common.brandName} />
           </a>
 
           <nav aria-label="Admin sections" className="admin-sidebar__nav">
@@ -150,6 +143,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
 
           <button
             className="admin-sidebar__logout"
+            onClick={handleLogout}
             tabIndex={sidebarOpen ? undefined : -1}
             type="button"
           >

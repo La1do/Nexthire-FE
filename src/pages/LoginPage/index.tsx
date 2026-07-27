@@ -42,7 +42,12 @@ function LoginPageForRole({ role }: { role: LoginPageRole }) {
       subtitle={roleContent.subtitle}
       title={roleContent.title}
     >
-      <LoginForm apiErrors={common.apiErrors} role={apiRoleByPageRole[role]} translations={login} />
+      <LoginForm
+        apiErrors={common.apiErrors}
+        authFeedback={common.authFeedback}
+        role={apiRoleByPageRole[role]}
+        translations={login}
+      />
     </AuthPageShell>
   )
 }

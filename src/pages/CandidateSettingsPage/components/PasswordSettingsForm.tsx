@@ -3,6 +3,7 @@ import { useId, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { ComponentPropsWithoutRef } from 'react'
 import { z } from 'zod'
+import { useToast } from '../../../context'
 import type { CandidateSettingsTranslations } from '../../../i18n/types'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { authService } from '../../../services/auth.service'
@@ -93,6 +94,7 @@ function getSecurityApiError(
 }
 
 export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps) {
+  const toast = useToast()
   const [submitMessage, setSubmitMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
   const schema = useMemo(
     () => z.object({
@@ -151,8 +153,11 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
       })
       reset()
       setSubmitMessage({ tone: 'success', text: translations.submitSuccess })
+      toast.success(translations.submitSuccess)
     } catch (submitError) {
-      setSubmitMessage({ tone: 'error', text: getSecurityApiError(submitError, translations) })
+      const message = getSecurityApiError(submitError, translations)
+      setSubmitMessage({ tone: 'error', text: message })
+      toast.error(message)
     }
   })
 

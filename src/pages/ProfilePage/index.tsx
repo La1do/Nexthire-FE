@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from '../../i18n'
+import { useAuth, useToast } from '../../context'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { candidateService } from '../../services/candidate.service'
 import { Button } from '../_components'
@@ -25,8 +26,10 @@ function createId(prefix: string) {
 }
 
 const CV_MAX_SIZE_BYTES = 10 * 1024 * 1024
+const AVATAR_MAX_SIZE_BYTES = 5 * 1024 * 1024
 const CV_PARSE_POLL_INTERVAL_MS = 2000
 const CV_PARSE_MAX_POLLS = 45
+const AVATAR_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
 const CV_MIME_TYPES = new Set([
   'application/pdf',
   'application/msword',
@@ -35,6 +38,7 @@ const CV_MIME_TYPES = new Set([
 
 const EDITABLE_PROFILE_FIELDS = [
   'avatarDocumentId',
+  'avatarUrl',
   'contactEmail',
   'education',
   'experiences',
@@ -72,8 +76,17 @@ function mergeParsedProfileWithLocalChanges(
   return { hasLocalChanges, profile: mergedProfile }
 }
 
+function isSupportedAvatarFile(file: File) {
+  const extension = file.name.split('.').pop()?.toLowerCase()
+  const hasSupportedExtension = extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'webp'
+
+  return AVATAR_MIME_TYPES.has(file.type) || hasSupportedExtension
+}
+
 export function ProfilePage() {
   const { pages } = useTranslations()
+  const { refreshUser } = useAuth()
+  const toast = useToast()
   const content = pages.profile
   const [profile, setProfile] = useState(() => createCandidateProfile(content.profile))
   const [newSkill, setNewSkill] = useState('')
@@ -269,9 +282,13 @@ export function ProfilePage() {
       profileRef.current = nextProfile
       setProfile(nextProfile)
       setHasUnsavedChanges(false)
+      refreshUser()
+      toast.success(content.states.saveSuccess)
       return nextProfile
     } catch (error) {
-      setSaveError(getApiErrorEnvelope(error)?.error.message ?? content.states.saveError)
+      const message = getApiErrorEnvelope(error)?.error.message ?? content.states.saveError
+      setSaveError(message)
+      toast.error(message)
       return null
     } finally {
       setSaving(false)
@@ -279,6 +296,18 @@ export function ProfilePage() {
   }
 
   async function uploadAvatar(file: File) {
+    if (!isSupportedAvatarFile(file)) {
+      setSaveError(content.states.avatarInvalidFileType)
+      toast.error(content.states.avatarInvalidFileType)
+      return
+    }
+
+    if (file.size > AVATAR_MAX_SIZE_BYTES) {
+      setSaveError(content.states.avatarFileTooLarge)
+      toast.error(content.states.avatarFileTooLarge)
+      return
+    }
+
     setUploadingAvatar(true)
     setSaveError(undefined)
 
@@ -287,9 +316,14 @@ export function ProfilePage() {
       setProfile((currentProfile) => ({
         ...currentProfile,
         avatarDocumentId: data.profile.avatarDocumentId,
+        avatarUrl: data.profile.avatarUrl,
       }))
+      refreshUser()
+      toast.success(content.states.avatarUploadSuccess)
     } catch (error) {
-      setSaveError(getApiErrorEnvelope(error)?.error.message ?? content.states.avatarUploadError)
+      const message = getApiErrorEnvelope(error)?.error.message ?? content.states.avatarUploadError
+      setSaveError(message)
+      toast.error(message)
     } finally {
       setUploadingAvatar(false)
     }
@@ -454,9 +488,7 @@ export function ProfilePage() {
         content={content.hero}
         hasUnsavedChanges={hasUnsavedChanges}
         isUploadingAvatar={isUploadingAvatar}
-        isSaving={isSaving}
         onAvatarUpload={(file) => void uploadAvatar(file)}
-        onSave={() => void saveProfile()}
         profile={profile}
       />
 

@@ -23,6 +23,16 @@ export type CommonTranslations = {
     recruiterRole: string
     adminRole: string
   }
+  authFeedback: {
+    loginSuccess: string
+    googleLoginSuccess: string
+    logoutSuccess: string
+    registerSuccess: string
+    emailVerifiedSuccess: string
+    passwordResetEmailSent: string
+    passwordResetVerified: string
+    passwordResetSuccess: string
+  }
   languageSwitcher: {
     label: string
     options: Record<Locale, string>
@@ -54,8 +64,15 @@ export type CommonTranslations = {
     saving: string
     removing: string
     remove: string
+    saveSuccess: string
+    removeSuccess: string
     saveError: string
     candidateOnly: string
+  }
+  toast: {
+    regionLabel: string
+    closeLabel: string
+    statusLabels: Record<'success' | 'error' | 'warning' | 'info', string>
   }
 }
 
@@ -704,13 +721,11 @@ export type ProfileTranslations = {
     searchJobs: string
     managedJobs: string
     applications: string
-    savedJobs: string
     profile: string
     messages: string
     currentRole: string
   }
   topbar: {
-    notificationsLabel: string
     logout: string
   }
   states: {
@@ -718,8 +733,12 @@ export type ProfileTranslations = {
     errorTitle: string
     errorDescription: string
     retry: string
+    saveSuccess: string
     saveError: string
+    avatarUploadSuccess: string
     avatarUploadError: string
+    avatarInvalidFileType: string
+    avatarFileTooLarge: string
     cvUploadError: string
     cvDeleteError: string
     emptyResume: string
@@ -730,7 +749,6 @@ export type ProfileTranslations = {
     saved: string
     unsaved: string
     save: string
-    viewPublic: string
   }
   completion: {
     title: string
@@ -800,6 +818,7 @@ export type ProfileTranslations = {
       errorTitle: string
       errorDescription: string
       retry: string
+      withdrawSuccess: string
       withdrawError: string
     }
     empty: {
@@ -868,6 +887,7 @@ export type ProfileTranslations = {
       errorTitle: string
       errorDescription: string
       retry: string
+      withdrawSuccess: string
       removeSavedError: string
       withdrawError: string
     }
@@ -884,36 +904,6 @@ export type ProfileTranslations = {
       filterTitle: string
       filterDescription: string
       filterAction: string
-    }
-  }
-  savedJobs: {
-    routeLabel: string
-    pageTitle: string
-    title: string
-    description: string
-    primaryAction: string
-    states: {
-      loading: string
-      errorTitle: string
-      errorDescription: string
-      retry: string
-    }
-    empty: {
-      title: string
-      description: string
-      action: string
-    }
-    card: {
-      savedAtLabel: string
-      removeAriaLabel: string
-      removingAriaLabel: string
-      statusLabel: string
-      statusValues: Record<
-        'published' | 'unpublished' | 'closed' | 'expired' | 'rejected',
-        string
-      >
-      viewJobLabel: string
-      notAvailable: string
     }
   }
   sections: {

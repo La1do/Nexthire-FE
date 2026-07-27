@@ -23,7 +23,7 @@ export function AuthPageShell({ align = 'start', brandName, children, footer, su
       className="auth-card auth-card-motion auth-card-shadow w-full"
     >
       <div className="auth-motion auth-motion-brand">
-        <BrandMark label={brandName} />
+        <BrandMark label={brandName} variant="full" />
       </div>
 
       {visual ? (

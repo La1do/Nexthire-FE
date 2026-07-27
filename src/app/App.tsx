@@ -1,6 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { AuthProvider } from '../context'
+import { AuthProvider, ToastProvider } from '../context'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { useTranslations } from '../i18n'
 import { queryClient } from './queryClient'
@@ -36,11 +36,13 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <LocaleProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </AuthProvider>
+        </ToastProvider>
       </LocaleProvider>
     </QueryClientProvider>
   )

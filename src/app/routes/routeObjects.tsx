@@ -16,7 +16,6 @@ import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pa
 import { CandidateJobsPage } from '../../pages/CandidateJobsPage'
 import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
-import { ProfileSavedJobsPage } from '../../pages/ProfileSavedJobsPage'
 import { CandidateSettingsPage } from '../../pages/CandidateSettingsPage'
 import { RecruiterApplicationsPage } from '../../pages/RecruiterApplicationsPage'
 import { RecruiterCompanyPage } from '../../pages/RecruiterCompanyPage'
@@ -127,13 +126,6 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/profile/jobs',
       label: pages.profile.managedJobs.routeLabel,
       element: <CandidateJobsPage />,
-      layout: CandidateLayout,
-      access: candidateAccess,
-    },
-    {
-      path: '/profile/saved-jobs',
-      label: pages.profile.savedJobs.routeLabel,
-      element: <ProfileSavedJobsPage />,
       layout: CandidateLayout,
       access: candidateAccess,
     },

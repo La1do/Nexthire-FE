@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
+import { useToast } from '../../../context'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, RegisterTranslations } from '../../../i18n/types'
@@ -36,6 +37,7 @@ const initialValues: RegisterFormValues = {
 
 export function RegisterForm({ apiErrors, onRegistered, role, translations }: RegisterFormProps) {
   const { form, validation } = translations
+  const toast = useToast()
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
   const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, values } = useFormState<RegisterFormValues>({
@@ -61,7 +63,9 @@ export function RegisterForm({ apiErrors, onRegistered, role, translations }: Re
           role,
         })
       } catch (error) {
-        setSubmitError(getApiErrorMessage(error, apiErrors))
+        const message = getApiErrorMessage(error, apiErrors)
+        setSubmitError(message)
+        toast.error(message)
       } finally {
         setSubmitting(false)
       }

@@ -17,8 +17,20 @@ export const common = {
     saving: '求人を保存しています',
     removing: '保存を解除しています',
     remove: '求人の保存を解除',
+    saveSuccess: '求人を保存しました。',
+    removeSuccess: '保存済み求人から削除しました。',
     saveError: '保存状態を更新できませんでした。もう一度お試しください。',
     candidateOnly: '求人を保存できるのは候補者アカウントのみです。',
+  },
+  toast: {
+    regionLabel: '通知',
+    closeLabel: '通知を閉じる',
+    statusLabels: {
+      success: '成功',
+      error: 'エラー',
+      warning: '注意',
+      info: 'お知らせ',
+    },
   },
   apiErrors: {
     default: 'エラーが発生しました。もう一度お試しください。',
@@ -61,6 +73,16 @@ export const common = {
     candidateRole: '候補者',
     recruiterRole: '採用担当者',
     adminRole: '管理者',
+  },
+  authFeedback: {
+    loginSuccess: 'ログインしました。',
+    googleLoginSuccess: 'Googleでログインしました。',
+    logoutSuccess: 'ログアウトしました。',
+    registerSuccess: 'アカウントを作成しました。確認コードをメールでご確認ください。',
+    emailVerifiedSuccess: 'メールを確認しました。NexHireへ移動します。',
+    passwordResetEmailSent: 'パスワード再設定の案内を送信しました。',
+    passwordResetVerified: '確認コードが承認されました。',
+    passwordResetSuccess: '新しいパスワードを保存しました。',
   },
   languageSwitcher: {
     label: '言語を変更',

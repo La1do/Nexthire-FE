@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useToast } from '../../context'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { applicationService } from '../../services/application.service'
@@ -14,6 +15,7 @@ import { createCandidateApplicationFromApi } from './utils/applicationApi'
 export function ProfileApplicationsPage() {
   const { locale } = useLocale()
   const { pages } = useTranslations()
+  const toast = useToast()
   const content = pages.profile.applications
   const [activeFilter, setActiveFilter] = useState<ApplicationFilter>('all')
   const [applications, setApplications] = useState<CandidateApplication[]>([])
@@ -80,8 +82,11 @@ export function ProfileApplicationsPage() {
           currentApplication.id === application.id ? nextApplication : currentApplication,
         ),
       )
+      toast.success(content.states.withdrawSuccess)
     } catch (error) {
-      setActionError(getApiErrorEnvelope(error)?.error.message ?? content.states.withdrawError)
+      const message = getApiErrorEnvelope(error)?.error.message ?? content.states.withdrawError
+      setActionError(message)
+      toast.error(message)
     }
   }
 

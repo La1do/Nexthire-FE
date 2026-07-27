@@ -15,6 +15,7 @@ export type AuthUser = {
   companyId?: string | null
   companyName?: string | null
   emailVerified: boolean
+  avatarUrl?: string | null
   logoUrl?: string | null
 }
 

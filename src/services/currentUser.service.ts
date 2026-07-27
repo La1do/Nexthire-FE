@@ -13,6 +13,7 @@ type CandidateProfile = {
   phone: string | null
   contactEmail: string | null
   avatarDocumentId: string | null
+  avatarUrl: string | null
 }
 
 type CandidateMeResponse = {
@@ -43,6 +44,7 @@ async function getCandidateUser(user: AuthUser) {
   return mergeDefinedUserFields(user, {
     fullName: profile.fullName ?? user.fullName,
     phone: profile.phone ?? user.phone,
+    avatarUrl: profile.avatarUrl ?? user.avatarUrl ?? null,
   })
 }
 

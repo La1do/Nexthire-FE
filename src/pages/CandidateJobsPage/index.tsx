@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useToast } from '../../context'
 import { useLocale, useTranslations } from '../../i18n'
 import { formatDate } from '../_utils/jobFormat'
 import { Button } from '../_components'
@@ -11,12 +12,13 @@ import {
   sortCandidateManagedJobs,
   useCandidateManagedJobs,
 } from './hooks/useCandidateManagedJobs'
-import type { CandidateManagedJobFilter, CandidateManagedJobSort } from './types'
+import type { CandidateManagedJob, CandidateManagedJobFilter, CandidateManagedJobSort } from './types'
 import './candidate-jobs.css'
 
 export function CandidateJobsPage() {
   const { locale } = useLocale()
   const { common, pages } = useTranslations()
+  const toast = useToast()
   const content = pages.profile.managedJobs
   const [activeFilter, setActiveFilter] = useState<CandidateManagedJobFilter>('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -48,6 +50,20 @@ export function CandidateJobsPage() {
   function showSavedJobs() {
     setActiveFilter('saved')
     setSearchQuery('')
+  }
+
+  async function removeSavedJob(jobId: string) {
+    const didRemove = await state.removeSavedJob(jobId, content.states.removeSavedError)
+    toast[didRemove ? 'success' : 'error'](
+      didRemove ? common.savedJobs.removeSuccess : content.states.removeSavedError,
+    )
+  }
+
+  async function withdrawApplication(job: CandidateManagedJob) {
+    const didWithdraw = await state.withdrawApplication(job, content.states.withdrawError)
+    toast[didWithdraw ? 'success' : 'error'](
+      didWithdraw ? content.states.withdrawSuccess : content.states.withdrawError,
+    )
   }
 
   const emptyState = getEmptyState({
@@ -110,10 +126,8 @@ export function CandidateJobsPage() {
                 isWithdrawingApplication={state.withdrawingApplicationId === job.applicationId}
                 job={job}
                 key={job.jobId}
-                onRemoveSavedJob={(jobId) => state.removeSavedJob(jobId, content.states.removeSavedError)}
-                onWithdrawApplication={(managedJob) =>
-                  state.withdrawApplication(managedJob, content.states.withdrawError)
-                }
+                onRemoveSavedJob={removeSavedJob}
+                onWithdrawApplication={withdrawApplication}
               />
             ))}
           </div>

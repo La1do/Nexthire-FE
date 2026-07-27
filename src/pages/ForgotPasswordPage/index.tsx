@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useTranslations } from '../../i18n'
+import { useToast } from '../../context'
 import { AuthPageShell } from '../_components'
 import { BackToLogin } from './components/BackToLogin'
 import { EmailSentIllustration } from './components/EmailSentIllustration'
@@ -29,6 +30,7 @@ function renderTemplateWithEmail(template: string, email: string) {
 
 export function ForgotPasswordPage() {
   const { common, pages } = useTranslations()
+  const toast = useToast()
   const forgotPassword = pages.forgotPassword
   const [step, setStep] = useState<ForgotPasswordStep>('request')
   const [email, setEmail] = useState('')
@@ -39,6 +41,17 @@ export function ForgotPasswordPage() {
   const handleRequestSent = (nextEmail: string) => {
     setEmail(nextEmail)
     setStep('sent')
+    toast.success(common.authFeedback.passwordResetEmailSent)
+  }
+
+  const handleCodeVerified = () => {
+    setStep('reset')
+    toast.success(common.authFeedback.passwordResetVerified)
+  }
+
+  const handlePasswordSaved = () => {
+    setStep('success')
+    toast.success(common.authFeedback.passwordResetSuccess)
   }
 
   const visualByStep: Partial<Record<ForgotPasswordStep, ReactNode>> = {
@@ -61,8 +74,8 @@ export function ForgotPasswordPage() {
       <div className="auth-step-motion" key={step}>
         {step === 'request' ? <ForgotPasswordForm onSent={handleRequestSent} translations={forgotPassword} /> : null}
         {step === 'sent' ? <EmailSentState onContinue={() => setStep('verify')} translations={forgotPassword} /> : null}
-        {step === 'verify' ? <VerificationCodeForm onVerified={() => setStep('reset')} translations={forgotPassword} /> : null}
-        {step === 'reset' ? <ResetPasswordForm onSaved={() => setStep('success')} translations={forgotPassword} /> : null}
+        {step === 'verify' ? <VerificationCodeForm onVerified={handleCodeVerified} translations={forgotPassword} /> : null}
+        {step === 'reset' ? <ResetPasswordForm onSaved={handlePasswordSaved} translations={forgotPassword} /> : null}
         {step === 'success' ? <ResetSuccessState /> : null}
       </div>
     </AuthPageShell>

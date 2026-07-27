@@ -1,6 +1,7 @@
 import type { ChangeEvent, FormEvent } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useToast } from '../../../context'
 import { useAuthGuard } from '../../../hooks/useAuthGuard'
 import type { JobDetailTranslations } from '../../../i18n/types'
 import { getApiErrorCode, getApiErrorEnvelope } from '../../../lib/api/apiError'
@@ -62,6 +63,7 @@ function getApplyErrorMessage(error: unknown, content: JobDetailTranslations['si
 
 export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
   const { isAuthenticated, isCandidate, loginHref } = useAuthGuard()
+  const toast = useToast()
   const modal = content.applyModal
   const dialogRef = useRef<HTMLDialogElement | null>(null)
   const firstFieldRef = useRef<HTMLSelectElement | HTMLInputElement | null>(null)
@@ -146,13 +148,15 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
         setCandidateProfile(null)
         setSelectedCvId('')
         setProfileState('error')
-        setSubmitError(getApiErrorEnvelope(error)?.error.message ?? modal.profileLoadError)
+        const message = getApiErrorEnvelope(error)?.error.message ?? modal.profileLoadError
+        setSubmitError(message)
+        toast.error(message)
       })
 
     return () => {
       ignore = true
     }
-  }, [isOpen, isCandidate, modal.profileLoadError])
+  }, [isOpen, isCandidate, modal.profileLoadError, toast])
 
   useEffect(() => {
     if (!isAuthenticated || !isCandidate) {
@@ -239,12 +243,14 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     if (!isSupportedCvFile(file)) {
       setUploadState('error')
       setUploadError(modal.cvInvalidType)
+      toast.error(modal.cvInvalidType)
       return
     }
 
     if (file.size > CV_MAX_SIZE_BYTES) {
       setUploadState('error')
       setUploadError(modal.cvTooLarge)
+      toast.error(modal.cvTooLarge)
       return
     }
 
@@ -274,9 +280,12 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
       setSelectedCvId(cv.id)
       setUploadedCvId(cv.id)
       setUploadState('success')
+      toast.success(modal.cvUploadSuccess)
     } catch (error) {
       setUploadState('error')
-      setUploadError(getApiErrorEnvelope(error)?.error.message ?? modal.cvUploadError)
+      const message = getApiErrorEnvelope(error)?.error.message ?? modal.cvUploadError
+      setUploadError(message)
+      toast.error(message)
     }
   }
 
@@ -286,12 +295,14 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     if (!selectedCvId) {
       setSubmitState('error')
       setSubmitError(modal.noCvDescription)
+      toast.error(modal.noCvDescription)
       return
     }
 
     if (coverLetterTooLong) {
       setSubmitState('error')
       setSubmitError(modal.coverLetterTooLong)
+      toast.error(modal.coverLetterTooLong)
       return
     }
 
@@ -309,15 +320,19 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
       setExistingApplication(application)
       setAlreadyApplied(false)
       setSubmitState('success')
+      toast.success(modal.submitSuccessTitle)
     } catch (error) {
       if (getApiErrorCode(error) === 'APPLICATION.DUPLICATE_ACTIVE_APPLICATION') {
         setAlreadyApplied(true)
         setSubmitState('success')
+        toast.info(content.appliedHint)
         return
       }
 
       setSubmitState('error')
-      setSubmitError(getApplyErrorMessage(error, modal))
+      const message = getApplyErrorMessage(error, modal)
+      setSubmitError(message)
+      toast.error(message)
     }
   }
 

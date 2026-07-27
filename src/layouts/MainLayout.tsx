@@ -5,11 +5,12 @@ import {
   getAuthUserDisplayName,
   getInitials,
   useAuth,
+  useToast,
 } from '../context'
 import type { AuthApiRole } from '../lib/auth/authRole'
 import type { AuthUser } from '../services/auth.service'
 import { useTranslations } from '../i18n'
-import { LanguageSwitch } from '../pages/_components'
+import { BrandMark, LanguageSwitch } from '../pages/_components'
 
 function getRoleLabel(
   role: AuthApiRole,
@@ -169,11 +170,14 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 export function MainLayout({ children }: PropsWithChildren) {
   const { common } = useTranslations()
   const { user, isAuthenticated, logout } = useAuth()
+  const toast = useToast()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    void logout()
-    navigate('/login')
+    void logout().then(() => {
+      toast.success(common.authFeedback.logoutSuccess)
+      navigate('/login')
+    })
   }
 
   return (
@@ -181,7 +185,7 @@ export function MainLayout({ children }: PropsWithChildren) {
       <header className="main-header">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-5 px-5 py-4">
           <a className="main-brand" href="/">
-            {common.brandName}
+            <BrandMark compact label={common.brandName} />
           </a>
           <nav className="main-nav">
             <a href="/search">
@@ -221,7 +225,7 @@ export function MainLayout({ children }: PropsWithChildren) {
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <a className="main-footer-brand" href="/">
-              {common.brandName}
+              <BrandMark compact label={common.brandName} />
             </a>
             <p className="main-footer-description mt-4 max-w-sm text-sm leading-6">{common.footer.description}</p>
           </div>
