@@ -45,6 +45,7 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
     (currentPath.startsWith('/recruiter/jobs/') && currentPath.endsWith('/edit'))
   const isApplicationsPath = currentPath.startsWith('/recruiter/applications')
   const isSettingsPath = currentPath.startsWith('/recruiter/settings')
+  const isVerificationPath = currentPath.startsWith('/recruiter/verification')
   const topbarContent = isJobFormPath
     ? pages.recruiterJobCreate
     : currentPath.startsWith('/recruiter/jobs')
@@ -53,7 +54,9 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
         ? pages.recruiterApplications
         : isSettingsPath
           ? pages.recruiterSettings
-          : content
+          : isVerificationPath
+            ? pages.recruiterVerification
+            : content
   const displayName = user ? getAuthUserDisplayName(user) : common.brandName
   const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
   const navItems = [

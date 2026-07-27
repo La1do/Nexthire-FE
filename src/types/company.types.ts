@@ -22,6 +22,7 @@ export type CompanyResponse = {
   id: string
   name: string
   logo: string | null
+  logoUrl?: string | null
   logoDocumentId: string | null
   description: string | null
   industry: string | null
@@ -34,11 +35,20 @@ export type CompanyResponse = {
   heroImageUrl: string | null
   heroImageDocumentId: string | null
   website: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
   address: string | null
   taxCode: string
   ownerId: string
   status: CompanyStatus
+  canPostJobs: boolean
+  completionPercent: number
+  missingRequiredFields: string[]
+  submittedAt: string | null
   rejectionReason?: string | null
+  statusReason?: string | null
+  statusChangedAt?: string | null
+  statusChangedByUserId?: string | null
   createdAt: string
   updatedAt: string
 }
@@ -61,3 +71,35 @@ export type CreateCompanyPayload = {
 }
 
 export type UpdateCompanyPayload = Partial<CreateCompanyPayload>
+
+export type CompanyVerificationDocumentType =
+  | 'BUSINESS_LICENSE'
+  | 'TAX_CERTIFICATE'
+  | 'DOMAIN_PROOF'
+  | 'OTHER'
+
+export type CompanyVerificationDocument = {
+  id: string
+  companyId: string
+  documentId: string
+  type: CompanyVerificationDocumentType
+  documentType?: 'CERTIFICATE' | 'OTHER'
+  fileName?: string
+  mimeType?: string
+  size?: number
+  uploadedByUserId: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type UploadedCompanyDocument = {
+  id: string
+  documentType: 'CERTIFICATE' | 'OTHER'
+  ownerType: 'company'
+  ownerId: string
+  fileName: string
+  mimeType: string
+  size: number
+  key: string
+  url: string
+}

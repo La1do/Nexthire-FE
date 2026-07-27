@@ -5,9 +5,10 @@ type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'className'> & {
   error?: string
   label: string
   className?: string
+  reserveMessageSpace?: boolean
 }
 
-export function Input({ className = '', error, id, label, ...props }: InputProps) {
+export function Input({ className = '', error, id, label, reserveMessageSpace = false, ...props }: InputProps) {
   const generatedId = useId()
   const inputId = id ?? generatedId
   const errorId = `${inputId}-error`
@@ -22,9 +23,14 @@ export function Input({ className = '', error, id, label, ...props }: InputProps
         id={inputId}
         {...props}
       />
-      {error ? (
-        <span className="text-sm font-medium text-[var(--color-text-danger)]" id={errorId}>
-          {error}
+      {error || reserveMessageSpace ? (
+        <span
+          aria-hidden={!error}
+          className="min-h-[1lh] text-sm font-medium text-[var(--color-text-danger)]"
+          id={error ? errorId : undefined}
+          role={error ? 'alert' : undefined}
+        >
+          {error ?? ' '}
         </span>
       ) : null}
     </label>

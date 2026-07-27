@@ -68,7 +68,7 @@ export function JobPostCompanyGate({
           <Link className="job-post-link-button job-post-link-button--primary" to="/recruiter">
             {translations.openDashboard}
           </Link>
-          <Link className="job-post-link-button" to="/recruiter/company">
+          <Link className="job-post-link-button" to="/recruiter/verification">
             {translations.manageCompany}
           </Link>
         </div>

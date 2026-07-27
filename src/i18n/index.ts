@@ -14,6 +14,7 @@ import { recruiterHome as enRecruiterHome } from './locales/en/pages/recruiterHo
 import { recruiterJobCreate as enRecruiterJobCreate } from './locales/en/pages/recruiterJobCreate'
 import { recruiterJobs as enRecruiterJobs } from './locales/en/pages/recruiterJobs'
 import { recruiterSettings as enRecruiterSettings } from './locales/en/pages/recruiterSettings'
+import { recruiterVerification as enRecruiterVerification } from './locales/en/pages/recruiterVerification'
 import { register as enRegister } from './locales/en/pages/register'
 import { search as enSearch } from './locales/en/pages/search'
 import { common as jaCommon } from './locales/ja/common'
@@ -32,6 +33,7 @@ import { recruiterHome as jaRecruiterHome } from './locales/ja/pages/recruiterHo
 import { recruiterJobCreate as jaRecruiterJobCreate } from './locales/ja/pages/recruiterJobCreate'
 import { recruiterJobs as jaRecruiterJobs } from './locales/ja/pages/recruiterJobs'
 import { recruiterSettings as jaRecruiterSettings } from './locales/ja/pages/recruiterSettings'
+import { recruiterVerification as jaRecruiterVerification } from './locales/ja/pages/recruiterVerification'
 import { register as jaRegister } from './locales/ja/pages/register'
 import { search as jaSearch } from './locales/ja/pages/search'
 import { common as viCommon } from './locales/vi/common'
@@ -50,6 +52,7 @@ import { recruiterHome as viRecruiterHome } from './locales/vi/pages/recruiterHo
 import { recruiterJobCreate as viRecruiterJobCreate } from './locales/vi/pages/recruiterJobCreate'
 import { recruiterJobs as viRecruiterJobs } from './locales/vi/pages/recruiterJobs'
 import { recruiterSettings as viRecruiterSettings } from './locales/vi/pages/recruiterSettings'
+import { recruiterVerification as viRecruiterVerification } from './locales/vi/pages/recruiterVerification'
 import { register as viRegister } from './locales/vi/pages/register'
 import { search as viSearch } from './locales/vi/pages/search'
 import type { Locale, Translations } from './types'
@@ -76,6 +79,7 @@ export const translations = {
       recruiterJobCreate: enRecruiterJobCreate,
       recruiterJobs: enRecruiterJobs,
       recruiterSettings: enRecruiterSettings,
+      recruiterVerification: enRecruiterVerification,
       register: enRegister,
       search: enSearch,
     },
@@ -98,6 +102,7 @@ export const translations = {
       recruiterJobCreate: viRecruiterJobCreate,
       recruiterJobs: viRecruiterJobs,
       recruiterSettings: viRecruiterSettings,
+      recruiterVerification: viRecruiterVerification,
       register: viRegister,
       search: viSearch,
     },
@@ -120,6 +125,7 @@ export const translations = {
       recruiterJobCreate: jaRecruiterJobCreate,
       recruiterJobs: jaRecruiterJobs,
       recruiterSettings: jaRecruiterSettings,
+      recruiterVerification: jaRecruiterVerification,
       register: jaRegister,
       search: jaSearch,
     },

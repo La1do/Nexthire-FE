@@ -1,12 +1,7 @@
-import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslations } from '../../i18n'
-import { getApiErrorEnvelope } from '../../lib/api/apiError'
-import { companyService } from '../../services/company.service'
-import type { CreateCompanyPayload } from '../../types/company.types'
 import { Button } from '../_components'
 import { CompanyVerificationCard } from './components/CompanyVerificationCard'
-import { CompanyVerificationDrawer } from './components/CompanyVerificationDrawer'
 import {
   RecruiterApplications,
   RecruiterPerformance,
@@ -15,63 +10,14 @@ import {
   RecruiterStatGrid,
   RecruiterTasks,
 } from './components/RecruiterDashboardPanels'
-import type { CompanyVerificationFormValues } from './types'
 import { useRecruiterDashboardData } from './hooks/useRecruiterDashboardData'
-import {
-  createCompanyFormValues,
-  recruiterQuickActions,
-} from './utils/recruiterHomeData'
-
-function createCompanyPayload(values: CompanyVerificationFormValues): CreateCompanyPayload {
-  const logo = values.logo.trim()
-  const website = values.website.trim()
-  const address = values.address.trim()
-  const description = values.description.trim()
-
-  return {
-    name: values.name.trim(),
-    address: address || null,
-    description: description || null,
-    logo: logo || null,
-    taxCode: values.taxCode.trim(),
-    website: website || null,
-  }
-}
+import { recruiterQuickActions } from './utils/recruiterHomeData'
 
 export function RecruiterHomePage() {
   const { pages } = useTranslations()
   const content = pages.recruiterHome
   const navigate = useNavigate()
   const { data, error, loading, refresh } = useRecruiterDashboardData()
-  const [isVerificationOpen, setVerificationOpen] = useState(false)
-  const [isCompanySubmitting, setCompanySubmitting] = useState(false)
-  const [companySubmitError, setCompanySubmitError] = useState<string | undefined>(undefined)
-  const company = data?.company
-
-  const handleVerificationSubmit = useCallback(
-    async (values: CompanyVerificationFormValues) => {
-      setCompanySubmitting(true)
-      setCompanySubmitError(undefined)
-
-      try {
-        const payload = createCompanyPayload(values)
-
-        if (company?.id) {
-          await companyService.updateCompany(company.id, payload)
-        } else {
-          await companyService.createCompany(payload)
-        }
-
-        await refresh()
-        setVerificationOpen(false)
-      } catch (submitError) {
-        setCompanySubmitError(getApiErrorEnvelope(submitError)?.error.message ?? content.verification.form.submitError)
-      } finally {
-        setCompanySubmitting(false)
-      }
-    },
-    [company?.id, content.verification.form.submitError, refresh],
-  )
 
   if (loading && !data) {
     return (
@@ -119,10 +65,7 @@ export function RecruiterHomePage() {
 
       <CompanyVerificationCard
         company={activeCompany}
-        onOpenVerification={() => {
-          setCompanySubmitError(undefined)
-          setVerificationOpen(true)
-        }}
+        onOpenVerification={() => navigate('/recruiter/verification')}
         translations={content.verification}
       />
 
@@ -143,17 +86,6 @@ export function RecruiterHomePage() {
           <RecruiterTasks tasks={tasks} translations={content.tasks} />
         </aside>
       </div>
-
-      {isVerificationOpen ? (
-        <CompanyVerificationDrawer
-          initialValues={createCompanyFormValues(activeCompany)}
-          isSubmitting={isCompanySubmitting}
-          onClose={() => setVerificationOpen(false)}
-          onSubmit={handleVerificationSubmit}
-          submitError={companySubmitError}
-          translations={content.verification}
-        />
-      ) : null}
     </div>
   )
 }

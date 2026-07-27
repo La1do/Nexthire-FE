@@ -64,26 +64,6 @@ function replaceCount(template: string, count: number, locale: string) {
   return template.replace('{count}', formatNumber(count, locale))
 }
 
-function calculateCompanyCompletion(company: CompanyResponse | null) {
-  if (!company) return 0
-
-  const fields = [
-    company.name,
-    company.taxCode,
-    company.website,
-    company.address,
-    company.description,
-    company.logo ?? company.logoDocumentId,
-    company.industry,
-    company.size,
-    company.mission,
-    company.culture,
-  ]
-  const completed = fields.filter((value) => clean(value).length > 0).length
-
-  return Math.round((completed / fields.length) * 100)
-}
-
 function mapCompany(company: CompanyResponse | null, content: RecruiterHomeTranslations, locale: string): RecruiterCompany {
   if (!company) {
     return {
@@ -103,13 +83,13 @@ function mapCompany(company: CompanyResponse | null, content: RecruiterHomeTrans
   return {
     id: company.id,
     address: clean(company.address),
-    completion: calculateCompanyCompletion(company),
+    completion: company.completionPercent,
     description: clean(company.description),
-    logo: clean(company.logo),
+    logo: clean(company.logoUrl ?? company.logo),
     name: company.name,
     rejectionReason: clean(company.rejectionReason) || undefined,
     status: company.status,
-    submittedAt: formatDate(company.createdAt, locale),
+    submittedAt: formatDate(company.submittedAt, locale),
     taxCode: company.taxCode,
     website: clean(company.website),
   }

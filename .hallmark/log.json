@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-07-24",
+    "macrostructure": "Narrative Workflow",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral",
+    "vibe": "utilitarian, trustworthy company verification workspace",
+    "enrichment": "none",
+    "brief": "Build the recruiter company verification workflow with legal data and document upload"
+  },
+  {
+    "date": "2026-07-24",
     "macrostructure": "Split Studio",
     "theme": "Nexhire Home",
     "theme_axes": "light / geometric-sans / coral",

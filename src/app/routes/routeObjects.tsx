@@ -22,6 +22,7 @@ import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RecruiterJobCreatePage } from '../../pages/RecruiterJobCreatePage'
 import { RecruiterJobDetailPage, RecruiterJobsPage } from '../../pages/RecruiterJobsPage'
 import { RecruiterSettingsPage } from '../../pages/RecruiterSettingsPage'
+import { RecruiterVerificationPage } from '../../pages/RecruiterVerificationPage'
 import { CandidateRegisterPage, RecruiterRegisterPage } from '../../pages/RegisterPage'
 import { SearchPage } from '../../pages/SearchPage'
 import type { AppRoute } from './routeTypes'
@@ -148,6 +149,12 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/recruiter/company',
       label: comingSoon.pages.recruiterCompany.title,
       element: <ComingSoonPage pageKey="recruiterCompany" />,
+      layout: RecruiterLayout,
+    },
+    {
+      path: '/recruiter/verification',
+      label: pages.recruiterVerification.routeLabel,
+      element: <RecruiterVerificationPage />,
       layout: RecruiterLayout,
     },
     {

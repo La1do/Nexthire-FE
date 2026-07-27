@@ -1543,6 +1543,104 @@ export type RecruiterSettingsTranslations = {
   }
 }
 
+export type RecruiterVerificationTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  navigation: {
+    label: string
+    status: string
+    legal: string
+    documents: string
+  }
+  status: {
+    labels: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    titles: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    descriptions: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    completion: string
+    submittedAt: string
+    notSubmitted: string
+    postingAccess: string
+    postingUnlocked: string
+    postingLocked: string
+    rejectionReason: string
+    missingTitle: string
+    missingFieldLabels: Record<'name' | 'taxCode' | 'website' | 'address' | 'description', string>
+  }
+  legal: {
+    title: string
+    description: string
+    approvedWarning: string
+    suspendedHint: string
+    nameLabel: string
+    namePlaceholder: string
+    taxCodeLabel: string
+    taxCodePlaceholder: string
+    websiteLabel: string
+    websitePlaceholder: string
+    addressLabel: string
+    addressPlaceholder: string
+    descriptionLabel: string
+    descriptionPlaceholder: string
+    logoTitle: string
+    logoDescription: string
+    logoAction: string
+    logoReplace: string
+    logoSelected: string
+    logoHint: string
+    logoInvalidType: string
+    logoTooLarge: string
+    validation: {
+      nameRequired: string
+      taxCodeRequired: string
+      taxCodeMinLength: string
+      websiteRequired: string
+      websiteInvalid: string
+      addressRequired: string
+      descriptionRequired: string
+    }
+  }
+  documents: {
+    title: string
+    description: string
+    typeLabel: string
+    types: Record<'BUSINESS_LICENSE' | 'TAX_CERTIFICATE' | 'DOMAIN_PROOF' | 'OTHER', string>
+    uploadAction: string
+    dropTitle: string
+    dropHint: string
+    queuedTitle: string
+    attachedTitle: string
+    emptyTitle: string
+    emptyDescription: string
+    removeQueued: string
+    deleteAttached: string
+    deleting: string
+    invalidType: string
+    tooLarge: string
+    required: string
+    fileSize: string
+  }
+  actions: {
+    create: string
+    save: string
+    resubmit: string
+    saving: string
+    retry: string
+    backToDashboard: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+  }
+  feedback: {
+    saveSuccess: string
+    resubmitSuccess: string
+    submitError: string
+    deleteError: string
+  }
+}
+
 export type CandidateSettingsTranslations = {
   routeLabel: string
   pageTitle: string
@@ -1594,6 +1692,7 @@ export type Translations = {
     recruiterJobs: RecruiterJobsTranslations
     recruiterHome: RecruiterHomeTranslations
     recruiterSettings: RecruiterSettingsTranslations
+    recruiterVerification: RecruiterVerificationTranslations
     register: RegisterTranslations
     search: SearchTranslations
   }

@@ -76,6 +76,8 @@
   --color-home-brand: oklch(63% 0.2 26);
   --color-home-brand-ink: oklch(47% 0.18 26);
   --color-home-brand-soft: oklch(95% 0.035 26);
+  --color-home-danger: oklch(49% 0.19 25);
+  --color-home-danger-soft: oklch(95% 0.035 25);
   --color-home-success: oklch(57% 0.14 165);
   --color-home-success-soft: oklch(94% 0.035 165);
   --color-home-info: oklch(58% 0.16 225);
@@ -133,5 +135,6 @@
   --radius-home-md: 8px;
   --radius-home-pill: 999px;
   --size-home-touch: 2.75rem;
+  --size-home-topbar: 5rem;
   --shadow-home-panel: 0 1.125rem 2.8125rem oklch(18% 0.035 255 / 0.18);
 }
