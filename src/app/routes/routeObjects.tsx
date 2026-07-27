@@ -13,6 +13,7 @@ import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
 import { HomePage } from '../../pages/HomePage'
 import { JobDetailPage } from '../../pages/JobDetailPage'
 import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pages/LoginPage'
+import { CandidateJobsPage } from '../../pages/CandidateJobsPage'
 import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
 import { ProfileSavedJobsPage } from '../../pages/ProfileSavedJobsPage'
@@ -119,6 +120,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/profile/applications',
       label: pages.profile.applications.routeLabel,
       element: <ProfileApplicationsPage />,
+      layout: CandidateLayout,
+      access: candidateAccess,
+    },
+    {
+      path: '/profile/jobs',
+      label: pages.profile.managedJobs.routeLabel,
+      element: <CandidateJobsPage />,
       layout: CandidateLayout,
       access: candidateAccess,
     },

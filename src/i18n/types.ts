@@ -682,11 +682,27 @@ export type ProfileApplicationStatus =
   | 'WITHDRAWN'
   | 'CANCELLED'
 
+export type CandidateManagedJobsTab = 'all' | 'saved' | 'applied' | 'active' | 'closed'
+export type CandidateManagedJobsSort = 'newest' | 'deadline' | 'salary'
+export type CandidateManagedJobsStatus =
+  | 'saved'
+  | 'SUBMITTED'
+  | 'OFFERED'
+  | 'REJECTED'
+  | 'WITHDRAWN'
+  | 'CANCELLED'
+  | 'PUBLISHED'
+  | 'UNPUBLISHED'
+  | 'CLOSED'
+  | 'EXPIRED'
+  | 'needsAttention'
+
 export type ProfileTranslations = {
   routeLabel: string
   pageTitle: string
   sidebar: {
     searchJobs: string
+    managedJobs: string
     applications: string
     savedJobs: string
     profile: string
@@ -805,6 +821,70 @@ export type ProfileTranslations = {
       updatedAt: string
       status: ProfileApplicationStatus
     }>
+  }
+  managedJobs: {
+    routeLabel: string
+    pageTitle: string
+    title: string
+    description: string
+    listLabel: string
+    stats: {
+      label: string
+      saved: string
+      applied: string
+      active: string
+      needsAttention: string
+    }
+    filters: {
+      label: string
+      searchLabel: string
+      searchPlaceholder: string
+      tabLabel: string
+      tabs: Record<CandidateManagedJobsTab, string>
+      sortLabel: string
+      sortOptions: Record<CandidateManagedJobsSort, string>
+    }
+    statusLabels: Record<CandidateManagedJobsStatus, string>
+    meta: {
+      location: string
+      salary: string
+      deadline: string
+      savedAt: string
+      appliedAt: string
+      notAvailable: string
+      noDeadline: string
+    }
+    actions: {
+      viewJob: string
+      apply: string
+      viewApplication: string
+      removeSaved: string
+      removingSaved: string
+      withdraw: string
+      withdrawing: string
+    }
+    states: {
+      loading: string
+      errorTitle: string
+      errorDescription: string
+      retry: string
+      removeSavedError: string
+      withdrawError: string
+    }
+    empty: {
+      allTitle: string
+      allDescription: string
+      allAction: string
+      savedTitle: string
+      savedDescription: string
+      savedAction: string
+      appliedTitle: string
+      appliedDescription: string
+      appliedAction: string
+      filterTitle: string
+      filterDescription: string
+      filterAction: string
+    }
   }
   savedJobs: {
     routeLabel: string

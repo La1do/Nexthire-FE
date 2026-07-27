@@ -13,6 +13,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
   const navItems = [
     { href: '/search', label: profile.sidebar.searchJobs },
+    { href: '/profile/jobs', label: profile.sidebar.managedJobs },
     { href: '/profile/applications', label: profile.sidebar.applications },
     { href: '/profile/saved-jobs', label: profile.sidebar.savedJobs },
     { href: '/profile', label: profile.sidebar.profile },
@@ -22,11 +23,13 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const pageTitle =
     pathname === '/profile/applications'
       ? profile.applications.pageTitle
-      : pathname === '/profile/saved-jobs'
-        ? profile.savedJobs.pageTitle
-        : pathname === '/profile/settings'
-          ? candidateSettings.pageTitle
-          : profile.pageTitle
+      : pathname === '/profile/jobs'
+        ? profile.managedJobs.pageTitle
+        : pathname === '/profile/saved-jobs'
+          ? profile.savedJobs.pageTitle
+          : pathname === '/profile/settings'
+            ? candidateSettings.pageTitle
+            : profile.pageTitle
 
   return (
     <div className="candidate-shell">
