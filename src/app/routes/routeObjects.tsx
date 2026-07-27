@@ -27,7 +27,34 @@ import { RecruiterVerificationPage } from '../../pages/RecruiterVerificationPage
 import { CandidateRegisterPage, RecruiterRegisterPage } from '../../pages/RegisterPage'
 import { SearchPage } from '../../pages/SearchPage'
 import type { AppRoute } from './routeTypes'
+import type { RouteAccess } from './routeTypes'
+import type { BusinessGate } from './businessGates'
 import type { Translations } from '../../i18n'
+
+const publicAccess: RouteAccess = { kind: 'public' }
+const guestOnlyAccess: RouteAccess = { kind: 'guest-only' }
+
+const candidateAccess: RouteAccess = {
+  kind: 'protected',
+  roles: ['CANDIDATE'],
+  loginPath: '/login',
+}
+
+const recruiterAccess: RouteAccess = {
+  kind: 'protected',
+  roles: ['RECRUITER'],
+  loginPath: '/recruiter/login',
+}
+
+const adminAccess: RouteAccess = {
+  kind: 'protected',
+  roles: ['ADMIN'],
+  loginPath: '/admin/login',
+}
+
+const recruiterCompanyRequired: BusinessGate = { kind: 'recruiter-company-required' }
+const recruiterCompanyApproved: BusinessGate = { kind: 'recruiter-company-approved' }
+const recruiterCanPostJobs: BusinessGate = { kind: 'recruiter-can-post-jobs' }
 
 export function getRoutes({ common, pages }: Translations): AppRoute[] {
   const comingSoon = pages.comingSoon
@@ -37,210 +64,250 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       label: common.navigation.home,
       element: <HomePage />,
       layout: MainLayout,
+      access: publicAccess,
     },
     {
       path: '/home',
       label: common.navigation.home,
       element: <HomePage />,
       layout: MainLayout,
+      access: publicAccess,
     },
     {
       path: '/search',
       label: pages.search.routeLabel,
       element: <SearchPage />,
       layout: MainLayout,
+      access: publicAccess,
     },
     {
       path: '/jobs/:id',
       label: pages.jobDetail.routeLabel,
       element: <JobDetailPage />,
       layout: MainLayout,
+      access: publicAccess,
     },
     {
       path: '/companies',
       label: comingSoon.pages.companies.title,
       element: <ComingSoonPage pageKey="companies" />,
       layout: MainLayout,
+      access: publicAccess,
     },
     {
       path: '/career-guide',
       label: comingSoon.pages.careerGuide.title,
       element: <CareerGuidePage />,
       layout: MainLayout,
+      access: publicAccess,
     },
     {
       path: '/companies/:id',
       label: pages.companyDetail.routeLabel,
       element: <CompanyDetailPage />,
       layout: MainLayout,
+      access: publicAccess,
     },
     {
       path: '/profile',
       label: pages.profile.routeLabel,
       element: <ProfilePage />,
       layout: CandidateLayout,
+      access: candidateAccess,
     },
     {
       path: '/profile/applications',
       label: pages.profile.applications.routeLabel,
       element: <ProfileApplicationsPage />,
       layout: CandidateLayout,
+      access: candidateAccess,
     },
     {
       path: '/profile/saved-jobs',
       label: pages.profile.savedJobs.routeLabel,
       element: <ProfileSavedJobsPage />,
       layout: CandidateLayout,
+      access: candidateAccess,
     },
     {
       path: '/profile/messages',
       label: comingSoon.pages.profileMessages.title,
       element: <ComingSoonPage pageKey="profileMessages" />,
       layout: CandidateLayout,
+      access: candidateAccess,
     },
     {
       path: '/profile/settings',
       label: pages.candidateSettings.routeLabel,
       element: <CandidateSettingsPage />,
       layout: CandidateLayout,
+      access: candidateAccess,
     },
     {
       path: '/recruiter',
       label: pages.recruiterHome.routeLabel,
       element: <RecruiterHomePage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
     },
     {
       path: '/recruiter/jobs/new',
       label: pages.recruiterJobCreate.routeLabel,
       element: <RecruiterJobCreatePage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
+      businessGate: recruiterCanPostJobs,
     },
     {
       path: '/recruiter/jobs',
       label: pages.recruiterJobs.routeLabel,
       element: <RecruiterJobsPage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
+      businessGate: recruiterCompanyRequired,
     },
     {
       path: '/recruiter/jobs/:id/edit',
       label: pages.recruiterJobCreate.routeLabel,
       element: <RecruiterJobCreatePage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
+      businessGate: recruiterCanPostJobs,
     },
     {
       path: '/recruiter/jobs/:id',
       label: pages.recruiterJobs.detailRouteLabel,
       element: <RecruiterJobDetailPage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
+      businessGate: recruiterCompanyRequired,
     },
     {
       path: '/recruiter/applications',
       label: pages.recruiterApplications.routeLabel,
       element: <RecruiterApplicationsPage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
+      businessGate: recruiterCompanyApproved,
     },
     {
       path: '/recruiter/candidates',
       label: comingSoon.pages.recruiterCandidates.title,
       element: <ComingSoonPage pageKey="recruiterCandidates" />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
     },
     {
       path: '/recruiter/company',
       label: pages.recruiterCompany.routeLabel,
       element: <RecruiterCompanyPage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
     },
     {
       path: '/recruiter/verification',
       label: pages.recruiterVerification.routeLabel,
       element: <RecruiterVerificationPage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
     },
     {
       path: '/recruiter/messages',
       label: comingSoon.pages.recruiterMessages.title,
       element: <ComingSoonPage pageKey="recruiterMessages" />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
     },
     {
       path: '/recruiter/settings',
       label: pages.recruiterSettings.routeLabel,
       element: <RecruiterSettingsPage />,
       layout: RecruiterLayout,
+      access: recruiterAccess,
     },
     {
       path: '/login',
       label: common.navigation.login,
       element: <CandidateLoginPage />,
       layout: AuthLayout,
+      access: guestOnlyAccess,
     },
     {
       path: '/recruiter/login',
       label: common.navigation.employerCta,
       element: <RecruiterLoginPage />,
       layout: AuthLayout,
+      access: guestOnlyAccess,
     },
     {
       path: '/admin/login',
       label: pages.adminUsers.routeLabel,
       element: <AdminLoginPage />,
       layout: AuthLayout,
+      access: guestOnlyAccess,
     },
     {
       path: '/register',
       label: pages.register.candidate.routeLabel,
       element: <CandidateRegisterPage />,
       layout: AuthLayout,
+      access: guestOnlyAccess,
     },
     {
       path: '/recruiter/register',
       label: pages.register.recruiter.routeLabel,
       element: <RecruiterRegisterPage />,
       layout: AuthLayout,
+      access: guestOnlyAccess,
     },
     {
       path: '/forgot-password',
       label: pages.forgotPassword.routeLabel,
       element: <ForgotPasswordPage />,
       layout: AuthLayout,
+      access: guestOnlyAccess,
     },
     {
       path: '/admin/dashboard',
       label: comingSoon.pages.adminDashboard.title,
       element: <ComingSoonPage pageKey="adminDashboard" />,
       layout: AdminLayout,
+      access: adminAccess,
     },
     {
       path: '/admin/jobs',
       label: comingSoon.pages.adminJobs.title,
       element: <ComingSoonPage pageKey="adminJobs" />,
       layout: AdminLayout,
+      access: adminAccess,
     },
     {
       path: '/admin/settings',
       label: comingSoon.pages.adminSettings.title,
       element: <ComingSoonPage pageKey="adminSettings" />,
       layout: AdminLayout,
+      access: adminAccess,
     },
     {
       path: '/admin/users',
       label: pages.adminUsers.routeLabel,
       element: <AdminUsersPage />,
       layout: AdminLayout,
+      access: adminAccess,
     },
     {
       path: '/admin/companies',
       label: pages.adminCompanies.routeLabel,
       element: <AdminCompaniesPage />,
       layout: AdminLayout,
+      access: adminAccess,
     },
     {
       path: '/admin/companies/:id',
       label: pages.adminCompanies.detailRouteLabel,
       element: <AdminCompanyDetailPage />,
       layout: AdminLayout,
+      access: adminAccess,
     },
   ]
 }

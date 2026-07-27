@@ -1,6 +1,7 @@
 import type { ChangeEvent, FormEvent } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../context'
 import { useTranslations } from '../../i18n'
 import { getApiErrorCode, getApiErrorEnvelope } from '../../lib/api/apiError'
@@ -238,7 +239,10 @@ function ProfileField({
 }
 
 export function RecruiterCompanyPage() {
-  const { refreshUser } = useAuth()
+  const { refreshUser, user } = useAuth()
+  const queryClient = useQueryClient()
+  const [searchParams] = useSearchParams()
+  const nextPath = searchParams.get('next')
   const { pages } = useTranslations()
   const content = pages.recruiterCompany
   const [company, setCompany] = useState<CompanyResponse | null>(null)
@@ -433,6 +437,11 @@ export function RecruiterCompanyPage() {
       setCompany(updatedCompany)
       setForm(companyToForm(updatedCompany))
       setSaveSuccess(content.form.saveSuccess)
+      if (user) {
+        await queryClient.invalidateQueries({
+          queryKey: ['company', 'me', user.id],
+        })
+      }
     } catch (error) {
       setSaveError(getApiErrorEnvelope(error)?.error.message ?? content.form.saveError)
     } finally {
@@ -480,6 +489,15 @@ export function RecruiterCompanyPage() {
 
   return (
     <div className="recruiter-company-page">
+      {nextPath ? (
+        <aside className="recruiter-company-next-banner" role="status">
+          <h2>{content.nextBanner.title}</h2>
+          <p>{content.nextBanner.description}</p>
+          <Link className="recruiter-company-next-banner__action" to={nextPath}>
+            {content.nextBanner.action}
+          </Link>
+        </aside>
+      ) : null}
       <header className="recruiter-company-hero">
         <div className="recruiter-company-hero__copy">
           <span>{content.hero.kicker}</span>

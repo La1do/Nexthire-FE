@@ -4,6 +4,8 @@ import { AuthProvider } from '../context'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { useTranslations } from '../i18n'
 import { queryClient } from './queryClient'
+import { BusinessGateGuard } from './routes/BusinessGateGuard'
+import { RouteGuard } from './routes/RouteGuard'
 import { getRoutes } from './routes'
 
 function AppRoutes() {
@@ -12,9 +14,15 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {routes.map(({ element, layout: Layout, path }) => (
+      {routes.map(({ access, businessGate, element, layout: Layout, path }) => (
         <Route
-          element={<Layout>{element}</Layout>}
+          element={
+            <RouteGuard access={access}>
+              <BusinessGateGuard gate={businessGate}>
+                <Layout>{element}</Layout>
+              </BusinessGateGuard>
+            </RouteGuard>
+          }
           key={path}
           path={path}
         />

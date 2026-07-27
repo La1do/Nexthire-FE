@@ -157,4 +157,10 @@ export const recruiterCompany: RecruiterCompanyTranslations = {
       'Sau khi có hồ sơ công ty, bạn có thể cập nhật mô tả, văn hoá, phúc lợi và thông tin liên hệ tại đây.',
     noCompanyAction: 'Tạo hồ sơ xác thực',
   },
+  nextBanner: {
+    title: 'Hoàn thiện hồ sơ công ty trước khi tiếp tục',
+    description:
+      'Tạo hồ sơ công ty ở trang xác minh. Sau khi có hồ sơ, bạn có thể quay lại trang đang mở để tiếp tục thao tác.',
+    action: 'Tiếp tục sau khi tạo hồ sơ',
+  },
 }

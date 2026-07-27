@@ -125,4 +125,10 @@ export const recruiterVerification: RecruiterVerificationTranslations = {
     submitError: 'プロフィールを処理できませんでした。完了した進捗は保持されています。',
     deleteError: '書類を削除できませんでした。もう一度お試しください。',
   },
+  nextBanner: {
+    title: '続ける前に会社認証が必要です',
+    description:
+      '法定プロフィールと認証書類を完成させてください。承認されれば、開いていたページに戻れます。',
+    action: '認証後に続行',
+  },
 }

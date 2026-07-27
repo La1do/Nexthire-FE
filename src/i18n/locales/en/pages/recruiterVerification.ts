@@ -125,4 +125,10 @@ export const recruiterVerification: RecruiterVerificationTranslations = {
     submitError: 'The profile could not be processed. Completed progress has been retained.',
     deleteError: 'The document could not be deleted. Try again.',
   },
+  nextBanner: {
+    title: 'Verify your company before continuing',
+    description:
+      'Complete your legal profile and verification documents. Once approved, you can return to where you were headed.',
+    action: 'Continue after verification',
+  },
 }

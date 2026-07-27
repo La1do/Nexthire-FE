@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context'
 import { useLocale } from '../../i18n'
 import { getApiErrorCode, getApiErrorEnvelope } from '../../lib/api/apiError'
@@ -58,8 +58,10 @@ function hasPayloadValues(payload: Record<string, unknown>) {
 export function RecruiterVerificationPage() {
   const { locale, translations } = useLocale()
   const content = translations.pages.recruiterVerification
-  const { refreshUser } = useAuth()
+  const { refreshUser, user } = useAuth()
   const queryClient = useQueryClient()
+  const [searchParams] = useSearchParams()
+  const nextPath = searchParams.get('next')
   const [company, setCompany] = useState<CompanyResponse | null>(null)
   const [documents, setDocuments] = useState<CompanyVerificationDocument[]>([])
   const [queuedDocuments, setQueuedDocuments] = useState<QueuedVerificationDocument[]>([])
@@ -265,8 +267,12 @@ export function RecruiterVerificationPage() {
       }
 
       reset(companyToFormValues(activeCompany))
+      const userId = user?.id
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['recruiter-dashboard'] }),
+        ...(userId
+          ? [queryClient.invalidateQueries({ queryKey: ['company', 'me', userId] })]
+          : []),
         Promise.resolve(refreshUser()),
       ])
       setSubmitSuccess(
@@ -320,6 +326,15 @@ export function RecruiterVerificationPage() {
 
   return (
     <div className="recruiter-verification-page">
+      {nextPath ? (
+        <aside className="verification-next-banner" role="status">
+          <h2>{content.nextBanner.title}</h2>
+          <p>{content.nextBanner.description}</p>
+          <Link className="verification-next-banner__action" to={nextPath}>
+            {content.nextBanner.action}
+          </Link>
+        </aside>
+      ) : null}
       <VerificationStatusPanel company={company} locale={locale} translations={content.status} />
 
       <div className="verification-layout">

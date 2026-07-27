@@ -125,4 +125,10 @@ export const recruiterVerification: RecruiterVerificationTranslations = {
     submitError: 'Chưa thể xử lý hồ sơ. Tiến độ đã hoàn tất vẫn được giữ lại.',
     deleteError: 'Chưa thể xóa tài liệu. Vui lòng thử lại.',
   },
+  nextBanner: {
+    title: 'Bạn cần xác minh công ty trước khi tiếp tục',
+    description:
+      'Hoàn tất hồ sơ pháp lý và tài liệu xác minh. Sau khi được duyệt, bạn có thể quay lại trang đang mở.',
+    action: 'Tiếp tục sau khi xác minh',
+  },
 }

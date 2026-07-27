@@ -157,4 +157,10 @@ export const recruiterCompany: RecruiterCompanyTranslations = {
       'Once a company profile exists, you can update the overview, culture, perks, and contact details here.',
     noCompanyAction: 'Create verification profile',
   },
+  nextBanner: {
+    title: 'Create your company profile before continuing',
+    description:
+      'Set up your company on the verification page. Once it exists, you can return to where you were headed.',
+    action: 'Continue after creating the profile',
+  },
 }

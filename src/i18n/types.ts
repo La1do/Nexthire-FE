@@ -1697,6 +1697,11 @@ export type RecruiterVerificationTranslations = {
     submitError: string
     deleteError: string
   }
+  nextBanner: {
+    title: string
+    description: string
+    action: string
+  }
 }
 
 export type CandidateSettingsTranslations = {
@@ -1886,6 +1891,11 @@ export type RecruiterCompanyTranslations = {
     noCompanyTitle: string
     noCompanyDescription: string
     noCompanyAction: string
+  }
+  nextBanner: {
+    title: string
+    description: string
+    action: string
   }
 }
 

@@ -157,4 +157,10 @@ export const recruiterCompany: RecruiterCompanyTranslations = {
       '会社プロフィールを作成すると、概要、文化、福利厚生、連絡先をここで更新できます。',
     noCompanyAction: '認証プロフィールを作成',
   },
+  nextBanner: {
+    title: '続ける前に会社プロフィールを作成してください',
+    description:
+      '認証ページで会社プロフィールを作成してください。作成後、開いていたページに戻れます。',
+    action: '作成後に続行',
+  },
 }
