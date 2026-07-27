@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../../context'
 import { useTranslations } from '../../i18n'
-import { getApiErrorEnvelope } from '../../lib/api/apiError'
+import { getApiErrorCode, getApiErrorEnvelope } from '../../lib/api/apiError'
 import { authService } from '../../services/auth.service'
 import type { AuthProfile } from '../../services/auth.service'
+import { companyService } from '../../services/company.service'
+import type { CompanyResponse } from '../../types/company.types'
 import { AccountSettingsForm } from './components/AccountSettingsForm'
 import { LanguageSettingsSection } from './components/LanguageSettingsSection'
 import { SecuritySettingsForm } from './components/SecuritySettingsForm'
@@ -15,6 +17,7 @@ export function RecruiterSettingsPage() {
   const content = pages.recruiterSettings
   const { refreshUser, user } = useAuth()
   const [profile, setProfile] = useState<AuthProfile | null>(null)
+  const [company, setCompany] = useState<CompanyResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | undefined>(undefined)
   const sections = useMemo(
@@ -31,7 +34,15 @@ export function RecruiterSettingsPage() {
     setLoadError(undefined)
 
     try {
-      setProfile(await authService.getMe())
+      const [nextProfile, nextCompany] = await Promise.all([
+        authService.getMe(),
+        companyService.getMyCompany().catch((error: unknown) => {
+          if (getApiErrorCode(error) === 'COMPANY.NOT_FOUND') return null
+          throw error
+        }),
+      ])
+      setProfile(nextProfile)
+      setCompany(nextCompany)
     } catch (error) {
       setLoadError(getApiErrorEnvelope(error)?.error.message ?? content.account.errorDescription)
     } finally {
@@ -49,12 +60,14 @@ export function RecruiterSettingsPage() {
 
       <div className="recruiter-settings-stack">
         <AccountSettingsForm
-          companyName={user?.companyName}
+          company={company}
+          companyName={company?.name ?? user?.companyName}
           error={loadError}
           loading={loading}
           onRetry={() => void loadProfile()}
-          onSaved={(updatedProfile) => {
+          onSaved={(updatedProfile, updatedCompany) => {
             setProfile(updatedProfile)
+            setCompany(updatedCompany)
             refreshUser()
           }}
           profile={profile}

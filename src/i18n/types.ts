@@ -526,11 +526,62 @@ export type JobDetailTranslations = {
     noDeadline: string
     openings: string
     apply: string
+    applied: string
+    appliedHint: string
+    applyHint: string
+    applyLoginHint: string
+    applyStatusLoading: string
+    candidateOnly: string
     save: string
     saved: string
     saveError: string
     jobNotPublic: string
     loginHint: string
+    applyModal: {
+      kicker: string
+      title: string
+      description: string
+      close: string
+      cvLabel: string
+      cvHelper: string
+      cvLoading: string
+      profileLoadError: string
+      cvFallback: string
+      defaultCvBadge: string
+      noCvTitle: string
+      noCvDescription: string
+      uploadCvAction: string
+      uploadFirstTitle: string
+      uploadFirstDescription: string
+      uploadAlternativeTitle: string
+      uploadAlternativeDescription: string
+      cvUploading: string
+      cvUploadSuccess: string
+      cvUploadError: string
+      cvInvalidType: string
+      cvTooLarge: string
+      coverLetterLabel: string
+      coverLetterPlaceholder: string
+      coverLetterHint: string
+      coverLetterCounter: string
+      coverLetterTooLong: string
+      submit: string
+      submitting: string
+      submitError: string
+      jobNotApplicableError: string
+      cvNotFoundError: string
+      submitSuccessTitle: string
+      submitSuccessDescription: string
+      duplicateTitle: string
+      duplicateDescription: string
+      viewApplications: string
+      parseStatuses: {
+        NOT_PARSED: string
+        PARSING: string
+        PARSED: string
+        FAILED: string
+      }
+    }
   }
   sections: {
     description: string
@@ -586,6 +637,7 @@ export type CompanyDetailTranslations = {
   snapshot: {
     openJobs: string
     size: string
+    founded: string
     responseTime: string
     location: string
   }
@@ -1485,6 +1537,10 @@ export type RecruiterSettingsTranslations = {
     fullNamePlaceholder: string
     emailLabel: string
     emailHint: string
+    contactEmailLabel: string
+    contactEmailPlaceholder: string
+    contactEmailHint: string
+    contactEmailUnavailableHint: string
     phoneLabel: string
     phonePlaceholder: string
     phoneHint: string
@@ -1506,6 +1562,8 @@ export type RecruiterSettingsTranslations = {
       fullNameMinLength: string
       fullNameMaxLength: string
       phoneMaxLength: string
+      contactEmailInvalid: string
+      contactEmailMaxLength: string
     }
   }
   language: {
@@ -1674,6 +1732,163 @@ export type CandidateSettingsTranslations = {
   }
 }
 
+export type RecruiterCompanyTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    kicker: string
+    companyLabel: string
+  }
+  form: {
+    storyTitle: string
+    storyDescription: string
+    descriptionLabel: string
+    descriptionPlaceholder: string
+    descriptionHint: string
+    missionLabel: string
+    missionPlaceholder: string
+    missionHint: string
+    cultureLabel: string
+    culturePlaceholder: string
+    cultureHint: string
+    highlightsTitle: string
+    highlightsDescription: string
+    valuesLabel: string
+    valuesPlaceholder: string
+    valuesHint: string
+    perksLabel: string
+    perksPlaceholder: string
+    perksHint: string
+    factsTitle: string
+    factsDescription: string
+    industryLabel: string
+    industryPlaceholder: string
+    industryHint: string
+    sizeLabel: string
+    sizePlaceholder: string
+    sizeHint: string
+    foundedYearLabel: string
+    foundedYearPlaceholder: string
+    foundedYearHint: string
+    contactTitle: string
+    contactDescription: string
+    logoTitle: string
+    logoDescription: string
+    logoAction: string
+    logoReplace: string
+    logoSelected: string
+    logoHint: string
+    logoInvalidType: string
+    logoTooLarge: string
+    heroImageUrlLabel: string
+    heroImageUrlPlaceholder: string
+    heroImageUrlHint: string
+    websiteLabel: string
+    websitePlaceholder: string
+    websiteHint: string
+    contactEmailLabel: string
+    contactEmailPlaceholder: string
+    contactEmailHint: string
+    addressLabel: string
+    addressPlaceholder: string
+    addressHint: string
+    save: string
+    saving: string
+    reset: string
+    noChanges: string
+    saveSuccess: string
+    saveError: string
+    readOnlyHint: string
+    validation: {
+      addressMaxLength: string
+      contactEmailInvalid: string
+      contactEmailMaxLength: string
+      cultureMaxLength: string
+      descriptionMaxLength: string
+      foundedYearInvalid: string
+      heroImageUrlInvalid: string
+      heroImageUrlMaxLength: string
+      industryMaxLength: string
+      missionMaxLength: string
+      perksItemMaxLength: string
+      perksMaxItems: string
+      sizeMaxLength: string
+      valuesItemMaxLength: string
+      valuesMaxItems: string
+      websiteInvalid: string
+      websiteMaxLength: string
+    }
+  }
+  preview: {
+    title: string
+    description: string
+    factsLabel: string
+    industryLabel: string
+    heroImageFallback: string
+    industryFallback: string
+    sizeLabel: string
+    sizeFallback: string
+    foundedYearLabel: string
+    foundedYearFallback: string
+    aboutLabel: string
+    missionLabel: string
+    cultureLabel: string
+    contactLabel: string
+    valuesLabel: string
+    perksLabel: string
+    emptyDescription: string
+    emptyMission: string
+    emptyCulture: string
+    emptyContact: string
+    emptyValues: string
+    emptyPerks: string
+    openReview: string
+    reviewHint: string
+  }
+  review: {
+    kicker: string
+    title: string
+    description: string
+    closeLabel: string
+    factsLabel: string
+    heroImageFallback: string
+    websiteLabel: string
+    contactEmailLabel: string
+    addressLabel: string
+    websiteFallback: string
+    contactEmailFallback: string
+    addressFallback: string
+    missionLabel: string
+    cultureLabel: string
+    valuesLabel: string
+    perksLabel: string
+    contactLabel: string
+    emptyDescription: string
+    emptyMission: string
+    emptyCulture: string
+    emptyValues: string
+    emptyPerks: string
+  }
+  statuses: {
+    NO_COMPANY: string
+    PENDING: string
+    APPROVED: string
+    REJECTED: string
+    SUSPENDED: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    noCompanyKicker: string
+    noCompanyTitle: string
+    noCompanyDescription: string
+    noCompanyAction: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -1691,6 +1906,7 @@ export type Translations = {
     recruiterJobCreate: RecruiterJobCreateTranslations
     recruiterJobs: RecruiterJobsTranslations
     recruiterHome: RecruiterHomeTranslations
+    recruiterCompany: RecruiterCompanyTranslations
     recruiterSettings: RecruiterSettingsTranslations
     recruiterVerification: RecruiterVerificationTranslations
     register: RegisterTranslations

@@ -45,13 +45,16 @@ export function mapCompanyDetail(
   const openJobs = openJobsRaw.map((job) => mapJobToCard(job, locale, jobLabels))
 
   return {
-    // Generic copy fills legacy facts that the public endpoint does not expose yet.
+    // Generic copy fills legacy/sample facts when the public endpoint omits them.
     ...fallback,
     // Real data from the public company endpoint wins where available.
     name: profile.name,
     description: cleanOptionalString(profile.description) ?? fallback.description,
+    founded: profile.foundedYear ? String(profile.foundedYear) : fallback.founded,
+    industry: cleanOptionalString(profile.industry) ?? fallback.industry,
     website: cleanOptionalString(profile.website) ?? '',
     location: cleanOptionalString(profile.address) ?? fallback.location,
+    size: cleanOptionalString(profile.size) ?? fallback.size,
     mission: cleanOptionalString(profile.mission),
     culture: cleanOptionalString(profile.culture),
     values: cleanList(profile.values),
@@ -62,7 +65,7 @@ export function mapCompanyDetail(
     logo: {
       alt: `${profile.name} logo`,
       fallbackText: initials(profile.name),
-      src: profile.logo ?? '',
+      src: profile.logoUrl ?? profile.logo ?? '',
       tone: pickTone(profile.id || profile.name),
     },
     openJobs,

@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-07-27",
+    "macrostructure": "Workbench",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral-cobalt",
+    "vibe": "normal recruiter company profile editor",
+    "enrichment": "none",
+    "brief": "Replace drag-and-drop recruiter company designer with a normal public profile editor"
+  },
+  {
     "date": "2026-07-24",
     "macrostructure": "Narrative Workflow",
     "theme": "Nexhire Home",

@@ -17,6 +17,7 @@ export const companyDetail: CompanyDetailTranslations = {
   snapshot: {
     openJobs: 'Open roles',
     size: 'Team size',
+    founded: 'Founded',
     responseTime: 'Response',
     location: 'Office',
   },

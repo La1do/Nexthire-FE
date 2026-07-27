@@ -365,10 +365,6 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .recruiter-settings-form__grid > :last-child {
-    grid-column: 1 / -1;
-  }
-
   .recruiter-settings-account-meta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

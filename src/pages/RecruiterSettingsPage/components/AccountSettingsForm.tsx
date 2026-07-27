@@ -7,19 +7,23 @@ import type { RecruiterSettingsTranslations } from '../../../i18n/types'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { authService } from '../../../services/auth.service'
 import type { AuthProfile } from '../../../services/auth.service'
+import { companyService } from '../../../services/company.service'
+import type { CompanyResponse } from '../../../types/company.types'
 import { Button } from '../../_components'
 
 type AccountFormValues = {
   fullName: string
   phone: string
+  contactEmail: string
 }
 
 type AccountSettingsFormProps = {
+  company: CompanyResponse | null
   companyName?: string | null
   error?: string
   loading: boolean
   onRetry: () => void
-  onSaved: (profile: AuthProfile) => void
+  onSaved: (profile: AuthProfile, company: CompanyResponse | null) => void
   profile: AuthProfile | null
   translations: RecruiterSettingsTranslations['account']
 }
@@ -64,6 +68,7 @@ function AccountLoading({ label }: { label: string }) {
 }
 
 export function AccountSettingsForm({
+  company,
   companyName,
   error,
   loading,
@@ -83,11 +88,18 @@ export function AccountSettingsForm({
       phone: z.string()
         .trim()
         .max(30, translations.validation.phoneMaxLength),
+      contactEmail: z.string()
+        .trim()
+        .max(255, translations.validation.contactEmailMaxLength)
+        .refine(
+          (value) => value.length === 0 || z.string().email().safeParse(value).success,
+          translations.validation.contactEmailInvalid,
+        ),
     }),
     [translations.validation],
   )
   const {
-    formState: { errors, isDirty, isSubmitting },
+    formState: { dirtyFields, errors, isDirty, isSubmitting },
     handleSubmit,
     register,
     reset,
@@ -95,6 +107,7 @@ export function AccountSettingsForm({
     defaultValues: {
       fullName: profile?.fullName ?? '',
       phone: profile?.phone ?? '',
+      contactEmail: company?.contactEmail ?? '',
     },
     mode: 'onBlur',
     resolver: zodResolver(schema),
@@ -108,24 +121,38 @@ export function AccountSettingsForm({
     reset({
       fullName: profile.fullName ?? '',
       phone: profile.phone ?? '',
+      contactEmail: company?.contactEmail ?? '',
     })
-  }, [profile, reset])
+  }, [company?.contactEmail, profile, reset])
 
   const handleSave = handleSubmit(async (values) => {
+    if (!profile) return
     setSubmitMessage(null)
 
     try {
-      const updatedProfile = await authService.updateMe({
-        fullName: values.fullName.trim(),
-        phone: values.phone.trim() || null,
-      })
+      const shouldUpdateAccount = dirtyFields.fullName || dirtyFields.phone
+      const shouldUpdateCompany = Boolean(company && dirtyFields.contactEmail)
+      const [updatedProfile, updatedCompany] = await Promise.all([
+        shouldUpdateAccount
+          ? authService.updateMe({
+              fullName: values.fullName.trim(),
+              phone: values.phone.trim() || null,
+            })
+          : Promise.resolve(profile),
+        shouldUpdateCompany && company
+          ? companyService.updateCompany(company.id, {
+              contactEmail: values.contactEmail.trim() || null,
+            })
+          : Promise.resolve(company),
+      ])
 
       reset({
         fullName: updatedProfile.fullName ?? '',
         phone: updatedProfile.phone ?? '',
+        contactEmail: updatedCompany?.contactEmail ?? '',
       })
       setSubmitMessage({ tone: 'success', text: translations.saveSuccess })
-      onSaved(updatedProfile)
+      onSaved(updatedProfile, updatedCompany)
     } catch (submitError) {
       setSubmitMessage({
         tone: 'error',
@@ -181,6 +208,17 @@ export function AccountSettingsForm({
               readOnly
               type="email"
               value={profile.email}
+            />
+            <AccountField
+              autoComplete="email"
+              disabled={!company}
+              error={errors.contactEmail?.message}
+              helper={company ? translations.contactEmailHint : translations.contactEmailUnavailableHint}
+              id="settings-contact-email"
+              label={translations.contactEmailLabel}
+              placeholder={translations.contactEmailPlaceholder}
+              type="email"
+              {...register('contactEmail')}
             />
           </div>
 

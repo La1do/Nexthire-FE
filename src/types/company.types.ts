@@ -7,8 +7,12 @@ export type PublicCompanyProfile = {
   id: string
   name: string
   logo: string | null
+  logoUrl?: string | null
   logoDocumentId: string | null
   description: string | null
+  industry?: string | null
+  size?: string | null
+  foundedYear?: number | null
   website: string | null
   address: string | null
   mission: string | null
@@ -66,6 +70,7 @@ export type CreateCompanyPayload = {
   perks?: string[]
   heroImageUrl?: string | null
   website?: string | null
+  contactEmail?: string | null
   address?: string | null
   taxCode: string
 }

@@ -17,6 +17,7 @@ export const companyDetail: CompanyDetailTranslations = {
   snapshot: {
     openJobs: 'Vị trí mở',
     size: 'Quy mô',
+    founded: 'Thành lập',
     responseTime: 'Phản hồi',
     location: 'Văn phòng',
   },

@@ -1,6 +1,13 @@
 import type { ApiMeta } from './job.types'
 
 export type ApplicationStatus = 'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'WITHDRAWN' | 'CANCELLED'
+export type ApplicationMatchLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'EXCELLENT'
+
+export type CreateApplicationPayload = {
+  jobId: string
+  candidateCvId: string
+  coverLetter?: string | null
+}
 
 export type ApplicationResponse = {
   id: string
@@ -27,6 +34,8 @@ export type ApplicationResponse = {
   coverLetter: string | null
   status: ApplicationStatus
   statusNote: string | null
+  matchScore: number | null
+  matchLevel: ApplicationMatchLevel | null
   submittedAt: string
   withdrawnAt: string | null
   decidedAt: string | null

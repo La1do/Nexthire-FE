@@ -4,12 +4,17 @@ import type {
   ApplicationResponse,
   CandidateApplicationListResponse,
   CandidateApplicationQuery,
+  CreateApplicationPayload,
   RecruiterApplicationListResponse,
   RecruiterApplicationQuery,
 } from '../types/application.types'
 import type { Envelope } from '../types/job.types'
 
 export const applicationService = {
+  async apply(payload: CreateApplicationPayload) {
+    const response = await apiClient.post<Envelope<ApplicationResponse>>('/applications', payload)
+    return response.data.data
+  },
   async getMyApplications(params?: CandidateApplicationQuery) {
     const response = await apiClient.get<CandidateApplicationListResponse>('/applications/me', { params })
     return response.data

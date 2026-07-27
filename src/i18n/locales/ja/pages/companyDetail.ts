@@ -17,6 +17,7 @@ export const companyDetail: CompanyDetailTranslations = {
   snapshot: {
     openJobs: '募集職種',
     size: '従業員規模',
+    founded: '設立',
     responseTime: '返信目安',
     location: '拠点',
   },

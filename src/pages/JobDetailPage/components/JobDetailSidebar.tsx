@@ -1,5 +1,6 @@
 import type { JobDetailTranslations } from '../../../i18n/types'
 import type { JobDetailView } from '../types'
+import { ApplyJobButton } from './ApplyJobButton'
 import { SaveJobButton } from './SaveJobButton'
 
 type JobDetailSidebarProps = {
@@ -32,7 +33,7 @@ export function JobDetailSidebar({ content, job }: JobDetailSidebarProps) {
         </dl>
 
         <div className="job-detail-actions">
-          <a href="/login">{content.apply}</a>
+          <ApplyJobButton content={content} job={job} />
           <SaveJobButton content={content} jobId={job.id} />
         </div>
       </div>
