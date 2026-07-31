@@ -14,6 +14,17 @@ export const companyDetail: CompanyDetailTranslations = {
     follow: 'Follow company',
     websiteLabel: 'Open company website',
   },
+  follow: {
+    follow: 'Follow company',
+    following: 'Following',
+    loading: 'Working...',
+    loginRequired: 'Please log in to follow this company.',
+    candidateOnly: 'Only candidate accounts can follow companies.',
+    followSuccess: 'Company followed.',
+    unfollowSuccess: 'Company unfollowed.',
+    unavailable: 'This company is not available to follow yet.',
+    error: 'Could not update follow status right now.',
+  },
   snapshot: {
     openJobs: 'Open roles',
     size: 'Team size',

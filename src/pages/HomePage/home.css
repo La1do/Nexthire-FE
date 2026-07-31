@@ -1659,6 +1659,77 @@ body {
   }
 }
 
+@media (min-width: 100rem) {
+  .main-shell:has(.home-page) .main-container {
+    max-width: min(92rem, calc(100vw - 7rem));
+  }
+
+  .main-shell:has(.home-page) > main {
+    padding-block: var(--space-2xl) var(--space-3xl);
+  }
+
+  .home-page {
+    gap: var(--space-3xl);
+  }
+
+  .home-page .home-hero {
+    border-radius: calc(var(--radius-home-md) + var(--space-2xs));
+  }
+
+  .home-hero-stage {
+    gap: var(--space-3xl);
+    grid-template-columns: minmax(0, 1.04fr) minmax(24rem, 0.96fr);
+    min-height: 44rem;
+    padding: var(--space-xl) var(--space-2xl) var(--space-2xl);
+  }
+
+  .home-hero-copy {
+    gap: var(--space-lg);
+    max-width: 46rem;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(var(--text-3xl), 4vw, var(--text-display));
+    max-width: 15ch;
+  }
+
+  .home-hero-description {
+    font-size: 1.0625rem;
+    max-width: 60ch;
+  }
+
+  .home-hero-media {
+    width: 50%;
+  }
+
+  .home-page .home-hero::before {
+    inset-inline-start: 50%;
+  }
+
+  .home-hero-board {
+    max-width: 30rem;
+    padding: var(--space-xl);
+  }
+
+  .home-hero-search .job-search-fields {
+    grid-template-columns: minmax(0, 1.15fr) minmax(11rem, 0.72fr) auto;
+  }
+
+  .home-employer-card {
+    flex-basis: 24rem;
+  }
+
+  .home-discovery-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(20rem, 0.72fr);
+  }
+
+  .home-section-heading h2,
+  .home-simple-title,
+  .home-newsletter h2 {
+    font-size: var(--text-2xl);
+  }
+}
+
 @media (max-width: 39.999rem), (pointer: coarse) {
   .home-page :where(a, button, input),
   .job-search-chip,

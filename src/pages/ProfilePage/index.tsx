@@ -7,8 +7,10 @@ import { Button } from '../_components'
 import { BasicInfoForm } from './components/BasicInfoForm'
 import { CompletionPanel } from './components/CompletionPanel'
 import { ContactInfoForm } from './components/ContactInfoForm'
+import { CvParseReviewDialog } from './components/CvParseReviewDialog'
 import { EducationEditor } from './components/EducationEditor'
 import { ExperienceEditor } from './components/ExperienceEditor'
+import { ProfileCvAssistCard } from './components/ProfileCvAssistCard'
 import { ProfileHero } from './components/ProfileHero'
 import { ResumeLinksForm } from './components/ResumeLinksForm'
 import { SkillsEditor } from './components/SkillsEditor'
@@ -20,6 +22,14 @@ import {
 } from './utils/candidateProfileApi'
 import { createCandidateProfile } from './utils/profileData'
 import { getProfileCompletion } from './utils/profileCompletion'
+import {
+  isProfileSparse,
+  mergeCvParsedProfileBySelection,
+  mergeParsedProfileWithLocalChanges,
+  mergeProfileWithLocalChanges,
+  shouldReviewParsedProfile,
+  type CvParseReviewGroupId,
+} from './utils/cvParseReview'
 
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}`
@@ -35,46 +45,6 @@ const CV_MIME_TYPES = new Set([
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ])
-
-const EDITABLE_PROFILE_FIELDS = [
-  'avatarDocumentId',
-  'avatarUrl',
-  'contactEmail',
-  'education',
-  'experiences',
-  'headline',
-  'linkedin',
-  'location',
-  'name',
-  'phone',
-  'portfolio',
-  'skills',
-  'summary',
-] as const
-
-function mergeParsedProfileWithLocalChanges(
-  parsedProfile: CandidateProfile,
-  parseBaseline: CandidateProfile | null,
-  currentProfile: CandidateProfile,
-) {
-  if (!parseBaseline) {
-    return { hasLocalChanges: false, profile: parsedProfile }
-  }
-
-  const mergedProfile = { ...parsedProfile }
-  let hasLocalChanges = false
-
-  EDITABLE_PROFILE_FIELDS.forEach((field) => {
-    if (JSON.stringify(currentProfile[field]) === JSON.stringify(parseBaseline[field])) {
-      return
-    }
-
-    hasLocalChanges = true
-    Object.assign(mergedProfile, { [field]: currentProfile[field] })
-  })
-
-  return { hasLocalChanges, profile: mergedProfile }
-}
 
 function isSupportedAvatarFile(file: File) {
   const extension = file.name.split('.').pop()?.toLowerCase()
@@ -98,12 +68,22 @@ export function ProfilePage() {
   const [isUploadingAvatar, setUploadingAvatar] = useState(false)
   const [isUploadingResume, setUploadingResume] = useState(false)
   const [isStartingCvParse, setStartingCvParse] = useState(false)
+  const [isCvAssistDismissed, setCvAssistDismissed] = useState(false)
+  const [isApplyingCvParseReview, setApplyingCvParseReview] = useState(false)
   const [cvMessage, setCvMessage] = useState<string | undefined>(undefined)
   const [cvError, setCvError] = useState<string | undefined>(undefined)
+  const [cvParseReview, setCvParseReview] = useState<{
+    baselineProfile: CandidateProfile
+    parsedProfile: CandidateProfile
+  } | null>(null)
   const cvParseBaselineRef = useRef<CandidateProfile | null>(null)
   const profileRef = useRef(profile)
   profileRef.current = profile
   const completion = useMemo(() => getProfileCompletion(profile), [profile])
+  const isSparseProfile = useMemo(() => isProfileSparse(profile), [profile])
+  const shouldShowCvAssist =
+    !isCvAssistDismissed &&
+    (isSparseProfile || !profile.defaultCvId || profile.defaultCvParseStatus !== 'PARSED')
 
   const loadProfile = useCallback(async () => {
     setLoading(true)
@@ -114,6 +94,7 @@ export function ProfilePage() {
       setProfile(createProfileFromCandidateAggregate(data))
       setHasUnsavedChanges(false)
       cvParseBaselineRef.current = null
+      setCvParseReview(null)
     } catch (error) {
       setLoadError(getApiErrorEnvelope(error)?.error.message ?? content.states.errorDescription)
     } finally {
@@ -124,6 +105,71 @@ export function ProfilePage() {
   useEffect(() => {
     void loadProfile()
   }, [loadProfile])
+
+  const handleParsedProfileReady = useCallback(
+    (parsedProfile: CandidateProfile) => {
+      const baselineProfile = mergeProfileWithLocalChanges(
+        cvParseBaselineRef.current,
+        profileRef.current,
+      )
+
+      if (shouldReviewParsedProfile(baselineProfile, parsedProfile)) {
+        const currentWithParsedCv = mergeCvParsedProfileBySelection(
+          baselineProfile,
+          parsedProfile,
+          [],
+        )
+        profileRef.current = currentWithParsedCv
+        setProfile(currentWithParsedCv)
+        setHasUnsavedChanges(false)
+        setCvParseReview({ baselineProfile, parsedProfile })
+        setCvError(undefined)
+        setCvMessage(content.sections.resume.parseReviewReady)
+        toast.info(content.sections.resume.parseReviewReady)
+        cvParseBaselineRef.current = null
+
+        void (async () => {
+          setSaving(true)
+
+          try {
+            const data = await candidateService.updateMyProfile(
+              createCandidateUpdatePayload(currentWithParsedCv),
+            )
+            const restoredProfile = createProfileFromCandidateAggregate(data)
+            profileRef.current = restoredProfile
+            setProfile(restoredProfile)
+            setHasUnsavedChanges(false)
+            refreshUser()
+          } catch (error) {
+            const message = getApiErrorEnvelope(error)?.error.message ?? content.states.saveError
+            setSaveError(message)
+            toast.error(message)
+          } finally {
+            setSaving(false)
+          }
+        })()
+
+        return
+      }
+
+      const result = mergeParsedProfileWithLocalChanges(
+        parsedProfile,
+        cvParseBaselineRef.current,
+        profileRef.current,
+      )
+      profileRef.current = result.profile
+      setProfile(result.profile)
+      setHasUnsavedChanges(result.hasLocalChanges)
+      setCvError(undefined)
+      const message = result.hasLocalChanges
+        ? content.sections.resume.parseSuccessWithLocalChanges
+        : content.sections.resume.parseSuccess
+      setCvMessage(message)
+      toast.success(message)
+      cvParseBaselineRef.current = null
+    },
+    [content.sections.resume, content.states.saveError, refreshUser, toast],
+  )
 
   useEffect(() => {
     if (!profile.defaultCvId || profile.defaultCvParseStatus !== 'PARSING') {
@@ -149,20 +195,7 @@ export function ProfilePage() {
         const nextProfile = createProfileFromCandidateAggregate(data)
 
         if (nextProfile.defaultCvParseStatus === 'PARSED') {
-          const result = mergeParsedProfileWithLocalChanges(
-            nextProfile,
-            cvParseBaselineRef.current,
-            profileRef.current,
-          )
-          setProfile(result.profile)
-          setHasUnsavedChanges(result.hasLocalChanges)
-          setCvError(undefined)
-          setCvMessage(
-            result.hasLocalChanges
-              ? content.sections.resume.parseSuccessWithLocalChanges
-              : content.sections.resume.parseSuccess,
-          )
-          cvParseBaselineRef.current = null
+          handleParsedProfileReady(nextProfile)
           return
         }
 
@@ -173,6 +206,7 @@ export function ProfilePage() {
           }))
           setCvMessage(undefined)
           setCvError(content.sections.resume.parseFailed)
+          toast.error(content.sections.resume.parseFailed)
           cvParseBaselineRef.current = null
           return
         }
@@ -182,6 +216,7 @@ export function ProfilePage() {
 
       if (pollCount >= CV_PARSE_MAX_POLLS) {
         setCvError(content.sections.resume.parseTimeout)
+        toast.warning(content.sections.resume.parseTimeout)
         cvParseBaselineRef.current = null
         return
       }
@@ -197,7 +232,7 @@ export function ProfilePage() {
         window.clearTimeout(timeoutId)
       }
     }
-  }, [content.sections.resume, profile.defaultCvId, profile.defaultCvParseStatus])
+  }, [content.sections.resume, handleParsedProfileReady, profile.defaultCvId, profile.defaultCvParseStatus, toast])
 
   function updateProfile(patch: Partial<CandidateProfile>) {
     setProfile((currentProfile) => ({ ...currentProfile, ...patch }))
@@ -272,18 +307,23 @@ export function ProfilePage() {
     updateProfile({ education: profile.education.filter((item) => item.id !== id) })
   }
 
-  async function saveProfile(): Promise<CandidateProfile | null> {
+  async function saveProfile(
+    profileToSave: CandidateProfile = profile,
+    options: { showToast?: boolean; successMessage?: string } = {},
+  ): Promise<CandidateProfile | null> {
     setSaving(true)
     setSaveError(undefined)
 
     try {
-      const data = await candidateService.updateMyProfile(createCandidateUpdatePayload(profile))
+      const data = await candidateService.updateMyProfile(createCandidateUpdatePayload(profileToSave))
       const nextProfile = createProfileFromCandidateAggregate(data)
       profileRef.current = nextProfile
       setProfile(nextProfile)
       setHasUnsavedChanges(false)
       refreshUser()
-      toast.success(content.states.saveSuccess)
+      if (options.showToast !== false) {
+        toast.success(options.successMessage ?? content.states.saveSuccess)
+      }
       return nextProfile
     } catch (error) {
       const message = getApiErrorEnvelope(error)?.error.message ?? content.states.saveError
@@ -336,12 +376,14 @@ export function ProfilePage() {
     if (!CV_MIME_TYPES.has(file.type) && !hasSupportedExtension) {
       setCvMessage(undefined)
       setCvError(content.sections.resume.invalidFileType)
+      toast.error(content.sections.resume.invalidFileType)
       return
     }
 
     if (file.size > CV_MAX_SIZE_BYTES) {
       setCvMessage(undefined)
       setCvError(content.sections.resume.fileTooLarge)
+      toast.error(content.sections.resume.fileTooLarge)
       return
     }
 
@@ -349,6 +391,8 @@ export function ProfilePage() {
     setSaveError(undefined)
     setCvError(undefined)
     setCvMessage(undefined)
+    setCvParseReview(null)
+    setCvAssistDismissed(false)
 
     try {
       const cv = await candidateService.uploadCv(file, {
@@ -364,8 +408,11 @@ export function ProfilePage() {
       }))
       cvParseBaselineRef.current = null
       setCvMessage(content.sections.resume.uploadSuccess)
+      toast.success(content.sections.resume.uploadSuccess)
     } catch (error) {
-      setCvError(getApiErrorEnvelope(error)?.error.message ?? content.states.cvUploadError)
+      const message = getApiErrorEnvelope(error)?.error.message ?? content.states.cvUploadError
+      setCvError(message)
+      toast.error(message)
     } finally {
       setUploadingResume(false)
     }
@@ -380,15 +427,18 @@ export function ProfilePage() {
     setSaveError(undefined)
     setCvError(undefined)
     setCvMessage(undefined)
+    setCvParseReview(null)
+    setCvAssistDismissed(false)
 
     try {
       let parseBaseline = profile
 
       if (hasUnsavedChanges) {
-        const savedProfile = await saveProfile()
+        const savedProfile = await saveProfile(profile, { showToast: false })
 
         if (!savedProfile) {
           setCvError(content.sections.resume.saveBeforeParseError)
+          toast.error(content.sections.resume.saveBeforeParseError)
           return
         }
 
@@ -406,27 +456,19 @@ export function ProfilePage() {
       if (cv.parseStatus === 'FAILED') {
         cvParseBaselineRef.current = null
         setCvError(content.sections.resume.parseFailed)
+        toast.error(content.sections.resume.parseFailed)
       } else if (cv.parseStatus === 'PARSED') {
         const data = await candidateService.getMyProfile()
-        const result = mergeParsedProfileWithLocalChanges(
-          createProfileFromCandidateAggregate(data),
-          cvParseBaselineRef.current,
-          profileRef.current,
-        )
-        setProfile(result.profile)
-        setHasUnsavedChanges(result.hasLocalChanges)
-        setCvMessage(
-          result.hasLocalChanges
-            ? content.sections.resume.parseSuccessWithLocalChanges
-            : content.sections.resume.parseSuccess,
-        )
-        cvParseBaselineRef.current = null
+        handleParsedProfileReady(createProfileFromCandidateAggregate(data))
       } else {
         setCvMessage(content.sections.resume.parseStarted)
+        toast.info(content.sections.resume.parseStarted)
       }
     } catch (error) {
       cvParseBaselineRef.current = null
-      setCvError(getApiErrorEnvelope(error)?.error.message ?? content.sections.resume.parseFailed)
+      const message = getApiErrorEnvelope(error)?.error.message ?? content.sections.resume.parseFailed
+      setCvError(message)
+      toast.error(message)
     } finally {
       setStartingCvParse(false)
     }
@@ -442,6 +484,8 @@ export function ProfilePage() {
     setSaveError(undefined)
     setCvError(undefined)
     setCvMessage(undefined)
+    setCvParseReview(null)
+    setCvAssistDismissed(false)
 
     try {
       await candidateService.deleteCv(profile.defaultCvId)
@@ -457,6 +501,47 @@ export function ProfilePage() {
     } finally {
       setUploadingResume(false)
     }
+  }
+
+  async function applyCvParseReview(selectedGroups: CvParseReviewGroupId[]) {
+    if (!cvParseReview || isApplyingCvParseReview) {
+      return
+    }
+
+    setApplyingCvParseReview(true)
+    setCvError(undefined)
+
+    try {
+      const finalProfile = mergeCvParsedProfileBySelection(
+        cvParseReview.baselineProfile,
+        cvParseReview.parsedProfile,
+        selectedGroups,
+      )
+      const savedProfile = await saveProfile(finalProfile, {
+        successMessage:
+          selectedGroups.length > 0
+            ? content.cvParseReview.applySuccess
+            : content.cvParseReview.keepSuccess,
+      })
+
+      if (!savedProfile) {
+        return
+      }
+
+      setCvParseReview(null)
+      setCvAssistDismissed(true)
+      setCvMessage(
+        selectedGroups.length > 0
+          ? content.sections.resume.parseReviewApplied
+          : content.sections.resume.parseReviewKept,
+      )
+    } finally {
+      setApplyingCvParseReview(false)
+    }
+  }
+
+  function keepCurrentCvParseReview() {
+    void applyCvParseReview([])
   }
 
   if (isLoading) {
@@ -491,6 +576,19 @@ export function ProfilePage() {
         onAvatarUpload={(file) => void uploadAvatar(file)}
         profile={profile}
       />
+
+      {shouldShowCvAssist ? (
+        <ProfileCvAssistCard
+          content={content.cvAssist}
+          isProfileSparse={isSparseProfile}
+          isStartingCvParse={isStartingCvParse}
+          isUploadingResume={isUploadingResume}
+          onDismiss={() => setCvAssistDismissed(true)}
+          onParseResume={() => void parseResume()}
+          onUploadResume={(file) => void uploadResume(file)}
+          profile={profile}
+        />
+      ) : null}
 
       {saveError ? <p className="profile-api-message profile-api-message-error">{saveError}</p> : null}
 
@@ -548,6 +646,17 @@ export function ProfilePage() {
         isSaving={isSaving}
         onSave={() => void saveProfile()}
       />
+
+      {cvParseReview ? (
+        <CvParseReviewDialog
+          baselineProfile={cvParseReview.baselineProfile}
+          content={content.cvParseReview}
+          isApplying={isApplyingCvParseReview || isSaving}
+          onApply={(selectedGroups) => void applyCvParseReview(selectedGroups)}
+          onKeepCurrent={keepCurrentCvParseReview}
+          parsedProfile={cvParseReview.parsedProfile}
+        />
+      ) : null}
     </div>
   )
 }

@@ -1,12 +1,14 @@
 import type { CompanyDetailTranslations } from '../../../i18n/types'
+import type { CompanyFollowControl } from '../hooks/useCompanyFollow'
 import type { CompanyDetailViewModel } from '../utils/companyDetailMappers'
 
 type CompanySidebarProps = {
   company: CompanyDetailViewModel
   content: CompanyDetailTranslations
+  followControl: CompanyFollowControl
 }
 
-export function CompanySidebar({ company, content }: CompanySidebarProps) {
+export function CompanySidebar({ company, content, followControl }: CompanySidebarProps) {
   const facts = [
     {
       label: content.sidebar.website,
@@ -42,7 +44,21 @@ export function CompanySidebar({ company, content }: CompanySidebarProps) {
 
         <div className="company-detail-side-actions">
           <a href="#company-open-jobs">{content.sidebar.viewJobs}</a>
-          <button type="button">{content.sidebar.follow}</button>
+          {followControl.canRender ? (
+            <button
+              aria-pressed={followControl.isFollowed}
+              className="company-detail-follow-button"
+              data-follow-state={
+                followControl.isBusy ? 'loading' : followControl.isFollowed ? 'followed' : 'default'
+              }
+              disabled={followControl.isBusy}
+              onClick={followControl.onToggle}
+              title={followControl.title}
+              type="button"
+            >
+              {followControl.label}
+            </button>
+          ) : null}
         </div>
       </div>
 
