@@ -3172,9 +3172,10 @@ select {
 
 .company-detail-hero-actions button,
 .company-detail-side-actions button {
-  background: var(--color-surface-card);
-  border: 1px solid var(--color-brand-soft);
-  color: var(--color-brand-solid);
+  background: var(--color-brand-solid);
+  border: 1px solid var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
 }
 
 .company-detail-follow-button[data-follow-state="followed"] {
