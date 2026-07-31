@@ -3178,9 +3178,9 @@ select {
 }
 
 .company-detail-follow-button[data-follow-state="followed"] {
-  background: var(--color-brand-solid);
-  border-color: var(--color-brand-solid);
-  box-shadow: var(--shadow-brand);
+  background: #10b981;
+  border-color: #10b981;
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.24);
   color: var(--color-text-inverse);
 }
 
