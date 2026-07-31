@@ -393,11 +393,18 @@ export type AdminUsersTranslations = {
     totalLabel: string
     candidatesLabel: string
     employersLabel: string
+    adminsLabel: string
     lockedLabel: string
     totalDelta: string
     candidatesDelta: string
     employersDelta: string
     lockedDelta: string
+  }
+  statusOverview: {
+    title: string
+    description: string
+    totalLabel: string
+    distributionLabel: string
   }
   filters: {
     queryLabel: string
@@ -422,9 +429,10 @@ export type AdminUsersTranslations = {
       actions: string
     }
     actionView: string
-    actionLock: string
-    actionUnlock: string
-    actionDelete: string
+    actionSuspend: string
+    actionBan: string
+    actionArchive: string
+    actionRestore: string
   }
   pagination: {
     prev: string
@@ -432,14 +440,64 @@ export type AdminUsersTranslations = {
     pageOf: string
   }
   roles: {
+    ADMIN: string
+    RECRUITER: string
+    CANDIDATE: string
     admin: string
-    employer: string
+    recruiter: string
     candidate: string
   }
   statuses: {
+    ACTIVE: string
+    INACTIVE: string
+    SUSPENDED: string
+    LOCKED: string
+    BANNED: string
+    ARCHIVED: string
     active: string
+    inactive: string
+    suspended: string
     locked: string
-    invited: string
+    banned: string
+    archived: string
+  }
+  actions: {
+    title: string
+    description: string
+    reasonLabel: string
+    reasonPlaceholder: string
+    reasonRequired: string
+    suspend: string
+    ban: string
+    archive: string
+    restore: string
+    confirm: string
+    cancel: string
+  }
+  feedback: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    actionSuccess: string
+    actionError: string
+    cannotManageSelf: string
+  }
+  detail: {
+    routeLabel: string
+    back: string
+    title: string
+    contact: string
+    lifecycle: string
+    company: string
+    noCompany: string
+    emailVerified: string
+    emailUnverified: string
+    statusReason: string
+    changedAt: string
+    createdAt: string
+    updatedAt: string
+    lastLoginAt: string
   }
   currentUser: {
     name: string

@@ -28,7 +28,7 @@ const initialValues: LoginFormValues = {
 function getLoginRedirect(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/home'
   if (role === 'RECRUITER') return '/recruiter'
-  return '/admin/users'
+  return '/admin/dashboard'
 }
 
 export function LoginForm({ apiErrors, authFeedback, role, translations }: LoginFormProps) {

@@ -35,6 +35,21 @@ export function useAdminUserGrowth(query: AdminDashboardGrowthQuery = {}) {
   })
 }
 
+export function useAdminGrowthSeries(query: AdminDashboardGrowthQuery = {}) {
+  return useQuery({
+    queryKey: adminQueryKeys.dashboardGrowthSeries(query),
+    queryFn: () => adminDashboardService.getGrowthSeries(query),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useAdminUsersOverview() {
+  return useQuery({
+    queryKey: [...adminQueryKeys.users(), 'overview'],
+    queryFn: adminUsersService.getOverview,
+  })
+}
+
 export function useAdminCompanyGrowth(query: AdminDashboardGrowthQuery = {}) {
   return useQuery({
     queryKey: adminQueryKeys.dashboardCompanyGrowth(query),

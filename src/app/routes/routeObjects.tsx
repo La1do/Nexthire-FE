@@ -7,6 +7,7 @@ import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
 import { AdminDashboardPage } from '../../pages/AdminDashboardPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
+import { AdminUserDetailPage } from '../../pages/AdminUserDetailPage'
 import { ComingSoonPage } from '../../pages/ComingSoonPage'
 import { CareerGuidePage } from '../../pages/CareerGuidePage'
 import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
@@ -293,6 +294,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/admin/users',
       label: pages.adminUsers.routeLabel,
       element: <AdminUsersPage />,
+      layout: AdminLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/admin/users/:id',
+      label: pages.adminUsers.detail.routeLabel,
+      element: <AdminUserDetailPage />,
       layout: AdminLayout,
       access: adminAccess,
     },

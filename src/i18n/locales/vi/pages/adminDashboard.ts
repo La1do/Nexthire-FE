@@ -13,7 +13,7 @@ export const adminDashboard: AdminDashboardTranslations = {
   growth: {
     title: 'Tăng trưởng người dùng',
     description: 'Theo dõi quy mô người dùng và số tài khoản mới theo thời gian.',
-    demoBadge: 'Dữ liệu minh họa',
+    demoBadge: 'Dữ liệu trực tiếp',
     comparisonLabel: 'So với kỳ trước',
     unavailableLabel: 'Chưa thể so sánh',
     totalUsers: 'Tổng người dùng',

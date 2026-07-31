@@ -16,6 +16,7 @@ type SelectFieldProps = {
   icon?: ReactNode
   id?: string
   label: string
+  menuClassName?: string
   name?: string
   onChange?: (value: string) => void
   options: ReadonlyArray<SelectFieldOption>
@@ -46,6 +47,7 @@ export function SelectField({
   icon,
   id,
   label,
+  menuClassName = '',
   name,
   onChange,
   options,
@@ -63,6 +65,7 @@ export function SelectField({
   const [menuPlacement, setMenuPlacement] = useState<MenuPlacement>('bottom')
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
+  const positionFrameRef = useRef<number | null>(null)
   const currentValue = isControlled ? value : internalValue
   const selectedIndex = Math.max(
     options.findIndex((option) => option.value === currentValue),
@@ -97,17 +100,34 @@ export function SelectField({
     const spaceAbove = rect.top - VIEWPORT_GUTTER
     const shouldOpenUp = spaceBelow < 220 && spaceAbove > spaceBelow
     const maxHeight = Math.min(MENU_MAX_HEIGHT, Math.max(160, shouldOpenUp ? spaceAbove : spaceBelow))
+    const menuHeight = Math.min(menuRef.current?.scrollHeight ?? maxHeight, maxHeight)
     const top = shouldOpenUp
-      ? Math.max(VIEWPORT_GUTTER, rect.top - maxHeight - MENU_GAP)
+      ? Math.max(VIEWPORT_GUTTER, rect.top - menuHeight - MENU_GAP)
       : Math.min(window.innerHeight - VIEWPORT_GUTTER, rect.bottom + MENU_GAP)
+    const width = Math.min(rect.width, window.innerWidth - VIEWPORT_GUTTER * 2)
+    const left = Math.min(
+      Math.max(VIEWPORT_GUTTER, rect.left),
+      window.innerWidth - width - VIEWPORT_GUTTER,
+    )
 
     setMenuPlacement(shouldOpenUp ? 'top' : 'bottom')
     setMenuStyle({
-      left: rect.left,
+      left,
       maxHeight,
-      minWidth: rect.width,
+      minWidth: width,
       top,
-      width: rect.width,
+      width,
+    })
+  }
+
+  function scheduleMenuPositionUpdate() {
+    if (positionFrameRef.current !== null) {
+      cancelAnimationFrame(positionFrameRef.current)
+    }
+
+    positionFrameRef.current = requestAnimationFrame(() => {
+      positionFrameRef.current = null
+      updateMenuPosition()
     })
   }
 
@@ -118,7 +138,7 @@ export function SelectField({
 
     setActiveIndex(nextIndex)
     setOpen(true)
-    requestAnimationFrame(updateMenuPosition)
+    scheduleMenuPositionUpdate()
   }
 
   function closeMenu() {
@@ -214,22 +234,39 @@ export function SelectField({
       closeMenu()
     }
 
-    function handleWindowChange() {
-      updateMenuPosition()
+    document.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('resize', scheduleMenuPositionUpdate)
+    window.addEventListener('scroll', scheduleMenuPositionUpdate, true)
+    window.visualViewport?.addEventListener('resize', scheduleMenuPositionUpdate)
+    window.visualViewport?.addEventListener('scroll', scheduleMenuPositionUpdate)
+
+    const resizeObserver = typeof ResizeObserver === 'undefined'
+      ? null
+      : new ResizeObserver(scheduleMenuPositionUpdate)
+    if (buttonRef.current) {
+      resizeObserver?.observe(buttonRef.current)
     }
 
-    document.addEventListener('pointerdown', handlePointerDown)
-    window.addEventListener('resize', handleWindowChange)
+    scheduleMenuPositionUpdate()
+
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown)
-      window.removeEventListener('resize', handleWindowChange)
+      window.removeEventListener('resize', scheduleMenuPositionUpdate)
+      window.removeEventListener('scroll', scheduleMenuPositionUpdate, true)
+      window.visualViewport?.removeEventListener('resize', scheduleMenuPositionUpdate)
+      window.visualViewport?.removeEventListener('scroll', scheduleMenuPositionUpdate)
+      resizeObserver?.disconnect()
+      if (positionFrameRef.current !== null) {
+        cancelAnimationFrame(positionFrameRef.current)
+        positionFrameRef.current = null
+      }
     }
   }, [isOpen])
 
   const menu = isOpen && typeof document !== 'undefined'
     ? createPortal(
         <div
-          className={`select-field__menu select-field__menu--${menuPlacement}`}
+          className={`select-field__menu select-field__menu--${menuPlacement}${menuClassName ? ` ${menuClassName}` : ''}`}
           id={menuId}
           ref={menuRef}
           role="listbox"

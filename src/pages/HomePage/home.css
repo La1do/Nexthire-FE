@@ -231,7 +231,7 @@ body {
   animation: home-hero-settle var(--dur-short) var(--ease-out) var(--dur-home-delay-2) both;
   background: var(--color-home-surface);
   border: var(--rule-home-hair) solid var(--color-home-rule);
-  border-block-start: var(--space-2xs) solid var(--color-home-accent);
+  border-block-start: var(--space-2xs) solid var(--color-workbench-accent);
   border-radius: var(--radius-home-md);
   box-shadow: var(--shadow-home-panel);
   color: var(--color-home-ink);
@@ -353,7 +353,7 @@ body {
 }
 
 .home-spotlight-arrow {
-  color: var(--color-home-accent);
+  color: var(--color-workbench-accent);
   font-size: var(--text-md);
 }
 
@@ -373,7 +373,7 @@ body {
 }
 
 .home-hero-board-footer > span {
-  color: var(--color-home-accent);
+  color: var(--color-workbench-accent);
   font-size: var(--text-lg);
 }
 
@@ -543,7 +543,7 @@ body {
 }
 
 .job-search-submit:focus-visible {
-  outline-color: var(--color-home-accent);
+  outline-color: var(--color-workbench-accent);
 }
 
 .job-search-submit:hover,
@@ -582,8 +582,8 @@ body {
 }
 
 .job-search-chip.is-active {
-  background: var(--color-home-accent-soft);
-  border-color: var(--color-home-accent);
+  background: var(--color-workbench-accent-soft);
+  border-color: var(--color-workbench-accent);
   color: var(--color-home-focus);
 }
 
@@ -657,8 +657,8 @@ body {
 }
 
 .home-employer-card {
-  --employer-card-signal: var(--color-home-accent);
-  --employer-card-surface: var(--color-home-accent-soft);
+  --employer-card-signal: var(--color-workbench-accent);
+  --employer-card-surface: var(--color-workbench-accent-soft);
   align-items: center;
   background: color-mix(in oklch, var(--employer-card-surface) 68%, var(--color-home-surface));
   border: var(--rule-home-hair) solid color-mix(in oklch, var(--employer-card-signal) 32%, var(--color-home-rule));
@@ -953,7 +953,7 @@ body {
 }
 
 .job-company-link:hover {
-  color: var(--color-home-accent);
+  color: var(--color-workbench-accent);
 }
 
 .job-meta-row {
@@ -1066,8 +1066,8 @@ body {
 }
 
 .home-category-card[data-icon="all"] {
-  --category-color: var(--color-home-accent);
-  --category-surface: var(--color-home-accent-soft);
+  --category-color: var(--color-workbench-accent);
+  --category-surface: var(--color-workbench-accent-soft);
 }
 
 .home-category-card[data-icon="briefcase"] {
@@ -1076,8 +1076,8 @@ body {
 }
 
 .home-category-card[data-icon="code"] {
-  --category-color: var(--color-home-accent);
-  --category-surface: var(--color-home-accent-soft);
+  --category-color: var(--color-workbench-accent);
+  --category-surface: var(--color-workbench-accent-soft);
 }
 
 .home-category-card[data-icon="data"] {
@@ -1338,11 +1338,11 @@ body {
 }
 
 .home-newsletter-form input:focus-visible {
-  outline-color: var(--color-home-accent);
+  outline-color: var(--color-workbench-accent);
 }
 
 .home-newsletter-form input:invalid:not(:placeholder-shown) {
-  border-color: var(--color-home-accent);
+  border-color: var(--color-workbench-accent);
 }
 
 .home-newsletter-form label small {
@@ -1353,8 +1353,8 @@ body {
 }
 
 .home-newsletter-form button {
-  background: var(--color-home-accent);
-  border: var(--rule-home-hair) solid var(--color-home-accent);
+  background: var(--color-workbench-accent);
+  border: var(--rule-home-hair) solid var(--color-workbench-accent);
   border-radius: var(--radius-home-sm);
   color: var(--color-home-accent-ink);
   cursor: pointer;
@@ -1468,7 +1468,7 @@ body {
   }
 
   .job-search-chip.is-active:hover {
-    border-color: var(--color-home-accent);
+    border-color: var(--color-workbench-accent);
     color: var(--color-home-focus);
   }
 }
@@ -1743,9 +1743,9 @@ body {
 }
 
 .home-page .job-save-overlay.save-job-bookmark-saved {
-  background: var(--color-home-accent-soft);
-  border-color: var(--color-home-accent);
-  color: var(--color-home-accent);
+  background: var(--color-workbench-accent-soft);
+  border-color: var(--color-workbench-accent);
+  color: var(--color-workbench-accent);
 }
 
 .home-page .job-save-overlay.save-job-bookmark-error {
@@ -1760,8 +1760,8 @@ body {
 }
 
 .home-page .job-save-overlay.save-job-bookmark-saved:hover {
-  background: var(--color-home-accent-soft);
-  color: var(--color-home-accent);
+  background: var(--color-workbench-accent-soft);
+  color: var(--color-workbench-accent);
 }
 
 .home-page .job-save-overlay.save-job-bookmark:focus-visible {

@@ -11,7 +11,7 @@ function LoginPageForRole({ role }: { role: LoginPageRole }) {
   const roleContent = login[role]
   const switchHref = role === 'candidate' ? '/recruiter/login' : '/login'
   const registerHref =
-    role === 'recruiter' ? '/recruiter/register' : role === 'candidate' ? '/register' : '/admin/users'
+    role === 'recruiter' ? '/recruiter/register' : role === 'candidate' ? '/register' : '/admin/dashboard'
   const apiRoleByPageRole: Record<LoginPageRole, AuthApiRole> = {
     admin: 'ADMIN',
     candidate: 'CANDIDATE',

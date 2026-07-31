@@ -2,6 +2,7 @@ import { apiClient } from '../../lib/api'
 import type {
   AdminCompanyGrowthSummary,
   AdminDashboardGrowthQuery,
+  AdminDashboardGrowthSeries,
   AdminDashboardOverview,
   AdminJobGrowthSummary,
   AdminUserGrowthSummary,
@@ -19,6 +20,14 @@ export const adminDashboardService = {
   async getUserGrowth(query: AdminDashboardGrowthQuery = {}) {
     const response = await apiClient.get<ApiSuccessEnvelope<AdminUserGrowthSummary>>(
       '/admin/dashboard/users/growth',
+      { params: query },
+    )
+    return response.data.data
+  },
+
+  async getGrowthSeries(query: AdminDashboardGrowthQuery = {}) {
+    const response = await apiClient.get<ApiSuccessEnvelope<AdminDashboardGrowthSeries>>(
+      '/admin/dashboard/growth',
       { params: query },
     )
     return response.data.data

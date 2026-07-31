@@ -13,7 +13,7 @@ export const adminDashboard: AdminDashboardTranslations = {
   growth: {
     title: 'ユーザー増加',
     description: 'ユーザー総数と新規アカウントの推移を確認します。',
-    demoBadge: 'デモデータ',
+    demoBadge: 'ライブデータ',
     comparisonLabel: '前期比',
     unavailableLabel: 'まだ比較できません',
     totalUsers: 'ユーザー総数',

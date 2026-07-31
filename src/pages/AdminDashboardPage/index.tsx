@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import {
   useAdminDashboardOverview,
+  useAdminGrowthSeries,
   useAdminUserGrowth,
 } from '../../hooks/useAdminQueries'
 import { useTranslations } from '../../i18n'
@@ -12,8 +13,8 @@ import { DashboardDonutChart } from './components/DashboardDonutChart'
 import type { DashboardChartItem } from './components/DashboardDistributionChart'
 import { DashboardGrowthChart } from './components/DashboardGrowthChart'
 import { DashboardReviewQueues } from './components/DashboardReviewQueues'
-import { adminUserGrowthFixture } from './utils/adminUserGrowthFixture'
 import { getAdminGrowthDateRange } from './utils/adminDashboardDateRange'
+import { toAdminUserGrowthChartData } from './utils/adminUserGrowthSeries'
 
 function MetricIcon({ type }: { type: 'users' | 'companies' | 'jobs' | 'revisions' }) {
   if (type === 'companies') {
@@ -58,6 +59,15 @@ export function AdminDashboardPage() {
     [growthPeriod],
   )
   const growthQuery = useAdminUserGrowth(growthRange)
+  const growthSeriesQuery = useAdminGrowthSeries({ ...growthRange, bucket: 'day' })
+  const growthChartData = useMemo(
+    () =>
+      toAdminUserGrowthChartData(
+        growthSeriesQuery.data?.users.points ?? [],
+        overview?.users.total ?? 0,
+      ),
+    [growthSeriesQuery.data, overview?.users.total],
+  )
 
   const charts = useMemo(() => {
     if (!overview) {
@@ -133,16 +143,22 @@ export function AdminDashboardPage() {
         </div>
         <button
           className="admin-dashboard-refresh"
-          disabled={overviewQuery.isFetching || growthQuery.isFetching}
+          disabled={
+            overviewQuery.isFetching || growthQuery.isFetching || growthSeriesQuery.isFetching
+          }
           onClick={() =>
-            void Promise.all([overviewQuery.refetch(), growthQuery.refetch()])
+            void Promise.all([
+              overviewQuery.refetch(),
+              growthQuery.refetch(),
+              growthSeriesQuery.refetch(),
+            ])
           }
           type="button"
         >
           <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path d="M20 7v5h-5M4 17v-5h5M6.1 9a7 7 0 0 1 11.2-2L20 9M4 15l2.7 2A7 7 0 0 0 18 15" />
           </svg>
-          {overviewQuery.isFetching || growthQuery.isFetching
+          {overviewQuery.isFetching || growthQuery.isFetching || growthSeriesQuery.isFetching
             ? content.header.refreshing
             : content.header.refresh}
         </button>
@@ -176,12 +192,22 @@ export function AdminDashboardPage() {
       </div>
 
       <div className="admin-dashboard-focus-grid">
-        <DashboardGrowthChart
+        {growthSeriesQuery.isError ? (
+          <section className="admin-dashboard-panel admin-dashboard-growth">
+            <ErrorState
+              actionLabel={content.error.retry}
+              description={content.error.description}
+              onRetry={() => void growthSeriesQuery.refetch()}
+              title={content.error.title}
+            />
+          </section>
+        ) : (
+          <DashboardGrowthChart
           badgeLabel={content.growth.demoBadge}
           comparisonLabel={content.growth.comparisonLabel}
-          data={adminUserGrowthFixture[growthPeriod]}
+          data={growthChartData}
           description={content.growth.description}
-          growthLoading={growthQuery.isPending}
+          growthLoading={growthQuery.isPending || growthSeriesQuery.isPending}
           growthPercent={
             growthQuery.isError
               ? undefined
@@ -194,7 +220,8 @@ export function AdminDashboardPage() {
           title={content.growth.title}
           totalUsersLabel={content.growth.totalUsers}
           unavailableLabel={content.growth.unavailableLabel}
-        />
+          />
+        )}
         <DashboardReviewQueues
           actionLabel={content.queues.action}
           description={content.queues.description}

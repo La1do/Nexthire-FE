@@ -12,6 +12,8 @@ export const adminQueryKeys = {
   dashboard: () => [...adminQueryKeys.all, 'dashboard'] as const,
   dashboardOverview: () => [...adminQueryKeys.dashboard(), 'overview'] as const,
   dashboardGrowth: () => [...adminQueryKeys.dashboard(), 'growth'] as const,
+  dashboardGrowthSeries: (query: AdminDashboardGrowthQuery) =>
+    [...adminQueryKeys.dashboardGrowth(), 'series', query] as const,
   dashboardUserGrowth: (query: AdminDashboardGrowthQuery) =>
     [...adminQueryKeys.dashboardGrowth(), 'users', query] as const,
   dashboardCompanyGrowth: (query: AdminDashboardGrowthQuery) =>

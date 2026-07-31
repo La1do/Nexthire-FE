@@ -258,9 +258,34 @@ export type AdminUserGrowthPoint = {
   newUsers: number
 }
 
+export type AdminUserGrowthSeriesPoint = {
+  bucket: string
+  registeredUsers: number
+  candidates: number
+  recruiters: number
+  admins: number
+  bannedUsers: number
+  suspendedUsers: number
+  archivedUsers: number
+}
+
+export type AdminUserGrowthSeries = {
+  from: string
+  to: string
+  bucket: 'day' | 'month'
+  points: AdminUserGrowthSeriesPoint[]
+}
+
+export type AdminDashboardGrowthSeries = {
+  users: AdminUserGrowthSeries
+  companies: { from: string; to: string; bucket: 'day' | 'month'; points: unknown[] }
+  jobs: { from: string; to: string; bucket: 'day' | 'month'; points: unknown[] }
+}
+
 export type AdminDashboardGrowthQuery = {
   from?: string
   to?: string
+  bucket?: 'day' | 'month'
 }
 
 export type AdminGrowthMetric = {

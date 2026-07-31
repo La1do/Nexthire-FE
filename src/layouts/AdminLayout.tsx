@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { SearchIcon } from '../assets/icons/admin'
 import { useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
@@ -189,6 +190,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
 
           <label className="admin-topbar__search">
             <span className="sr-only">{content.topbar.searchPlaceholder}</span>
+            <SearchIcon />
             <input
               aria-label={content.topbar.searchPlaceholder}
               placeholder={content.topbar.searchPlaceholder}
