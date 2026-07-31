@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
@@ -42,18 +42,20 @@ function getInitials(name: string) {
 
 export function AdminLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()
   const content = pages.adminUsers
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
-  const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
-  const pageTitle = currentPath.startsWith('/admin/companies/')
-    ? pages.adminCompanies.detail.pageTitle
-    : currentPath.startsWith('/admin/companies')
-      ? pages.adminCompanies.pageTitle
-      : content.pageTitle
+  const { pathname: currentPath } = useLocation()
+  const pageTitle = currentPath.startsWith('/admin/dashboard')
+    ? pages.adminDashboard.pageTitle
+    : currentPath.startsWith('/admin/companies/')
+      ? pages.adminCompanies.detail.pageTitle
+      : currentPath.startsWith('/admin/companies')
+        ? pages.adminCompanies.pageTitle
+        : content.pageTitle
 
   useEffect(() => {
     if (!isSidebarOpen) {
@@ -100,44 +102,61 @@ export function AdminLayout({ children }: PropsWithChildren) {
         id="admin-sidebar"
       >
         <div className="admin-sidebar__inner">
-          <a className="admin-sidebar__brand" href="/">
+          <Link className="admin-sidebar__brand" to="/">
             <BrandMark compact label={common.brandName} />
-          </a>
+          </Link>
 
           <nav aria-label="Admin sections" className="admin-sidebar__nav">
-            <a className="admin-sidebar__link" href="/admin/dashboard" tabIndex={sidebarOpen ? undefined : -1}>
-              {content.sidebar.dashboard}
-            </a>
-            <a
-              aria-current={currentPath.startsWith('/admin/users') ? 'page' : undefined}
-              className={`admin-sidebar__link${currentPath.startsWith('/admin/users') ? ' is-active' : ''}`}
-              href="/admin/users"
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
               tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/dashboard"
+            >
+              {content.sidebar.dashboard}
+            </NavLink>
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+              tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/users"
             >
               {content.sidebar.users}
-            </a>
-            <a
-              aria-current={currentPath.startsWith('/admin/companies') ? 'page' : undefined}
-              className={`admin-sidebar__link${currentPath.startsWith('/admin/companies') ? ' is-active' : ''}`}
-              href="/admin/companies"
+            </NavLink>
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
               tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/companies"
             >
               {common.navigation.companies}
-            </a>
-            <a className="admin-sidebar__link" href="/admin/jobs" tabIndex={sidebarOpen ? undefined : -1}>
+            </NavLink>
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+              tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/jobs"
+            >
               {content.sidebar.jobs}
-            </a>
-            <a className="admin-sidebar__link" href="/admin/settings" tabIndex={sidebarOpen ? undefined : -1}>
+            </NavLink>
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+              tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/settings"
+            >
               {content.sidebar.settings}
-            </a>
+            </NavLink>
           </nav>
 
           <div className="admin-sidebar__user" tabIndex={sidebarOpen ? undefined : -1}>
-            <span aria-hidden="true" className="admin-sidebar__user-avatar">{getInitials(content.currentUser.name)}</span>
+            <span aria-hidden="true" className="admin-sidebar__user-avatar">
+              {getInitials(user?.fullName || user?.email || content.currentUser.name)}
+            </span>
             <div>
-              <p className="admin-sidebar__user-name">{content.currentUser.name}</p>
-              <p className="admin-sidebar__user-email">{content.currentUser.email}</p>
-              <p className="admin-sidebar__user-role">{content.currentUser.role}</p>
+              <p className="admin-sidebar__user-name">{user?.fullName || content.currentUser.name}</p>
+              <p className="admin-sidebar__user-email">{user?.email || content.currentUser.email}</p>
+              <p className="admin-sidebar__user-role">{user?.role || content.currentUser.role}</p>
             </div>
           </div>
 

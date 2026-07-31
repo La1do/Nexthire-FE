@@ -7,6 +7,7 @@ import {
 } from '../services/admin'
 import type {
   AdminCompanyListQuery,
+  AdminDashboardGrowthQuery,
   AdminJobListQuery,
   AdminJobReviewQueueQuery,
   AdminReasonPayload,
@@ -23,6 +24,30 @@ export function useAdminDashboardOverview() {
   return useQuery({
     queryKey: adminQueryKeys.dashboardOverview(),
     queryFn: adminDashboardService.getOverview,
+  })
+}
+
+export function useAdminUserGrowth(query: AdminDashboardGrowthQuery = {}) {
+  return useQuery({
+    queryKey: adminQueryKeys.dashboardUserGrowth(query),
+    queryFn: () => adminDashboardService.getUserGrowth(query),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useAdminCompanyGrowth(query: AdminDashboardGrowthQuery = {}) {
+  return useQuery({
+    queryKey: adminQueryKeys.dashboardCompanyGrowth(query),
+    queryFn: () => adminDashboardService.getCompanyGrowth(query),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useAdminJobGrowth(query: AdminDashboardGrowthQuery = {}) {
+  return useQuery({
+    queryKey: adminQueryKeys.dashboardJobGrowth(query),
+    queryFn: () => adminDashboardService.getJobGrowth(query),
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -104,6 +129,7 @@ function useInvalidateAdminUsers() {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.userLists() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.userDetail(userId) }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardOverview() }),
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardGrowth() }),
     ])
   }
 }
@@ -126,6 +152,7 @@ function useInvalidateAdminCompanies(companyId?: string) {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.companyLists() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.pendingCompanies() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardOverview() }),
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardGrowth() }),
       ...(companyId
         ? [
             queryClient.invalidateQueries({
@@ -175,6 +202,7 @@ function useInvalidateAdminJobs() {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.jobReviewQueues() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.revisionReviewQueues() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardOverview() }),
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardGrowth() }),
     ])
   }
 }

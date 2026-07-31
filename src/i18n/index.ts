@@ -1,4 +1,5 @@
 import { common as enCommon } from './locales/en/common'
+import { adminDashboard as enAdminDashboard } from './locales/en/pages/adminDashboard'
 import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
 import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
 import { candidateSettings as enCandidateSettings } from './locales/en/pages/candidateSettings'
@@ -19,6 +20,7 @@ import { recruiterVerification as enRecruiterVerification } from './locales/en/p
 import { register as enRegister } from './locales/en/pages/register'
 import { search as enSearch } from './locales/en/pages/search'
 import { common as jaCommon } from './locales/ja/common'
+import { adminDashboard as jaAdminDashboard } from './locales/ja/pages/adminDashboard'
 import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
 import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
 import { candidateSettings as jaCandidateSettings } from './locales/ja/pages/candidateSettings'
@@ -39,6 +41,7 @@ import { recruiterVerification as jaRecruiterVerification } from './locales/ja/p
 import { register as jaRegister } from './locales/ja/pages/register'
 import { search as jaSearch } from './locales/ja/pages/search'
 import { common as viCommon } from './locales/vi/common'
+import { adminDashboard as viAdminDashboard } from './locales/vi/pages/adminDashboard'
 import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
 import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
 import { candidateSettings as viCandidateSettings } from './locales/vi/pages/candidateSettings'
@@ -67,6 +70,7 @@ export const translations = {
   en: {
     common: enCommon,
     pages: {
+      adminDashboard: enAdminDashboard,
       adminCompanies: enAdminCompanies,
       adminUsers: enAdminUsers,
       candidateSettings: enCandidateSettings,
@@ -91,6 +95,7 @@ export const translations = {
   vi: {
     common: viCommon,
     pages: {
+      adminDashboard: viAdminDashboard,
       adminCompanies: viAdminCompanies,
       adminUsers: viAdminUsers,
       candidateSettings: viCandidateSettings,
@@ -115,6 +120,7 @@ export const translations = {
   ja: {
     common: jaCommon,
     pages: {
+      adminDashboard: jaAdminDashboard,
       adminCompanies: jaAdminCompanies,
       adminUsers: jaAdminUsers,
       candidateSettings: jaCandidateSettings,

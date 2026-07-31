@@ -1,5 +1,6 @@
 import type {
   AdminCompanyListQuery,
+  AdminDashboardGrowthQuery,
   AdminJobListQuery,
   AdminJobReviewQueueQuery,
   AdminRevisionReviewQueueQuery,
@@ -10,6 +11,13 @@ export const adminQueryKeys = {
   all: ['admin'] as const,
   dashboard: () => [...adminQueryKeys.all, 'dashboard'] as const,
   dashboardOverview: () => [...adminQueryKeys.dashboard(), 'overview'] as const,
+  dashboardGrowth: () => [...adminQueryKeys.dashboard(), 'growth'] as const,
+  dashboardUserGrowth: (query: AdminDashboardGrowthQuery) =>
+    [...adminQueryKeys.dashboardGrowth(), 'users', query] as const,
+  dashboardCompanyGrowth: (query: AdminDashboardGrowthQuery) =>
+    [...adminQueryKeys.dashboardGrowth(), 'companies', query] as const,
+  dashboardJobGrowth: (query: AdminDashboardGrowthQuery) =>
+    [...adminQueryKeys.dashboardGrowth(), 'jobs', query] as const,
   users: () => [...adminQueryKeys.all, 'users'] as const,
   userLists: () => [...adminQueryKeys.users(), 'list'] as const,
   userList: (query: AdminUserListQuery) => [...adminQueryKeys.userLists(), query] as const,

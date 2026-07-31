@@ -250,6 +250,85 @@ export type AdminDashboardOverview = {
   jobs: AdminJobOverview
 }
 
+export type AdminUserGrowthPeriod = '7d' | '30d' | '90d'
+
+export type AdminUserGrowthPoint = {
+  date: string
+  totalUsers: number
+  newUsers: number
+}
+
+export type AdminDashboardGrowthQuery = {
+  from?: string
+  to?: string
+}
+
+export type AdminGrowthMetric = {
+  previousValue: number
+  change: number
+  percent: number | null
+}
+
+export type AdminGrowthRange = {
+  from: string
+  to: string
+  comparisonFrom: string
+  comparisonTo: string
+}
+
+export type AdminUserGrowthSummary = AdminGrowthRange & {
+  registeredUsers: number
+  candidates: number
+  recruiters: number
+  admins: number
+  bannedUsers: number
+  suspendedUsers: number
+  archivedUsers: number
+  growth: {
+    registeredUsers: AdminGrowthMetric
+    candidates: AdminGrowthMetric
+    recruiters: AdminGrowthMetric
+    admins: AdminGrowthMetric
+    bannedUsers: AdminGrowthMetric
+    suspendedUsers: AdminGrowthMetric
+    archivedUsers: AdminGrowthMetric
+  }
+}
+
+export type AdminCompanyGrowthSummary = AdminGrowthRange & {
+  registeredCompanies: number
+  approvedCompanies: number
+  rejectedCompanies: number
+  suspendedCompanies: number
+  reviewRequestedAgain: number
+  growth: {
+    registeredCompanies: AdminGrowthMetric
+    approvedCompanies: AdminGrowthMetric
+    rejectedCompanies: AdminGrowthMetric
+    suspendedCompanies: AdminGrowthMetric
+    reviewRequestedAgain: AdminGrowthMetric
+  }
+}
+
+export type AdminJobGrowthSummary = AdminGrowthRange & {
+  createdJobs: number
+  publishedJobs: number
+  unpublishedJobs: number
+  closedJobs: number
+  reviewedJobs: number
+  rejectedJobs: number
+  applicationsSubmitted: number
+  growth: {
+    createdJobs: AdminGrowthMetric
+    publishedJobs: AdminGrowthMetric
+    unpublishedJobs: AdminGrowthMetric
+    closedJobs: AdminGrowthMetric
+    reviewedJobs: AdminGrowthMetric
+    rejectedJobs: AdminGrowthMetric
+    applicationsSubmitted: AdminGrowthMetric
+  }
+}
+
 export type AdminJobFormSnapshot = {
   title: string
   description: string

@@ -5,6 +5,7 @@ import { MainLayout } from '../../layouts/MainLayout'
 import { RecruiterLayout } from '../../layouts/RecruiterLayout'
 import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
+import { AdminDashboardPage } from '../../pages/AdminDashboardPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
 import { ComingSoonPage } from '../../pages/ComingSoonPage'
 import { CareerGuidePage } from '../../pages/CareerGuidePage'
@@ -269,8 +270,8 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     },
     {
       path: '/admin/dashboard',
-      label: comingSoon.pages.adminDashboard.title,
-      element: <ComingSoonPage pageKey="adminDashboard" />,
+      label: pages.adminDashboard.routeLabel,
+      element: <AdminDashboardPage />,
       layout: AdminLayout,
       access: adminAccess,
     },

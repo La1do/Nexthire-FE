@@ -1969,9 +1969,77 @@ export type RecruiterCompanyTranslations = {
   }
 }
 
+export type AdminDashboardTranslations = {
+  routeLabel: string
+  pageTitle: string
+  subtitle: string
+  loadingLabel: string
+  header: {
+    lastUpdated: string
+    refresh: string
+    refreshing: string
+  }
+  growth: {
+    title: string
+    description: string
+    demoBadge: string
+    comparisonLabel: string
+    unavailableLabel: string
+    totalUsers: string
+    newUsers: string
+    periods: {
+      '7d': string
+      '30d': string
+      '90d': string
+    }
+  }
+  error: {
+    title: string
+    description: string
+    retry: string
+  }
+  empty: {
+    title: string
+    description: string
+  }
+  stats: {
+    users: string
+    pendingCompanies: string
+    pendingJobs: string
+    pendingRevisions: string
+  }
+  charts: {
+    usersByRole: string
+    companiesByStatus: string
+    jobsByStatus: string
+    noData: string
+  }
+  roles: {
+    CANDIDATE: string
+    RECRUITER: string
+    ADMIN: string
+  }
+  companyStatuses: {
+    PENDING: string
+    APPROVED: string
+    REJECTED: string
+    SUSPENDED: string
+  }
+  jobStatuses: Record<string, string>
+  queues: {
+    title: string
+    description: string
+    companies: string
+    jobs: string
+    revisions: string
+    action: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
+    adminDashboard: AdminDashboardTranslations
     adminCompanies: AdminCompaniesTranslations
     adminUsers: AdminUsersTranslations
     comingSoon: ComingSoonTranslations
