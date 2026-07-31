@@ -3172,8 +3172,21 @@ select {
 
 .company-detail-hero-actions button,
 .company-detail-side-actions button {
-  background: var(--color-surface-muted);
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-brand-soft);
   color: var(--color-brand-solid);
+}
+
+.company-detail-follow-button[data-follow-state="followed"] {
+  background: var(--color-brand-solid);
+  border-color: var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+}
+
+.company-detail-follow-button[data-follow-state="loading"] {
+  cursor: wait;
+  opacity: 0.85;
 }
 
 .company-detail-hero-actions a:hover,
