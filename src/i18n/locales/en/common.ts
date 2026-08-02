@@ -1,5 +1,37 @@
 export const common = {
   brandName: 'NexHire',
+  job: {
+    workingType: {
+      ONSITE: 'On-site',
+      REMOTE: 'Remote',
+      HYBRID: 'Hybrid',
+    },
+    salaryNegotiable: 'Negotiable',
+    jobsCountSuffix: 'jobs',
+    rolesCountSuffix: 'roles',
+    postedJustNow: 'Posted just now',
+    postedPrefix: 'Posted ',
+    postedSuffix: '',
+  },
+  savedJobs: {
+    saving: 'Saving job',
+    removing: 'Removing saved job',
+    remove: 'Remove saved job',
+    saveSuccess: 'Job saved.',
+    removeSuccess: 'Job removed from saved jobs.',
+    saveError: 'Could not update saved jobs. Try again.',
+    candidateOnly: 'Only candidate accounts can save jobs.',
+  },
+  toast: {
+    regionLabel: 'Notifications',
+    closeLabel: 'Close notification',
+    statusLabels: {
+      success: 'Success',
+      error: 'Error',
+      warning: 'Heads up',
+      info: 'Info',
+    },
+  },
   apiErrors: {
     default: 'Something went wrong. Please try again.',
     byCode: {
@@ -10,9 +42,15 @@ export const common = {
       'COMMON.RATE_LIMITED': 'You are doing that too quickly. Please try again later.',
       'COMMON.INTERNAL_ERROR': 'The system is having trouble. Please try again later.',
       'AUTH.INVALID_CREDENTIALS': 'Email or password is incorrect.',
+      'AUTH.GOOGLE_TOKEN_INVALID': 'The Google sign-in token is invalid. Please try again.',
+      'AUTH.GOOGLE_EMAIL_NOT_VERIFIED': 'Your Google email is not verified.',
+      'AUTH.GOOGLE_LOGIN_NOT_CONFIGURED': 'Google sign-in has not been configured.',
       'AUTH.LOGIN_ROLE_NOT_ALLOWED': 'This account does not match the selected role.',
       'AUTH.ACCOUNT_TEMPORARILY_LOCKED': 'This account is temporarily locked.',
       'AUTH.EMAIL_ALREADY_REGISTERED': 'This email has already been registered.',
+      'AUTH.EMAIL_VERIFICATION_TOKEN_INVALID': 'The verification code is incorrect.',
+      'AUTH.EMAIL_VERIFICATION_TOKEN_EXPIRED': 'The verification code has expired.',
+      'AUTH.EMAIL_VERIFICATION_NOT_FOUND': 'No pending verification was found for this email.',
       'AUTH.REGISTRATION_ROLE_NOT_ALLOWED': 'This role cannot self-register.',
       'AUTH.ROLE_NOT_PROVISIONED': 'This role is not available yet.',
       'AUTH.CANDIDATE_ROLE_NOT_PROVISIONED': 'The candidate role is not available yet.',
@@ -35,6 +73,29 @@ export const common = {
     candidateRole: 'Candidate',
     recruiterRole: 'Recruiter',
     adminRole: 'Administrator',
+  },
+  authFeedback: {
+    loginSuccess: 'Signed in successfully.',
+    googleLoginSuccess: 'Signed in with Google.',
+    logoutSuccess: 'Signed out.',
+    registerSuccess: 'Account created. Check your email for the verification code.',
+    emailVerifiedSuccess: 'Email verified. Taking you into NexHire.',
+    passwordResetEmailSent: 'Password reset instructions sent.',
+    passwordResetVerified: 'Verification code accepted.',
+    passwordResetSuccess: 'Your new password has been saved.',
+  },
+  languageSwitcher: {
+    label: 'Change language',
+    options: {
+      vi: 'Tiếng Việt',
+      en: 'English',
+      ja: '日本語',
+    },
+    shortOptions: {
+      vi: 'VI',
+      en: 'EN',
+      ja: 'JA',
+    },
   },
   footer: {
     description: 'Connect with businesses through a modern, fast, and trustworthy hiring experience.',

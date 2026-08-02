@@ -1,13 +1,16 @@
 import type { SearchTranslations } from '../../../i18n/types'
+import { SelectField } from '../../_components'
+import type { SearchFieldOption } from '../hooks/useSearchJobs'
 import type { SearchQueryParams } from '../utils/searchParams'
 
 type SearchFilterPanelProps = {
   content: SearchTranslations['filters']
+  fieldOptions: ReadonlyArray<SearchFieldOption>
   locationOptions: ReadonlyArray<string>
   params: SearchQueryParams
 }
 
-export function SearchFilterPanel({ content, locationOptions, params }: SearchFilterPanelProps) {
+export function SearchFilterPanel({ content, fieldOptions, locationOptions, params }: SearchFilterPanelProps) {
   return (
     <aside className="search-filter-panel search-motion">
       <div className="search-filter-heading">
@@ -19,53 +22,45 @@ export function SearchFilterPanel({ content, locationOptions, params }: SearchFi
         <input name="keyword" type="hidden" value={params.keyword} />
         <input name="sort" type="hidden" value={params.sort} />
 
-        <label>
-          <span>{content.locationLabel}</span>
-          <select defaultValue={params.location} name="location">
-            <option value="">{content.allOption}</option>
-            {locationOptions.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectField
+          defaultValue={params.location}
+          label={content.locationLabel}
+          name="location"
+          options={[
+            { label: content.allOption, value: '' },
+            ...locationOptions.map((location) => ({ label: location, value: location })),
+          ]}
+        />
 
-        <label>
-          <span>{content.fieldLabel}</span>
-          <select defaultValue={params.field} name="field">
-            <option value="">{content.allOption}</option>
-            {content.fieldOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectField
+          defaultValue={params.field}
+          label={content.fieldLabel}
+          name="field"
+          options={[
+            { label: content.allOption, value: '' },
+            ...fieldOptions,
+          ]}
+        />
 
-        <label>
-          <span>{content.workModeLabel}</span>
-          <select defaultValue={params.workMode} name="workMode">
-            <option value="">{content.allOption}</option>
-            {content.workModeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectField
+          defaultValue={params.workMode}
+          label={content.workModeLabel}
+          name="workMode"
+          options={[
+            { label: content.allOption, value: '' },
+            ...content.workModeOptions,
+          ]}
+        />
 
-        <label>
-          <span>{content.salaryLabel}</span>
-          <select defaultValue={params.salary} name="salary">
-            <option value="">{content.allOption}</option>
-            {content.salaryOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectField
+          defaultValue={params.salary}
+          label={content.salaryLabel}
+          name="salary"
+          options={[
+            { label: content.allOption, value: '' },
+            ...content.salaryOptions,
+          ]}
+        />
 
         <div className="search-filter-actions">
           <a href="/search">{content.clear}</a>

@@ -5,10 +5,12 @@ import {
   getAuthUserDisplayName,
   getInitials,
   useAuth,
+  useToast,
 } from '../context'
 import type { AuthApiRole } from '../lib/auth/authRole'
 import type { AuthUser } from '../services/auth.service'
-import { getTranslations } from '../i18n'
+import { useTranslations } from '../i18n'
+import { BrandMark, LanguageSwitch } from '../pages/_components'
 
 function getRoleLabel(
   role: AuthApiRole,
@@ -31,7 +33,7 @@ function getUserMetaLabel(
 
 function getProfileHref(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/profile'
-  if (role === 'ADMIN') return '/admin/users'
+  if (role === 'ADMIN') return '/admin/dashboard'
   return '/recruiter'
 }
 
@@ -166,39 +168,43 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 }
 
 export function MainLayout({ children }: PropsWithChildren) {
-  const { common } = getTranslations()
+  const { common } = useTranslations()
   const { user, isAuthenticated, logout } = useAuth()
+  const toast = useToast()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    void logout()
-    navigate('/login')
+    void logout().then(() => {
+      toast.success(common.authFeedback.logoutSuccess)
+      navigate('/login')
+    })
   }
 
   return (
     <div className="main-shell min-h-screen text-[var(--color-text-primary)]">
       <header className="main-header">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-5 px-5 py-4">
+        <div className="main-container flex items-center justify-between gap-5 py-4">
           <a className="main-brand" href="/">
-            {common.brandName}
+            <BrandMark compact label={common.brandName} />
           </a>
           <nav className="main-nav">
-            <a href="/">
+            <a href="/search">
               {common.navigation.jobs}
             </a>
-            <a href="/">
+            <a href="/companies">
               {common.navigation.companies}
             </a>
-            <a href="/">
+            <a href="/career-guide">
               {common.navigation.guide}
             </a>
           </nav>
           <div className="main-header-actions">
+            <LanguageSwitch className="main-language-switch" compact />
             {isAuthenticated && user ? (
               <MainUserMenu labels={common.authUser} onLogout={handleLogout} user={user} />
             ) : (
               <>
-                <a className="main-employer-link" href="/">
+                <a className="main-employer-link" href="/recruiter/login">
                   {common.navigation.employerCta}
                 </a>
                 <a className="main-login-link" href="/login">
@@ -213,13 +219,13 @@ export function MainLayout({ children }: PropsWithChildren) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-5 py-10 md:py-16">{children}</main>
+      <main className="main-container py-10 md:py-16">{children}</main>
 
       <footer className="main-footer">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[1.2fr_2fr]">
+        <div className="main-container grid gap-10 py-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <a className="main-footer-brand" href="/">
-              {common.brandName}
+              <BrandMark compact label={common.brandName} />
             </a>
             <p className="main-footer-description mt-4 max-w-sm text-sm leading-6">{common.footer.description}</p>
           </div>
@@ -241,7 +247,7 @@ export function MainLayout({ children }: PropsWithChildren) {
           </div>
         </div>
         <div className="main-footer-bottom-border">
-          <div className="main-footer-bottom mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 text-xs">
+          <div className="main-footer-bottom main-container flex flex-wrap items-center justify-between gap-4 py-5 text-xs">
             <span className="main-legal-pill">{common.footer.legalLabel}</span>
             <span>{common.footer.copyright}</span>
           </div>

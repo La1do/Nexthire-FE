@@ -1,0 +1,19 @@
+{
+  "scannedAt": "2026-07-22",
+  "designSystem": null,
+  "fontStack": "Inter and system sans in src/styles/index.css",
+  "palette": "Hex and rgba custom properties in src/styles/index.css",
+  "motion": "Motion-cut project with CSS keyframes and no motion dependency",
+  "spacing": "Mixed rem values without a named project scale",
+  "framework": "React 19, Vite 8, Tailwind CSS 4",
+  "preserve": [
+    "Nexhire coral brand signal",
+    "Existing route ownership",
+    "Home API data and i18n"
+  ],
+  "introduce": [
+    "Ecosystem Index macrostructure",
+    "Named 4-point token scale",
+    "Purposeful motion and reduced-motion states"
+  ]
+}

@@ -1,19 +1,15 @@
-import type { HomeJobItem } from '../../../i18n/types'
-import { CompanyLogoMark } from '../../_components/CompanyLogoMark'
-import { createCompanyDetailHref, createJobDetailHref } from '../../_utils/jobRoutes'
+import { CompanyLogoMark, SaveJobBookmarkButton } from '../../_components'
+import { createCompanyDetailHrefById, createJobDetailHrefById } from '../../_utils/jobRoutes'
+import type { JobCardView } from '../types'
 
 type JobCardProps = {
-  job: HomeJobItem
-  saveLabel: string
+  job: JobCardView
+  labels: {
+    loginAriaLabel: string
+    saveAriaLabel: string
+    savedAriaLabel: string
+  }
   variant?: 'default' | 'compact'
-}
-
-function BookmarkIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z" />
-    </svg>
-  )
 }
 
 function CheckIcon() {
@@ -25,27 +21,29 @@ function CheckIcon() {
   )
 }
 
-export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
-  const classes = ['job-card', 'home-hover-card', variant === 'compact' ? 'job-card-compact' : ''].filter(Boolean).join(' ')
-  const companyHref = createCompanyDetailHref(job.company)
+export function JobCard({ job, labels, variant = 'default' }: JobCardProps) {
+  const classes = ['job-card', variant === 'compact' ? 'job-card-compact' : ''].filter(Boolean).join(' ')
+  const companyHref = createCompanyDetailHrefById(job.companyId)
 
   return (
     <article className={classes}>
-      <a aria-label={`${job.title} ${job.company}`} className="job-card-link-layer" href={createJobDetailHref(job)} />
+      <a aria-label={`${job.title} ${job.company}`} className="job-card-link-layer" href={createJobDetailHrefById(job.id)} />
 
-      <div className={`job-card-media job-card-media-${job.companyLogo.tone}`}>
+      <div className={`job-card-media job-card-media-${job.logo.tone}`}>
         <a aria-label={job.company} className="job-card-company-link" href={companyHref}>
           <CompanyLogoMark
-            alt={job.companyLogo.alt}
+            alt={job.logo.alt}
             className="job-company-logo-image"
-            fallbackText={job.companyLogo.fallbackText}
-            src={job.companyLogo.src}
-            tone={job.companyLogo.tone}
+            fallbackText={job.logo.fallbackText}
+            src={job.logo.src}
+            tone={job.logo.tone}
           />
         </a>
-        <button aria-label={saveLabel} className="job-save-overlay" type="button">
-          <BookmarkIcon />
-        </button>
+        <SaveJobBookmarkButton
+          className="job-save-overlay"
+          jobId={job.id}
+          labels={labels}
+        />
       </div>
 
       <div className="job-company-row">
@@ -60,8 +58,6 @@ export function JobCard({ job, saveLabel, variant = 'default' }: JobCardProps) {
         <span>{job.workMode}</span>
         <span className={`job-salary job-salary-${job.badgeTone}`}>{job.salary}</span>
       </div>
-
-      <p className="job-description">{job.description}</p>
 
       <div className="job-card-footer">
         <div className="job-tag-row">

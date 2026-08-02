@@ -1,46 +1,78 @@
+import { useEffect, useState } from 'react'
 import type { PropsWithChildren } from 'react'
-import { getTranslations } from '../i18n'
-import { BrandMark } from '../pages/_components'
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(-2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-}
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
+import { useTranslations } from '../i18n'
+import { BrandMark, LanguageSwitch } from '../pages/_components'
 
 export function CandidateLayout({ children }: PropsWithChildren) {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const { logout, user } = useAuth()
+  const toast = useToast()
   const profile = pages.profile
+  const candidateSettings = pages.candidateSettings
+  const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
+  const [avatarFailed, setAvatarFailed] = useState(false)
+  const showAvatarImage = Boolean(user?.avatarUrl) && !avatarFailed
+
+  useEffect(() => {
+    setAvatarFailed(false)
+  }, [user?.avatarUrl])
+
+  async function handleLogout() {
+    await logout()
+    toast.success(common.authFeedback.logoutSuccess)
+    navigate('/login')
+  }
+
   const navItems = [
     { href: '/search', label: profile.sidebar.searchJobs },
-    { href: '/', label: profile.sidebar.applications },
+    { href: '/profile/jobs', label: profile.sidebar.managedJobs },
+    { href: '/profile/applications', label: profile.sidebar.applications },
     { href: '/profile', label: profile.sidebar.profile },
-    { href: '/', label: profile.sidebar.messages },
+    { href: '/profile/messages', label: profile.sidebar.messages },
+    { href: '/profile/settings', label: candidateSettings.routeLabel },
   ]
+  const pageTitle =
+    pathname === '/profile/applications'
+      ? profile.applications.pageTitle
+      : pathname === '/profile/jobs'
+        ? profile.managedJobs.pageTitle
+        : pathname === '/profile/settings'
+          ? candidateSettings.pageTitle
+          : profile.pageTitle
 
   return (
     <div className="candidate-shell">
       <aside className="candidate-sidebar">
         <a className="candidate-brand" href="/">
-          <BrandMark label={common.brandName} />
+          <BrandMark compact label={common.brandName} />
         </a>
 
         <nav aria-label={profile.routeLabel} className="candidate-nav">
           {navItems.map((item) => (
-            <a aria-current={item.href === '/profile' ? 'page' : undefined} href={item.href} key={item.label}>
+            <a aria-current={pathname === item.href ? 'page' : undefined} href={item.href} key={item.label}>
               {item.label}
             </a>
           ))}
         </nav>
 
         <div className="candidate-sidebar-user">
-          <span>{getInitials(profile.profile.name)}</span>
+          <span>
+            {showAvatarImage ? (
+              <img
+                alt={userDisplayName}
+                onError={() => setAvatarFailed(true)}
+                src={user?.avatarUrl ?? ''}
+              />
+            ) : (
+              getInitials(userDisplayName)
+            )}
+          </span>
           <div>
-            <strong>{profile.profile.name}</strong>
+            <strong>{userDisplayName}</strong>
             <small>{profile.sidebar.currentRole}</small>
           </div>
         </div>
@@ -48,10 +80,12 @@ export function CandidateLayout({ children }: PropsWithChildren) {
 
       <div className="candidate-main">
         <header className="candidate-topbar">
-          <h1>{profile.pageTitle}</h1>
+          <h1>{pageTitle}</h1>
           <div className="candidate-topbar-actions">
-            <button aria-label={profile.topbar.notificationsLabel} className="candidate-icon-button" type="button" />
-            <a href="/login">{profile.topbar.logout}</a>
+            <LanguageSwitch compact />
+            <button onClick={() => void handleLogout()} type="button">
+              {profile.topbar.logout}
+            </button>
           </div>
         </header>
 

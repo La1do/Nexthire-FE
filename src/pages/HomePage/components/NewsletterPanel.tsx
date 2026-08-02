@@ -11,29 +11,37 @@ export function NewsletterPanel({ content }: NewsletterPanelProps) {
   }
 
   return (
-    <section className="home-newsletter home-reveal">
-      <div>
-        <p className="home-eyebrow">{content.eyebrow}</p>
+    <section className="home-newsletter" data-home-reveal>
+      <div className="home-newsletter-copy">
         <h2>{content.title}</h2>
         <p>{content.description}</p>
-        <div className="home-newsletter-chips">
-          {content.chips.map((chip) => (
-            <span key={chip}>{chip}</span>
-          ))}
-        </div>
         <form className="home-newsletter-form" onSubmit={handleSubmit}>
           <label>
             <span>{content.emailLabel}</span>
-            <input autoComplete="email" id="home-newsletter-email" name="email" placeholder={content.emailPlaceholder} type="email" />
+            <input
+              aria-describedby="home-newsletter-email-helper"
+              autoComplete="email"
+              id="home-newsletter-email"
+              name="email"
+              placeholder={content.emailPlaceholder}
+              required
+              type="email"
+            />
+            <small id="home-newsletter-email-helper">{content.emailHelper}</small>
           </label>
           <button type="submit">{content.submit}</button>
         </form>
       </div>
-      <div className="home-newsletter-card" aria-hidden="true">
+      <div className="home-newsletter-index" aria-hidden="true">
         <p>{content.mockTitle}</p>
-        {content.mockLines.map((line) => (
-          <span key={line}>{line}</span>
-        ))}
+        <ul>
+          {content.mockLines.map((line, index) => (
+            <li key={line}>
+              <span>0{index + 1}</span>
+              <strong>{line}</strong>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   )

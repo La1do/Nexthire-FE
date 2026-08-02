@@ -4,14 +4,21 @@ import { Button } from '../../_components'
 import type { ForgotPasswordTranslations } from '../../../i18n/types'
 
 type VerificationCodeFormProps = {
-  onVerified: () => void
+  isSubmitting?: boolean
+  onVerified: (code: string) => Promise<void> | void
+  submitError?: string
   translations: ForgotPasswordTranslations
 }
 
 const digitCount = 6
 const emptyDigits = Array.from({ length: digitCount }, () => '')
 
-export function VerificationCodeForm({ onVerified, translations }: VerificationCodeFormProps) {
+export function VerificationCodeForm({
+  isSubmitting = false,
+  onVerified,
+  submitError,
+  translations,
+}: VerificationCodeFormProps) {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
   const [digits, setDigits] = useState(emptyDigits)
   const [error, setError] = useState('')
@@ -70,8 +77,12 @@ export function VerificationCodeForm({ onVerified, translations }: VerificationC
     applyCode(event.clipboardData.getData('text'))
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (isSubmitting) {
+      return
+    }
 
     if (code.length !== digitCount) {
       setError(translations.validation.codeRequired)
@@ -79,7 +90,7 @@ export function VerificationCodeForm({ onVerified, translations }: VerificationC
       return
     }
 
-    onVerified()
+    await onVerified(code)
   }
 
   return (
@@ -89,6 +100,7 @@ export function VerificationCodeForm({ onVerified, translations }: VerificationC
           <input
             aria-label={`${translations.form.codeDigitLabel} ${index + 1}`}
             className="otp-input"
+            disabled={isSubmitting}
             inputMode="numeric"
             key={index}
             maxLength={1}
@@ -105,13 +117,15 @@ export function VerificationCodeForm({ onVerified, translations }: VerificationC
         ))}
       </div>
 
-      {error ? <p className="text-center text-sm font-medium text-[var(--color-text-danger)]">{error}</p> : null}
+      {error || submitError ? (
+        <p className="text-center text-sm font-medium text-[var(--color-text-danger)]">{error || submitError}</p>
+      ) : null}
 
       <p className="text-center text-base text-[var(--color-text-muted)]">
         {translations.form.resendPrefix} <strong className="text-[var(--color-text-secondary)]">{translations.form.resendTime}</strong>
       </p>
 
-      <Button className="w-full" type="submit">
+      <Button className="w-full" disabled={isSubmitting} type="submit">
         {translations.form.verifySubmit}
       </Button>
     </form>

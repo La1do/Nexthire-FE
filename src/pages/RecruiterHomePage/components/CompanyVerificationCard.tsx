@@ -30,6 +30,8 @@ export function CompanyVerificationCard({
   translations,
 }: CompanyVerificationCardProps) {
   const statusClass = company.status.toLowerCase().replace('_', '-')
+  const companyName = company.name || translations.statusLabels[company.status]
+  const emptyValue = '-'
 
   return (
     <section className={`recruiter-verification-card is-${statusClass}`}>
@@ -37,9 +39,9 @@ export function CompanyVerificationCard({
         <p className="recruiter-eyebrow">{translations.eyebrow}</p>
         <div className="recruiter-verification-card__identity">
           {company.logo ? (
-            <img alt={`${company.name} logo`} src={company.logo} />
+            <img alt={`${companyName} logo`} src={company.logo} />
           ) : (
-            <span>{getCompanyInitials(company.name)}</span>
+            <span>{getCompanyInitials(companyName)}</span>
           )}
           <div>
             <div className="recruiter-verification-card__title-row">
@@ -73,15 +75,15 @@ export function CompanyVerificationCard({
         <dl>
           <div>
             <dt>{translations.form.websiteLabel}</dt>
-            <dd>{company.website}</dd>
+            <dd>{company.website || emptyValue}</dd>
           </div>
           <div>
             <dt>{translations.submittedLabel}</dt>
-            <dd>{company.submittedAt}</dd>
+            <dd>{company.submittedAt || emptyValue}</dd>
           </div>
           <div>
             <dt>{translations.form.taxCodeLabel}</dt>
-            <dd>{company.taxCode}</dd>
+            <dd>{company.taxCode || emptyValue}</dd>
           </div>
         </dl>
         <Button className="w-full" onClick={onOpenVerification}>

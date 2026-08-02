@@ -1,18 +1,34 @@
 import type { HomeTranslations } from '../../../i18n/types'
+import type { CategoryIconKind, CategoryView } from '../types'
+import { HomeSectionState } from './HomeSectionState'
 import { SectionHeading } from './SectionHeading'
 
 type CategoryGridProps = {
   content: HomeTranslations['categories']
+  states: HomeTranslations['states']
+  categories: ReadonlyArray<CategoryView>
+  loading: boolean
+  error: unknown
 }
 
 type CategoryIconProps = {
-  icon: HomeTranslations['categories']['items'][number]['icon']
+  icon: CategoryIconKind
 }
 
 function CategoryIcon({ icon }: CategoryIconProps) {
+  const iconProps = {
+    'aria-hidden': true,
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    strokeWidth: '1.8',
+    viewBox: '0 0 24 24',
+  }
+
   if (icon === 'code') {
     return (
-      <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <svg {...iconProps}>
         <path d="m8 9-4 3 4 3" />
         <path d="m16 9 4 3-4 3" />
         <path d="m14 5-4 14" />
@@ -22,71 +38,93 @@ function CategoryIcon({ icon }: CategoryIconProps) {
 
   if (icon === 'design') {
     return (
-      <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M4 6h16v12H4z" />
-        <path d="M8 10h8" />
-        <path d="M8 14h5" />
+      <svg {...iconProps}>
+        <path d="m12 3 3 5.5-3 3-3-3L12 3Z" />
+        <path d="m9 8.5-4.5 4.6a2.8 2.8 0 0 0 0 4l2.4 2.4a2.8 2.8 0 0 0 4 0l4.6-4.5" />
+        <path d="m14.8 5.8 3.4-2 2 2-2 3.4" />
+        <path d="M6.5 15.5h.01" />
       </svg>
     )
   }
 
   if (icon === 'data') {
     return (
-      <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-        <ellipse cx="12" cy="6" rx="7" ry="3" />
-        <path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
-        <path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
+      <svg {...iconProps}>
+        <ellipse cx="12" cy="5.5" rx="7.5" ry="3" />
+        <path d="M4.5 5.5v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6" />
+        <path d="M4.5 11.5v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6" />
       </svg>
     )
   }
 
   if (icon === 'marketing') {
     return (
-      <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M4 13V7l12-3v16L4 17v-4Z" />
-        <path d="M18 9h2" />
-        <path d="M18 15h2" />
+      <svg {...iconProps}>
+        <path d="M4 10v4a2 2 0 0 0 2 2h2l8 4V4L8 8H6a2 2 0 0 0-2 2Z" />
+        <path d="m8 16 1.5 4h3" />
+        <path d="M19 9.5v5" />
       </svg>
     )
   }
 
   if (icon === 'support') {
     return (
-      <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="8" />
-        <path d="M9 10a3 3 0 1 1 5 2.2c-.8.5-1.2 1-1.2 1.8" />
-        <path d="M12 17h.01" />
+      <svg {...iconProps}>
+        <path d="M4 13v-2a8 8 0 0 1 16 0v2" />
+        <path d="M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2v-2Z" />
+        <path d="M20 13a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2v-2Z" />
+        <path d="M17 17c0 2-1.8 3-4 3h-1" />
+      </svg>
+    )
+  }
+
+  if (icon === 'all') {
+    return (
+      <svg {...iconProps}>
+        <rect height="6" rx="1" width="6" x="3" y="3" />
+        <rect height="6" rx="1" width="6" x="15" y="3" />
+        <rect height="6" rx="1" width="6" x="3" y="15" />
+        <rect height="6" rx="1" width="6" x="15" y="15" />
       </svg>
     )
   }
 
   return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M4 7h16v12H4z" />
-      <path d="M9 7V5h6v2" />
+    <svg {...iconProps}>
+      <path d="M4 8.5h16v10.75a1.75 1.75 0 0 1-1.75 1.75H5.75A1.75 1.75 0 0 1 4 19.25V8.5Z" />
+      <path d="M9 8.5V6.25C9 5.56 9.56 5 10.25 5h3.5c.69 0 1.25.56 1.25 1.25V8.5" />
+      <path d="M4 13h16" />
+      <path d="M10 13v1.5h4V13" />
     </svg>
   )
 }
 
-export function CategoryGrid({ content }: CategoryGridProps) {
-  return (
-    <section className="home-section home-reveal">
-      <SectionHeading eyebrow={content.eyebrow} title={content.title} />
+export function CategoryGrid({ content, states, categories, loading, error }: CategoryGridProps) {
+  const isEmpty = !categories.length
+  const showPlaceholder = loading || Boolean(error) || isEmpty
 
-      <div className="home-category-grid">
-        {content.items.map((item) => (
-          <article className="home-category-card home-hover-card" key={item.title}>
-            <span className="home-category-icon">
-              <CategoryIcon icon={item.icon} />
-            </span>
-            <span>
-              <strong>{item.title}</strong>
-              <small>{item.count}</small>
-            </span>
-            <small className="home-category-arrow" aria-hidden="true">→</small>
-          </article>
-        ))}
-      </div>
+  return (
+    <section className="home-section home-category-section" data-home-reveal>
+      <SectionHeading title={content.title} />
+
+      {showPlaceholder ? (
+        <HomeSectionState error={error} isEmpty={isEmpty} loading={loading} states={states} />
+      ) : (
+        <div className="home-category-grid">
+          {categories.map((item) => (
+            <a className="home-category-card" data-icon={item.icon} href={`/search?categoryId=${item.id}`} key={item.id}>
+              <span className="home-category-icon">
+                <CategoryIcon icon={item.icon} />
+              </span>
+              <span>
+                <strong>{item.title}</strong>
+                <small>{item.count}</small>
+              </span>
+              <small className="home-category-arrow" aria-hidden="true">↗</small>
+            </a>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

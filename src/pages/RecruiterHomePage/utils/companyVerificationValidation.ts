@@ -1,40 +1,36 @@
-import type { FormErrors } from '../../../hooks/useFormState'
-import type { CompanyVerificationFormValues } from '../types'
+import { z } from 'zod'
 import type { RecruiterHomeTranslations } from '../../../i18n/types'
 
-export function validateCompanyVerificationForm(
-  values: CompanyVerificationFormValues,
+export function createCompanyVerificationSchema(
   validation: RecruiterHomeTranslations['verification']['form']['validation'],
-): FormErrors<CompanyVerificationFormValues> {
-  const errors: FormErrors<CompanyVerificationFormValues> = {}
-
-  if (!values.name.trim()) {
-    errors.name = validation.nameRequired
-  }
-
-  if (!values.taxCode.trim()) {
-    errors.taxCode = validation.taxCodeRequired
-  } else if (values.taxCode.trim().length < 10) {
-    errors.taxCode = validation.taxCodeMinLength
-  }
-
-  if (!values.website.trim()) {
-    errors.website = validation.websiteRequired
-  } else if (!/^https?:\/\/\S+\.\S+/.test(values.website.trim())) {
-    errors.website = validation.websiteInvalid
-  }
-
-  if (!values.address.trim()) {
-    errors.address = validation.addressRequired
-  }
-
-  if (!values.description.trim()) {
-    errors.description = validation.descriptionRequired
-  }
-
-  if (values.documents.length === 0) {
-    errors.documents = validation.documentsRequired
-  }
-
-  return errors
+) {
+  return z.object({
+    address: z.string().refine((value) => value.trim().length > 0, {
+      message: validation.addressRequired,
+    }),
+    description: z.string().refine((value) => value.trim().length > 0, {
+      message: validation.descriptionRequired,
+    }),
+    documents: z.array(z.string()).min(1, {
+      message: validation.documentsRequired,
+    }),
+    logo: z.string(),
+    name: z.string().refine((value) => value.trim().length > 0, {
+      message: validation.nameRequired,
+    }),
+    taxCode: z.string()
+      .refine((value) => value.trim().length > 0, {
+        message: validation.taxCodeRequired,
+      })
+      .refine((value) => !value.trim() || value.trim().length >= 10, {
+        message: validation.taxCodeMinLength,
+      }),
+    website: z.string()
+      .refine((value) => value.trim().length > 0, {
+        message: validation.websiteRequired,
+      })
+      .refine((value) => !value.trim() || /^https?:\/\/\S+\.\S+/.test(value.trim()), {
+        message: validation.websiteInvalid,
+      }),
+  })
 }

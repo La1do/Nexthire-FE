@@ -1,17 +1,21 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button, Checkbox, Input, PasswordInput, SegmentedControl } from '../../_components'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Button, Checkbox, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
-import { useAuth } from '../../../context'
+import { useAuth, useToast } from '../../../context'
+import { useLocale } from '../../../i18n'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
-import { isAuthFormRole, toAuthApiRole } from '../../../lib/auth/authRole'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, LoginTranslations } from '../../../i18n/types'
+import type { AuthApiRole } from '../../../lib/auth/authRole'
 import type { LoginFormValues } from '../types'
+import { GoogleLoginButton } from './GoogleLoginButton'
 import { validateLoginForm } from '../utils/loginValidation'
 
 type LoginFormProps = {
   apiErrors: CommonTranslations['apiErrors']
+  authFeedback: CommonTranslations['authFeedback']
+  role: AuthApiRole
   translations: LoginTranslations
 }
 
@@ -19,27 +23,39 @@ const initialValues: LoginFormValues = {
   email: '',
   password: '',
   rememberMe: false,
-  role: 'candidate',
 }
 
-function getLoginRedirect(role: ReturnType<typeof toAuthApiRole>) {
+function getDefaultLoginRedirect(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/home'
   if (role === 'RECRUITER') return '/recruiter'
-  return '/admin/users'
+  return '/admin/dashboard'
 }
 
-export function LoginForm({ apiErrors, translations }: LoginFormProps) {
+function getSafeRedirect(value: string | null) {
+  if (!value || !value.startsWith('/') || value.startsWith('//')) {
+    return null
+  }
+
+  return value
+}
+
+export function LoginForm({ apiErrors, authFeedback, role, translations }: LoginFormProps) {
   const { form, validation } = translations
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { login } = useAuth()
+  const toast = useToast()
+  const { locale } = useLocale()
   const [isSubmitting, setSubmitting] = useState(false)
+  const [isGoogleSubmitting, setGoogleSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
-  const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
+  const isBusy = isSubmitting || isGoogleSubmitting
+  const canUseGoogleLogin = role !== 'ADMIN'
+  const loginRedirect = getSafeRedirect(searchParams.get('redirect')) ?? getDefaultLoginRedirect(role)
+  const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, values } =
     useFormState<LoginFormValues>({
       initialValues,
       onSubmit: async (formValues) => {
-        const role = toAuthApiRole(formValues.role)
-
         setSubmitError(undefined)
         setSubmitting(true)
 
@@ -51,9 +67,12 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
           })
 
           login(auth, formValues.rememberMe ? 'local' : 'session')
-          navigate(getLoginRedirect(role))
+          toast.success(authFeedback.loginSuccess)
+          navigate(loginRedirect, { replace: true })
         } catch (error) {
-          setSubmitError(getApiErrorMessage(error, apiErrors))
+          const message = getApiErrorMessage(error, apiErrors)
+          setSubmitError(message)
+          toast.error(message)
         } finally {
           setSubmitting(false)
         }
@@ -61,24 +80,37 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
       validate: (formValues) => validateLoginForm(formValues, validation),
     })
 
+  async function handleGoogleCredential(idToken: string) {
+    if (role === 'ADMIN') {
+      return
+    }
+
+    setSubmitError(undefined)
+    setGoogleSubmitting(true)
+
+    try {
+      const auth = await authService.googleLogin({
+        idToken,
+        role,
+      })
+
+      login(auth, values.rememberMe ? 'local' : 'session')
+      toast.success(authFeedback.googleLoginSuccess)
+      navigate(loginRedirect, { replace: true })
+    } catch (error) {
+      const message = getApiErrorMessage(error, apiErrors)
+      setSubmitError(message)
+      toast.error(message)
+    } finally {
+      setGoogleSubmitting(false)
+    }
+  }
+
   return (
     <form className="auth-form-grid grid" noValidate onSubmit={handleSubmit}>
-      <SegmentedControl
-        label={form.roleLabel}
-        name="login-role"
-        onChange={(role) => {
-          if (isAuthFormRole(role)) {
-            setSubmitError(undefined)
-            setFieldValue('role', role)
-          }
-        }}
-        options={form.roleOptions}
-        value={values.role}
-      />
-
       <Input
         autoComplete="email"
-        disabled={isSubmitting}
+        disabled={isBusy}
         error={getFieldError('email')}
         label={form.emailLabel}
         onBlur={() => setFieldTouched('email')}
@@ -90,7 +122,7 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
 
       <PasswordInput
         autoComplete="current-password"
-        disabled={isSubmitting}
+        disabled={isBusy}
         error={getFieldError('password')}
         hidePasswordLabel={form.hidePassword}
         label={form.passwordLabel}
@@ -104,7 +136,7 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Checkbox
           checked={values.rememberMe}
-          disabled={isSubmitting}
+          disabled={isBusy}
           label={form.rememberMe}
           onChange={handleCheckboxChange('rememberMe')}
         />
@@ -119,9 +151,30 @@ export function LoginForm({ apiErrors, translations }: LoginFormProps) {
         </p>
       ) : null}
 
-      <Button className="mt-1 w-full" disabled={isSubmitting} type="submit">
+      <Button className="mt-1 w-full" disabled={isBusy} type="submit">
         {isSubmitting ? form.submitLoading : form.submit}
       </Button>
+
+      {canUseGoogleLogin ? (
+        <>
+          <div className="flex items-center gap-3 text-xs font-semibold uppercase text-[var(--color-text-muted)]">
+            <span className="h-px flex-1 bg-[var(--color-border-subtle)]" />
+            <span>{form.orDivider}</span>
+            <span className="h-px flex-1 bg-[var(--color-border-subtle)]" />
+          </div>
+
+          <GoogleLoginButton
+            disabled={isBusy}
+            locale={locale}
+            onCredential={handleGoogleCredential}
+            onError={(message) => {
+              setSubmitError(message)
+              toast.error(message)
+            }}
+            translations={form}
+          />
+        </>
+      ) : null}
     </form>
   )
 }

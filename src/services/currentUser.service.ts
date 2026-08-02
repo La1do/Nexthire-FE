@@ -1,4 +1,6 @@
+import axios from 'axios'
 import { apiClient } from '../lib/api'
+import { authService } from './auth.service'
 import type { AuthUser } from './auth.service'
 
 type ApiSuccessEnvelope<TData> = {
@@ -11,6 +13,7 @@ type CandidateProfile = {
   phone: string | null
   contactEmail: string | null
   avatarDocumentId: string | null
+  avatarUrl: string | null
 }
 
 type CandidateMeResponse = {
@@ -41,17 +44,40 @@ async function getCandidateUser(user: AuthUser) {
   return mergeDefinedUserFields(user, {
     fullName: profile.fullName ?? user.fullName,
     phone: profile.phone ?? user.phone,
+    avatarUrl: profile.avatarUrl ?? user.avatarUrl ?? null,
   })
 }
 
 async function getRecruiterUser(user: AuthUser) {
-  const response = await apiClient.get<ApiSuccessEnvelope<CompanyMeResponse>>('/companies/me')
-  const company = response.data.data
+  const account = await authService.getMe()
+  let company: CompanyMeResponse | undefined
+
+  try {
+    const response = await apiClient.get<ApiSuccessEnvelope<CompanyMeResponse>>('/companies/me')
+    company = response.data.data
+  } catch (error) {
+    if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+      throw error
+    }
+  }
 
   return mergeDefinedUserFields(user, {
-    companyId: company.id,
-    companyName: company.name,
-    logoUrl: company.logo,
+    email: account.email,
+    fullName: account.fullName,
+    phone: account.phone,
+    companyId: company?.id ?? null,
+    companyName: company?.name ?? null,
+    logoUrl: company ? company.logo : account.logoUrl ?? null,
+  })
+}
+
+async function getAdminUser(user: AuthUser) {
+  const account = await authService.getMe()
+  return mergeDefinedUserFields(user, {
+    email: account.email,
+    fullName: account.fullName,
+    phone: account.phone,
+    avatarUrl: account.avatarUrl ?? account.logoUrl ?? null,
   })
 }
 
@@ -63,6 +89,10 @@ export const currentUserService = {
 
     if (user.role === 'RECRUITER') {
       return getRecruiterUser(user)
+    }
+
+    if (user.role === 'ADMIN') {
+      return getAdminUser(user)
     }
 
     return user

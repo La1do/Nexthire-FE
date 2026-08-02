@@ -34,20 +34,20 @@ export const recruiterQuickActions: ReadonlyArray<RecruiterQuickAction> = [
     id: 'postJob',
     description: 'Tao tin tuyen dung moi va gui duyet nhanh.',
     disabledWhenUnverified: true,
-    href: '/',
+    href: '/recruiter/jobs/new',
     label: 'Dang tin moi',
   },
   {
     id: 'reviewCandidates',
     description: 'Loc ung vien moi theo diem phu hop.',
     disabledWhenUnverified: true,
-    href: '/',
+    href: '/recruiter/applications',
     label: 'Xem ung vien',
   },
   {
     id: 'companyProfile',
     description: 'Cap nhat ho so, logo va tai lieu xac minh.',
-    href: '/',
+    href: '/recruiter/company',
     label: 'Ho so cong ty',
   },
 ]
@@ -66,6 +66,7 @@ export const recruiterApplications: ReadonlyArray<RecruiterApplication> = [
     role: 'Senior Frontend Engineer',
     score: '92%',
     stage: 'Moi ung tuyen',
+    status: 'SUBMITTED',
     submittedAt: 'Hom nay',
   },
   {
@@ -74,6 +75,7 @@ export const recruiterApplications: ReadonlyArray<RecruiterApplication> = [
     role: 'Backend Engineer',
     score: '86%',
     stage: 'Cho phong van',
+    status: 'OFFERED',
     submittedAt: 'Hom qua',
   },
   {
@@ -82,17 +84,18 @@ export const recruiterApplications: ReadonlyArray<RecruiterApplication> = [
     role: 'Product Designer',
     score: '78%',
     stage: 'Can phan hoi',
+    status: 'SUBMITTED',
     submittedAt: '2 ngay truoc',
   },
 ]
 
 export const recruiterPerformance: ReadonlyArray<RecruiterPerformancePoint> = [
-  { id: 'mon', label: 'T2', value: 42 },
-  { id: 'tue', label: 'T3', value: 58 },
-  { id: 'wed', label: 'T4', value: 74 },
-  { id: 'thu', label: 'T5', value: 62 },
-  { id: 'fri', label: 'T6', value: 88 },
-  { id: 'sat', label: 'T7', value: 54 },
+  { count: 42, id: 'mon', label: 'T2' },
+  { count: 58, id: 'tue', label: 'T3' },
+  { count: 74, id: 'wed', label: 'T4' },
+  { count: 62, id: 'thu', label: 'T5' },
+  { count: 88, id: 'fri', label: 'T6' },
+  { count: 54, id: 'sat', label: 'T7' },
 ]
 
 export const recruiterTasks: ReadonlyArray<RecruiterTask> = [

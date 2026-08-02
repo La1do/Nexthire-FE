@@ -1,6 +1,6 @@
 import type { CompanyDetailTranslations } from '../../../i18n/types'
 import { JobCard } from '../../HomePage/components/JobCard'
-import type { CompanyDetailViewModel } from '../utils/companyDetailData'
+import type { CompanyDetailViewModel } from '../utils/companyDetailMappers'
 
 type CompanyOpenJobsProps = {
   company: CompanyDetailViewModel
@@ -21,7 +21,16 @@ export function CompanyOpenJobs({ company, content, title }: CompanyOpenJobsProp
       {company.openJobs.length ? (
         <div className="company-detail-job-grid">
           {company.openJobs.map((job) => (
-            <JobCard job={job} key={`${job.company}-${job.title}`} saveLabel={content.saveLabel} variant="compact" />
+            <JobCard
+              job={job}
+              key={job.id}
+              labels={{
+                loginAriaLabel: content.saveLabel,
+                saveAriaLabel: content.saveLabel,
+                savedAriaLabel: content.saveLabel,
+              }}
+              variant="compact"
+            />
           ))}
         </div>
       ) : (

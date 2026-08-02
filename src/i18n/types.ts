@@ -23,6 +23,21 @@ export type CommonTranslations = {
     recruiterRole: string
     adminRole: string
   }
+  authFeedback: {
+    loginSuccess: string
+    googleLoginSuccess: string
+    logoutSuccess: string
+    registerSuccess: string
+    emailVerifiedSuccess: string
+    passwordResetEmailSent: string
+    passwordResetVerified: string
+    passwordResetSuccess: string
+  }
+  languageSwitcher: {
+    label: string
+    options: Record<Locale, string>
+    shortOptions: Record<Locale, string>
+  }
   footer: {
     description: string
     legalLabel: string
@@ -32,17 +47,55 @@ export type CommonTranslations = {
       links: ReadonlyArray<string>
     }>
   }
+  job: {
+    workingType: {
+      ONSITE: string
+      REMOTE: string
+      HYBRID: string
+    }
+    salaryNegotiable: string
+    jobsCountSuffix: string
+    rolesCountSuffix: string
+    postedJustNow: string
+    postedPrefix: string
+    postedSuffix: string
+  }
+  savedJobs: {
+    saving: string
+    removing: string
+    remove: string
+    saveSuccess: string
+    removeSuccess: string
+    saveError: string
+    candidateOnly: string
+  }
+  toast: {
+    regionLabel: string
+    closeLabel: string
+    statusLabels: Record<'success' | 'error' | 'warning' | 'info', string>
+  }
 }
 
 export type LoginTranslations = {
-  title: string
-  subtitle: string
+  candidate: {
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+  }
+  recruiter: {
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+  }
+  admin: {
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+  }
   form: {
-    roleLabel: string
-    roleOptions: ReadonlyArray<{
-      value: string
-      label: string
-    }>
     emailLabel: string
     emailPlaceholder: string
     passwordLabel: string
@@ -53,6 +106,12 @@ export type LoginTranslations = {
     hidePassword: string
     submit: string
     submitLoading: string
+    orDivider: string
+    googleAriaLabel: string
+    googleCredentialMissing: string
+    googleLoadError: string
+    googleLoading: string
+    googleUnavailable: string
   }
   footer: {
     prompt: string
@@ -66,32 +125,36 @@ export type LoginTranslations = {
 }
 
 export type RegisterTranslations = {
-  title: string
-  subtitle: string
-  form: {
-    roleLabel: string
-    roleOptions: ReadonlyArray<{
-      value: string
-      label: string
-    }>
-    fullNameLabel: string
-    fullNamePlaceholder: string
-    phoneLabel: string
-    phonePlaceholder: string
-    emailLabel: string
-    emailPlaceholder: string
-    passwordLabel: string
-    passwordPlaceholder: string
-    confirmPasswordLabel: string
-    confirmPasswordPlaceholder: string
-    showPassword: string
-    hidePassword: string
-    submit: string
-    submitLoading: string
+  candidate: {
+    routeLabel: string
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+    loginPrompt: string
+    loginAction: string
+    form: RegisterFormCopy
   }
-  footer: {
-    prompt: string
-    action: string
+  recruiter: {
+    routeLabel: string
+    title: string
+    subtitle: string
+    switchPrompt: string
+    switchAction: string
+    loginPrompt: string
+    loginAction: string
+    form: RegisterFormCopy
+  }
+  verification: {
+    sent: {
+      title: string
+      subtitle: string
+    }
+    sentSubmit: string
+    verify: {
+      title: string
+      subtitle: string
+    }
   }
   validation: {
     emailRequired: string
@@ -105,6 +168,23 @@ export type RegisterTranslations = {
     confirmPasswordRequired: string
     passwordMismatch: string
   }
+}
+
+type RegisterFormCopy = {
+  fullNameLabel: string
+  fullNamePlaceholder: string
+  phoneLabel: string
+  phonePlaceholder: string
+  emailLabel: string
+  emailPlaceholder: string
+  passwordLabel: string
+  passwordPlaceholder: string
+  confirmPasswordLabel: string
+  confirmPasswordPlaceholder: string
+  showPassword: string
+  hidePassword: string
+  submit: string
+  submitLoading: string
 }
 
 export type ForgotPasswordTranslations = {
@@ -160,36 +240,14 @@ export type ForgotPasswordTranslations = {
   }
 }
 
-export type HomeJobItem = {
-  badgeTone: 'blue' | 'pink'
-  company: string
-  companyLogo: {
-    alt: string
-    fallbackText: string
-    src: string
-    tone: 'blue' | 'coral' | 'green' | 'violet'
-  }
-  description: string
-  field: string
-  location: string
-  postedAt: string
-  salary: string
-  tags: ReadonlyArray<string>
-  title: string
-  verified?: boolean
-  workMode: string
-}
-
-export type HomeCompanyItem = {
-  logoAlt: string
-  logoSrc: string
-  logoText: string
-  name: string
-  openRoles: string
-  tone: 'blue' | 'coral' | 'green' | 'violet'
-}
-
 export type HomeTranslations = {
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    emptyTitle: string
+    emptyDescription: string
+  }
   hero: {
     eyebrow: string
     title: string
@@ -202,21 +260,20 @@ export type HomeTranslations = {
     filterLabel: string
     submit: string
     quickFilters: ReadonlyArray<string>
-    stats: ReadonlyArray<{
-      label: string
-      value: string
-    }>
+    stats: {
+      openRoles: string
+      companies: string
+      categories: string
+    }
     spotlight: {
       title: string
       subtitle: string
-      items: ReadonlyArray<HomeCompanyItem>
     }
   }
   employers: {
     eyebrow: string
     title: string
     viewAll: string
-    items: ReadonlyArray<HomeCompanyItem>
   }
   jobs: {
     eyebrow: string
@@ -224,16 +281,10 @@ export type HomeTranslations = {
     tabs: ReadonlyArray<string>
     loadMore: string
     saveLabel: string
-    items: ReadonlyArray<HomeJobItem>
   }
   categories: {
     eyebrow: string
     title: string
-    items: ReadonlyArray<{
-      icon: 'all' | 'briefcase' | 'code' | 'data' | 'design' | 'marketing' | 'support'
-      title: string
-      count: string
-    }>
   }
   industryJobs: {
     eyebrow: string
@@ -241,10 +292,6 @@ export type HomeTranslations = {
     viewAll: string
     viewMore: string
     saveLabel: string
-    groups: ReadonlyArray<{
-      title: string
-      jobs: ReadonlyArray<HomeJobItem>
-    }>
   }
   articles: {
     title: string
@@ -262,6 +309,7 @@ export type HomeTranslations = {
     description: string
     emailLabel: string
     emailPlaceholder: string
+    emailHelper: string
     submit: string
     chips: ReadonlyArray<string>
     mockTitle: string
@@ -290,10 +338,6 @@ export type SearchTranslations = {
     allOption: string
     clear: string
     apply: string
-    fieldOptions: ReadonlyArray<{
-      label: string
-      value: string
-    }>
     salaryOptions: ReadonlyArray<{
       label: string
       value: string
@@ -313,9 +357,13 @@ export type SearchTranslations = {
       value: string
     }>
     saveLabel: string
+    unsaveLabel: string
     verifiedLabel: string
     detailLabel: string
     activeFiltersLabel: string
+    loading: string
+    errorTitle: string
+    errorDescription: string
   }
   empty: {
     title: string
@@ -340,16 +388,38 @@ export type AdminUsersTranslations = {
     notificationsLabel: string
     toggleSidebarLabel: string
     profileLabel: string
+    notificationTitle: string
+    notificationEmpty: string
+    notificationError: string
+    notificationLoading: string
+    markAllRead: string
+    profileSettings: string
+    profileLogout: string
+    adminRole: string
+    quickLinks: string
+    quickDashboard: string
+    quickUsers: string
+    quickCompanies: string
+    quickJobs: string
+    quickAi: string
+    quickSettings: string
   }
   stats: {
     totalLabel: string
     candidatesLabel: string
     employersLabel: string
+    adminsLabel: string
     lockedLabel: string
     totalDelta: string
     candidatesDelta: string
     employersDelta: string
     lockedDelta: string
+  }
+  statusOverview: {
+    title: string
+    description: string
+    totalLabel: string
+    distributionLabel: string
   }
   filters: {
     queryLabel: string
@@ -374,9 +444,10 @@ export type AdminUsersTranslations = {
       actions: string
     }
     actionView: string
-    actionLock: string
-    actionUnlock: string
-    actionDelete: string
+    actionSuspend: string
+    actionBan: string
+    actionArchive: string
+    actionRestore: string
   }
   pagination: {
     prev: string
@@ -384,14 +455,64 @@ export type AdminUsersTranslations = {
     pageOf: string
   }
   roles: {
+    ADMIN: string
+    RECRUITER: string
+    CANDIDATE: string
     admin: string
-    employer: string
+    recruiter: string
     candidate: string
   }
   statuses: {
+    ACTIVE: string
+    INACTIVE: string
+    SUSPENDED: string
+    LOCKED: string
+    BANNED: string
+    ARCHIVED: string
     active: string
+    inactive: string
+    suspended: string
     locked: string
-    invited: string
+    banned: string
+    archived: string
+  }
+  actions: {
+    title: string
+    description: string
+    reasonLabel: string
+    reasonPlaceholder: string
+    reasonRequired: string
+    suspend: string
+    ban: string
+    archive: string
+    restore: string
+    confirm: string
+    cancel: string
+  }
+  feedback: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    actionSuccess: string
+    actionError: string
+    cannotManageSelf: string
+  }
+  detail: {
+    routeLabel: string
+    back: string
+    title: string
+    contact: string
+    lifecycle: string
+    company: string
+    noCompany: string
+    emailVerified: string
+    emailUnverified: string
+    statusReason: string
+    changedAt: string
+    createdAt: string
+    updatedAt: string
+    lastLoginAt: string
   }
   currentUser: {
     name: string
@@ -409,6 +530,7 @@ export type AdminCompaniesTranslations = {
     pendingLabel: string
     approvedLabel: string
     rejectedLabel: string
+    suspendedLabel: string
     pendingDelta: string
     approvedDelta: string
     rejectedDelta: string
@@ -418,6 +540,13 @@ export type AdminCompaniesTranslations = {
     queryPlaceholder: string
     statusLabel: string
     statusAll: string
+    trustLevelLabel: string
+    trustLevelAll: string
+    sortLabel: string
+    sortLatest: string
+    sortOldest: string
+    sortRejected: string
+    rejectedBefore: string
     clear: string
   }
   results: {
@@ -428,6 +557,7 @@ export type AdminCompaniesTranslations = {
       company: string
       submittedAt: string
       status: string
+      trustLevel: string
       actions: string
     }
     actions: {
@@ -435,6 +565,7 @@ export type AdminCompaniesTranslations = {
       approve: string
       reject: string
       verified: string
+      reviewAgain: string
     }
   }
   pagination: {
@@ -446,6 +577,17 @@ export type AdminCompaniesTranslations = {
     pending: string
     approved: string
     rejected: string
+    suspended: string
+  }
+  trustLevels: { low: string; medium: string; high: string }
+  feedback: {
+    loading: string; errorTitle: string; errorDescription: string; retry: string
+    actionSuccess: string; actionError: string
+  }
+  actions: {
+    cancel: string; confirm: string; approveTitle: string; approveDescription: string
+    rejectTitle: string; rejectDescription: string; reasonTitle: string; reasonDescription: string
+    reasonLabel: string; reasonPlaceholder: string; reasonRequired: string
   }
   detail: {
     pageTitle: string
@@ -461,12 +603,34 @@ export type AdminCompaniesTranslations = {
     pendingHint: string
     approvedHint: string
     rejectedHint: string
+    suspendedHint: string
     approve: string
     reject: string
+    suspend: string
+    restore: string
+    completionLabel: string
+    contactLabel: string
+    statusReasonLabel: string
+    trustLevelLabel: string
+    trustChangeTitle: string
+    trustHistoryTitle: string
+    trustHistoryDescription: string
+    trustHistoryEmpty: string
+    trustHistoryError: string
+    documentsLoading: string
+    documentsEmpty: string
+    documentsError: string
+    opening: string
     quickStatsTitle: string
     jobPostsLabel: string
     applicantsLabel: string
     responseRateLabel: string
+    reviewCountLabel: string
+    approvedRiskLabel: string
+    negativeSignalLabel: string
+    canPostJobsLabel: string
+    yes: string
+    no: string
     notFoundEyebrow: string
     notFoundTitle: string
     notFoundDescription: string
@@ -476,6 +640,11 @@ export type AdminCompaniesTranslations = {
 export type JobDetailTranslations = {
   routeLabel: string
   backToSearch: string
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+  }
   hero: {
     metaLabel: string
     verifiedLabel: string
@@ -485,28 +654,72 @@ export type JobDetailTranslations = {
     salary: string
     location: string
     workMode: string
-    field: string
     postedAt: string
+    deadline: string
+    noDeadline: string
+    openings: string
     apply: string
+    applied: string
+    appliedHint: string
+    applyHint: string
+    applyLoginHint: string
+    applyStatusLoading: string
+    candidateOnly: string
     save: string
+    saved: string
+    saveError: string
+    jobNotPublic: string
+    loginHint: string
+    applyModal: {
+      kicker: string
+      title: string
+      description: string
+      close: string
+      cvLabel: string
+      cvHelper: string
+      cvLoading: string
+      profileLoadError: string
+      cvFallback: string
+      defaultCvBadge: string
+      noCvTitle: string
+      noCvDescription: string
+      uploadCvAction: string
+      uploadFirstTitle: string
+      uploadFirstDescription: string
+      uploadAlternativeTitle: string
+      uploadAlternativeDescription: string
+      cvUploading: string
+      cvUploadSuccess: string
+      cvUploadError: string
+      cvInvalidType: string
+      cvTooLarge: string
+      coverLetterLabel: string
+      coverLetterPlaceholder: string
+      coverLetterHint: string
+      coverLetterCounter: string
+      coverLetterTooLong: string
+      submit: string
+      submitting: string
+      submitError: string
+      jobNotApplicableError: string
+      cvNotFoundError: string
+      submitSuccessTitle: string
+      submitSuccessDescription: string
+      duplicateTitle: string
+      duplicateDescription: string
+      viewApplications: string
+      parseStatuses: {
+        NOT_PARSED: string
+        PARSING: string
+        PARSED: string
+        FAILED: string
+      }
+    }
   }
   sections: {
-    overview: {
-      title: string
-      body: string
-    }
-    responsibilities: {
-      title: string
-      items: ReadonlyArray<string>
-    }
-    requirements: {
-      title: string
-      items: ReadonlyArray<string>
-    }
-    benefits: {
-      title: string
-      items: ReadonlyArray<string>
-    }
+    description: string
+    requirements: string
+    benefits: string
   }
   related: {
     title: string
@@ -544,14 +757,31 @@ export type CompanyDetailTranslations = {
   routeLabel: string
   backToSearch: string
   verifiedLabel: string
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+  }
   hero: {
     openJobs: string
     follow: string
     websiteLabel: string
   }
+  follow: {
+    follow: string
+    following: string
+    loading: string
+    loginRequired: string
+    candidateOnly: string
+    followSuccess: string
+    unfollowSuccess: string
+    unavailable: string
+    error: string
+  }
   snapshot: {
     openJobs: string
     size: string
+    founded: string
     responseTime: string
     location: string
   }
@@ -587,19 +817,58 @@ export type CompanyDetailTranslations = {
   profiles: ReadonlyArray<CompanyDetailProfile>
 }
 
+export type ProfileApplicationStatus =
+  | 'SUBMITTED'
+  | 'REVIEWING'
+  | 'INTERVIEW'
+  | 'OFFERED'
+  | 'REJECTED'
+  | 'WITHDRAWN'
+  | 'CANCELLED'
+
+export type CandidateManagedJobsTab = 'all' | 'saved' | 'applied' | 'active' | 'closed'
+export type CandidateManagedJobsSort = 'newest' | 'deadline' | 'salary'
+export type CandidateManagedJobsStatus =
+  | 'saved'
+  | 'SUBMITTED'
+  | 'OFFERED'
+  | 'REJECTED'
+  | 'WITHDRAWN'
+  | 'CANCELLED'
+  | 'PUBLISHED'
+  | 'UNPUBLISHED'
+  | 'CLOSED'
+  | 'EXPIRED'
+  | 'needsAttention'
+
 export type ProfileTranslations = {
   routeLabel: string
   pageTitle: string
   sidebar: {
     searchJobs: string
+    managedJobs: string
     applications: string
     profile: string
     messages: string
     currentRole: string
   }
   topbar: {
-    notificationsLabel: string
     logout: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    saveSuccess: string
+    saveError: string
+    avatarUploadSuccess: string
+    avatarUploadError: string
+    avatarInvalidFileType: string
+    avatarFileTooLarge: string
+    cvUploadError: string
+    cvDeleteError: string
+    emptyResume: string
   }
   hero: {
     avatarAction: string
@@ -607,7 +876,6 @@ export type ProfileTranslations = {
     saved: string
     unsaved: string
     save: string
-    viewPublic: string
   }
   completion: {
     title: string
@@ -618,6 +886,191 @@ export type ProfileTranslations = {
       skills: string
       experience: string
       resume: string
+    }
+  }
+  cvAssist: {
+    eyebrow: string
+    title: string
+    description: string
+    descriptionSparse: string
+    readyTitle: string
+    parsedTitle: string
+    parsedDescription: string
+    hint: string
+    uploadAction: string
+    uploadingAction: string
+    parseAction: string
+    parsingAction: string
+    replaceAction: string
+    manualAction: string
+  }
+  cvParseReview: {
+    eyebrow: string
+    title: string
+    description: string
+    currentLabel: string
+    parsedLabel: string
+    emptyValue: string
+    moreItems: string
+    recommendedBadge: string
+    closeLabel: string
+    keepCurrent: string
+    applySelected: string
+    applying: string
+    applySuccess: string
+    keepSuccess: string
+    groupLabels: {
+      basic: string
+      contact: string
+      skills: string
+      experiences: string
+      education: string
+      links: string
+    }
+  }
+  applications: {
+    routeLabel: string
+    pageTitle: string
+    title: string
+    description: string
+    primaryAction: string
+    stats: {
+      total: string
+      active: string
+      interviews: string
+      closed: string
+    }
+    filters: {
+      label: string
+      all: string
+    }
+    statusLabels: Record<ProfileApplicationStatus, string>
+    meta: {
+      company: string
+      location: string
+      workingType: string
+      salary: string
+      cvFile: string
+      coverLetter: string
+      noCoverLetter: string
+      notAvailable: string
+      appliedAt: string
+      updatedAt: string
+    }
+    actions: {
+      viewJob: string
+      withdraw: string
+      withdrawing: string
+    }
+    cvPreview: {
+      open: string
+      title: string
+      subtitle: string
+      close: string
+      contact: string
+      email: string
+      phone: string
+      location: string
+      summary: string
+      skills: string
+      experience: string
+      education: string
+      present: string
+      loading: string
+      error: string
+      openExternal: string
+    }
+    states: {
+      loading: string
+      errorTitle: string
+      errorDescription: string
+      retry: string
+      withdrawSuccess: string
+      withdrawError: string
+    }
+    empty: {
+      title: string
+      description: string
+      reset: string
+    }
+    items: ReadonlyArray<{
+      id: string
+      jobId: string
+      jobTitle: string
+      companyName: string
+      location: string
+      workingType: string
+      salaryLabel: string
+      cvFileName: string
+      coverLetter: string
+      appliedAt: string
+      updatedAt: string
+      status: ProfileApplicationStatus
+    }>
+  }
+  managedJobs: {
+    routeLabel: string
+    pageTitle: string
+    title: string
+    description: string
+    listLabel: string
+    stats: {
+      label: string
+      saved: string
+      applied: string
+      active: string
+      needsAttention: string
+    }
+    filters: {
+      label: string
+      searchLabel: string
+      searchPlaceholder: string
+      tabLabel: string
+      tabs: Record<CandidateManagedJobsTab, string>
+      sortLabel: string
+      sortOptions: Record<CandidateManagedJobsSort, string>
+    }
+    statusLabels: Record<CandidateManagedJobsStatus, string>
+    meta: {
+      location: string
+      salary: string
+      deadline: string
+      savedAt: string
+      appliedAt: string
+      notAvailable: string
+      noDeadline: string
+    }
+    actions: {
+      viewJob: string
+      apply: string
+      viewApplication: string
+      removeSaved: string
+      removingSaved: string
+      withdraw: string
+      withdrawing: string
+    }
+    states: {
+      loading: string
+      errorTitle: string
+      errorDescription: string
+      retry: string
+      withdrawSuccess: string
+      removeSavedError: string
+      withdrawError: string
+    }
+    empty: {
+      allTitle: string
+      allDescription: string
+      allAction: string
+      savedTitle: string
+      savedDescription: string
+      savedAction: string
+      appliedTitle: string
+      appliedDescription: string
+      appliedAction: string
+      filterTitle: string
+      filterDescription: string
+      filterAction: string
     }
   }
   sections: {
@@ -672,6 +1125,30 @@ export type ProfileTranslations = {
       description: string
       fileLabel: string
       removeFileLabel: string
+      uploadFileLabel: string
+      replaceFileLabel: string
+      uploadingFileLabel: string
+      dropTitle: string
+      dropHint: string
+      parseAction: string
+      retryParseAction: string
+      parsingLabel: string
+      parseHint: string
+      pdfRecommended: string
+      statusLabel: string
+      status: Record<'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED', string>
+      uploadSuccess: string
+      parseStarted: string
+      parseSuccess: string
+      parseSuccessWithLocalChanges: string
+      parseReviewReady: string
+      parseReviewApplied: string
+      parseReviewKept: string
+      parseFailed: string
+      parseTimeout: string
+      invalidFileType: string
+      fileTooLarge: string
+      saveBeforeParseError: string
       portfolioLabel: string
       linkedinLabel: string
     }
@@ -681,7 +1158,7 @@ export type ProfileTranslations = {
     headline: string
     location: string
     summary: string
-    email: string
+    contactEmail: string
     phone: string
     skills: ReadonlyArray<string>
     resumeFile: string
@@ -740,6 +1217,7 @@ export type RecruiterHomeTranslations = {
       manageProfile: string
       close: string
       submit: string
+      submitLoading: string
       cancel: string
     }
     form: {
@@ -759,6 +1237,7 @@ export type RecruiterHomeTranslations = {
       descriptionPlaceholder: string
       documentsTitle: string
       documentsDescription: string
+      submitError: string
       documentOptions: ReadonlyArray<{
         id: string
         label: string
@@ -784,8 +1263,32 @@ export type RecruiterHomeTranslations = {
     primaryAction: string
     secondaryAction: string
   }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+  }
   stats: {
     title: string
+    cards: {
+      activeJobs: {
+        label: string
+        delta: string
+      }
+      pendingJobs: {
+        label: string
+        delta: string
+      }
+      newApplications: {
+        label: string
+        delta: string
+      }
+      responseRate: {
+        label: string
+        delta: string
+      }
+    }
   }
   quickActions: {
     title: string
@@ -794,11 +1297,19 @@ export type RecruiterHomeTranslations = {
   pipeline: {
     title: string
     description: string
+    items: {
+      draft: string
+      pending: string
+      active: string
+      paused: string
+    }
   }
   applications: {
     title: string
     description: string
     viewAll: string
+    empty: string
+    statusLabels: Record<'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'WITHDRAWN' | 'CANCELLED', string>
   }
   performance: {
     title: string
@@ -808,22 +1319,1038 @@ export type RecruiterHomeTranslations = {
   tasks: {
     title: string
     description: string
+    empty: string
+    items: {
+      verifyCompany: {
+        label: string
+        description: string
+      }
+      pendingJobs: {
+        label: string
+        description: string
+      }
+      replyCandidates: {
+        label: string
+        description: string
+      }
+    }
   }
+}
+
+export type RecruiterJobCreateTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    editTitle: string
+    description: string
+    editDescription: string
+    backAction: string
+    backToDetail: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    editErrorDescription: string
+    editDraftOnly: string
+    retry: string
+    categoryFallback: string
+  }
+  gate: {
+    loadingTitle: string
+    loadingDescription: string
+    lockedBadge: string
+    noCompanyTitle: string
+    noCompanyDescription: string
+    pendingTitle: string
+    pendingDescription: string
+    rejectedTitle: string
+    rejectedDescription: string
+    suspendedTitle: string
+    suspendedDescription: string
+    manageCompany: string
+    openDashboard: string
+  }
+  form: {
+    sections: {
+      basics: {
+        title: string
+        description: string
+      }
+      details: {
+        title: string
+        description: string
+      }
+      content: {
+        title: string
+        description: string
+      }
+    }
+    fields: {
+      title: {
+        label: string
+        placeholder: string
+      }
+      category: {
+        label: string
+      }
+      employmentType: {
+        label: string
+      }
+      workingType: {
+        label: string
+      }
+      experienceLevel: {
+        label: string
+      }
+      location: {
+        label: string
+        placeholder: string
+      }
+      salaryMin: {
+        label: string
+        placeholder: string
+      }
+      salaryMax: {
+        label: string
+        placeholder: string
+      }
+      salaryCurrency: {
+        label: string
+      }
+      isSalaryVisible: {
+        label: string
+      }
+      deadline: {
+        label: string
+      }
+      numberOfOpenings: {
+        label: string
+        placeholder: string
+      }
+      skills: {
+        label: string
+        placeholder: string
+        add: string
+        removeLabel: string
+        empty: string
+      }
+      description: {
+        label: string
+        placeholder: string
+      }
+      requirements: {
+        label: string
+        placeholder: string
+      }
+      benefits: {
+        label: string
+        placeholder: string
+      }
+    }
+    options: {
+      noCategory: string
+      employmentTypes: Record<'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERNSHIP' | 'FREELANCE', string>
+      workingTypes: Record<'ONSITE' | 'REMOTE' | 'HYBRID', string>
+      experienceLevels: Record<'INTERN' | 'FRESHER' | 'JUNIOR' | 'MIDDLE' | 'SENIOR' | 'LEAD', string>
+      currencies: Record<'VND' | 'USD' | 'JPY', string>
+    }
+    actions: {
+      saveDraft: string
+      savingDraft: string
+      saved: string
+      notSavedYet: string
+      unsavedChanges: string
+      noDraftChanges: string
+      submitReview: string
+      submittingReview: string
+      reset: string
+    }
+    reviewDialog: {
+      title: string
+      description: string
+      cancel: string
+      saveDraft: string
+      savingDraft: string
+      submitReview: string
+      submittingReview: string
+    }
+    submitError: string
+    successDraft: string
+    successSubmit: string
+    successDescription: string
+    viewJobs: string
+    createAnother: string
+  }
+  preview: {
+    title: string
+    emptyTitle: string
+    emptyDescription: string
+    labels: {
+      category: string
+      location: string
+      salary: string
+      openings: string
+      deadline: string
+      employmentType: string
+      workingType: string
+      experienceLevel: string
+      skills: string
+      description: string
+      requirements: string
+      benefits: string
+      company: string
+    }
+    salaryHidden: string
+    salaryNegotiable: string
+    noDeadline: string
+    noBenefits: string
+    readinessLabel: string
+    readinessProgress: string
+    checklistTitle: string
+    checklistItems: {
+      basics: string
+      salary: string
+      skills: string
+      content: string
+      deadline: string
+    }
+  }
+  statusLabels: Record<
+    | 'DRAFT'
+    | 'PENDING_REVIEW'
+    | 'NEEDS_REVIEW'
+    | 'SHOULD_REJECT'
+    | 'PUBLISHED'
+    | 'UNPUBLISHED'
+    | 'REJECTED'
+    | 'CLOSED'
+    | 'EXPIRED',
+    string
+  >
+  validation: {
+    titleRequired: string
+    employmentTypeRequired: string
+    workingTypeRequired: string
+    experienceLevelRequired: string
+    locationRequired: string
+    skillsRequired: string
+    descriptionRequired: string
+    requirementsRequired: string
+    salaryMinInvalid: string
+    salaryMaxInvalid: string
+    salaryRangeInvalid: string
+    openingsInvalid: string
+    deadlineInvalid: string
+  }
+}
+
+export type RecruiterJobSortOption = 'latest' | 'deadline_asc' | 'salary_desc' | 'salary_asc'
+
+export type RecruiterJobsTranslations = {
+  routeLabel: string
+  detailRouteLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+    createAction: string
+  }
+  summary: {
+    label: string
+    total: string
+    totalDescription: string
+    needsAction: string
+    needsActionDescription: string
+    published: string
+    publishedDescription: string
+    inactive: string
+    inactiveDescription: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    emptyTitle: string
+    emptyDescription: string
+    detailLoading: string
+    detailErrorTitle: string
+    detailErrorDescription: string
+  }
+  filters: {
+    searchLabel: string
+    searchPlaceholder: string
+    sortLabel: string
+    statusLabel: string
+    allStatus: string
+    apply: string
+    clear: string
+  }
+  table: {
+    job: string
+    status: string
+    applications: string
+    deadline: string
+    updated: string
+    actions: string
+  }
+  sortOptions: Record<RecruiterJobSortOption, string>
+  actions: {
+    view: string
+    edit: string
+    viewPublic: string
+    submit: string
+    submitting: string
+    delete: string
+    deleting: string
+    unpublish: string
+    unpublishing: string
+    republish: string
+    republishing: string
+    close: string
+    closing: string
+    none: string
+    actionError: string
+    confirmSubmit: string
+    confirmDelete: string
+    confirmRepublish: string
+    reasonUnpublishPrompt: string
+    reasonClosePrompt: string
+    backToList: string
+  }
+  detail: {
+    overview: string
+    content: string
+    moderation: string
+    jobId: string
+    version: string
+    salary: string
+    location: string
+    openings: string
+    employmentType: string
+    workingType: string
+    experienceLevel: string
+    deadline: string
+    publishedAt: string
+    updatedAt: string
+    applications: string
+    description: string
+    requirements: string
+    benefits: string
+    noBenefits: string
+    skills: string
+    adminReason: string
+    unpublishReason: string
+    noReason: string
+    riskScore: string
+    riskLevel: string
+    moderationDecision: string
+    moderationReasons: string
+    matchedRules: string
+    noModeration: string
+    publicLinkUnavailable: string
+  }
+  metrics: {
+    applicationsSuffix: string
+    openingsSuffix: string
+    noDeadline: string
+    salaryHidden: string
+    salaryNegotiable: string
+    noData: string
+    deadlineOverdueAria: string
+    deadlineSoonAria: string
+  }
+}
+
+export type RecruiterApplicationsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+  }
+  stats: {
+    title: string
+    totalLabel: string
+    newLabel: string
+    interviewLabel: string
+    responseRateLabel: string
+    totalDelta: string
+    newDelta: string
+    interviewDelta: string
+    responseRateDelta: string
+  }
+  tabs: {
+    label: string
+    all: string
+  }
+  filters: {
+    queryLabel: string
+    queryPlaceholder: string
+    jobLabel: string
+    jobAll: string
+    sortLabel: string
+    sortOptions: {
+      newest: string
+      scoreDesc: string
+      scoreAsc: string
+    }
+    clear: string
+  }
+  results: {
+    caption: string
+    countLabel: string
+    emptyTitle: string
+    emptyDescription: string
+    columns: {
+      candidate: string
+      job: string
+      status: string
+      score: string
+      submittedAt: string
+      actions: string
+    }
+    actionView: string
+    actionEmail: string
+    actionDownload: string
+  }
+  statusLabels: {
+    new: string
+    screening: string
+    interview: string
+    offer: string
+    hired: string
+    rejected: string
+  }
+  drawer: {
+    title: string
+    close: string
+    statusLabel: string
+    candidateTitle: string
+    applicationTitle: string
+    contactTitle: string
+    skillsTitle: string
+    coverLetterTitle: string
+    activityTitle: string
+    emailLabel: string
+    phoneLabel: string
+    locationLabel: string
+    experienceLabel: string
+    expectedSalaryLabel: string
+    resumeAction: string
+    emailAction: string
+    portfolioAction: string
+    appliedJobLabel: string
+    submittedLabel: string
+    updatedLabel: string
+    scoreLabel: string
+  }
+  pagination: {
+    prev: string
+    next: string
+    pageOf: string
+  }
+}
+
+export type RecruiterSettingsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  navigation: {
+    label: string
+    account: string
+    language: string
+    security: string
+  }
+  account: {
+    title: string
+    description: string
+    fullNameLabel: string
+    fullNamePlaceholder: string
+    emailLabel: string
+    emailHint: string
+    contactEmailLabel: string
+    contactEmailPlaceholder: string
+    contactEmailHint: string
+    contactEmailUnavailableHint: string
+    phoneLabel: string
+    phonePlaceholder: string
+    phoneHint: string
+    roleLabel: string
+    companyLabel: string
+    recruiterRole: string
+    noCompany: string
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    save: string
+    saveLoading: string
+    reset: string
+    saveSuccess: string
+    saveError: string
+    validation: {
+      fullNameRequired: string
+      fullNameMinLength: string
+      fullNameMaxLength: string
+      phoneMaxLength: string
+      contactEmailInvalid: string
+      contactEmailMaxLength: string
+    }
+  }
+  language: {
+    title: string
+    description: string
+    controlLabel: string
+    helper: string
+  }
+  security: {
+    title: string
+    description: string
+    currentPasswordLabel: string
+    newPasswordLabel: string
+    confirmPasswordLabel: string
+    showPassword: string
+    hidePassword: string
+    submit: string
+    submitLoading: string
+    submitSuccess: string
+    submitError: string
+    validation: {
+      currentRequired: string
+      newRequired: string
+      confirmRequired: string
+      passwordMinLength: string
+      passwordMaxLength: string
+      passwordMismatch: string
+      passwordReuse: string
+    }
+    apiErrors: {
+      invalidCredentials: string
+      passwordReuse: string
+      credentialMissing: string
+    }
+  }
+}
+
+export type RecruiterVerificationTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  navigation: {
+    label: string
+    status: string
+    legal: string
+    documents: string
+  }
+  status: {
+    labels: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    titles: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    descriptions: Record<'NO_COMPANY' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED', string>
+    completion: string
+    submittedAt: string
+    notSubmitted: string
+    postingAccess: string
+    postingUnlocked: string
+    postingLocked: string
+    rejectionReason: string
+    missingTitle: string
+    missingFieldLabels: Record<'name' | 'taxCode' | 'website' | 'address' | 'description', string>
+  }
+  legal: {
+    title: string
+    description: string
+    approvedWarning: string
+    suspendedHint: string
+    nameLabel: string
+    namePlaceholder: string
+    taxCodeLabel: string
+    taxCodePlaceholder: string
+    websiteLabel: string
+    websitePlaceholder: string
+    addressLabel: string
+    addressPlaceholder: string
+    descriptionLabel: string
+    descriptionPlaceholder: string
+    logoTitle: string
+    logoDescription: string
+    logoAction: string
+    logoReplace: string
+    logoSelected: string
+    logoHint: string
+    logoInvalidType: string
+    logoTooLarge: string
+    validation: {
+      nameRequired: string
+      taxCodeRequired: string
+      taxCodeMinLength: string
+      websiteRequired: string
+      websiteInvalid: string
+      addressRequired: string
+      descriptionRequired: string
+    }
+  }
+  documents: {
+    title: string
+    description: string
+    typeLabel: string
+    types: Record<'BUSINESS_LICENSE' | 'TAX_CERTIFICATE' | 'DOMAIN_PROOF' | 'OTHER', string>
+    uploadAction: string
+    dropTitle: string
+    dropHint: string
+    queuedTitle: string
+    attachedTitle: string
+    emptyTitle: string
+    emptyDescription: string
+    removeQueued: string
+    deleteAttached: string
+    deleting: string
+    invalidType: string
+    tooLarge: string
+    required: string
+    fileSize: string
+  }
+  actions: {
+    create: string
+    save: string
+    resubmit: string
+    saving: string
+    retry: string
+    backToDashboard: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+  }
+  feedback: {
+    saveSuccess: string
+    resubmitSuccess: string
+    submitError: string
+    deleteError: string
+  }
+  nextBanner: {
+    title: string
+    description: string
+    action: string
+  }
+}
+
+export type CandidateSettingsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  security: {
+    title: string
+    description: string
+    currentPasswordLabel: string
+    newPasswordLabel: string
+    confirmPasswordLabel: string
+    showPassword: string
+    hidePassword: string
+    submit: string
+    submitLoading: string
+    submitSuccess: string
+    submitError: string
+    validation: {
+      currentRequired: string
+      newRequired: string
+      confirmRequired: string
+      passwordMinLength: string
+      passwordMaxLength: string
+      passwordMismatch: string
+      passwordReuse: string
+    }
+    apiErrors: {
+      invalidCredentials: string
+      passwordReuse: string
+      credentialMissing: string
+    }
+  }
+}
+
+export type RecruiterCompanyTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    kicker: string
+    companyLabel: string
+  }
+  form: {
+    storyTitle: string
+    storyDescription: string
+    descriptionLabel: string
+    descriptionPlaceholder: string
+    descriptionHint: string
+    missionLabel: string
+    missionPlaceholder: string
+    missionHint: string
+    cultureLabel: string
+    culturePlaceholder: string
+    cultureHint: string
+    highlightsTitle: string
+    highlightsDescription: string
+    valuesLabel: string
+    valuesPlaceholder: string
+    valuesHint: string
+    perksLabel: string
+    perksPlaceholder: string
+    perksHint: string
+    factsTitle: string
+    factsDescription: string
+    industryLabel: string
+    industryPlaceholder: string
+    industryHint: string
+    sizeLabel: string
+    sizePlaceholder: string
+    sizeHint: string
+    foundedYearLabel: string
+    foundedYearPlaceholder: string
+    foundedYearHint: string
+    contactTitle: string
+    contactDescription: string
+    logoTitle: string
+    logoDescription: string
+    logoAction: string
+    logoReplace: string
+    logoSelected: string
+    logoHint: string
+    logoInvalidType: string
+    logoTooLarge: string
+    heroImageUrlLabel: string
+    heroImageUrlPlaceholder: string
+    heroImageUrlHint: string
+    websiteLabel: string
+    websitePlaceholder: string
+    websiteHint: string
+    contactEmailLabel: string
+    contactEmailPlaceholder: string
+    contactEmailHint: string
+    addressLabel: string
+    addressPlaceholder: string
+    addressHint: string
+    save: string
+    saving: string
+    reset: string
+    noChanges: string
+    saveSuccess: string
+    saveError: string
+    readOnlyHint: string
+    validation: {
+      addressMaxLength: string
+      contactEmailInvalid: string
+      contactEmailMaxLength: string
+      cultureMaxLength: string
+      descriptionMaxLength: string
+      foundedYearInvalid: string
+      heroImageUrlInvalid: string
+      heroImageUrlMaxLength: string
+      industryMaxLength: string
+      missionMaxLength: string
+      perksItemMaxLength: string
+      perksMaxItems: string
+      sizeMaxLength: string
+      valuesItemMaxLength: string
+      valuesMaxItems: string
+      websiteInvalid: string
+      websiteMaxLength: string
+    }
+  }
+  preview: {
+    title: string
+    description: string
+    factsLabel: string
+    industryLabel: string
+    heroImageFallback: string
+    industryFallback: string
+    sizeLabel: string
+    sizeFallback: string
+    foundedYearLabel: string
+    foundedYearFallback: string
+    aboutLabel: string
+    missionLabel: string
+    cultureLabel: string
+    contactLabel: string
+    valuesLabel: string
+    perksLabel: string
+    emptyDescription: string
+    emptyMission: string
+    emptyCulture: string
+    emptyContact: string
+    emptyValues: string
+    emptyPerks: string
+    openReview: string
+    reviewHint: string
+  }
+  review: {
+    kicker: string
+    title: string
+    description: string
+    closeLabel: string
+    factsLabel: string
+    heroImageFallback: string
+    websiteLabel: string
+    contactEmailLabel: string
+    addressLabel: string
+    websiteFallback: string
+    contactEmailFallback: string
+    addressFallback: string
+    missionLabel: string
+    cultureLabel: string
+    valuesLabel: string
+    perksLabel: string
+    contactLabel: string
+    emptyDescription: string
+    emptyMission: string
+    emptyCulture: string
+    emptyValues: string
+    emptyPerks: string
+  }
+  statuses: {
+    NO_COMPANY: string
+    PENDING: string
+    APPROVED: string
+    REJECTED: string
+    SUSPENDED: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    noCompanyKicker: string
+    noCompanyTitle: string
+    noCompanyDescription: string
+    noCompanyAction: string
+  }
+  nextBanner: {
+    title: string
+    description: string
+    action: string
+  }
+}
+
+export type AdminDashboardTranslations = {
+  routeLabel: string
+  pageTitle: string
+  subtitle: string
+  loadingLabel: string
+  header: {
+    lastUpdated: string
+    refresh: string
+    refreshing: string
+  }
+  growth: {
+    title: string
+    description: string
+    demoBadge: string
+    comparisonLabel: string
+    unavailableLabel: string
+    totalUsers: string
+    newUsers: string
+    periods: {
+      '7d': string
+      '30d': string
+      '90d': string
+    }
+  }
+  error: {
+    title: string
+    description: string
+    retry: string
+  }
+  empty: {
+    title: string
+    description: string
+  }
+  stats: {
+    users: string
+    pendingCompanies: string
+    pendingJobs: string
+    pendingRevisions: string
+  }
+  charts: {
+    usersByRole: string
+    companiesByStatus: string
+    jobsByStatus: string
+    noData: string
+  }
+  roles: {
+    CANDIDATE: string
+    RECRUITER: string
+    ADMIN: string
+  }
+  companyStatuses: {
+    PENDING: string
+    APPROVED: string
+    REJECTED: string
+    SUSPENDED: string
+  }
+  jobStatuses: Record<string, string>
+  queues: {
+    title: string
+    description: string
+    companies: string
+    jobs: string
+    revisions: string
+    action: string
+  }
+}
+
+export type AdminJobsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  tabs: { all: string; review: string; revisions: string }
+  stats: { total: string; review: string; published: string; revisions: string }
+  filters: {
+    searchLabel: string; searchPlaceholder: string; statusLabel: string; statusAll: string
+    riskLabel: string; riskAll: string; companyLabel: string; companyAll: string
+    sortLabel: string; clear: string
+  }
+  columns: { job: string; company: string; status: string; risk: string; applications: string; updated: string; actions: string }
+  statuses: Record<string, string>
+  risks: Record<string, string>
+  sorts: { latest: string; oldest: string; risk: string; applications: string }
+  detail: {
+    title: string; description: string; requirements: string; benefits: string; skills: string
+    moderation: string; reasons: string; rules: string; changeSummary: string; noData: string; close: string
+  }
+  actions: {
+    view: string; approve: string; reject: string; unpublish: string; republish: string; close: string
+    cancel: string; confirmTitle: string; confirmDescription: string; reasonTitle: string
+    reasonDescription: string; reasonLabel: string; reasonPlaceholder: string; reasonRequired: string
+  }
+  feedback: {
+    loading: string; errorTitle: string; errorDescription: string; retry: string
+    emptyTitle: string; emptyDescription: string; countLabel: string
+    actionSuccess: string; actionError: string
+  }
+  pagination: { prev: string; next: string; pageOf: string }
+}
+
+export type AdminSettingsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  summary: { accountId: string; email: string; role: string; adminRole: string; fallbackName: string; changeAvatar: string; saveAvatar: string; cancelAvatar: string; removeAvatar: string; avatarHint: string; invalidAvatar: string; avatarError: string }
+  profile: {
+    title: string; description: string; fullName: string; fullNamePlaceholder: string
+    phone: string; phonePlaceholder: string; email: string; emailHint: string; role: string
+    save: string; saving: string; reset: string; saveSuccess: string; saveError: string
+    validation: { fullNameRequired: string; fullNameMin: string; fullNameMax: string; phoneInvalid: string; phoneMax: string }
+  }
+  password: {
+    title: string; description: string; current: string; next: string; confirm: string
+    show: string; hide: string; submit: string; submitting: string; success: string; error: string
+    rulesTitle: string; lengthRule: string; caseRule: string; numberRule: string; symbolRule: string
+    validation: { currentRequired: string; nextRequired: string; confirmRequired: string; length: string; mismatch: string; reuse: string }
+    apiErrors: { invalidCredentials: string; passwordReuse: string; credentialMissing: string }
+  }
+  preferences: {
+    title: string; description: string; language: string; languageHint: string
+    sessionTitle: string; sessionDescription: string; logout: string
+  }
+  logout: { title: string; description: string; confirm: string; cancel: string }
+  feedback: { loading: string; errorTitle: string; errorDescription: string; retry: string }
+}
+
+export type AdminAiManagementTranslations = {
+  routeLabel: string
+  pageTitle: string
+  sidebarLabel: string
+  pageSubtitle: string
+  header: { title: string; refresh: string; refreshing: string; healthy: string; degraded: string; unknown: string }
+  tabs: { overview: string; config: string; logs: string }
+  notes: { newRequests: string; apiKeys: string; estimatedCost: string }
+  config: {
+    title: string; description: string; provider: string; gemini: string; openAi: string
+    geminiModel: string; openAiModel: string; save: string; saving: string
+    updatedAt: string; updatedBy: string; neverUpdated: string; loadErrorTitle: string
+    loadErrorDescription: string; retry: string; success: string; error: string; undo: string
+    activeProvider: string; selectedModel: string
+  }
+  summary: {
+    title: string; description: string; totalRequests: string; succeededRequests: string; failedRequests: string
+    totalTokens: string; estimatedCost: string; noPricing: string; empty: string
+    errorTitle: string; errorDescription: string; retry: string; successRate: string; providerBreakdown: string
+    columns: { provider: string; model: string; requests: string; success: string; failed: string; failureRate: string; inputTokens: string; outputTokens: string; totalTokens: string; cost: string }
+  }
+  logs: {
+    title: string; description: string; count: string; provider: string; model: string
+    status: string; dateFrom: string; dateTo: string; candidateCvId: string
+    allProviders: string; allModels: string; allStatuses: string; apply: string; clear: string
+    loading: string; errorTitle: string; errorDescription: string; retry: string
+    emptyTitle: string; emptyDescription: string; copied: string; copy: string
+    noValue: string; succeeded: string; failed: string; noPricing: string
+    columns: { request: string; providerModel: string; status: string; tokens: string; latency: string; cost: string; createdAt: string; error: string }
+  }
+  pagination: { prev: string; next: string; pageOf: string }
 }
 
 export type Translations = {
   common: CommonTranslations
   pages: {
+    adminAiManagement: AdminAiManagementTranslations
+    adminDashboard: AdminDashboardTranslations
     adminCompanies: AdminCompaniesTranslations
+    adminJobs: AdminJobsTranslations
+    adminSettings: AdminSettingsTranslations
     adminUsers: AdminUsersTranslations
+    comingSoon: ComingSoonTranslations
+    candidateSettings: CandidateSettingsTranslations
     companyDetail: CompanyDetailTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations
     jobDetail: JobDetailTranslations
     login: LoginTranslations
     profile: ProfileTranslations
+    recruiterApplications: RecruiterApplicationsTranslations
+    recruiterJobCreate: RecruiterJobCreateTranslations
+    recruiterJobs: RecruiterJobsTranslations
     recruiterHome: RecruiterHomeTranslations
+    recruiterCompany: RecruiterCompanyTranslations
+    recruiterSettings: RecruiterSettingsTranslations
+    recruiterVerification: RecruiterVerificationTranslations
     register: RegisterTranslations
     search: SearchTranslations
   }
+}
+
+export type ComingSoonPageKey =
+  | 'adminDashboard'
+  | 'adminJobs'
+  | 'adminSettings'
+  | 'careerGuide'
+  | 'companies'
+  | 'profileMessages'
+  | 'recruiterCandidates'
+  | 'recruiterCompany'
+  | 'recruiterJobs'
+  | 'recruiterMessages'
+  | 'recruiterSettings'
+
+export type ComingSoonTranslations = {
+  badge: string
+  title: string
+  description: string
+  backAction: string
+  pages: Record<
+    ComingSoonPageKey,
+    {
+      title: string
+      description: string
+      backHref: string
+      backLabel: string
+    }
+  >
 }

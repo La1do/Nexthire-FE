@@ -1,21 +1,33 @@
 import { useParams } from 'react-router-dom'
-import { getTranslations } from '../../i18n'
+import { useTranslations } from '../../i18n'
+import { EmptyState, Loading } from '../_components'
 import { CompanyAbout } from './components/CompanyAbout'
 import { CompanyCulturePanel } from './components/CompanyCulturePanel'
 import { CompanyHero } from './components/CompanyHero'
 import { CompanyOpenJobs } from './components/CompanyOpenJobs'
 import { CompanySidebar } from './components/CompanySidebar'
 import { CompanySnapshot } from './components/CompanySnapshot'
-import { findCompanyDetailBySlug } from './utils/companyDetailData'
+import { useCompanyDetail } from './hooks/useCompanyDetail'
+import { useCompanyFollow } from './hooks/useCompanyFollow'
 
 export function CompanyDetailPage() {
-  const { slug = '' } = useParams()
-  const { pages } = getTranslations()
-  const home = pages.home
+  const { id = '' } = useParams()
+  const { pages } = useTranslations()
   const content = pages.companyDetail
-  const company = findCompanyDetailBySlug(home, content, slug)
+  const { company, loading, error, notFound } = useCompanyDetail(id)
+  const followControl = useCompanyFollow(company?.id ?? '', content.follow)
 
-  if (!company) {
+  if (loading) {
+    return (
+      <div className="company-detail-page">
+        <div className="company-detail-state">
+          <Loading label={content.states.loading} />
+        </div>
+      </div>
+    )
+  }
+
+  if (notFound) {
     return (
       <div className="company-detail-page">
         <section className="company-detail-not-found company-detail-motion">
@@ -28,13 +40,26 @@ export function CompanyDetailPage() {
     )
   }
 
+  if (error || !company) {
+    return (
+      <div className="company-detail-page">
+        <div className="company-detail-state">
+          <EmptyState
+            description={content.states.errorDescription}
+            title={content.states.errorTitle}
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="company-detail-page">
       <a className="company-detail-back-link" href="/search">
         {content.backToSearch}
       </a>
 
-      <CompanyHero company={company} content={content} />
+      <CompanyHero company={company} content={content} followControl={followControl} />
       <CompanySnapshot company={company} content={content.snapshot} />
 
       <div className="company-detail-layout">
@@ -44,7 +69,7 @@ export function CompanyDetailPage() {
           <CompanyOpenJobs company={company} content={content.openJobs} title={content.sections.openJobs} />
         </main>
 
-        <CompanySidebar company={company} content={content} />
+        <CompanySidebar company={company} content={content} followControl={followControl} />
       </div>
     </div>
   )

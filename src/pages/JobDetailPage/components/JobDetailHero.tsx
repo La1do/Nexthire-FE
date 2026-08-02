@@ -1,24 +1,25 @@
-import type { HomeJobItem, JobDetailTranslations } from '../../../i18n/types'
+import type { JobDetailTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
-import { createCompanyDetailHref } from '../../_utils/jobRoutes'
+import { createCompanyDetailHrefById } from '../../_utils/jobRoutes'
+import type { JobDetailView } from '../types'
 
 type JobDetailHeroProps = {
   content: JobDetailTranslations['hero']
-  job: HomeJobItem
+  job: JobDetailView
 }
 
 export function JobDetailHero({ content, job }: JobDetailHeroProps) {
-  const companyHref = createCompanyDetailHref(job.company)
+  const companyHref = createCompanyDetailHrefById(job.companyId)
 
   return (
     <section className="job-detail-hero job-detail-motion">
-      <a className={`job-detail-logo-panel job-detail-logo-panel-${job.companyLogo.tone}`} href={companyHref}>
+      <a className={`job-detail-logo-panel job-detail-logo-panel-${job.logo.tone}`} href={companyHref}>
         <CompanyLogoMark
-          alt={job.companyLogo.alt}
+          alt={job.logo.alt}
           className="job-detail-hero-logo"
-          fallbackText={job.companyLogo.fallbackText}
-          src={job.companyLogo.src}
-          tone={job.companyLogo.tone}
+          fallbackText={job.logo.fallbackText}
+          src={job.logo.src}
+          tone={job.logo.tone}
         />
       </a>
 
@@ -29,7 +30,6 @@ export function JobDetailHero({ content, job }: JobDetailHeroProps) {
         </div>
 
         <h1>{job.title}</h1>
-        <p>{job.description}</p>
 
         <div aria-label={content.metaLabel} className="job-detail-hero-meta">
           <span>{job.location}</span>

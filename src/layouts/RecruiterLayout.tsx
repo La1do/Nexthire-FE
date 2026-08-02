@@ -1,9 +1,9 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getAuthUserDisplayName, getInitials, useAuth } from '../context'
-import { getTranslations } from '../i18n'
-import { BrandMark } from '../pages/_components'
+import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
+import { useTranslations } from '../i18n'
+import { BrandMark, LanguageSwitch } from '../pages/_components'
 
 function MenuIcon() {
   return (
@@ -34,22 +34,40 @@ function SearchIcon() {
 }
 
 export function RecruiterLayout({ children }: PropsWithChildren) {
-  const { common, pages } = getTranslations()
+  const { common, pages } = useTranslations()
   const content = pages.recruiterHome
   const { logout, user } = useAuth()
+  const toast = useToast()
   const navigate = useNavigate()
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
   const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
+  const isJobFormPath = currentPath.startsWith('/recruiter/jobs/new') ||
+    (currentPath.startsWith('/recruiter/jobs/') && currentPath.endsWith('/edit'))
+  const isApplicationsPath = currentPath.startsWith('/recruiter/applications')
+  const isSettingsPath = currentPath.startsWith('/recruiter/settings')
+  const isVerificationPath = currentPath.startsWith('/recruiter/verification')
+  const topbarContent = isJobFormPath
+    ? pages.recruiterJobCreate
+    : currentPath.startsWith('/recruiter/jobs')
+      ? pages.recruiterJobs
+      : isApplicationsPath
+        ? pages.recruiterApplications
+        : isSettingsPath
+          ? pages.recruiterSettings
+          : isVerificationPath
+            ? pages.recruiterVerification
+            : content
   const displayName = user ? getAuthUserDisplayName(user) : common.brandName
   const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
   const navItems = [
     { href: '/recruiter', label: content.sidebar.overview },
-    { href: '/', label: content.sidebar.jobs },
-    { href: '/', label: content.sidebar.candidates },
-    { href: '/', label: content.sidebar.company },
-    { href: '/', label: content.sidebar.messages },
-    { href: '/', label: content.sidebar.settings },
+    { href: '/recruiter/jobs', label: content.sidebar.jobs },
+    { href: '/recruiter/applications', label: pages.recruiterApplications.routeLabel },
+    { href: '/recruiter/candidates', label: content.sidebar.candidates },
+    { href: '/recruiter/company', label: content.sidebar.company },
+    { href: '/recruiter/messages', label: content.sidebar.messages },
+    { href: '/recruiter/settings', label: content.sidebar.settings },
   ]
 
   useEffect(() => {
@@ -81,8 +99,10 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   }, [isSidebarOpen])
 
   const handleLogout = () => {
-    void logout()
-    navigate('/login')
+    void logout().then(() => {
+      toast.success(common.authFeedback.logoutSuccess)
+      navigate('/login')
+    })
   }
 
   return (
@@ -94,12 +114,15 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
       >
         <div className="recruiter-sidebar__inner">
           <a className="recruiter-sidebar__brand" href="/home">
-            <BrandMark label={common.brandName} />
+            <BrandMark compact label={common.brandName} />
           </a>
 
           <nav aria-label={content.routeLabel} className="recruiter-sidebar__nav">
             {navItems.map((item) => {
-              const isActive = item.href === '/recruiter' && currentPath.startsWith('/recruiter')
+              const isActive =
+                item.href === '/recruiter'
+                  ? currentPath === item.href
+                  : currentPath.startsWith(item.href)
 
               return (
                 <a
@@ -115,12 +138,14 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
           </nav>
 
           <div className="recruiter-sidebar__user">
-            {user?.logoUrl ? (
-              <img alt={user.companyName ? `${user.companyName} logo` : ''} src={user.logoUrl} />
-            ) : (
-              <span>{avatarLabel}</span>
-            )}
-            <div>
+            <div className="recruiter-sidebar__user-avatar">
+              {user?.logoUrl ? (
+                <img alt={user.companyName ? `${user.companyName} logo` : ''} src={user.logoUrl} />
+              ) : (
+                <span>{avatarLabel}</span>
+              )}
+            </div>
+            <div className="recruiter-sidebar__user-info">
               <strong>{displayName}</strong>
               <small>{user?.companyName ?? content.sidebar.currentRole}</small>
             </div>
@@ -151,8 +176,8 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
           </button>
 
           <div className="recruiter-topbar__heading">
-            <h1>{content.pageTitle}</h1>
-            <p>{content.pageSubtitle}</p>
+            <h1>{topbarContent.pageTitle}</h1>
+            <p>{topbarContent.pageSubtitle}</p>
           </div>
 
           <label className="recruiter-topbar__search">
@@ -165,13 +190,17 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
             />
           </label>
 
-          <button
-            aria-label={content.topbar.notificationsLabel}
-            className="recruiter-topbar__icon-button"
-            type="button"
-          >
-            <BellIcon />
-          </button>
+          <div className="recruiter-topbar__actions">
+            <LanguageSwitch compact />
+            <button
+              aria-label={content.topbar.notificationsLabel}
+              className="recruiter-topbar__icon-button"
+              title={content.topbar.notificationsLabel}
+              type="button"
+            >
+              <BellIcon />
+            </button>
+          </div>
         </header>
 
         <main className="recruiter-main__content">{children}</main>

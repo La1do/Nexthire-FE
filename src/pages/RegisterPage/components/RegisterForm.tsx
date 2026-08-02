@@ -1,18 +1,30 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button, Input, PasswordInput, SegmentedControl } from '../../_components'
+import { Button, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
-import { useAuth } from '../../../context'
+import { useToast } from '../../../context'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
-import { isAuthFormRole, toAuthApiRole } from '../../../lib/auth/authRole'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, RegisterTranslations } from '../../../i18n/types'
+import type { AuthApiRole } from '../../../lib/auth/authRole'
 import type { RegisterFormValues } from '../types'
 import { validateRegisterForm } from '../utils/registerValidation'
 
+export type PendingRegistration = {
+  email: string
+  password: string
+  role: AuthApiRole
+}
+
+type RegisterFormRoleCopy = {
+  form: RegisterTranslations['candidate']['form']
+  validation: RegisterTranslations['validation']
+}
+
 type RegisterFormProps = {
   apiErrors: CommonTranslations['apiErrors']
-  translations: RegisterTranslations
+  onRegistered: (registration: PendingRegistration) => void
+  role: AuthApiRole
+  translations: RegisterFormRoleCopy
 }
 
 const initialValues: RegisterFormValues = {
@@ -21,67 +33,48 @@ const initialValues: RegisterFormValues = {
   fullName: '',
   password: '',
   phone: '',
-  role: 'candidate',
 }
 
-function getRegisterRedirect(role: ReturnType<typeof toAuthApiRole>) {
-  if (role === 'CANDIDATE') return '/home'
-  if (role === 'RECRUITER') return '/recruiter'
-  return '/admin/users'
-}
-
-export function RegisterForm({ apiErrors, translations }: RegisterFormProps) {
+export function RegisterForm({ apiErrors, onRegistered, role, translations }: RegisterFormProps) {
   const { form, validation } = translations
-  const navigate = useNavigate()
-  const { login } = useAuth()
+  const toast = useToast()
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
-  const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, setFieldValue, values } =
-    useFormState<RegisterFormValues>({
-      initialValues,
-      onSubmit: async (formValues) => {
-        const role = toAuthApiRole(formValues.role)
-
-        setSubmitError(undefined)
-        setSubmitting(true)
-
-        try {
-          const auth = await authService.register({
-            fullName: formValues.fullName.trim(),
-            phone: formValues.phone.trim(),
-            email: formValues.email.trim(),
-            password: formValues.password,
-            role,
-          })
-
-          login(auth, 'session')
-          navigate(getRegisterRedirect(role))
-        } catch (error) {
-          setSubmitError(getApiErrorMessage(error, apiErrors))
-        } finally {
-          setSubmitting(false)
-        }
-      },
-      validate: (formValues) => validateRegisterForm(formValues, validation),
-    })
-
-  const handleRoleChange = (role: string) => {
-    if (isAuthFormRole(role)) {
+  const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, values } = useFormState<RegisterFormValues>({
+    initialValues,
+    onSubmit: async (formValues) => {
       setSubmitError(undefined)
-      setFieldValue('role', role)
-    }
-  }
+      setSubmitting(true)
+
+      try {
+        const email = formValues.email.trim()
+
+        await authService.register({
+          fullName: formValues.fullName.trim(),
+          phone: formValues.phone.trim(),
+          email,
+          password: formValues.password,
+          role,
+        })
+
+        onRegistered({
+          email,
+          password: formValues.password,
+          role,
+        })
+      } catch (error) {
+        const message = getApiErrorMessage(error, apiErrors)
+        setSubmitError(message)
+        toast.error(message)
+      } finally {
+        setSubmitting(false)
+      }
+    },
+    validate: (formValues) => validateRegisterForm(formValues, validation),
+  })
 
   return (
     <form className="auth-form-grid grid" noValidate onSubmit={handleSubmit}>
-      <SegmentedControl
-        label={form.roleLabel}
-        name="role"
-        onChange={handleRoleChange}
-        options={form.roleOptions}
-        value={values.role}
-      />
-
       <Input
         autoComplete="name"
         disabled={isSubmitting}

@@ -12,7 +12,7 @@ export function getProfileCompletion(profile: CandidateProfile): ProfileCompleti
     },
     {
       key: 'contact',
-      completed: [profile.email, profile.phone].every(hasText),
+      completed: [profile.contactEmail, profile.phone].every(hasText),
     },
     {
       key: 'skills',

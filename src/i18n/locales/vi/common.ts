@@ -1,5 +1,37 @@
 export const common = {
   brandName: 'NexHire',
+  job: {
+    workingType: {
+      ONSITE: 'Tại văn phòng',
+      REMOTE: 'Remote',
+      HYBRID: 'Hybrid',
+    },
+    salaryNegotiable: 'Thỏa thuận',
+    jobsCountSuffix: 'việc làm',
+    rolesCountSuffix: 'việc làm',
+    postedJustNow: 'Vừa đăng',
+    postedPrefix: 'Đăng ',
+    postedSuffix: '',
+  },
+  savedJobs: {
+    saving: 'Đang lưu việc làm',
+    removing: 'Đang bỏ lưu việc làm',
+    remove: 'Bỏ lưu việc làm',
+    saveSuccess: 'Đã lưu việc làm.',
+    removeSuccess: 'Đã bỏ lưu việc làm.',
+    saveError: 'Không thể cập nhật việc làm đã lưu. Thử lại.',
+    candidateOnly: 'Chỉ tài khoản ứng viên mới có thể lưu việc làm.',
+  },
+  toast: {
+    regionLabel: 'Thông báo',
+    closeLabel: 'Đóng thông báo',
+    statusLabels: {
+      success: 'Thành công',
+      error: 'Có lỗi',
+      warning: 'Cần chú ý',
+      info: 'Thông tin',
+    },
+  },
   apiErrors: {
     default: 'Có lỗi xảy ra, vui lòng thử lại.',
     byCode: {
@@ -10,9 +42,15 @@ export const common = {
       'COMMON.RATE_LIMITED': 'Bạn thao tác quá nhanh, vui lòng thử lại sau.',
       'COMMON.INTERNAL_ERROR': 'Hệ thống đang gặp lỗi, vui lòng thử lại sau.',
       'AUTH.INVALID_CREDENTIALS': 'Email hoặc mật khẩu không đúng.',
+      'AUTH.GOOGLE_TOKEN_INVALID': 'Phiên đăng nhập Google không hợp lệ. Vui lòng thử lại.',
+      'AUTH.GOOGLE_EMAIL_NOT_VERIFIED': 'Email Google của bạn chưa được xác minh.',
+      'AUTH.GOOGLE_LOGIN_NOT_CONFIGURED': 'Đăng nhập Google chưa được cấu hình.',
       'AUTH.LOGIN_ROLE_NOT_ALLOWED': 'Tài khoản không thuộc vai trò đã chọn.',
       'AUTH.ACCOUNT_TEMPORARILY_LOCKED': 'Tài khoản đang bị khóa tạm thời.',
       'AUTH.EMAIL_ALREADY_REGISTERED': 'Email này đã được đăng ký.',
+      'AUTH.EMAIL_VERIFICATION_TOKEN_INVALID': 'Mã xác thực không đúng.',
+      'AUTH.EMAIL_VERIFICATION_TOKEN_EXPIRED': 'Mã xác thực đã hết hạn.',
+      'AUTH.EMAIL_VERIFICATION_NOT_FOUND': 'Không tìm thấy yêu cầu xác thực cho email này.',
       'AUTH.REGISTRATION_ROLE_NOT_ALLOWED': 'Vai trò này không thể tự đăng ký.',
       'AUTH.ROLE_NOT_PROVISIONED': 'Vai trò này chưa được hệ thống hỗ trợ.',
       'AUTH.CANDIDATE_ROLE_NOT_PROVISIONED': 'Vai trò ứng viên chưa được hệ thống hỗ trợ.',
@@ -35,6 +73,29 @@ export const common = {
     candidateRole: 'Ứng viên',
     recruiterRole: 'Nhà tuyển dụng',
     adminRole: 'Quản trị viên',
+  },
+  authFeedback: {
+    loginSuccess: 'Đăng nhập thành công.',
+    googleLoginSuccess: 'Đăng nhập Google thành công.',
+    logoutSuccess: 'Đã đăng xuất.',
+    registerSuccess: 'Đã tạo tài khoản. Kiểm tra email để lấy mã xác thực.',
+    emailVerifiedSuccess: 'Email đã được xác thực. Đang vào NexHire.',
+    passwordResetEmailSent: 'Đã gửi hướng dẫn đặt lại mật khẩu.',
+    passwordResetVerified: 'Mã xác thực hợp lệ.',
+    passwordResetSuccess: 'Đã cập nhật mật khẩu mới.',
+  },
+  languageSwitcher: {
+    label: 'Đổi ngôn ngữ',
+    options: {
+      vi: 'Tiếng Việt',
+      en: 'English',
+      ja: '日本語',
+    },
+    shortOptions: {
+      vi: 'VI',
+      en: 'EN',
+      ja: 'JA',
+    },
   },
   footer: {
     description: 'Kết nối ứng viên và doanh nghiệp bằng trải nghiệm tuyển dụng rõ ràng, đáng tin cậy.',

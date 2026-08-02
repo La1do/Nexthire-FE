@@ -1,5 +1,5 @@
 import type { CompanyDetailTranslations } from '../../../i18n/types'
-import type { CompanyDetailViewModel } from '../utils/companyDetailData'
+import type { CompanyDetailViewModel } from '../utils/companyDetailMappers'
 
 type CompanySnapshotProps = {
   company: CompanyDetailViewModel
@@ -17,8 +17,8 @@ export function CompanySnapshot({ company, content }: CompanySnapshotProps) {
       value: company.size,
     },
     {
-      label: content.responseTime,
-      value: company.responseTime,
+      label: content.founded,
+      value: company.founded,
     },
     {
       label: content.location,

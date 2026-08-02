@@ -1,9 +1,9 @@
+import type { ApplicationStatus } from '../../types/application.types'
+import type { CompanyStatus } from '../../types/company.types'
+
 export type CompanyVerificationStatus =
+  | CompanyStatus
   | 'NO_COMPANY'
-  | 'PENDING'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'SUSPENDED'
 
 export type CompanyVerificationFormValues = {
   name: string
@@ -12,11 +12,11 @@ export type CompanyVerificationFormValues = {
   address: string
   logo: string
   description: string
-  documents: ReadonlyArray<string>
+  documents: string[]
 }
 
 export type RecruiterCompany = {
-  id: string
+  id: string | null
   address: string
   completion: number
   description: string
@@ -60,13 +60,14 @@ export type RecruiterApplication = {
   role: string
   score: string
   stage: string
+  status: ApplicationStatus
   submittedAt: string
 }
 
 export type RecruiterPerformancePoint = {
+  count: number
   id: string
   label: string
-  value: number
 }
 
 export type RecruiterTask = {
@@ -74,4 +75,13 @@ export type RecruiterTask = {
   description: string
   label: string
   tone: RecruiterStatTone
+}
+
+export type RecruiterDashboardData = {
+  applications: ReadonlyArray<RecruiterApplication>
+  company: RecruiterCompany
+  performance: ReadonlyArray<RecruiterPerformancePoint>
+  pipeline: ReadonlyArray<RecruiterPipelineItem>
+  stats: ReadonlyArray<RecruiterStat>
+  tasks: ReadonlyArray<RecruiterTask>
 }

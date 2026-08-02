@@ -1,12 +1,23 @@
 export const login = {
-  title: 'Welcome back',
-  subtitle: 'Log in to continue with NexHire',
+  candidate: {
+    title: 'Welcome back',
+    subtitle: 'Log in to continue finding roles that fit your profile.',
+    switchPrompt: 'Are you an employer?',
+    switchAction: 'Log in as recruiter',
+  },
+  recruiter: {
+    title: 'Recruiter login',
+    subtitle: 'Access your hiring workspace, company profile, and candidate pipeline.',
+    switchPrompt: 'Are you a candidate?',
+    switchAction: 'Log in as candidate',
+  },
+  admin: {
+    title: 'Admin login',
+    subtitle: 'Sign in to review platform operations, users, and company verification.',
+    switchPrompt: 'Need candidate access?',
+    switchAction: 'Log in as candidate',
+  },
   form: {
-    roleLabel: 'Log in as',
-    roleOptions: [
-      { value: 'candidate', label: 'Candidate' },
-      { value: 'employer', label: 'Employer' },
-    ],
     emailLabel: 'Email',
     emailPlaceholder: 'name@company.com',
     passwordLabel: 'Password',
@@ -17,6 +28,12 @@ export const login = {
     hidePassword: 'Hide password',
     submit: 'Log in',
     submitLoading: 'Logging in...',
+    orDivider: 'Or',
+    googleAriaLabel: 'Continue with Google',
+    googleCredentialMissing: 'Google did not return a sign-in token. Please try again.',
+    googleLoadError: 'Google sign-in could not be loaded. Please try again later.',
+    googleLoading: 'Loading Google...',
+    googleUnavailable: 'Google sign-in is not configured',
   },
   footer: {
     prompt: 'No account yet?',

@@ -1,5 +1,37 @@
 export const common = {
   brandName: 'NexHire',
+  job: {
+    workingType: {
+      ONSITE: '出社',
+      REMOTE: 'リモート',
+      HYBRID: 'ハイブリッド',
+    },
+    salaryNegotiable: '応相談',
+    jobsCountSuffix: '件',
+    rolesCountSuffix: '件',
+    postedJustNow: '先ほど掲載',
+    postedPrefix: '',
+    postedSuffix: '掲載',
+  },
+  savedJobs: {
+    saving: '求人を保存しています',
+    removing: '保存を解除しています',
+    remove: '求人の保存を解除',
+    saveSuccess: '求人を保存しました。',
+    removeSuccess: '保存済み求人から削除しました。',
+    saveError: '保存状態を更新できませんでした。もう一度お試しください。',
+    candidateOnly: '求人を保存できるのは候補者アカウントのみです。',
+  },
+  toast: {
+    regionLabel: '通知',
+    closeLabel: '通知を閉じる',
+    statusLabels: {
+      success: '成功',
+      error: 'エラー',
+      warning: '注意',
+      info: 'お知らせ',
+    },
+  },
   apiErrors: {
     default: 'エラーが発生しました。もう一度お試しください。',
     byCode: {
@@ -10,9 +42,15 @@ export const common = {
       'COMMON.RATE_LIMITED': '操作が速すぎます。しばらくしてからお試しください。',
       'COMMON.INTERNAL_ERROR': 'システムで問題が発生しています。後でもう一度お試しください。',
       'AUTH.INVALID_CREDENTIALS': 'メールまたはパスワードが正しくありません。',
+      'AUTH.GOOGLE_TOKEN_INVALID': 'Googleログイントークンが無効です。もう一度お試しください。',
+      'AUTH.GOOGLE_EMAIL_NOT_VERIFIED': 'Googleメールが確認されていません。',
+      'AUTH.GOOGLE_LOGIN_NOT_CONFIGURED': 'Googleログインが設定されていません。',
       'AUTH.LOGIN_ROLE_NOT_ALLOWED': 'このアカウントは選択した役割では利用できません。',
       'AUTH.ACCOUNT_TEMPORARILY_LOCKED': 'このアカウントは一時的にロックされています。',
       'AUTH.EMAIL_ALREADY_REGISTERED': 'このメールは既に登録されています。',
+      'AUTH.EMAIL_VERIFICATION_TOKEN_INVALID': '確認コードが正しくありません。',
+      'AUTH.EMAIL_VERIFICATION_TOKEN_EXPIRED': '確認コードの有効期限が切れています。',
+      'AUTH.EMAIL_VERIFICATION_NOT_FOUND': 'このメールの確認待ち情報が見つかりません。',
       'AUTH.REGISTRATION_ROLE_NOT_ALLOWED': 'この役割では自己登録できません。',
       'AUTH.ROLE_NOT_PROVISIONED': 'この役割はまだ利用できません。',
       'AUTH.CANDIDATE_ROLE_NOT_PROVISIONED': '候補者の役割はまだ利用できません。',
@@ -35,6 +73,29 @@ export const common = {
     candidateRole: '候補者',
     recruiterRole: '採用担当者',
     adminRole: '管理者',
+  },
+  authFeedback: {
+    loginSuccess: 'ログインしました。',
+    googleLoginSuccess: 'Googleでログインしました。',
+    logoutSuccess: 'ログアウトしました。',
+    registerSuccess: 'アカウントを作成しました。確認コードをメールでご確認ください。',
+    emailVerifiedSuccess: 'メールを確認しました。NexHireへ移動します。',
+    passwordResetEmailSent: 'パスワード再設定の案内を送信しました。',
+    passwordResetVerified: '確認コードが承認されました。',
+    passwordResetSuccess: '新しいパスワードを保存しました。',
+  },
+  languageSwitcher: {
+    label: '言語を変更',
+    options: {
+      vi: 'Tiếng Việt',
+      en: 'English',
+      ja: '日本語',
+    },
+    shortOptions: {
+      vi: 'VI',
+      en: 'EN',
+      ja: 'JA',
+    },
   },
   footer: {
     description: '企業と候補者を、わかりやすく信頼できる採用体験でつなぎます。',

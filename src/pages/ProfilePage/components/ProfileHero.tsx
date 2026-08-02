@@ -1,4 +1,5 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { CSSProperties, ChangeEvent } from 'react'
 import type { ProfileTranslations } from '../../../i18n/types'
 import type { CandidateProfile, ProfileCompletion } from '../types'
 
@@ -6,7 +7,8 @@ type ProfileHeroProps = {
   completion: ProfileCompletion
   content: ProfileTranslations['hero']
   hasUnsavedChanges: boolean
-  onSave: () => void
+  isUploadingAvatar: boolean
+  onAvatarUpload: (file: File) => void
   profile: CandidateProfile
 }
 
@@ -17,19 +19,65 @@ function getInitials(name: string) {
     .slice(-2)
     .map((part) => part[0])
     .join('')
-    .toUpperCase()
+    .toUpperCase() || 'NH'
 }
 
-export function ProfileHero({ completion, content, hasUnsavedChanges, onSave, profile }: ProfileHeroProps) {
+export function ProfileHero({
+  completion,
+  content,
+  hasUnsavedChanges,
+  isUploadingAvatar,
+  onAvatarUpload,
+  profile,
+}: ProfileHeroProps) {
+  const avatarInputRef = useRef<HTMLInputElement | null>(null)
+  const [avatarFailed, setAvatarFailed] = useState(false)
+  const showAvatarImage = Boolean(profile.avatarUrl) && !avatarFailed
   const progressStyle = {
     '--profile-progress': `${completion.percent}%`,
   } as CSSProperties
 
+  useEffect(() => {
+    setAvatarFailed(false)
+  }, [profile.avatarUrl])
+
+  function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
+    if (file) {
+      onAvatarUpload(file)
+    }
+  }
+
   return (
     <section className="profile-hero profile-card-motion">
       <div className="profile-avatar-wrap">
-        <span className="profile-avatar">{getInitials(profile.name)}</span>
-        <button aria-label={content.avatarAction} className="profile-avatar-action" type="button" />
+        <span className="profile-avatar">
+          {showAvatarImage ? (
+            <img
+              alt={profile.name || content.avatarAction}
+              onError={() => setAvatarFailed(true)}
+              src={profile.avatarUrl ?? ''}
+            />
+          ) : (
+            getInitials(profile.name)
+          )}
+        </span>
+        <button
+          aria-label={content.avatarAction}
+          className="profile-avatar-action"
+          disabled={isUploadingAvatar}
+          onClick={() => avatarInputRef.current?.click()}
+          type="button"
+        />
+        <input
+          accept="image/jpeg,image/png,image/webp"
+          className="sr-only"
+          onChange={handleAvatarChange}
+          ref={avatarInputRef}
+          type="file"
+        />
       </div>
 
       <div className="profile-hero-main">
@@ -50,10 +98,6 @@ export function ProfileHero({ completion, content, hasUnsavedChanges, onSave, pr
           <strong>{completion.percent}%</strong>
         </div>
 
-        <div className="profile-hero-actions">
-          <button onClick={onSave} type="button">{content.save}</button>
-          <a href="/profile">{content.viewPublic}</a>
-        </div>
       </div>
     </section>
   )

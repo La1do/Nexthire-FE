@@ -1,6 +1,6 @@
-import type { AuthFormRole } from '../../lib/auth/authRole'
+import type { AuthApiRole } from '../../lib/auth/authRole'
 
-export type RegisterRole = AuthFormRole
+export type RegisterRole = Exclude<AuthApiRole, 'ADMIN'>
 
 export type RegisterFormValues = {
   confirmPassword: string
@@ -8,7 +8,6 @@ export type RegisterFormValues = {
   fullName: string
   password: string
   phone: string
-  role: RegisterRole
 }
 
 export type RegisterValidationMessages = {

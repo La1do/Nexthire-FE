@@ -1,19 +1,17 @@
 type SectionHeadingProps = {
   action?: string
-  eyebrow?: string
+  actionHref?: string
   title: string
 }
 
-export function SectionHeading({ action, eyebrow, title }: SectionHeadingProps) {
+export function SectionHeading({ action, actionHref = '/search', title }: SectionHeadingProps) {
   return (
     <div className="home-section-heading">
-      <div>
-        {eyebrow ? <p className="home-eyebrow">{eyebrow}</p> : null}
-        <h2>{title}</h2>
-      </div>
+      <h2>{title}</h2>
       {action ? (
-        <a href="/">
-          {action}
+        <a href={actionHref}>
+          <span>{action}</span>
+          <span aria-hidden="true">→</span>
         </a>
       ) : null}
     </div>
