@@ -8,12 +8,14 @@ import { CompanyOpenJobs } from './components/CompanyOpenJobs'
 import { CompanySidebar } from './components/CompanySidebar'
 import { CompanySnapshot } from './components/CompanySnapshot'
 import { useCompanyDetail } from './hooks/useCompanyDetail'
+import { useCompanyFollow } from './hooks/useCompanyFollow'
 
 export function CompanyDetailPage() {
   const { id = '' } = useParams()
   const { pages } = useTranslations()
   const content = pages.companyDetail
   const { company, loading, error, notFound } = useCompanyDetail(id)
+  const followControl = useCompanyFollow(company?.id ?? '', content.follow)
 
   if (loading) {
     return (
@@ -57,7 +59,7 @@ export function CompanyDetailPage() {
         {content.backToSearch}
       </a>
 
-      <CompanyHero company={company} content={content} />
+      <CompanyHero company={company} content={content} followControl={followControl} />
       <CompanySnapshot company={company} content={content.snapshot} />
 
       <div className="company-detail-layout">
@@ -67,7 +69,7 @@ export function CompanyDetailPage() {
           <CompanyOpenJobs company={company} content={content.openJobs} title={content.sections.openJobs} />
         </main>
 
-        <CompanySidebar company={company} content={content} />
+        <CompanySidebar company={company} content={content} followControl={followControl} />
       </div>
     </div>
   )

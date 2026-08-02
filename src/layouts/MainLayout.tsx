@@ -183,7 +183,7 @@ export function MainLayout({ children }: PropsWithChildren) {
   return (
     <div className="main-shell min-h-screen text-[var(--color-text-primary)]">
       <header className="main-header">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-5 px-5 py-4">
+        <div className="main-container flex items-center justify-between gap-5 py-4">
           <a className="main-brand" href="/">
             <BrandMark compact label={common.brandName} />
           </a>
@@ -219,10 +219,10 @@ export function MainLayout({ children }: PropsWithChildren) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-5 py-10 md:py-16">{children}</main>
+      <main className="main-container py-10 md:py-16">{children}</main>
 
       <footer className="main-footer">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-12 lg:grid-cols-[1.2fr_2fr]">
+        <div className="main-container grid gap-10 py-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <a className="main-footer-brand" href="/">
               <BrandMark compact label={common.brandName} />
@@ -247,7 +247,7 @@ export function MainLayout({ children }: PropsWithChildren) {
           </div>
         </div>
         <div className="main-footer-bottom-border">
-          <div className="main-footer-bottom mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 text-xs">
+          <div className="main-footer-bottom main-container flex flex-wrap items-center justify-between gap-4 py-5 text-xs">
             <span className="main-legal-pill">{common.footer.legalLabel}</span>
             <span>{common.footer.copyright}</span>
           </div>

@@ -14,6 +14,17 @@ export const companyDetail: CompanyDetailTranslations = {
     follow: 'Theo dõi công ty',
     websiteLabel: 'Mở website công ty',
   },
+  follow: {
+    follow: 'Theo dõi công ty',
+    following: 'Đang theo dõi',
+    loading: 'Đang xử lý...',
+    loginRequired: 'Vui lòng đăng nhập để theo dõi công ty.',
+    candidateOnly: 'Chỉ tài khoản ứng viên mới có thể theo dõi công ty.',
+    followSuccess: 'Đã theo dõi công ty.',
+    unfollowSuccess: 'Đã bỏ theo dõi công ty.',
+    unavailable: 'Công ty này chưa khả dụng để theo dõi.',
+    error: 'Không thể cập nhật theo dõi lúc này.',
+  },
   snapshot: {
     openJobs: 'Vị trí mở',
     size: 'Quy mô',

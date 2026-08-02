@@ -767,6 +767,17 @@ export type CompanyDetailTranslations = {
     follow: string
     websiteLabel: string
   }
+  follow: {
+    follow: string
+    following: string
+    loading: string
+    loginRequired: string
+    candidateOnly: string
+    followSuccess: string
+    unfollowSuccess: string
+    unavailable: string
+    error: string
+  }
   snapshot: {
     openJobs: string
     size: string
@@ -875,6 +886,46 @@ export type ProfileTranslations = {
       skills: string
       experience: string
       resume: string
+    }
+  }
+  cvAssist: {
+    eyebrow: string
+    title: string
+    description: string
+    descriptionSparse: string
+    readyTitle: string
+    parsedTitle: string
+    parsedDescription: string
+    hint: string
+    uploadAction: string
+    uploadingAction: string
+    parseAction: string
+    parsingAction: string
+    replaceAction: string
+    manualAction: string
+  }
+  cvParseReview: {
+    eyebrow: string
+    title: string
+    description: string
+    currentLabel: string
+    parsedLabel: string
+    emptyValue: string
+    moreItems: string
+    recommendedBadge: string
+    closeLabel: string
+    keepCurrent: string
+    applySelected: string
+    applying: string
+    applySuccess: string
+    keepSuccess: string
+    groupLabels: {
+      basic: string
+      contact: string
+      skills: string
+      experiences: string
+      education: string
+      links: string
     }
   }
   applications: {
@@ -1090,6 +1141,9 @@ export type ProfileTranslations = {
       parseStarted: string
       parseSuccess: string
       parseSuccessWithLocalChanges: string
+      parseReviewReady: string
+      parseReviewApplied: string
+      parseReviewKept: string
       parseFailed: string
       parseTimeout: string
       invalidFileType: string

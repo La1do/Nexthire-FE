@@ -1,13 +1,15 @@
 import type { CompanyDetailTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
+import type { CompanyFollowControl } from '../hooks/useCompanyFollow'
 import type { CompanyDetailViewModel } from '../utils/companyDetailMappers'
 
 type CompanyHeroProps = {
   company: CompanyDetailViewModel
   content: CompanyDetailTranslations
+  followControl: CompanyFollowControl
 }
 
-export function CompanyHero({ company, content }: CompanyHeroProps) {
+export function CompanyHero({ company, content, followControl }: CompanyHeroProps) {
   const heroClassName = company.heroImageUrl
     ? 'company-detail-hero company-detail-motion'
     : 'company-detail-hero company-detail-hero-without-media company-detail-motion'
@@ -41,7 +43,21 @@ export function CompanyHero({ company, content }: CompanyHeroProps) {
           <a href="#company-open-jobs">
             {company.openJobs.length} {content.hero.openJobs}
           </a>
-          <button type="button">{content.hero.follow}</button>
+          {followControl.canRender ? (
+            <button
+              aria-pressed={followControl.isFollowed}
+              className="company-detail-follow-button"
+              data-follow-state={
+                followControl.isBusy ? 'loading' : followControl.isFollowed ? 'followed' : 'default'
+              }
+              disabled={followControl.isBusy}
+              onClick={followControl.onToggle}
+              title={followControl.title}
+              type="button"
+            >
+              {followControl.label}
+            </button>
+          ) : null}
         </div>
       </div>
 

@@ -14,6 +14,17 @@ export const companyDetail: CompanyDetailTranslations = {
     follow: '企業をフォロー',
     websiteLabel: '企業サイトを開く',
   },
+  follow: {
+    follow: '企業をフォロー',
+    following: 'フォロー中',
+    loading: '処理中...',
+    loginRequired: '企業をフォローするにはログインしてください。',
+    candidateOnly: '企業をフォローできるのは候補者アカウントのみです。',
+    followSuccess: '企業をフォローしました。',
+    unfollowSuccess: '企業のフォローを解除しました。',
+    unavailable: 'この企業はまだフォローできません。',
+    error: 'フォロー状態を更新できませんでした。',
+  },
   snapshot: {
     openJobs: '募集職種',
     size: '従業員規模',

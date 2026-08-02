@@ -812,6 +812,13 @@ select {
   background: var(--color-home-page);
 }
 
+.main-container {
+  margin-inline: auto;
+  max-width: 72rem;
+  padding-inline: clamp(1rem, 3vw, 1.5rem);
+  width: 100%;
+}
+
 .main-header {
   background: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid var(--color-border-subtle);
@@ -3238,8 +3245,22 @@ select {
 
 .company-detail-hero-actions button,
 .company-detail-side-actions button {
-  background: var(--color-surface-muted);
-  color: var(--color-brand-solid);
+  background: var(--color-brand-solid);
+  border: 1px solid var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+}
+
+.company-detail-follow-button[data-follow-state="followed"] {
+  background: #10b981;
+  border-color: #10b981;
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.24);
+  color: var(--color-text-inverse);
+}
+
+.company-detail-follow-button[data-follow-state="loading"] {
+  cursor: wait;
+  opacity: 0.85;
 }
 
 .company-detail-hero-actions a:hover,

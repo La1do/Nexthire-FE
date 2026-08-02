@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Checkbox, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
 import { useAuth, useToast } from '../../../context'
@@ -25,15 +25,24 @@ const initialValues: LoginFormValues = {
   rememberMe: false,
 }
 
-function getLoginRedirect(role: AuthApiRole) {
+function getDefaultLoginRedirect(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/home'
   if (role === 'RECRUITER') return '/recruiter'
   return '/admin/dashboard'
 }
 
+function getSafeRedirect(value: string | null) {
+  if (!value || !value.startsWith('/') || value.startsWith('//')) {
+    return null
+  }
+
+  return value
+}
+
 export function LoginForm({ apiErrors, authFeedback, role, translations }: LoginFormProps) {
   const { form, validation } = translations
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { login } = useAuth()
   const toast = useToast()
   const { locale } = useLocale()
@@ -42,6 +51,7 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
   const [submitError, setSubmitError] = useState<string | undefined>()
   const isBusy = isSubmitting || isGoogleSubmitting
   const canUseGoogleLogin = role !== 'ADMIN'
+  const loginRedirect = getSafeRedirect(searchParams.get('redirect')) ?? getDefaultLoginRedirect(role)
   const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, values } =
     useFormState<LoginFormValues>({
       initialValues,
@@ -58,7 +68,7 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
 
           login(auth, formValues.rememberMe ? 'local' : 'session')
           toast.success(authFeedback.loginSuccess)
-          navigate(getLoginRedirect(role))
+          navigate(loginRedirect, { replace: true })
         } catch (error) {
           const message = getApiErrorMessage(error, apiErrors)
           setSubmitError(message)
@@ -86,7 +96,7 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
 
       login(auth, values.rememberMe ? 'local' : 'session')
       toast.success(authFeedback.googleLoginSuccess)
-      navigate(getLoginRedirect(role))
+      navigate(loginRedirect, { replace: true })
     } catch (error) {
       const message = getApiErrorMessage(error, apiErrors)
       setSubmitError(message)
