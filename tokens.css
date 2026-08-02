@@ -69,8 +69,8 @@
   --color-home-muted: oklch(49% 0.022 252);
   --color-home-rule: oklch(88% 0.02 250);
   --color-home-rule-strong: oklch(74% 0.035 250);
-  --color-home-accent: oklch(55% 0.19 258);
-  --color-home-accent-soft: oklch(94% 0.045 255);
+  --color-workbench-accent: oklch(55% 0.19 258);
+  --color-workbench-accent-soft: oklch(94% 0.045 255);
   --color-home-accent-ink: oklch(98.5% 0.006 250);
   --color-home-focus: oklch(50% 0.22 258);
   --color-home-brand: oklch(63% 0.2 26);

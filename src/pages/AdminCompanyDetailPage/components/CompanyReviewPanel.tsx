@@ -1,54 +1,11 @@
 import type { AdminCompaniesTranslations } from '../../../i18n/types'
+import type { AdminCompany, CompanyTrustLevel } from '../../../types/admin.types'
 import { CompanyStatusBadge } from '../../_components/admin/CompanyStatusBadge'
-import type { AdminCompany, CompanyReviewStatus } from '../../AdminCompaniesPage/types'
+import { SelectField } from '../../_components'
 
-type CompanyReviewPanelProps = {
-  company: AdminCompany
-  content: AdminCompaniesTranslations['detail']
-  onStatusChange: (status: CompanyReviewStatus) => void
-  statusesLabel: AdminCompaniesTranslations['statuses']
-}
+type Props = { company: AdminCompany; content: AdminCompaniesTranslations['detail']; isPending: boolean; onApprove: () => void; onReject: () => void; onRestore: () => void; onSuspend: () => void; onTrustChange: (level: CompanyTrustLevel) => void; statusesLabel: AdminCompaniesTranslations['statuses']; trustLevels: AdminCompaniesTranslations['trustLevels'] }
 
-export function CompanyReviewPanel({
-  company,
-  content,
-  onStatusChange,
-  statusesLabel,
-}: CompanyReviewPanelProps) {
-  const isPending = company.status === 'pending'
-  const helperText = company.status === 'approved'
-    ? content.approvedHint
-    : company.status === 'rejected'
-      ? content.rejectedHint
-      : content.pendingHint
-
-  return (
-    <aside className="admin-company-panel admin-company-review-panel" aria-labelledby="company-review-title">
-      <header className="admin-company-panel__header">
-        <h2 id="company-review-title">{content.reviewTitle}</h2>
-        <CompanyStatusBadge labels={statusesLabel} status={company.status} />
-      </header>
-
-      <p className="admin-company-review-panel__hint">{helperText}</p>
-
-      <div className="admin-company-review-panel__actions" role="group">
-        <button
-          className="admin-company-action admin-company-action--approve"
-          disabled={!isPending}
-          onClick={() => onStatusChange('approved')}
-          type="button"
-        >
-          {content.approve}
-        </button>
-        <button
-          className="admin-company-action admin-company-action--reject"
-          disabled={!isPending}
-          onClick={() => onStatusChange('rejected')}
-          type="button"
-        >
-          {content.reject}
-        </button>
-      </div>
-    </aside>
-  )
+export function CompanyReviewPanel({ company, content, isPending, onApprove, onReject, onRestore, onSuspend, onTrustChange, statusesLabel, trustLevels }: Props) {
+  const helperText = company.status === 'APPROVED' ? content.approvedHint : company.status === 'REJECTED' ? content.rejectedHint : company.status === 'SUSPENDED' ? content.suspendedHint : content.pendingHint
+  return <aside aria-labelledby="company-review-title" className="admin-company-panel admin-company-review-panel"><header className="admin-company-panel__header"><h2 id="company-review-title">{content.reviewTitle}</h2><CompanyStatusBadge labels={statusesLabel} status={company.status} /></header><p className="admin-company-review-panel__hint">{helperText}</p><div className="admin-company-trust-control"><SelectField label={content.trustLevelLabel} onChange={(value) => onTrustChange(value as CompanyTrustLevel)} options={[{ label: trustLevels.low, value: 'LOW' }, { label: trustLevels.medium, value: 'MEDIUM' }, { label: trustLevels.high, value: 'HIGH' }]} value={company.trustLevel} /></div><div className="admin-company-review-panel__actions">{company.status === 'PENDING' ? <><button className="admin-company-action admin-company-action--approve" disabled={isPending} onClick={onApprove} type="button">{content.approve}</button><button className="admin-company-action admin-company-action--reject" disabled={isPending} onClick={onReject} type="button">{content.reject}</button></> : null}{company.status === 'APPROVED' ? <button className="admin-company-action admin-company-action--reject" disabled={isPending} onClick={onSuspend} type="button">{content.suspend}</button> : null}{company.status === 'REJECTED' || company.status === 'SUSPENDED' ? <button className="admin-company-action admin-company-action--approve" disabled={isPending} onClick={onRestore} type="button">{content.restore}</button> : null}</div></aside>
 }

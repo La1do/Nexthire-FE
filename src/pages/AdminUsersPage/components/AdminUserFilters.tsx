@@ -1,5 +1,6 @@
-import type { ChangeEvent } from 'react'
+import { useRef, type ChangeEvent } from 'react'
 import type { AdminUsersTranslations } from '../../../i18n/types'
+import { DismissIcon, SearchIcon } from '../../../assets/icons/admin'
 import { SelectField } from '../../_components'
 import type { AdminUserRole, AdminUserStatus } from '../types'
 
@@ -9,109 +10,47 @@ type AdminUserFiltersProps = {
   onClear: () => void
   onQueryChange: (value: string) => void
   onRoleChange: (value: AdminUserRole | 'all') => void
+  onStatusChange: (value: AdminUserStatus | 'all') => void
   query: string
+  isSearching?: boolean
   role: AdminUserRole | 'all'
   rolesLabel: AdminUsersTranslations['roles']
-  roleTone: (role: AdminUserRole) => 'admin' | 'employer' | 'candidate'
   status: AdminUserStatus | 'all'
   statusLabel: AdminUsersTranslations['statuses']
-  onStatusChange: (value: AdminUserStatus | 'all') => void
 }
 
-function SearchIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.5-3.5" />
-    </svg>
-  )
-}
-
-export function AdminUserFilters({
-  content,
-  hasActiveFilters,
-  onClear,
-  onQueryChange,
-  onRoleChange,
-  onStatusChange,
-  query,
-  role,
-  rolesLabel,
-  roleTone,
-  status,
-  statusLabel,
-}: AdminUserFiltersProps) {
-  function handleQueryChange(event: ChangeEvent<HTMLInputElement>) {
-    onQueryChange(event.target.value)
-  }
-
-  function handleRoleChange(value: string) {
-    onRoleChange(value as AdminUserRole | 'all')
-  }
-
-  function handleStatusChange(value: string) {
-    onStatusChange(value as AdminUserStatus | 'all')
+export function AdminUserFilters(props: AdminUserFiltersProps) {
+  const { content, hasActiveFilters, isSearching = false, onClear, onQueryChange, onRoleChange, onStatusChange, query, role, rolesLabel, status, statusLabel } = props
+  const queryInputRef = useRef<HTMLInputElement>(null)
+  const clearQuery = () => {
+    onQueryChange('')
+    queryInputRef.current?.focus()
   }
 
   return (
-    <form
-      aria-label={content.queryLabel}
-      className="admin-users-filters"
-      onSubmit={(event) => event.preventDefault()}
-      role="search"
-    >
-      <label className="admin-filter admin-filter--query">
+    <form aria-label={content.queryLabel} className="admin-users-filters" onSubmit={(event) => event.preventDefault()} role="search">
+      <label className={`admin-filter admin-filter--query${isSearching ? ' is-searching' : ''}`}>
         <span className="sr-only">{content.queryLabel}</span>
-        <span aria-hidden="true" className="admin-filter__icon">
-          <SearchIcon />
-        </span>
-        <input
-          aria-label={content.queryLabel}
-          className="admin-filter__input"
-          onChange={handleQueryChange}
-          placeholder={content.queryPlaceholder}
-          type="search"
-          value={query}
-        />
+        <span aria-hidden="true" className="admin-filter__icon"><SearchIcon /></span>
+        <input aria-label={content.queryLabel} className="admin-filter__input" onChange={(event: ChangeEvent<HTMLInputElement>) => onQueryChange(event.target.value)} placeholder={content.queryPlaceholder} ref={queryInputRef} type="text" value={query} />
+        {query ? <button aria-label={content.clear} className="admin-filter__query-clear" onClick={clearQuery} type="button"><DismissIcon /></button> : null}
       </label>
-
-      <SelectField
-        className="admin-filter admin-filter--select"
-        label={content.roleLabel}
-        onChange={handleRoleChange}
-        options={[
-          { label: content.roleAll, value: 'all' },
-          { label: rolesLabel.admin, value: 'admin' },
-          { label: rolesLabel.employer, value: 'employer' },
-          { label: rolesLabel.candidate, value: 'candidate' },
-        ]}
-        value={role}
-      />
-
-      <SelectField
-        className="admin-filter admin-filter--select"
-        label={content.statusLabel}
-        onChange={handleStatusChange}
-        options={[
-          { label: content.statusAll, value: 'all' },
-          { label: statusLabel.active, value: 'active' },
-          { label: statusLabel.locked, value: 'locked' },
-          { label: statusLabel.invited, value: 'invited' },
-        ]}
-        value={status}
-      />
-
-      <button
-        aria-label={content.clear}
-        className="admin-filter__clear"
-        disabled={!hasActiveFilters}
-        onClick={onClear}
-        type="button"
-      >
-        {content.clear}
-      </button>
-      {/* roleTone is provided by parent for future variant binding; silence unused warning */}
-      <span aria-hidden="true" className="sr-only" data-tone={roleTone('admin')} />
+      <SelectField className="admin-filter admin-filter--select" label={content.roleLabel} menuClassName="admin-filter-menu" onChange={(value) => onRoleChange(value as AdminUserRole | 'all')} options={[
+        { label: content.roleAll, value: 'all' },
+        { label: rolesLabel.admin, value: 'ADMIN' },
+        { label: rolesLabel.recruiter, value: 'RECRUITER' },
+        { label: rolesLabel.candidate, value: 'CANDIDATE' },
+      ]} value={role} />
+      <SelectField className="admin-filter admin-filter--select" label={content.statusLabel} menuClassName="admin-filter-menu" onChange={(value) => onStatusChange(value as AdminUserStatus | 'all')} options={[
+        { label: content.statusAll, value: 'all' },
+        { label: statusLabel.active, value: 'ACTIVE' },
+        { label: statusLabel.inactive, value: 'INACTIVE' },
+        { label: statusLabel.suspended, value: 'SUSPENDED' },
+        { label: statusLabel.locked, value: 'LOCKED' },
+        { label: statusLabel.banned, value: 'BANNED' },
+        { label: statusLabel.archived, value: 'ARCHIVED' },
+      ]} value={status} />
+      <button className="admin-filter__clear" disabled={!hasActiveFilters} onClick={onClear} type="button">{content.clear}</button>
     </form>
   )
 }

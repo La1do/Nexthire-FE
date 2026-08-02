@@ -82,7 +82,7 @@ body {
 }
 
 .career-guide-status > span {
-  background: var(--color-home-accent);
+  background: var(--color-workbench-accent);
   height: var(--space-xs);
   width: var(--space-xs);
 }

@@ -33,7 +33,7 @@ function getUserMetaLabel(
 
 function getProfileHref(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/profile'
-  if (role === 'ADMIN') return '/admin/users'
+  if (role === 'ADMIN') return '/admin/dashboard'
   return '/recruiter'
 }
 

@@ -12,7 +12,7 @@ type RouteGuardProps = PropsWithChildren<{
 function getRoleHomePath(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/profile'
   if (role === 'RECRUITER') return '/recruiter'
-  if (role === 'ADMIN') return '/admin/users'
+  if (role === 'ADMIN') return '/admin/dashboard'
 
   return '/'
 }

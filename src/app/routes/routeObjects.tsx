@@ -1,11 +1,16 @@
 import { AdminLayout } from '../../layouts/AdminLayout'
+import { AdminAiManagementPage } from '../../pages/AdminAiManagementPage'
 import { AuthLayout } from '../../layouts/AuthLayout'
 import { CandidateLayout } from '../../layouts/CandidateLayout'
 import { MainLayout } from '../../layouts/MainLayout'
 import { RecruiterLayout } from '../../layouts/RecruiterLayout'
 import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
+import { AdminDashboardPage } from '../../pages/AdminDashboardPage'
+import { AdminJobsPage } from '../../pages/AdminJobsPage'
+import { AdminSettingsPage } from '../../pages/AdminSettingsPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
+import { AdminUserDetailPage } from '../../pages/AdminUserDetailPage'
 import { ComingSoonPage } from '../../pages/ComingSoonPage'
 import { CareerGuidePage } from '../../pages/CareerGuidePage'
 import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
@@ -269,22 +274,29 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     },
     {
       path: '/admin/dashboard',
-      label: comingSoon.pages.adminDashboard.title,
-      element: <ComingSoonPage pageKey="adminDashboard" />,
+      label: pages.adminDashboard.routeLabel,
+      element: <AdminDashboardPage />,
+      layout: AdminLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/admin/ai-management',
+      label: pages.adminAiManagement.routeLabel,
+      element: <AdminAiManagementPage />,
       layout: AdminLayout,
       access: adminAccess,
     },
     {
       path: '/admin/jobs',
-      label: comingSoon.pages.adminJobs.title,
-      element: <ComingSoonPage pageKey="adminJobs" />,
+      label: pages.adminJobs.routeLabel,
+      element: <AdminJobsPage />,
       layout: AdminLayout,
       access: adminAccess,
     },
     {
       path: '/admin/settings',
-      label: comingSoon.pages.adminSettings.title,
-      element: <ComingSoonPage pageKey="adminSettings" />,
+      label: pages.adminSettings.routeLabel,
+      element: <AdminSettingsPage />,
       layout: AdminLayout,
       access: adminAccess,
     },
@@ -292,6 +304,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/admin/users',
       label: pages.adminUsers.routeLabel,
       element: <AdminUsersPage />,
+      layout: AdminLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/admin/users/:id',
+      label: pages.adminUsers.detail.routeLabel,
+      element: <AdminUserDetailPage />,
       layout: AdminLayout,
       access: adminAccess,
     },

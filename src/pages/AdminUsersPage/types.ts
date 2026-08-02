@@ -1,27 +1,14 @@
-export type AdminUserRole = 'admin' | 'employer' | 'candidate'
+import type {
+  AdminUser as AdminApiUser,
+  AdminUserRole,
+  AdminUserStatus,
+} from '../../types/admin.types'
 
-export type AdminUserStatus = 'active' | 'locked' | 'invited'
+export type { AdminUserRole, AdminUserStatus }
 
-export type AdminUser = {
-  id: string
+export type AdminUser = AdminApiUser & {
   name: string
-  email: string
-  role: AdminUserRole
-  status: AdminUserStatus
-  createdAt: string
-  lastActiveAt: string
-  company?: string
+  primaryRole: AdminUserRole
 }
 
-export type AdminUserCriteria = {
-  query: string
-  role: AdminUserRole | 'all'
-  status: AdminUserStatus | 'all'
-}
-
-export type AdminUserStats = {
-  total: number
-  candidates: number
-  employers: number
-  locked: number
-}
+export type AdminUserAction = 'suspend' | 'ban' | 'archive' | 'restore'

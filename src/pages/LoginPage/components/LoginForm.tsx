@@ -28,7 +28,7 @@ const initialValues: LoginFormValues = {
 function getDefaultLoginRedirect(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/home'
   if (role === 'RECRUITER') return '/recruiter'
-  return '/admin/users'
+  return '/admin/dashboard'
 }
 
 function getSafeRedirect(value: string | null) {
