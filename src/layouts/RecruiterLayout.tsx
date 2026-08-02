@@ -188,6 +188,7 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
               buttonClassName="recruiter-topbar__icon-button"
               content={content.topbar.notifications}
               fallbackHref="/recruiter"
+              variant="recruiter"
             />
           </div>
         </header>

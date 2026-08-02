@@ -14199,6 +14199,135 @@ select {
 .user-notification-popover li span { color: var(--color-text-secondary); font-size: .72rem; line-height: 1.45; }
 .user-notification-popover li time { color: var(--color-text-muted); font-size: .63rem; }
 .user-notification-state { padding: 2rem 1rem; color: var(--color-text-muted); font-size: .78rem; text-align: center; }
+.user-notification-popover--recruiter {
+  width: min(430px, 94vw);
+  padding: .45rem;
+  border-radius: 12px;
+}
+.user-notification-popover--recruiter > header {
+  padding: .78rem .82rem .65rem;
+  border-bottom: 0;
+}
+.user-notification-popover--recruiter h2 { font-size: .86rem; }
+.user-notification-popover--recruiter ul {
+  display: grid;
+  gap: .45rem;
+  max-height: 430px;
+  padding: .05rem .15rem .25rem;
+}
+.user-notification-popover--recruiter li,
+.user-notification-popover--recruiter li:last-child {
+  border-bottom: 0;
+}
+.user-notification-popover--recruiter li.is-unread { background: transparent; }
+.user-notification-popover--recruiter li > button.user-notification-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.35rem minmax(0, 1fr) .55rem;
+  align-items: center;
+  gap: .72rem;
+  min-height: 5.15rem;
+  padding: .76rem .72rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 10px;
+  background: var(--color-surface-card);
+  box-shadow: 0 8px 22px rgba(17, 24, 39, .05);
+  transition: border-color .16s ease, background-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+.user-notification-popover--recruiter li > button.user-notification-card:hover,
+.user-notification-popover--recruiter li > button.user-notification-card:focus-visible {
+  border-color: var(--color-border-brand-soft);
+  background: var(--color-surface-subtle);
+  box-shadow: 0 12px 28px rgba(17, 24, 39, .08);
+  outline: none;
+  transform: translateY(-1px);
+}
+.user-notification-popover--recruiter li.is-unread > button.user-notification-card {
+  border-color: var(--color-border-brand-soft);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--color-brand-soft) 72%, var(--color-surface-card)), var(--color-surface-card) 58%);
+}
+.user-notification-card__avatar {
+  display: grid;
+  place-items: center;
+  align-self: start;
+  width: 2.35rem;
+  height: 2.35rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 10px;
+  background: var(--color-surface-muted);
+  color: var(--color-brand-solid);
+  font-size: .72rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.user-notification-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.user-notification-card__content {
+  display: grid;
+  min-width: 0;
+  gap: .28rem;
+}
+.user-notification-popover--recruiter .user-notification-card__meta {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: .55rem;
+  color: var(--color-text-muted);
+  font-size: .64rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.user-notification-card__meta > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-notification-popover--recruiter .user-notification-card__meta time {
+  flex: 0 0 auto;
+  font-size: .62rem;
+}
+.user-notification-popover--recruiter .user-notification-card strong {
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-size: .8rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-notification-popover--recruiter .user-notification-card__body {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: .72rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.user-notification-card__dot {
+  position: absolute;
+  top: .72rem;
+  right: .72rem;
+  width: .46rem;
+  height: .46rem;
+  border-radius: 999px;
+  background: var(--color-text-danger);
+  box-shadow: 0 0 0 3px rgba(242, 85, 85, .12);
+}
+.user-notification-card__chevron {
+  width: .44rem;
+  height: .44rem;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  color: var(--color-text-muted);
+  opacity: .55;
+  transform: rotate(45deg);
+}
 
 /* ---------- Admin avatar controls ---------- */
 .admin-settings-avatar-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; padding: 0 1.25rem 1rem; }
