@@ -12,6 +12,14 @@ export const profile: ProfileTranslations = {
     currentRole: 'Ứng viên',
   },
   topbar: {
+    notifications: {
+      label: 'Thông báo',
+      title: 'Thông báo',
+      empty: 'Chưa có thông báo.',
+      error: 'Không thể tải thông báo.',
+      loading: 'Đang tải thông báo...',
+      markAllRead: 'Đánh dấu đã đọc',
+    },
     logout: 'Đăng xuất',
   },
   states: {

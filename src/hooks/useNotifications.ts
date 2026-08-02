@@ -6,6 +6,7 @@ import { notificationQueryKeys } from './notificationQueryKeys'
 
 type UseNotificationsOptions = {
   enabled?: boolean
+  listEnabled?: boolean
   listQuery?: NotificationListQuery
 }
 
@@ -25,7 +26,7 @@ function getNotificationScopeKey(user: ReturnType<typeof useAuth>['user']) {
 }
 
 export function useNotifications(options: UseNotificationsOptions = {}) {
-  const { enabled = true, listQuery = DEFAULT_LIST_QUERY } = options
+  const { enabled = true, listEnabled = enabled, listQuery = DEFAULT_LIST_QUERY } = options
   const { isAuthenticated, user } = useAuth()
   const queryClient = useQueryClient()
   const scopeKey = getNotificationScopeKey(user)
@@ -34,7 +35,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     queryClient.invalidateQueries({ queryKey: notificationQueryKeys.scope(scopeKey) })
 
   const list = useQuery({
-    enabled: canFetch,
+    enabled: canFetch && listEnabled,
     placeholderData: keepPreviousData,
     queryFn: () => notificationService.list(listQuery),
     queryKey: notificationQueryKeys.list(scopeKey, listQuery),

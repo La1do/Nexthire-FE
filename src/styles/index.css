@@ -14162,6 +14162,44 @@ select {
 .admin-profile-popover header em { color: var(--color-brand-solid); font-size: .62rem; font-style: normal; font-weight: 750; text-transform: uppercase; }
 .admin-profile-popover > button.is-danger { color: var(--color-text-danger); }
 
+/* ---------- Candidate and recruiter notifications ---------- */
+.user-notification-popover-wrap { position: relative; display: inline-flex; }
+.user-notification-button { position: relative; align-items: center; justify-content: center; }
+.candidate-topbar-actions .user-notification-button {
+  display: inline-flex;
+  width: 2.45rem;
+  height: 2.45rem;
+  padding: 0;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+  background: var(--color-surface-card);
+  color: var(--color-text-secondary);
+}
+.candidate-topbar-actions .user-notification-button:hover,
+.candidate-topbar-actions .user-notification-button:focus-visible {
+  border-color: var(--color-border-brand-soft);
+  background: var(--color-brand-soft);
+  color: var(--color-brand-end);
+  outline: none;
+}
+.user-notification-button svg { width: 1.08rem; height: 1.08rem; }
+.user-notification-badge { position: absolute; top: -5px; right: -5px; display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border: 2px solid var(--color-surface-card); border-radius: 999px; background: var(--color-text-danger); color: white; font-size: .58rem; font-weight: 800; line-height: 1; }
+.user-notification-popover { position: absolute; top: calc(100% + .55rem); right: 0; z-index: 80; width: min(390px, 92vw); overflow: hidden; border: 1px solid var(--color-border-subtle); border-radius: 10px; background: var(--color-surface-card); box-shadow: var(--shadow-card); }
+.user-notification-popover > header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem 1rem; border-bottom: 1px solid var(--color-border-subtle); }
+.user-notification-popover h2 { margin: 0; color: var(--color-text-primary); font-size: .9rem; }
+.user-notification-popover header button { padding: 0; border: 0; background: transparent; color: var(--color-brand-solid); font: inherit; font-size: .7rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.user-notification-popover header button:disabled { cursor: not-allowed; opacity: .45; }
+.user-notification-popover ul { max-height: 410px; overflow-y: auto; margin: 0; padding: 0; list-style: none; }
+.user-notification-popover li { border-bottom: 1px solid var(--color-border-subtle); }
+.user-notification-popover li:last-child { border-bottom: 0; }
+.user-notification-popover li.is-unread { background: var(--color-brand-soft); }
+.user-notification-popover li > button { display: grid; gap: .3rem; width: 100%; padding: .82rem 1rem; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.user-notification-popover li > button:hover { background: var(--color-surface-muted); }
+.user-notification-popover li strong { color: var(--color-text-primary); font-size: .78rem; line-height: 1.35; }
+.user-notification-popover li span { color: var(--color-text-secondary); font-size: .72rem; line-height: 1.45; }
+.user-notification-popover li time { color: var(--color-text-muted); font-size: .63rem; }
+.user-notification-state { padding: 2rem 1rem; color: var(--color-text-muted); font-size: .78rem; text-align: center; }
+
 /* ---------- Admin avatar controls ---------- */
 .admin-settings-avatar-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; padding: 0 1.25rem 1rem; }
 .admin-settings-avatar-actions button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 38px; padding: .45rem .65rem; border: 1px solid var(--color-border-default); border-radius: 8px; background: var(--color-surface-card); color: var(--color-text-secondary); font-size: .72rem; font-weight: 700; cursor: pointer; }
@@ -14190,7 +14228,7 @@ select {
 
 @media (max-width: 640px) {
   .admin-topbar-search-wrap { display: none; }
-  .admin-notification-popover, .admin-profile-popover { position: fixed; top: 72px; right: .75rem; left: .75rem; width: auto; }
+  .admin-notification-popover, .admin-profile-popover, .user-notification-popover { position: fixed; top: 72px; right: .75rem; left: .75rem; width: auto; }
 }
 
 /* ---------- Admin job moderation ---------- */

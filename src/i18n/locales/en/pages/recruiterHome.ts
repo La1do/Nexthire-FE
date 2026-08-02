@@ -19,6 +19,14 @@ export const recruiterHome: RecruiterHomeTranslations = {
     notificationsLabel: 'Notifications',
     toggleSidebarLabel: 'Open recruiter menu',
     profileLabel: 'Recruiter account',
+    notifications: {
+      label: 'Notifications',
+      title: 'Recruiter notifications',
+      empty: 'No notifications yet.',
+      error: 'Unable to load notifications.',
+      loading: 'Loading notifications...',
+      markAllRead: 'Mark all as read',
+    },
   },
   verification: {
     eyebrow: 'Company verification',

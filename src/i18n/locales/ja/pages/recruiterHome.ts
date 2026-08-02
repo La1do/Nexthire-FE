@@ -15,6 +15,14 @@ export const recruiterHome: RecruiterHomeTranslations = {
     logout: 'ログアウト',
   },
   topbar: {
+    notifications: {
+      label: '通知',
+      title: '採用通知',
+      empty: '通知はありません。',
+      error: '通知を読み込めません。',
+      loading: '通知を読み込み中...',
+      markAllRead: 'すべて既読にする',
+    },
     searchPlaceholder: '求人、候補者、会社を検索...',
     notificationsLabel: '通知',
     toggleSidebarLabel: '採用メニューを開く',

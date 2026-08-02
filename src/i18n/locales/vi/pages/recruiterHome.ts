@@ -15,6 +15,14 @@ export const recruiterHome: RecruiterHomeTranslations = {
     logout: 'Đăng xuất',
   },
   topbar: {
+    notifications: {
+      label: 'Thông báo',
+      title: 'Thông báo tuyển dụng',
+      empty: 'Chưa có thông báo.',
+      error: 'Không thể tải thông báo.',
+      loading: 'Đang tải thông báo...',
+      markAllRead: 'Đánh dấu đã đọc',
+    },
     searchPlaceholder: 'Tìm tin, ứng viên hoặc công ty...',
     notificationsLabel: 'Thông báo',
     toggleSidebarLabel: 'Mở menu nhà tuyển dụng',

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
+import { UserNotificationPopover } from './components/UserNotificationPopover'
 
 function MenuIcon() {
   return (
@@ -11,15 +12,6 @@ function MenuIcon() {
       <path d="M4 7h16" />
       <path d="M4 12h16" />
       <path d="M4 17h16" />
-    </svg>
-  )
-}
-
-function BellIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z" />
-      <path d="M10 19a2 2 0 0 0 4 0" />
     </svg>
   )
 }
@@ -192,14 +184,11 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
 
           <div className="recruiter-topbar__actions">
             <LanguageSwitch compact />
-            <button
-              aria-label={content.topbar.notificationsLabel}
-              className="recruiter-topbar__icon-button"
-              title={content.topbar.notificationsLabel}
-              type="button"
-            >
-              <BellIcon />
-            </button>
+            <UserNotificationPopover
+              buttonClassName="recruiter-topbar__icon-button"
+              content={content.topbar.notifications}
+              fallbackHref="/recruiter"
+            />
           </div>
         </header>
 

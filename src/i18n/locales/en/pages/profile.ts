@@ -13,6 +13,14 @@ export const profile: ProfileTranslations = {
   },
   topbar: {
     logout: 'Sign out',
+    notifications: {
+      label: 'Notifications',
+      title: 'Notifications',
+      empty: 'No notifications yet.',
+      error: 'Unable to load notifications.',
+      loading: 'Loading notifications...',
+      markAllRead: 'Mark all as read',
+    },
   },
   states: {
     loading: 'Loading your profile...',

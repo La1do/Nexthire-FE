@@ -841,6 +841,15 @@ export type CandidateManagedJobsStatus =
   | 'EXPIRED'
   | 'needsAttention'
 
+export type UserNotificationTranslations = {
+  label: string
+  title: string
+  empty: string
+  error: string
+  loading: string
+  markAllRead: string
+}
+
 export type ProfileTranslations = {
   routeLabel: string
   pageTitle: string
@@ -854,6 +863,7 @@ export type ProfileTranslations = {
   }
   topbar: {
     logout: string
+    notifications: UserNotificationTranslations
   }
   states: {
     loading: string
@@ -1202,6 +1212,7 @@ export type RecruiterHomeTranslations = {
     notificationsLabel: string
     toggleSidebarLabel: string
     profileLabel: string
+    notifications: UserNotificationTranslations
   }
   verification: {
     eyebrow: string

@@ -12,6 +12,14 @@ export const profile: ProfileTranslations = {
     currentRole: '候補者',
   },
   topbar: {
+    notifications: {
+      label: '通知',
+      title: '通知',
+      empty: '通知はありません。',
+      error: '通知を読み込めません。',
+      loading: '通知を読み込み中...',
+      markAllRead: 'すべて既読にする',
+    },
     logout: 'ログアウト',
   },
   states: {

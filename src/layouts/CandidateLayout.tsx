@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
+import { UserNotificationPopover } from './components/UserNotificationPopover'
 
 export function CandidateLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
@@ -83,6 +84,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
           <h1>{pageTitle}</h1>
           <div className="candidate-topbar-actions">
             <LanguageSwitch compact />
+            <UserNotificationPopover content={profile.topbar.notifications} fallbackHref="/profile" />
             <button onClick={() => void handleLogout()} type="button">
               {profile.topbar.logout}
             </button>
