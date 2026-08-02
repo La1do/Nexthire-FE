@@ -84,7 +84,11 @@ export function CandidateLayout({ children }: PropsWithChildren) {
           <h1>{pageTitle}</h1>
           <div className="candidate-topbar-actions">
             <LanguageSwitch compact />
-            <UserNotificationPopover content={profile.topbar.notifications} fallbackHref="/profile" />
+            <UserNotificationPopover
+              content={profile.topbar.notifications}
+              fallbackHref="/profile"
+              variant="card"
+            />
             <button onClick={() => void handleLogout()} type="button">
               {profile.topbar.logout}
             </button>

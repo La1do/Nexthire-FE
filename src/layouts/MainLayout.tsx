@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   getAuthUserDisplayName,
   getInitials,
@@ -11,6 +11,7 @@ import type { AuthApiRole } from '../lib/auth/authRole'
 import type { AuthUser } from '../services/auth.service'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
+import { UserNotificationPopover } from './components/UserNotificationPopover'
 
 function getRoleLabel(
   role: AuthApiRole,
@@ -168,10 +169,15 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 }
 
 export function MainLayout({ children }: PropsWithChildren) {
-  const { common } = useTranslations()
+  const { common, pages } = useTranslations()
   const { user, isAuthenticated, logout } = useAuth()
   const toast = useToast()
+  const { pathname } = useLocation()
   const navigate = useNavigate()
+  const isHomePath = pathname === '/' || pathname === '/home'
+  const showCandidateHomeNotifications =
+    isHomePath &&
+    user?.role === 'CANDIDATE'
 
   const handleLogout = () => {
     void logout().then(() => {
@@ -201,7 +207,17 @@ export function MainLayout({ children }: PropsWithChildren) {
           <div className="main-header-actions">
             <LanguageSwitch className="main-language-switch" compact />
             {isAuthenticated && user ? (
-              <MainUserMenu labels={common.authUser} onLogout={handleLogout} user={user} />
+              <>
+                {showCandidateHomeNotifications ? (
+                  <UserNotificationPopover
+                    buttonClassName="main-notification-button"
+                    content={pages.profile.topbar.notifications}
+                    fallbackHref="/profile"
+                    variant="card"
+                  />
+                ) : null}
+                <MainUserMenu labels={common.authUser} onLogout={handleLogout} user={user} />
+              </>
             ) : (
               <>
                 <a className="main-employer-link" href="/recruiter/login">

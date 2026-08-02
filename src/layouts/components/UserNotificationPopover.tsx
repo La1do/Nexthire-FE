@@ -8,7 +8,7 @@ type Props = {
   buttonClassName?: string
   content: UserNotificationTranslations
   fallbackHref: string
-  variant?: 'default' | 'recruiter'
+  variant?: 'default' | 'card'
 }
 
 function BellIcon() {
@@ -90,7 +90,7 @@ export function UserNotificationPopover({ buttonClassName, content, fallbackHref
   const buttonClasses = ['user-notification-button', buttonClassName].filter(Boolean).join(' ')
   const popoverClasses = [
     'user-notification-popover',
-    variant === 'recruiter' ? 'user-notification-popover--recruiter' : '',
+    variant === 'card' ? 'user-notification-popover--card' : '',
   ].filter(Boolean).join(' ')
 
   const handleNotificationClick = (item: NotificationItem) => {
@@ -163,7 +163,7 @@ export function UserNotificationPopover({ buttonClassName, content, fallbackHref
                 const createdAtLabel = formatCreatedAt(item.createdAt)
                 const senderLabel = getSenderLabel(item, content.title)
 
-                if (variant === 'recruiter') {
+                if (variant === 'card') {
                   return (
                     <li className={item.readAt ? '' : 'is-unread'} key={item.id}>
                       <button className="user-notification-card" onClick={() => handleNotificationClick(item)} type="button">
