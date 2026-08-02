@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AdminShieldIcon, CandidateIcon, RecruiterIcon, UsersGroupIcon } from '../../assets/icons/admin'
 import { useAuth, useToast } from '../../context'
 import { useAdminUserAction, useAdminUsers, useAdminUsersOverview } from '../../hooks/useAdminQueries'
@@ -26,7 +26,8 @@ export function AdminUsersPage() {
   const navigate = useNavigate()
   const toast = useToast()
   const { user: currentUser } = useAuth()
-  const [query, setQuery] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [query, setQuery] = useState(searchParams.get('search') ?? '')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [role, setRole] = useState<AdminUserRole | 'all'>('all')
   const [status, setStatus] = useState<AdminUserStatus | 'all'>('all')
@@ -38,6 +39,8 @@ export function AdminUsersPage() {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 350)
     return () => window.clearTimeout(timer)
   }, [query])
+  useEffect(() => { const external = searchParams.get('search') ?? ''; setQuery((current) => current === external ? current : external) }, [searchParams])
+  useEffect(() => { setSearchParams((current) => { const next = new URLSearchParams(current); if (debouncedQuery) next.set('search', debouncedQuery); else next.delete('search'); return next }, { replace: true }) }, [debouncedQuery, setSearchParams])
   useEffect(() => setPage(1), [debouncedQuery, role, status])
 
   const listQuery = useAdminUsers({ page, limit: PAGE_SIZE, search: debouncedQuery || undefined, role: role === 'all' ? undefined : role, status: status === 'all' ? undefined : status })
@@ -64,7 +67,7 @@ export function AdminUsersPage() {
   }
 
   if (listQuery.isPending || overviewQuery.isPending) return <div className="admin-users-page"><LoadingSkeleton ariaLabel={content.feedback.loading} lines={10} /></div>
-  if (listQuery.isError || overviewQuery.isError || !overview) return <div className="admin-users-page"><ErrorState actionLabel={content.feedback.retry} description={content.feedback.errorDescription} onRetry={() => void Promise.all([listQuery.refetch(), overviewQuery.refetch()])} title={content.feedback.errorTitle} /></div>
+  if ((listQuery.isError && !listQuery.data) || overviewQuery.isError || !overview) return <div className="admin-users-page"><ErrorState actionLabel={content.feedback.retry} description={content.feedback.errorDescription} onRetry={() => void Promise.all([listQuery.refetch(), overviewQuery.refetch()])} title={content.feedback.errorTitle} /></div>
 
   const activeFilters = Boolean(query.trim() || role !== 'all' || status !== 'all')
   return <div className="admin-users-page">
@@ -83,7 +86,8 @@ export function AdminUsersPage() {
       statusLabels={content.statuses}
       total={overview.total}
     />
-    <AdminUserFilters content={content.filters} hasActiveFilters={activeFilters} onClear={() => { setQuery(''); setRole('all'); setStatus('all') }} onQueryChange={setQuery} onRoleChange={setRole} onStatusChange={setStatus} query={query} role={role} rolesLabel={content.roles} status={status} statusLabel={content.statuses} />
+    <AdminUserFilters content={content.filters} hasActiveFilters={activeFilters} isSearching={listQuery.isFetching} onClear={() => { setQuery(''); setRole('all'); setStatus('all') }} onQueryChange={setQuery} onRoleChange={setRole} onStatusChange={setStatus} query={query} role={role} rolesLabel={content.roles} status={status} statusLabel={content.statuses} />
+    {listQuery.error ? <div className="admin-users-search-error" role="alert"><span>{content.feedback.errorDescription}</span><button onClick={() => void listQuery.refetch()} type="button">{content.feedback.retry}</button></div> : null}
     <div className="admin-users-results"><header className="admin-users-results__header"><p className="admin-users-results__count">{content.results.countLabel.replace('{{count}}', String(total))}</p></header>
       {users.length === 0 ? <div className="admin-users-empty"><p className="admin-users-empty__title">{content.results.emptyTitle}</p><p className="admin-users-empty__description">{content.results.emptyDescription}</p></div> : <>
         <AdminUserTable actions={content.results} columns={content.results.columns} currentUserId={currentUser?.id} onAction={(action, user) => setPendingAction({ action, user })} onView={(user) => navigate(`/admin/users/${user.id}`)} rolesLabel={content.roles} statusesLabel={content.statuses} users={users} />

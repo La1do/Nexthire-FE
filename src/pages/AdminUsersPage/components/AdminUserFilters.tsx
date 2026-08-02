@@ -1,6 +1,6 @@
-import type { ChangeEvent } from 'react'
+import { useRef, type ChangeEvent } from 'react'
 import type { AdminUsersTranslations } from '../../../i18n/types'
-import { SearchIcon } from '../../../assets/icons/admin'
+import { DismissIcon, SearchIcon } from '../../../assets/icons/admin'
 import { SelectField } from '../../_components'
 import type { AdminUserRole, AdminUserStatus } from '../types'
 
@@ -12,6 +12,7 @@ type AdminUserFiltersProps = {
   onRoleChange: (value: AdminUserRole | 'all') => void
   onStatusChange: (value: AdminUserStatus | 'all') => void
   query: string
+  isSearching?: boolean
   role: AdminUserRole | 'all'
   rolesLabel: AdminUsersTranslations['roles']
   status: AdminUserStatus | 'all'
@@ -19,13 +20,20 @@ type AdminUserFiltersProps = {
 }
 
 export function AdminUserFilters(props: AdminUserFiltersProps) {
-  const { content, hasActiveFilters, onClear, onQueryChange, onRoleChange, onStatusChange, query, role, rolesLabel, status, statusLabel } = props
+  const { content, hasActiveFilters, isSearching = false, onClear, onQueryChange, onRoleChange, onStatusChange, query, role, rolesLabel, status, statusLabel } = props
+  const queryInputRef = useRef<HTMLInputElement>(null)
+  const clearQuery = () => {
+    onQueryChange('')
+    queryInputRef.current?.focus()
+  }
+
   return (
     <form aria-label={content.queryLabel} className="admin-users-filters" onSubmit={(event) => event.preventDefault()} role="search">
-      <label className="admin-filter admin-filter--query">
+      <label className={`admin-filter admin-filter--query${isSearching ? ' is-searching' : ''}`}>
         <span className="sr-only">{content.queryLabel}</span>
         <span aria-hidden="true" className="admin-filter__icon"><SearchIcon /></span>
-        <input aria-label={content.queryLabel} className="admin-filter__input" onChange={(event: ChangeEvent<HTMLInputElement>) => onQueryChange(event.target.value)} placeholder={content.queryPlaceholder} type="search" value={query} />
+        <input aria-label={content.queryLabel} className="admin-filter__input" onChange={(event: ChangeEvent<HTMLInputElement>) => onQueryChange(event.target.value)} placeholder={content.queryPlaceholder} ref={queryInputRef} type="text" value={query} />
+        {query ? <button aria-label={content.clear} className="admin-filter__query-clear" onClick={clearQuery} type="button"><DismissIcon /></button> : null}
       </label>
       <SelectField className="admin-filter admin-filter--select" label={content.roleLabel} menuClassName="admin-filter-menu" onChange={(value) => onRoleChange(value as AdminUserRole | 'all')} options={[
         { label: content.roleAll, value: 'all' },

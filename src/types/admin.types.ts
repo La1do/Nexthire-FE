@@ -24,6 +24,85 @@ export type PaginatedEnvelope<TItem> = ApiSuccessEnvelope<TItem[]> & {
   meta: PaginationMeta
 }
 
+export type AdminAiProvider = 'GEMINI' | 'OPENAI'
+export type AdminAiUsageStatus = 'SUCCEEDED' | 'FAILED'
+
+export type AdminAiSupportedModel = {
+  id: string
+  name: string
+  isDefault: boolean
+}
+
+export type AdminAiCurrentConfig = {
+  activeProvider: AdminAiProvider
+  geminiModel: string
+  openAiModel: string
+  updatedByUserId: string | null
+  updatedAt: string | null
+}
+
+export type AdminAiConfig = {
+  currentConfig: AdminAiCurrentConfig
+  supportedModels: Record<AdminAiProvider, AdminAiSupportedModel[]>
+}
+
+export type UpdateAdminAiConfigPayload = Partial<
+  Pick<AdminAiCurrentConfig, 'activeProvider' | 'geminiModel' | 'openAiModel'>
+>
+
+export type AdminAiPricing = {
+  currency: 'USD'
+  inputUsdPerMillionTokens: number
+  outputUsdPerMillionTokens: number
+  multiplier: number
+  formula: string
+}
+
+export type AdminAiUsageSummary = {
+  provider: AdminAiProvider
+  model: string
+  totalRequests: number
+  succeededRequests: number
+  failedRequests: number
+  inputTokens: number
+  outputTokens: number
+  totalTokens: number
+  estimatedCostUsd: string | null
+  pricing: AdminAiPricing | null
+}
+
+export type AdminAiUsageLog = {
+  id: string
+  parseRequestId: string
+  candidateId: string
+  candidateCvId: string | null
+  context: string
+  provider: AdminAiProvider
+  model: string
+  operation: string
+  status: AdminAiUsageStatus
+  latencyMs: number | null
+  inputTokens: number | null
+  outputTokens: number | null
+  totalTokens: number | null
+  estimatedCostUsd: string | null
+  errorCode: string | null
+  errorMessage: string | null
+  metadata: Record<string, unknown> | null
+  createdAt: string
+}
+
+export type AdminAiUsageLogQuery = {
+  page?: number
+  limit?: number
+  provider?: AdminAiProvider
+  model?: string
+  status?: AdminAiUsageStatus
+  candidateCvId?: string
+  from?: string
+  to?: string
+}
+
 export type AdminUserRole = 'CANDIDATE' | 'RECRUITER' | 'ADMIN'
 export type AdminUserStatus =
   | 'ACTIVE'

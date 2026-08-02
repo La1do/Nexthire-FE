@@ -388,6 +388,21 @@ export type AdminUsersTranslations = {
     notificationsLabel: string
     toggleSidebarLabel: string
     profileLabel: string
+    notificationTitle: string
+    notificationEmpty: string
+    notificationError: string
+    notificationLoading: string
+    markAllRead: string
+    profileSettings: string
+    profileLogout: string
+    adminRole: string
+    quickLinks: string
+    quickDashboard: string
+    quickUsers: string
+    quickCompanies: string
+    quickJobs: string
+    quickAi: string
+    quickSettings: string
   }
   stats: {
     totalLabel: string
@@ -515,6 +530,7 @@ export type AdminCompaniesTranslations = {
     pendingLabel: string
     approvedLabel: string
     rejectedLabel: string
+    suspendedLabel: string
     pendingDelta: string
     approvedDelta: string
     rejectedDelta: string
@@ -524,6 +540,13 @@ export type AdminCompaniesTranslations = {
     queryPlaceholder: string
     statusLabel: string
     statusAll: string
+    trustLevelLabel: string
+    trustLevelAll: string
+    sortLabel: string
+    sortLatest: string
+    sortOldest: string
+    sortRejected: string
+    rejectedBefore: string
     clear: string
   }
   results: {
@@ -534,6 +557,7 @@ export type AdminCompaniesTranslations = {
       company: string
       submittedAt: string
       status: string
+      trustLevel: string
       actions: string
     }
     actions: {
@@ -541,6 +565,7 @@ export type AdminCompaniesTranslations = {
       approve: string
       reject: string
       verified: string
+      reviewAgain: string
     }
   }
   pagination: {
@@ -552,6 +577,17 @@ export type AdminCompaniesTranslations = {
     pending: string
     approved: string
     rejected: string
+    suspended: string
+  }
+  trustLevels: { low: string; medium: string; high: string }
+  feedback: {
+    loading: string; errorTitle: string; errorDescription: string; retry: string
+    actionSuccess: string; actionError: string
+  }
+  actions: {
+    cancel: string; confirm: string; approveTitle: string; approveDescription: string
+    rejectTitle: string; rejectDescription: string; reasonTitle: string; reasonDescription: string
+    reasonLabel: string; reasonPlaceholder: string; reasonRequired: string
   }
   detail: {
     pageTitle: string
@@ -567,12 +603,34 @@ export type AdminCompaniesTranslations = {
     pendingHint: string
     approvedHint: string
     rejectedHint: string
+    suspendedHint: string
     approve: string
     reject: string
+    suspend: string
+    restore: string
+    completionLabel: string
+    contactLabel: string
+    statusReasonLabel: string
+    trustLevelLabel: string
+    trustChangeTitle: string
+    trustHistoryTitle: string
+    trustHistoryDescription: string
+    trustHistoryEmpty: string
+    trustHistoryError: string
+    documentsLoading: string
+    documentsEmpty: string
+    documentsError: string
+    opening: string
     quickStatsTitle: string
     jobPostsLabel: string
     applicantsLabel: string
     responseRateLabel: string
+    reviewCountLabel: string
+    approvedRiskLabel: string
+    negativeSignalLabel: string
+    canPostJobsLabel: string
+    yes: string
+    no: string
     notFoundEyebrow: string
     notFoundTitle: string
     notFoundDescription: string
@@ -2094,11 +2152,105 @@ export type AdminDashboardTranslations = {
   }
 }
 
+export type AdminJobsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  tabs: { all: string; review: string; revisions: string }
+  stats: { total: string; review: string; published: string; revisions: string }
+  filters: {
+    searchLabel: string; searchPlaceholder: string; statusLabel: string; statusAll: string
+    riskLabel: string; riskAll: string; companyLabel: string; companyAll: string
+    sortLabel: string; clear: string
+  }
+  columns: { job: string; company: string; status: string; risk: string; applications: string; updated: string; actions: string }
+  statuses: Record<string, string>
+  risks: Record<string, string>
+  sorts: { latest: string; oldest: string; risk: string; applications: string }
+  detail: {
+    title: string; description: string; requirements: string; benefits: string; skills: string
+    moderation: string; reasons: string; rules: string; changeSummary: string; noData: string; close: string
+  }
+  actions: {
+    view: string; approve: string; reject: string; unpublish: string; republish: string; close: string
+    cancel: string; confirmTitle: string; confirmDescription: string; reasonTitle: string
+    reasonDescription: string; reasonLabel: string; reasonPlaceholder: string; reasonRequired: string
+  }
+  feedback: {
+    loading: string; errorTitle: string; errorDescription: string; retry: string
+    emptyTitle: string; emptyDescription: string; countLabel: string
+    actionSuccess: string; actionError: string
+  }
+  pagination: { prev: string; next: string; pageOf: string }
+}
+
+export type AdminSettingsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  summary: { accountId: string; email: string; role: string; adminRole: string; fallbackName: string; changeAvatar: string; saveAvatar: string; cancelAvatar: string; removeAvatar: string; avatarHint: string; invalidAvatar: string; avatarError: string }
+  profile: {
+    title: string; description: string; fullName: string; fullNamePlaceholder: string
+    phone: string; phonePlaceholder: string; email: string; emailHint: string; role: string
+    save: string; saving: string; reset: string; saveSuccess: string; saveError: string
+    validation: { fullNameRequired: string; fullNameMin: string; fullNameMax: string; phoneInvalid: string; phoneMax: string }
+  }
+  password: {
+    title: string; description: string; current: string; next: string; confirm: string
+    show: string; hide: string; submit: string; submitting: string; success: string; error: string
+    rulesTitle: string; lengthRule: string; caseRule: string; numberRule: string; symbolRule: string
+    validation: { currentRequired: string; nextRequired: string; confirmRequired: string; length: string; mismatch: string; reuse: string }
+    apiErrors: { invalidCredentials: string; passwordReuse: string; credentialMissing: string }
+  }
+  preferences: {
+    title: string; description: string; language: string; languageHint: string
+    sessionTitle: string; sessionDescription: string; logout: string
+  }
+  logout: { title: string; description: string; confirm: string; cancel: string }
+  feedback: { loading: string; errorTitle: string; errorDescription: string; retry: string }
+}
+
+export type AdminAiManagementTranslations = {
+  routeLabel: string
+  pageTitle: string
+  sidebarLabel: string
+  pageSubtitle: string
+  header: { title: string; refresh: string; refreshing: string; healthy: string; degraded: string; unknown: string }
+  tabs: { overview: string; config: string; logs: string }
+  notes: { newRequests: string; apiKeys: string; estimatedCost: string }
+  config: {
+    title: string; description: string; provider: string; gemini: string; openAi: string
+    geminiModel: string; openAiModel: string; save: string; saving: string
+    updatedAt: string; updatedBy: string; neverUpdated: string; loadErrorTitle: string
+    loadErrorDescription: string; retry: string; success: string; error: string; undo: string
+    activeProvider: string; selectedModel: string
+  }
+  summary: {
+    title: string; description: string; totalRequests: string; succeededRequests: string; failedRequests: string
+    totalTokens: string; estimatedCost: string; noPricing: string; empty: string
+    errorTitle: string; errorDescription: string; retry: string; successRate: string; providerBreakdown: string
+    columns: { provider: string; model: string; requests: string; success: string; failed: string; failureRate: string; inputTokens: string; outputTokens: string; totalTokens: string; cost: string }
+  }
+  logs: {
+    title: string; description: string; count: string; provider: string; model: string
+    status: string; dateFrom: string; dateTo: string; candidateCvId: string
+    allProviders: string; allModels: string; allStatuses: string; apply: string; clear: string
+    loading: string; errorTitle: string; errorDescription: string; retry: string
+    emptyTitle: string; emptyDescription: string; copied: string; copy: string
+    noValue: string; succeeded: string; failed: string; noPricing: string
+    columns: { request: string; providerModel: string; status: string; tokens: string; latency: string; cost: string; createdAt: string; error: string }
+  }
+  pagination: { prev: string; next: string; pageOf: string }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
+    adminAiManagement: AdminAiManagementTranslations
     adminDashboard: AdminDashboardTranslations
     adminCompanies: AdminCompaniesTranslations
+    adminJobs: AdminJobsTranslations
+    adminSettings: AdminSettingsTranslations
     adminUsers: AdminUsersTranslations
     comingSoon: ComingSoonTranslations
     candidateSettings: CandidateSettingsTranslations

@@ -71,6 +71,16 @@ async function getRecruiterUser(user: AuthUser) {
   })
 }
 
+async function getAdminUser(user: AuthUser) {
+  const account = await authService.getMe()
+  return mergeDefinedUserFields(user, {
+    email: account.email,
+    fullName: account.fullName,
+    phone: account.phone,
+    avatarUrl: account.avatarUrl ?? account.logoUrl ?? null,
+  })
+}
+
 export const currentUserService = {
   async getCurrentUser(user: AuthUser) {
     if (user.role === 'CANDIDATE') {
@@ -79,6 +89,10 @@ export const currentUserService = {
 
     if (user.role === 'RECRUITER') {
       return getRecruiterUser(user)
+    }
+
+    if (user.role === 'ADMIN') {
+      return getAdminUser(user)
     }
 
     return user

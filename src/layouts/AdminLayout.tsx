@@ -1,10 +1,12 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { SearchIcon } from '../assets/icons/admin'
 import { useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
-import { BrandMark, LanguageSwitch } from '../pages/_components'
+import { BrandMark, ConfirmModal, LanguageSwitch } from '../pages/_components'
+import { AdminNotificationPopover } from './components/AdminNotificationPopover'
+import { AdminProfileMenu } from './components/AdminProfileMenu'
+import { AdminTopbarSearch } from './components/AdminTopbarSearch'
 
 function MenuIcon() {
   return (
@@ -12,24 +14,6 @@ function MenuIcon() {
       <path d="M4 7h16" />
       <path d="M4 12h16" />
       <path d="M4 17h16" />
-    </svg>
-  )
-}
-
-function BellIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z" />
-      <path d="M10 19a2 2 0 0 0 4 0" />
-    </svg>
-  )
-}
-
-function UserIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21a8 8 0 0 1 16 0" />
     </svg>
   )
 }
@@ -48,10 +32,18 @@ export function AdminLayout({ children }: PropsWithChildren) {
   const navigate = useNavigate()
   const content = pages.adminUsers
   const [isSidebarOpen, setSidebarOpen] = useState(false)
+  const [openPopover, setOpenPopover] = useState<'notifications' | 'profile' | null>(null)
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
   const { pathname: currentPath } = useLocation()
   const pageTitle = currentPath.startsWith('/admin/dashboard')
     ? pages.adminDashboard.pageTitle
+    : currentPath.startsWith('/admin/ai-management')
+      ? pages.adminAiManagement.pageTitle
+    : currentPath.startsWith('/admin/jobs')
+      ? pages.adminJobs.pageTitle
+    : currentPath.startsWith('/admin/settings')
+      ? pages.adminSettings.pageTitle
     : currentPath.startsWith('/admin/companies/')
       ? pages.adminCompanies.detail.pageTitle
       : currentPath.startsWith('/admin/companies')
@@ -86,11 +78,20 @@ export function AdminLayout({ children }: PropsWithChildren) {
     }
   }, [isSidebarOpen])
 
+  useEffect(() => {
+    if (!openPopover) return
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpenPopover(null) }
+    const closeOnOutside = (event: MouseEvent) => { if (!(event.target as HTMLElement | null)?.closest('.admin-topbar-popover-wrap')) setOpenPopover(null) }
+    window.addEventListener('keydown', closeOnEscape)
+    window.addEventListener('mousedown', closeOnOutside)
+    return () => { window.removeEventListener('keydown', closeOnEscape); window.removeEventListener('mousedown', closeOnOutside) }
+  }, [openPopover])
+
   const sidebarOpen = isSidebarOpen
   const handleLogout = () => {
     void logout().then(() => {
       toast.success(common.authFeedback.logoutSuccess)
-      navigate('/login')
+      navigate('/admin/login')
     })
   }
 
@@ -144,6 +145,14 @@ export function AdminLayout({ children }: PropsWithChildren) {
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
               tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/ai-management"
+            >
+              {pages.adminAiManagement.sidebarLabel}
+            </NavLink>
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+              tabIndex={sidebarOpen ? undefined : -1}
               to="/admin/settings"
             >
               {content.sidebar.settings}
@@ -151,9 +160,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
           </nav>
 
           <div className="admin-sidebar__user" tabIndex={sidebarOpen ? undefined : -1}>
-            <span aria-hidden="true" className="admin-sidebar__user-avatar">
-              {getInitials(user?.fullName || user?.email || content.currentUser.name)}
-            </span>
+            {user?.avatarUrl ? <img alt="" className="admin-sidebar__user-avatar" src={user.avatarUrl} /> : <span aria-hidden="true" className="admin-sidebar__user-avatar">{getInitials(user?.fullName || user?.email || content.currentUser.name)}</span>}
             <div>
               <p className="admin-sidebar__user-name">{user?.fullName || content.currentUser.name}</p>
               <p className="admin-sidebar__user-email">{user?.email || content.currentUser.email}</p>
@@ -188,38 +195,18 @@ export function AdminLayout({ children }: PropsWithChildren) {
 
           <h1 className="admin-topbar__title">{pageTitle}</h1>
 
-          <label className="admin-topbar__search">
-            <span className="sr-only">{content.topbar.searchPlaceholder}</span>
-            <SearchIcon />
-            <input
-              aria-label={content.topbar.searchPlaceholder}
-              placeholder={content.topbar.searchPlaceholder}
-              type="search"
-            />
-          </label>
+          <AdminTopbarSearch content={content.topbar} />
 
           <div className="admin-topbar__actions">
             <LanguageSwitch compact />
-            <button
-              aria-label={content.topbar.notificationsLabel}
-              className="admin-topbar__icon-button"
-              type="button"
-            >
-              <BellIcon />
-            </button>
-
-            <button
-              aria-label={content.topbar.profileLabel}
-              className="admin-topbar__icon-button"
-              type="button"
-            >
-              <UserIcon />
-            </button>
+            <AdminNotificationPopover content={content.topbar} isOpen={openPopover === 'notifications'} onToggle={() => setOpenPopover((value) => value === 'notifications' ? null : 'notifications')} />
+            <AdminProfileMenu content={content.topbar} isOpen={openPopover === 'profile'} onLogout={() => { setOpenPopover(null); setLogoutConfirmOpen(true) }} onToggle={() => setOpenPopover((value) => value === 'profile' ? null : 'profile')} user={user} />
           </div>
         </header>
 
         <main className="admin-main__content">{children}</main>
       </div>
+      <ConfirmModal cancelLabel={pages.adminSettings.logout.cancel} confirmLabel={pages.adminSettings.logout.confirm} description={pages.adminSettings.logout.description} isOpen={logoutConfirmOpen} onCancel={() => setLogoutConfirmOpen(false)} onConfirm={handleLogout} title={pages.adminSettings.logout.title} />
     </div>
   )
 }

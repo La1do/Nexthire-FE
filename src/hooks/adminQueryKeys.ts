@@ -1,5 +1,6 @@
 import type {
   AdminCompanyListQuery,
+  AdminAiUsageLogQuery,
   AdminDashboardGrowthQuery,
   AdminJobListQuery,
   AdminJobReviewQueueQuery,
@@ -9,6 +10,11 @@ import type {
 
 export const adminQueryKeys = {
   all: ['admin'] as const,
+  ai: () => [...adminQueryKeys.all, 'ai-management'] as const,
+  aiConfig: () => [...adminQueryKeys.ai(), 'config'] as const,
+  aiUsageSummary: () => [...adminQueryKeys.ai(), 'usage-summary'] as const,
+  aiUsageLogs: () => [...adminQueryKeys.ai(), 'usage-logs'] as const,
+  aiUsageLogList: (query: AdminAiUsageLogQuery) => [...adminQueryKeys.aiUsageLogs(), query] as const,
   dashboard: () => [...adminQueryKeys.all, 'dashboard'] as const,
   dashboardOverview: () => [...adminQueryKeys.dashboard(), 'overview'] as const,
   dashboardGrowth: () => [...adminQueryKeys.dashboard(), 'growth'] as const,
@@ -26,6 +32,7 @@ export const adminQueryKeys = {
   userDetails: () => [...adminQueryKeys.users(), 'detail'] as const,
   userDetail: (userId: string) => [...adminQueryKeys.userDetails(), userId] as const,
   companies: () => [...adminQueryKeys.all, 'companies'] as const,
+  companyOverview: () => [...adminQueryKeys.companies(), 'overview'] as const,
   companyLists: () => [...adminQueryKeys.companies(), 'list'] as const,
   companyList: (query: AdminCompanyListQuery) =>
     [...adminQueryKeys.companyLists(), query] as const,
@@ -43,4 +50,7 @@ export const adminQueryKeys = {
   revisionReviewQueues: () => [...adminQueryKeys.jobs(), 'revision-review-queue'] as const,
   revisionReviewQueue: (query: AdminRevisionReviewQueueQuery) =>
     [...adminQueryKeys.revisionReviewQueues(), query] as const,
+  notifications: () => [...adminQueryKeys.all, 'notifications'] as const,
+  notificationList: () => [...adminQueryKeys.notifications(), 'list'] as const,
+  notificationUnread: () => [...adminQueryKeys.notifications(), 'unread'] as const,
 }

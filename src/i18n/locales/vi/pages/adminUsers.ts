@@ -16,6 +16,8 @@ export const adminUsers: AdminUsersTranslations = {
     notificationsLabel: 'Thông báo',
     toggleSidebarLabel: 'Mở menu',
     profileLabel: 'Tài khoản',
+    notificationTitle: 'Thông báo quản trị', notificationEmpty: 'Chưa có thông báo.', notificationError: 'Không thể tải thông báo.', notificationLoading: 'Đang tải thông báo…', markAllRead: 'Đánh dấu đã đọc',
+    profileSettings: 'Cài đặt tài khoản', profileLogout: 'Đăng xuất', adminRole: 'Quản trị viên', quickLinks: 'Điều hướng nhanh', quickDashboard: 'Tổng quan', quickUsers: 'Người dùng', quickCompanies: 'Công ty', quickJobs: 'Tin tuyển dụng', quickAi: 'Quản lý AI', quickSettings: 'Cài đặt',
   },
   stats: {
     totalLabel: 'Tổng người dùng',

@@ -16,6 +16,8 @@ export const adminUsers: AdminUsersTranslations = {
     notificationsLabel: 'Notifications',
     toggleSidebarLabel: 'Open menu',
     profileLabel: 'Profile',
+    notificationTitle: 'Admin notifications', notificationEmpty: 'No notifications yet.', notificationError: 'Unable to load notifications.', notificationLoading: 'Loading notifications…', markAllRead: 'Mark all as read',
+    profileSettings: 'Account settings', profileLogout: 'Sign out', adminRole: 'Administrator', quickLinks: 'Quick navigation', quickDashboard: 'Overview', quickUsers: 'Users', quickCompanies: 'Companies', quickJobs: 'Job posts', quickAi: 'AI management', quickSettings: 'Settings',
   },
   stats: {
     totalLabel: 'Total users',

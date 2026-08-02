@@ -1,6 +1,9 @@
 import { common as enCommon } from './locales/en/common'
+import { adminAiManagement as enAdminAiManagement } from './locales/en/pages/adminAiManagement'
 import { adminDashboard as enAdminDashboard } from './locales/en/pages/adminDashboard'
 import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
+import { adminJobs as enAdminJobs } from './locales/en/pages/adminJobs'
+import { adminSettings as enAdminSettings } from './locales/en/pages/adminSettings'
 import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
 import { candidateSettings as enCandidateSettings } from './locales/en/pages/candidateSettings'
 import { comingSoon as enComingSoon } from './locales/en/pages/comingSoon'
@@ -20,8 +23,11 @@ import { recruiterVerification as enRecruiterVerification } from './locales/en/p
 import { register as enRegister } from './locales/en/pages/register'
 import { search as enSearch } from './locales/en/pages/search'
 import { common as jaCommon } from './locales/ja/common'
+import { adminAiManagement as jaAdminAiManagement } from './locales/ja/pages/adminAiManagement'
 import { adminDashboard as jaAdminDashboard } from './locales/ja/pages/adminDashboard'
 import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
+import { adminJobs as jaAdminJobs } from './locales/ja/pages/adminJobs'
+import { adminSettings as jaAdminSettings } from './locales/ja/pages/adminSettings'
 import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
 import { candidateSettings as jaCandidateSettings } from './locales/ja/pages/candidateSettings'
 import { comingSoon as jaComingSoon } from './locales/ja/pages/comingSoon'
@@ -41,8 +47,11 @@ import { recruiterVerification as jaRecruiterVerification } from './locales/ja/p
 import { register as jaRegister } from './locales/ja/pages/register'
 import { search as jaSearch } from './locales/ja/pages/search'
 import { common as viCommon } from './locales/vi/common'
+import { adminAiManagement as viAdminAiManagement } from './locales/vi/pages/adminAiManagement'
 import { adminDashboard as viAdminDashboard } from './locales/vi/pages/adminDashboard'
 import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
+import { adminJobs as viAdminJobs } from './locales/vi/pages/adminJobs'
+import { adminSettings as viAdminSettings } from './locales/vi/pages/adminSettings'
 import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
 import { candidateSettings as viCandidateSettings } from './locales/vi/pages/candidateSettings'
 import { comingSoon as viComingSoon } from './locales/vi/pages/comingSoon'
@@ -70,8 +79,11 @@ export const translations = {
   en: {
     common: enCommon,
     pages: {
+      adminAiManagement: enAdminAiManagement,
       adminDashboard: enAdminDashboard,
       adminCompanies: enAdminCompanies,
+      adminJobs: enAdminJobs,
+      adminSettings: enAdminSettings,
       adminUsers: enAdminUsers,
       candidateSettings: enCandidateSettings,
       comingSoon: enComingSoon,
@@ -95,8 +107,11 @@ export const translations = {
   vi: {
     common: viCommon,
     pages: {
+      adminAiManagement: viAdminAiManagement,
       adminDashboard: viAdminDashboard,
       adminCompanies: viAdminCompanies,
+      adminJobs: viAdminJobs,
+      adminSettings: viAdminSettings,
       adminUsers: viAdminUsers,
       candidateSettings: viCandidateSettings,
       comingSoon: viComingSoon,
@@ -120,8 +135,11 @@ export const translations = {
   ja: {
     common: jaCommon,
     pages: {
+      adminAiManagement: jaAdminAiManagement,
       adminDashboard: jaAdminDashboard,
       adminCompanies: jaAdminCompanies,
+      adminJobs: jaAdminJobs,
+      adminSettings: jaAdminSettings,
       adminUsers: jaAdminUsers,
       candidateSettings: jaCandidateSettings,
       comingSoon: jaComingSoon,

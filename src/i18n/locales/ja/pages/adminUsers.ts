@@ -16,6 +16,8 @@ export const adminUsers: AdminUsersTranslations = {
     notificationsLabel: '通知',
     toggleSidebarLabel: 'メニューを開く',
     profileLabel: 'プロフィール',
+    notificationTitle: '管理者通知', notificationEmpty: '通知はありません。', notificationError: '通知を読み込めません。', notificationLoading: '通知を読み込み中…', markAllRead: 'すべて既読にする',
+    profileSettings: 'アカウント設定', profileLogout: 'ログアウト', adminRole: '管理者', quickLinks: 'クイックナビゲーション', quickDashboard: '概要', quickUsers: 'ユーザー', quickCompanies: '企業', quickJobs: '求人', quickAi: 'AI管理', quickSettings: '設定',
   },
   stats: {
     totalLabel: '総ユーザー',

@@ -90,6 +90,13 @@ export function useAdminCompanies(query: AdminCompanyListQuery) {
   })
 }
 
+export function useAdminCompaniesOverview() {
+  return useQuery({
+    queryKey: adminQueryKeys.companyOverview(),
+    queryFn: adminCompaniesService.getOverview,
+  })
+}
+
 export function usePendingAdminCompanies() {
   return useQuery({
     queryKey: adminQueryKeys.pendingCompanies(),
@@ -113,27 +120,30 @@ export function useAdminCompanyTrustHistory(companyId: string | undefined) {
   })
 }
 
-export function useAdminJobs(query: AdminJobListQuery) {
+export function useAdminJobs(query: AdminJobListQuery, enabled = true) {
   return useQuery({
     queryKey: adminQueryKeys.jobList(query),
     queryFn: () => adminJobsService.list(query),
     placeholderData: keepPreviousData,
+    enabled,
   })
 }
 
-export function useAdminJobReviewQueue(query: AdminJobReviewQueueQuery) {
+export function useAdminJobReviewQueue(query: AdminJobReviewQueueQuery, enabled = true) {
   return useQuery({
     queryKey: adminQueryKeys.jobReviewQueue(query),
     queryFn: () => adminJobsService.listReviewQueue(query),
     placeholderData: keepPreviousData,
+    enabled,
   })
 }
 
-export function useAdminRevisionReviewQueue(query: AdminRevisionReviewQueueQuery) {
+export function useAdminRevisionReviewQueue(query: AdminRevisionReviewQueueQuery, enabled = true) {
   return useQuery({
     queryKey: adminQueryKeys.revisionReviewQueue(query),
     queryFn: () => adminJobsService.listRevisionReviewQueue(query),
     placeholderData: keepPreviousData,
+    enabled,
   })
 }
 
@@ -165,6 +175,7 @@ function useInvalidateAdminCompanies(companyId?: string) {
   return async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.companyLists() }),
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.companyOverview() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.pendingCompanies() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardOverview() }),
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.dashboardGrowth() }),

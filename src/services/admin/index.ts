@@ -1,5 +1,8 @@
+export { adminAiManagementService } from './adminAiManagement.service'
 export { adminCompaniesService } from './adminCompanies.service'
 export { adminDashboardService } from './adminDashboard.service'
 export { adminJobsService } from './adminJobs.service'
+export { adminNotificationsService } from './adminNotifications.service'
+export type * from './adminNotifications.service'
 export { adminUsersService } from './adminUsers.service'
 export type * from '../../types/admin.types'

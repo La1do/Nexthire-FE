@@ -1,84 +1,13 @@
+import { Link } from 'react-router-dom'
 import type { AdminCompaniesTranslations } from '../../../i18n/types'
+import type { AdminCompany } from '../../../types/admin.types'
+import { ApproveIcon, RejectIcon, ViewIcon } from '../../../assets/icons/admin'
 import { CompanyStatusBadge } from '../../_components/admin/CompanyStatusBadge'
-import type { AdminCompany } from '../types'
 
-type CompanyReviewMobileListHandlers = {
-  onApprove: (company: AdminCompany) => void
-  onReject: (company: AdminCompany) => void
-}
+type Handlers = { onApprove: (company: AdminCompany) => void; onReject: (company: AdminCompany) => void }
+type Props = { actions: AdminCompaniesTranslations['results']['actions']; columns: AdminCompaniesTranslations['results']['columns']; companies: ReadonlyArray<AdminCompany>; handlers: Handlers; statusesLabel: AdminCompaniesTranslations['statuses']; trustLevelsLabel: AdminCompaniesTranslations['trustLevels'] }
+const initials = (name: string) => name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
 
-type CompanyReviewMobileListProps = {
-  actions: AdminCompaniesTranslations['results']['actions']
-  columns: AdminCompaniesTranslations['results']['columns']
-  companies: ReadonlyArray<AdminCompany>
-  handlers: CompanyReviewMobileListHandlers
-  statusesLabel: AdminCompaniesTranslations['statuses']
-}
-
-export function CompanyReviewMobileList({
-  actions,
-  columns,
-  companies,
-  handlers,
-  statusesLabel,
-}: CompanyReviewMobileListProps) {
-  return (
-    <ul className="admin-company-mobile-list">
-      {companies.map((company) => (
-        <li className="admin-company-card" key={company.id}>
-          <div className="admin-company-cell">
-            <span aria-hidden="true" className="admin-company-cell__logo">{company.logoText}</span>
-            <div>
-              <p className="admin-company-cell__name">{company.name}</p>
-              <a className="admin-company-cell__website" href={company.website} rel="noreferrer" target="_blank">
-                {company.website}
-              </a>
-            </div>
-          </div>
-
-          <dl className="admin-company-card__meta">
-            <div>
-              <dt>{columns.submittedAt}</dt>
-              <dd>{company.submittedAt}</dd>
-            </div>
-            <div>
-              <dt>{columns.status}</dt>
-              <dd>
-                <CompanyStatusBadge labels={statusesLabel} status={company.status} />
-              </dd>
-            </div>
-          </dl>
-
-          <div className="admin-company-card__actions" role="group">
-            <a className="admin-company-action admin-company-action--ghost" href={`/admin/companies/${company.id}`}>
-              {actions.viewDetail}
-            </a>
-            {company.status === 'approved' ? (
-              <span className="admin-company-action admin-company-action--verified">
-                {actions.verified}
-              </span>
-            ) : null}
-            {company.status === 'pending' ? (
-              <>
-                <button
-                  className="admin-company-action admin-company-action--approve"
-                  onClick={() => handlers.onApprove(company)}
-                  type="button"
-                >
-                  {actions.approve}
-                </button>
-                <button
-                  className="admin-company-action admin-company-action--reject"
-                  onClick={() => handlers.onReject(company)}
-                  type="button"
-                >
-                  {actions.reject}
-                </button>
-              </>
-            ) : null}
-          </div>
-        </li>
-      ))}
-    </ul>
-  )
+export function CompanyReviewMobileList({ actions, columns, companies, handlers, statusesLabel, trustLevelsLabel }: Props) {
+  return <ul className="admin-company-mobile-list">{companies.map((company) => <li className="admin-company-card" key={company.id}><div className="admin-company-cell">{company.logoUrl || company.logo ? <img alt="" className="admin-company-cell__logo admin-company-cell__logo--image" src={company.logoUrl ?? company.logo} /> : <span aria-hidden="true" className="admin-company-cell__logo">{initials(company.name)}</span>}<div><p className="admin-company-cell__name">{company.name}</p><p className="admin-company-cell__website">{company.taxCode}</p></div></div><dl className="admin-company-card__meta"><div><dt>{columns.status}</dt><dd><CompanyStatusBadge labels={statusesLabel} status={company.status} /></dd></div><div><dt>{columns.trustLevel}</dt><dd><span className={`admin-company-trust admin-company-trust--${company.trustLevel.toLowerCase()}`}>{trustLevelsLabel[company.trustLevel.toLowerCase() as 'low' | 'medium' | 'high']}</span></dd></div></dl>{company.verificationRejectedCount > 0 ? <p className="admin-company-review-count">{actions.reviewAgain.replace('{{count}}', String(company.verificationRejectedCount))}</p> : null}<div className="admin-company-card__actions"><Link className="admin-company-action admin-company-action--ghost" to={`/admin/companies/${company.id}`}><ViewIcon />{actions.viewDetail}</Link>{company.status === 'PENDING' ? <><button className="admin-company-action admin-company-action--approve" onClick={() => handlers.onApprove(company)} type="button"><ApproveIcon />{actions.approve}</button><button className="admin-company-action admin-company-action--reject" onClick={() => handlers.onReject(company)} type="button"><RejectIcon />{actions.reject}</button></> : null}</div></li>)}</ul>
 }

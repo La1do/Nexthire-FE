@@ -39,6 +39,8 @@ export type AuthProfile = {
   role: AuthApiRole
   logoUrl?: string | null
   logoDocumentId?: string | null
+  avatarUrl?: string | null
+  avatarDocumentId?: string | null
 }
 
 export type UpdateAuthProfilePayload = {
@@ -96,6 +98,18 @@ export const authService = {
 
   async changePassword(payload: ChangePasswordPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<{ message: string }>>('/auth/change-password', payload)
+    return response.data.data
+  },
+
+  async updateAdminAvatar(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await apiClient.patch<ApiSuccessEnvelope<AuthProfile>>('/auth/me/avatar', formData)
+    return response.data.data
+  },
+
+  async deleteAdminAvatar() {
+    const response = await apiClient.delete<ApiSuccessEnvelope<AuthProfile>>('/auth/me/avatar')
     return response.data.data
   },
 
