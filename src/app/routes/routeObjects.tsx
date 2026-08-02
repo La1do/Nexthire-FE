@@ -14,6 +14,8 @@ import { AdminUserDetailPage } from '../../pages/AdminUserDetailPage'
 import { ComingSoonPage } from '../../pages/ComingSoonPage'
 import { CareerGuidePage } from '../../pages/CareerGuidePage'
 import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
+import { CvBuilderPage } from '../../pages/CvBuilderPage'
+import { CvTemplatesPage } from '../../pages/CvTemplatesPage'
 import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
 import { HomePage } from '../../pages/HomePage'
 import { JobDetailPage } from '../../pages/JobDetailPage'
@@ -82,6 +84,20 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/search',
       label: pages.search.routeLabel,
       element: <SearchPage />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/cv-templates',
+      label: 'CV Templates',
+      element: <CvTemplatesPage />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/cv-builder/:templateId',
+      label: 'CV Builder',
+      element: <CvBuilderPage />,
       layout: MainLayout,
       access: publicAccess,
     },
