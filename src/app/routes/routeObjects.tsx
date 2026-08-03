@@ -1,6 +1,7 @@
 import { AdminLayout } from '../../layouts/AdminLayout'
 import { AdminAiManagementPage } from '../../pages/AdminAiManagementPage'
 import { AuthLayout } from '../../layouts/AuthLayout'
+import { BlankLayout } from '../../layouts/BlankLayout'
 import { CandidateLayout } from '../../layouts/CandidateLayout'
 import { MainLayout } from '../../layouts/MainLayout'
 import { RecruiterLayout } from '../../layouts/RecruiterLayout'
@@ -95,10 +96,17 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       access: publicAccess,
     },
     {
+      path: '/cv-builder',
+      label: 'CV Builder',
+      element: <CvBuilderPage />,
+      layout: BlankLayout,
+      access: publicAccess,
+    },
+    {
       path: '/cv-builder/:templateId',
       label: 'CV Builder',
       element: <CvBuilderPage />,
-      layout: MainLayout,
+      layout: BlankLayout,
       access: publicAccess,
     },
     {
