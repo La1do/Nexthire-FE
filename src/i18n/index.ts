@@ -8,6 +8,7 @@ import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
 import { candidateSettings as enCandidateSettings } from './locales/en/pages/candidateSettings'
 import { comingSoon as enComingSoon } from './locales/en/pages/comingSoon'
 import { companyDetail as enCompanyDetail } from './locales/en/pages/companyDetail'
+import { cvTemplates as enCvTemplates } from './locales/en/pages/cvTemplates'
 import { forgotPassword as enForgotPassword } from './locales/en/pages/forgotPassword'
 import { home as enHome } from './locales/en/pages/home'
 import { jobDetail as enJobDetail } from './locales/en/pages/jobDetail'
@@ -32,6 +33,7 @@ import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
 import { candidateSettings as jaCandidateSettings } from './locales/ja/pages/candidateSettings'
 import { comingSoon as jaComingSoon } from './locales/ja/pages/comingSoon'
 import { companyDetail as jaCompanyDetail } from './locales/ja/pages/companyDetail'
+import { cvTemplates as jaCvTemplates } from './locales/ja/pages/cvTemplates'
 import { forgotPassword as jaForgotPassword } from './locales/ja/pages/forgotPassword'
 import { home as jaHome } from './locales/ja/pages/home'
 import { jobDetail as jaJobDetail } from './locales/ja/pages/jobDetail'
@@ -56,6 +58,7 @@ import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
 import { candidateSettings as viCandidateSettings } from './locales/vi/pages/candidateSettings'
 import { comingSoon as viComingSoon } from './locales/vi/pages/comingSoon'
 import { companyDetail as viCompanyDetail } from './locales/vi/pages/companyDetail'
+import { cvTemplates as viCvTemplates } from './locales/vi/pages/cvTemplates'
 import { forgotPassword as viForgotPassword } from './locales/vi/pages/forgotPassword'
 import { home as viHome } from './locales/vi/pages/home'
 import { jobDetail as viJobDetail } from './locales/vi/pages/jobDetail'
@@ -88,6 +91,7 @@ export const translations = {
       candidateSettings: enCandidateSettings,
       comingSoon: enComingSoon,
       companyDetail: enCompanyDetail,
+      cvTemplates: enCvTemplates,
       forgotPassword: enForgotPassword,
       home: enHome,
       jobDetail: enJobDetail,
@@ -116,6 +120,7 @@ export const translations = {
       candidateSettings: viCandidateSettings,
       comingSoon: viComingSoon,
       companyDetail: viCompanyDetail,
+      cvTemplates: viCvTemplates,
       forgotPassword: viForgotPassword,
       home: viHome,
       jobDetail: viJobDetail,
@@ -144,6 +149,7 @@ export const translations = {
       candidateSettings: jaCandidateSettings,
       comingSoon: jaComingSoon,
       companyDetail: jaCompanyDetail,
+      cvTemplates: jaCvTemplates,
       forgotPassword: jaForgotPassword,
       home: jaHome,
       jobDetail: jaJobDetail,

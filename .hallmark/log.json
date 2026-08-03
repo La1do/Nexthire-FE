@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-08-03",
+    "macrostructure": "Catalogue",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral-cobalt",
+    "vibe": "utilitarian candidate CV template catalogue",
+    "enrichment": "none",
+    "brief": "Expose CV templates in the home header and redesign the CV template catalogue around real builder templates"
+  },
+  {
     "date": "2026-07-27",
     "macrostructure": "Workbench",
     "theme": "Nexhire Home",

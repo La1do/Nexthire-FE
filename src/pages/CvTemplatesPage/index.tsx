@@ -2,6 +2,11 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { Link } from 'react-router-dom';
+
+import {
+  useTranslations,
+} from '../../i18n';
 
 import {
   CV_TEMPLATE_CATALOG,
@@ -12,35 +17,24 @@ import {
   TemplateCard,
 } from './components/TemplateCard';
 
-interface CategoryItem {
-  id: CvTemplateCategory;
-  label: string;
-}
+import './cv-templates.css';
 
-const CATEGORIES: CategoryItem[] = [
-  {
-    id: 'all',
-    label: 'Tất cả',
-  },
-  {
-    id: 'it',
-    label: 'IT',
-  },
-  {
-    id: 'marketing',
-    label: 'Marketing',
-  },
-  {
-    id: 'sales',
-    label: 'Sales',
-  },
-  {
-    id: 'hr',
-    label: 'Nhân sự',
-  },
+const CATEGORY_IDS: CvTemplateCategory[] = [
+  'all',
+  'it',
+  'marketing',
+  'sales',
+  'hr',
 ];
 
+function formatCount(template: string, count: number) {
+  return template.replace('{{count}}', String(count));
+}
+
 export function CvTemplatesPage() {
+  const { pages } = useTranslations();
+  const content = pages.cvTemplates;
+
   const [
     activeCategory,
     setActiveCategory,
@@ -48,6 +42,21 @@ export function CvTemplatesPage() {
     useState<CvTemplateCategory>(
       'all',
     );
+
+  const categoryItems = useMemo(
+    () =>
+      CATEGORY_IDS.map((id) => ({
+        id,
+        count:
+          id === 'all'
+            ? CV_TEMPLATE_CATALOG.length
+            : CV_TEMPLATE_CATALOG.filter((template) =>
+              template.categories.includes(id),
+            ).length,
+        label: content.categories[id],
+      })),
+    [content.categories],
+  );
 
   const filteredTemplates =
     useMemo(
@@ -63,127 +72,120 @@ export function CvTemplatesPage() {
       [activeCategory],
     );
 
+  const firstTemplate = CV_TEMPLATE_CATALOG[0];
+  const availableCategoryCount = CATEGORY_IDS.filter((id) => id !== 'all').length;
+
   return (
-    <div
-      className="
-        min-h-screen
-        bg-[#f7f6fb]
-        px-4
-        py-12
-        sm:px-6
-        lg:px-8
-      "
-    >
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-12 text-center">
-          <h1
-            className="
-              mb-4
-              text-3xl
-              font-bold
-              text-[#111827]
-              md:text-4xl
-            "
-          >
-            Mẫu CV theo vị trí ứng tuyển
-          </h1>
-
-          <p className="text-base text-[#6b7280]">
-            Tạo CV ngay - Chốt Job liền tay. Khám phá
-            các mẫu thiết kế CV đẹp.
-          </p>
+    <article className="cv-templates-page">
+      <header className="cv-templates-hero">
+        <div className="cv-templates-hero__copy">
+          <p className="cv-templates-hero__inventory">{content.hero.inventoryLabel}</p>
+          <h1>{content.hero.title}</h1>
+          <p>{content.hero.description}</p>
+          <div className="cv-templates-hero__actions">
+            {firstTemplate ? (
+              <Link className="cv-templates-button cv-templates-button--primary" to={`/cv-builder/${firstTemplate.id}`}>
+                <span>{content.hero.primaryAction}</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+            ) : null}
+            <a className="cv-templates-button cv-templates-button--secondary" href="#cv-template-list">
+              <span>{content.hero.secondaryAction}</span>
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
         </div>
 
-        <div
-          className="
-            mb-10
-            flex
-            flex-wrap
-            justify-center
-            gap-2
-          "
-        >
-          {CATEGORIES.map(
-            (category) => {
-              const isActive =
-                activeCategory ===
-                category.id;
+        <dl className="cv-templates-stats" aria-label={content.routeLabel}>
+          <div>
+            <dt>{formatCount(content.stats.readyTemplates, CV_TEMPLATE_CATALOG.length)}</dt>
+            <dd>{content.card.readyLabel}</dd>
+          </div>
+          <div>
+            <dt>{formatCount(content.stats.categoryGroups, availableCategoryCount)}</dt>
+            <dd>{content.filters.label}</dd>
+          </div>
+          <div>
+            <dt>{content.stats.exportReady}</dt>
+            <dd>PDF</dd>
+          </div>
+        </dl>
+      </header>
 
-              return (
-                <button
-                  key={category.id}
-                  type="button"
-                  onClick={() =>
-                    setActiveCategory(
-                      category.id,
-                    )
-                  }
-                  className={`
-                    rounded-full
-                    border
-                    px-5
-                    py-2
-                    text-sm
-                    font-medium
-                    transition-colors
-                    ${
-                      isActive
-                        ? `
-                          border-[#111827]
-                          bg-[#111827]
-                          text-white
-                        `
-                        : `
-                          border-[#d9d9e3]
-                          bg-white
-                          text-[#6b7280]
-                          hover:text-[#111827]
-                        `
-                    }
-                  `}
-                >
-                  {category.label}
-                </button>
-              );
-            },
-          )}
+      <section aria-labelledby="cv-template-list-title" className="cv-templates-catalog" id="cv-template-list">
+        <div className="cv-templates-section-head">
+          <div>
+            <h2 id="cv-template-list-title">{content.routeLabel}</h2>
+            <p>{formatCount(content.filters.countLabel, filteredTemplates.length)}</p>
+          </div>
         </div>
 
-        <div
-          className="
-            grid
-            grid-cols-1
-            gap-8
-            sm:grid-cols-2
-            md:grid-cols-3
-            lg:grid-cols-4
-          "
-        >
-          {filteredTemplates.map(
-            (template) => (
+        <div aria-label={content.filters.label} className="cv-templates-filter">
+          {categoryItems.map((category) => {
+            const isActive = activeCategory === category.id;
+
+            return (
+              <button
+                aria-pressed={isActive}
+                className={isActive ? 'is-active' : ''}
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                type="button"
+              >
+                <span>{category.label}</span>
+                <small>{category.count}</small>
+              </button>
+            );
+          })}
+        </div>
+
+        {filteredTemplates.length ? (
+          <div className="cv-templates-grid">
+            {filteredTemplates.map((template) => (
               <TemplateCard
+                categoryLabels={content.categories}
                 key={template.id}
+                labels={content.card}
                 template={template}
               />
-            ),
-          )}
-        </div>
-
-        {filteredTemplates.length ===
-          0 && (
-          <div
-            className="
-              py-20
-              text-center
-              text-[#6b7280]
-            "
-          >
-            Không tìm thấy mẫu CV phù hợp với danh mục
-            này.
+            ))}
+          </div>
+        ) : (
+          <div className="cv-templates-empty">
+            <h3>{content.filters.emptyTitle}</h3>
+            <p>{content.filters.emptyDescription}</p>
           </div>
         )}
-      </div>
-    </div>
+      </section>
+
+      <section aria-label={content.notes.title} className="cv-templates-support">
+        <div className="cv-templates-notes">
+          <h2>{content.notes.title}</h2>
+          <ul>
+            {content.notes.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="cv-templates-upcoming">
+          <div>
+            <h2>{content.upcoming.title}</h2>
+            <p>{content.upcoming.description}</p>
+          </div>
+          <div className="cv-templates-upcoming__grid">
+            {content.upcoming.items.map((item) => (
+              <article aria-disabled="true" className="cv-template-upcoming-card" key={item.name}>
+                <span>{content.upcoming.badge}</span>
+                <h3>{item.name}</h3>
+                <p>{item.description}</p>
+                <small>{item.category}</small>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    </article>
   );
 }
 

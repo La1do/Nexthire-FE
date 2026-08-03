@@ -89,7 +89,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     },
     {
       path: '/cv-templates',
-      label: 'CV Templates',
+      label: pages.cvTemplates.routeLabel,
       element: <CvTemplatesPage />,
       layout: MainLayout,
       access: publicAccess,

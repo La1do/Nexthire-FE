@@ -65,6 +65,7 @@ export const common = {
   },
   navigation: {
     companies: 'Companies',
+    cvTemplates: 'CV templates',
     employerCta: 'For employers',
     guide: 'Career guide',
     home: 'Home',

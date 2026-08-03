@@ -65,6 +65,7 @@ export const common = {
   },
   navigation: {
     companies: '企業',
+    cvTemplates: 'CVテンプレート',
     employerCta: '採用担当者向け',
     guide: 'キャリアガイド',
     home: 'ホーム',

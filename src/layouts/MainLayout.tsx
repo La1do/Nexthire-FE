@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   getAuthUserDisplayName,
   getInitials,
@@ -172,12 +172,8 @@ export function MainLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
   const { user, isAuthenticated, logout } = useAuth()
   const toast = useToast()
-  const { pathname } = useLocation()
   const navigate = useNavigate()
-  const isHomePath = pathname === '/' || pathname === '/home'
-  const showCandidateHomeNotifications =
-    isHomePath &&
-    user?.role === 'CANDIDATE'
+  const showCandidateNotifications = user?.role === 'CANDIDATE'
 
   const handleLogout = () => {
     void logout().then(() => {
@@ -200,6 +196,9 @@ export function MainLayout({ children }: PropsWithChildren) {
             <a href="/companies">
               {common.navigation.companies}
             </a>
+            <a href="/cv-templates">
+              {common.navigation.cvTemplates}
+            </a>
             <a href="/career-guide">
               {common.navigation.guide}
             </a>
@@ -208,7 +207,7 @@ export function MainLayout({ children }: PropsWithChildren) {
             <LanguageSwitch className="main-language-switch" compact />
             {isAuthenticated && user ? (
               <>
-                {showCandidateHomeNotifications ? (
+                {showCandidateNotifications ? (
                   <UserNotificationPopover
                     buttonClassName="main-notification-button"
                     content={pages.profile.topbar.notifications}

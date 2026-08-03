@@ -1,143 +1,65 @@
-import {
-  useNavigate,
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
+import type {
+  CvTemplatesTranslations,
+} from '../../../i18n/types';
 
 import type {
   CvTemplateCatalogItem,
+  CvTemplateCategory,
 } from './../../_components/cv-templates/TemplateCatalog';
 
 interface TemplateCardProps {
+  categoryLabels: Record<CvTemplateCategory, string>;
+  labels: CvTemplatesTranslations['card'];
   template: CvTemplateCatalogItem;
 }
 
 export const TemplateCard = ({
+  categoryLabels,
+  labels,
   template,
 }: TemplateCardProps) => {
-  const navigate =
-    useNavigate();
-
-  const handleUseTemplate =
-    () => {
-      navigate(
-        `/cv-builder/${template.id}`,
-      );
-    };
+  const categories = template.categories.filter(
+    (category) => category !== 'all',
+  );
 
   return (
-    <article
-      className="
-        group
-        overflow-hidden
-        rounded-xl
-        border
-        border-[#d9d9e3]
-        bg-white
-        shadow-sm
-        transition-all
-        hover:-translate-y-1
-        hover:shadow-lg
-      "
-    >
-      <div
-        className="
-          relative
-          overflow-hidden
-          bg-[#f3f4f6]
-        "
+    <article className="cv-template-card">
+      <Link
+        aria-label={labels.previewAlt.replace('{{name}}', template.name)}
+        className="cv-template-card__media"
+        to={`/cv-builder/${template.id}`}
       >
         <img
+          alt=""
+          decoding="async"
           src={template.thumbnail}
-          alt={template.name}
-          className="
-            aspect-[3/4]
-            w-full
-            object-cover
-            transition-transform
-            duration-300
-            group-hover:scale-[1.02]
-          "
         />
+      </Link>
 
-        <div
-          className="
-            absolute
-            inset-0
-            flex
-            items-center
-            justify-center
-            bg-black/0
-            opacity-0
-            transition-all
-            group-hover:bg-black/30
-            group-hover:opacity-100
-          "
-        >
-          <button
-            type="button"
-            onClick={
-              handleUseTemplate
-            }
-            className="
-              rounded-lg
-              bg-white
-              px-5
-              py-2.5
-              text-sm
-              font-semibold
-              text-[#111827]
-              shadow-lg
-              transition-transform
-              hover:scale-105
-            "
-          >
-            Dùng mẫu này
-          </button>
+      <div className="cv-template-card__body">
+        <div className="cv-template-card__title-row">
+          <div>
+            <h2>{template.name}</h2>
+            <p>{template.description}</p>
+          </div>
+          <span>{labels.readyLabel}</span>
         </div>
-      </div>
 
-      <div className="p-4">
-        <h3
-          className="
-            mb-1
-            text-base
-            font-bold
-            text-[#111827]
-          "
-        >
-          {template.name}
-        </h3>
+        <dl className="cv-template-card__meta">
+          <dt>{labels.categoriesLabel}</dt>
+          <dd>
+            {categories.map((category) => (
+              <span key={category}>{categoryLabels[category]}</span>
+            ))}
+          </dd>
+        </dl>
 
-        <p
-          className="
-            line-clamp-2
-            text-sm
-            text-[#6b7280]
-          "
-        >
-          {template.description}
-        </p>
-
-        <button
-          type="button"
-          onClick={
-            handleUseTemplate
-          }
-          className="
-            mt-4
-            w-full
-            rounded-lg
-            bg-[#f23b94]
-            px-4
-            py-2
-            text-sm
-            font-medium
-            text-white
-            transition-colors
-            hover:bg-[#db2777]
-          "
-        >
-          Tạo CV
-        </button>
+        <Link className="cv-template-card__action" to={`/cv-builder/${template.id}`}>
+          <span>{labels.useTemplate}</span>
+          <span aria-hidden="true">→</span>
+        </Link>
       </div>
     </article>
   );

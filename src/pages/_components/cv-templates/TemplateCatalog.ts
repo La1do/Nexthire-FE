@@ -1,3 +1,4 @@
+import professionalThumbnail from '../../../assets/cv-templates/CV-pro1.jpg';
 
 export type CvTemplateCategory =
   | 'all'
@@ -25,7 +26,7 @@ export const CV_TEMPLATE_CATALOG: CvTemplateCatalogItem[] = [
     id: 'professional',
     name: 'Professional',
     description: 'Mẫu CV chuyên nghiệp, rõ ràng và phù hợp nhiều vị trí.',
-    thumbnail: '/assets/cv-templates/CV-pro1.jpg',
+    thumbnail: professionalThumbnail,
     categories: [
       'all',
       'it',
@@ -43,4 +44,3 @@ export const getCvTemplateCatalogItem = (
     (template) =>
       template.id === templateId,
   );
-

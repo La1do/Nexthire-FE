@@ -8,6 +8,7 @@ export type CommonTranslations = {
   }
   navigation: {
     companies: string
+    cvTemplates: string
     employerCta: string
     guide: string
     home: string
@@ -371,6 +372,49 @@ export type SearchTranslations = {
     title: string
     description: string
     action: string
+  }
+}
+
+export type CvTemplatesTranslations = {
+  routeLabel: string
+  hero: {
+    inventoryLabel: string
+    title: string
+    description: string
+    primaryAction: string
+    secondaryAction: string
+  }
+  stats: {
+    readyTemplates: string
+    categoryGroups: string
+    exportReady: string
+  }
+  filters: {
+    label: string
+    countLabel: string
+    emptyTitle: string
+    emptyDescription: string
+  }
+  categories: Record<'all' | 'it' | 'marketing' | 'sales' | 'hr', string>
+  card: {
+    readyLabel: string
+    categoriesLabel: string
+    useTemplate: string
+    previewAlt: string
+  }
+  notes: {
+    title: string
+    items: ReadonlyArray<string>
+  }
+  upcoming: {
+    title: string
+    description: string
+    badge: string
+    items: ReadonlyArray<{
+      name: string
+      description: string
+      category: string
+    }>
   }
 }
 
@@ -2322,6 +2366,7 @@ export type Translations = {
     comingSoon: ComingSoonTranslations
     candidateSettings: CandidateSettingsTranslations
     companyDetail: CompanyDetailTranslations
+    cvTemplates: CvTemplatesTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations
     jobDetail: JobDetailTranslations

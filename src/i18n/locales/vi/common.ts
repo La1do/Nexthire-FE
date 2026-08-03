@@ -65,6 +65,7 @@ export const common = {
   },
   navigation: {
     companies: 'Công ty',
+    cvTemplates: 'Mẫu CV',
     employerCta: 'Bạn là nhà tuyển dụng',
     guide: 'Cẩm nang',
     home: 'Trang chủ',
