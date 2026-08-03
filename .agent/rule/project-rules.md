@@ -129,6 +129,8 @@ Rules:
 - Keep border radius moderate: usually `8px` or less, unless the design requires a larger auth card radius.
 - All UI work must be responsive across mobile, tablet, laptop, and desktop viewports.
 - New or changed screens must define responsive layout behavior for small, medium, and large breakpoints before implementation.
+- Wide desktop is a first-class breakpoint. New or changed public/user-facing screens must define how layout scales at `>= 1440px` and must be verified at `1920px` width, equivalent to common 24-inch monitors. When feasible, also verify at `2560px`.
+- Do not leave grid, table, search, or detail pages capped at narrow laptop widths such as `~72rem` when the content can safely use more horizontal space. Use fluid max-width tokens, adaptive grids, and component-level caps so text lines, logos, cards, and media do not become oversized.
 - Avoid fixed widths/heights that break on small screens; use responsive constraints such as min/max widths, fluid grids, wrapping, and container-safe spacing.
 - Text, buttons, forms, cards, navigation, and media must not overflow, overlap, or become unusable on narrow screens.
 - After UI changes, verify responsive behavior on mobile and desktop layouts at minimum. If browser preview is unavailable, report that visual responsive verification could not be performed.

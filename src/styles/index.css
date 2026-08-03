@@ -43,6 +43,8 @@
   --shadow-home-card: 0 14px 32px rgba(17, 24, 39, 0.08);
   --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --layout-public-max: clamp(72rem, 86vw, 112rem);
+  --layout-public-gutter: clamp(1rem, 2.5vw, 3rem);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--color-text-primary);
   background: var(--color-background-app);
@@ -814,8 +816,8 @@ select {
 
 .main-container {
   margin-inline: auto;
-  max-width: 72rem;
-  padding-inline: clamp(1rem, 3vw, 1.5rem);
+  max-width: var(--layout-public-max);
+  padding-inline: var(--layout-public-gutter);
   width: 100%;
 }
 
@@ -5286,6 +5288,10 @@ select {
 }
 
 @media (min-width: 768px) {
+  .search-toolbar-form {
+    grid-template-columns: minmax(0, 1.4fr) minmax(14rem, 0.75fr) auto;
+  }
+
   .profile-form-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -5472,6 +5478,39 @@ select {
 
   .home-newsletter {
     grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .search-layout {
+    gap: clamp(1.25rem, 2vw, 2rem);
+    grid-template-columns: clamp(20rem, 20vw, 24rem) minmax(0, 1fr);
+  }
+
+  .search-result-card {
+    grid-template-columns: clamp(8rem, 10vw, 11rem) minmax(0, 1fr);
+    padding: clamp(1rem, 1.4vw, 1.35rem);
+  }
+
+  .company-detail-layout {
+    gap: clamp(1.25rem, 2vw, 2rem);
+    grid-template-columns: minmax(0, 1fr) clamp(20rem, 21vw, 24rem);
+  }
+
+  .company-detail-hero {
+    grid-template-columns: minmax(0, 1.08fr) minmax(24rem, 0.85fr);
+    padding: clamp(1.5rem, 2.4vw, 2.5rem);
+  }
+
+  .company-detail-panel,
+  .company-detail-stat {
+    padding: clamp(1.1rem, 1.6vw, 1.75rem);
+  }
+}
+
+@media (min-width: 1680px) {
+  .company-detail-job-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
