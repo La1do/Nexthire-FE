@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from '../../i18n'
-import { useAuth, useToast } from '../../context'
+import { useAuth, useGlobalLoader, useToast } from '../../context'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { candidateService } from '../../services/candidate.service'
 import { Button } from '../_components'
@@ -54,8 +54,9 @@ function isSupportedAvatarFile(file: File) {
 }
 
 export function ProfilePage() {
-  const { pages } = useTranslations()
+  const { common, pages } = useTranslations()
   const { refreshUser } = useAuth()
+  const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const content = pages.profile
   const [profile, setProfile] = useState(() => createCandidateProfile(content.profile))
@@ -132,8 +133,14 @@ export function ProfilePage() {
           setSaving(true)
 
           try {
-            const data = await candidateService.updateMyProfile(
-              createCandidateUpdatePayload(currentWithParsedCv),
+            const data = await trackGlobalLoader(
+              candidateService.updateMyProfile(
+                createCandidateUpdatePayload(currentWithParsedCv),
+              ),
+              {
+                label: common.loader.applyingCvParseLabel,
+                mode: 'bar',
+              },
             )
             const restoredProfile = createProfileFromCandidateAggregate(data)
             profileRef.current = restoredProfile
@@ -168,7 +175,7 @@ export function ProfilePage() {
       toast.success(message)
       cvParseBaselineRef.current = null
     },
-    [content.sections.resume, content.states.saveError, refreshUser, toast],
+    [common.loader.applyingCvParseLabel, content.sections.resume, content.states.saveError, refreshUser, toast, trackGlobalLoader],
   )
 
   useEffect(() => {
@@ -309,13 +316,19 @@ export function ProfilePage() {
 
   async function saveProfile(
     profileToSave: CandidateProfile = profile,
-    options: { showToast?: boolean; successMessage?: string } = {},
+    options: { loaderLabel?: string; showToast?: boolean; successMessage?: string } = {},
   ): Promise<CandidateProfile | null> {
     setSaving(true)
     setSaveError(undefined)
 
     try {
-      const data = await candidateService.updateMyProfile(createCandidateUpdatePayload(profileToSave))
+      const data = await trackGlobalLoader(
+        candidateService.updateMyProfile(createCandidateUpdatePayload(profileToSave)),
+        {
+          label: options.loaderLabel ?? common.loader.savingProfileLabel,
+          mode: 'bar',
+        },
+      )
       const nextProfile = createProfileFromCandidateAggregate(data)
       profileRef.current = nextProfile
       setProfile(nextProfile)
@@ -352,7 +365,10 @@ export function ProfilePage() {
     setSaveError(undefined)
 
     try {
-      const data = await candidateService.uploadAvatar(file)
+      const data = await trackGlobalLoader(candidateService.uploadAvatar(file), {
+        label: common.loader.uploadingAvatarLabel,
+        mode: 'overlay',
+      })
       setProfile((currentProfile) => ({
         ...currentProfile,
         avatarDocumentId: data.profile.avatarDocumentId,
@@ -395,11 +411,17 @@ export function ProfilePage() {
     setCvAssistDismissed(false)
 
     try {
-      const cv = await candidateService.uploadCv(file, {
-        isDefault: true,
-        parse: false,
-        title: file.name,
-      })
+      const cv = await trackGlobalLoader(
+        candidateService.uploadCv(file, {
+          isDefault: true,
+          parse: false,
+          title: file.name,
+        }),
+        {
+          label: common.loader.uploadingCvLabel,
+          mode: 'overlay',
+        },
+      )
       setProfile((currentProfile) => ({
         ...currentProfile,
         defaultCvId: cv.id,
@@ -447,7 +469,10 @@ export function ProfilePage() {
 
       profileRef.current = parseBaseline
       cvParseBaselineRef.current = parseBaseline
-      const cv = await candidateService.parseCv(profile.defaultCvId)
+      const cv = await trackGlobalLoader(candidateService.parseCv(profile.defaultCvId), {
+        label: common.loader.parsingCvLabel,
+        mode: 'overlay',
+      })
       setProfile((currentProfile) => ({
         ...currentProfile,
         defaultCvParseStatus: cv.parseStatus,
@@ -488,7 +513,10 @@ export function ProfilePage() {
     setCvAssistDismissed(false)
 
     try {
-      await candidateService.deleteCv(profile.defaultCvId)
+      await trackGlobalLoader(candidateService.deleteCv(profile.defaultCvId), {
+        label: common.loader.deletingCvLabel,
+        mode: 'bar',
+      })
       setProfile((currentProfile) => ({
         ...currentProfile,
         defaultCvId: null,
@@ -518,6 +546,7 @@ export function ProfilePage() {
         selectedGroups,
       )
       const savedProfile = await saveProfile(finalProfile, {
+        loaderLabel: common.loader.applyingCvParseLabel,
         successMessage:
           selectedGroups.length > 0
             ? content.cvParseReview.applySuccess

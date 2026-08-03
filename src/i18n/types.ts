@@ -75,6 +75,25 @@ export type CommonTranslations = {
     closeLabel: string
     statusLabels: Record<'success' | 'error' | 'warning' | 'info', string>
   }
+  loader: {
+    applyingCvParseLabel: string
+    bootLabel: string
+    checkingSessionLabel: string
+    defaultLabel: string
+    deletingCvLabel: string
+    googleLoginLabel: string
+    loginLabel: string
+    logoutLabel: string
+    parsingCvLabel: string
+    passwordResetRequestLabel: string
+    passwordResetSaveLabel: string
+    regionLabel: string
+    registerLabel: string
+    savingProfileLabel: string
+    uploadingAvatarLabel: string
+    uploadingCvLabel: string
+    verifyEmailLabel: string
+  }
 }
 
 export type LoginTranslations = {

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Checkbox, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
-import { useAuth, useToast } from '../../../context'
+import { useAuth, useGlobalLoader, useToast } from '../../../context'
 import { useLocale } from '../../../i18n'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
 import { authService } from '../../../services/auth.service'
@@ -44,6 +44,7 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { login } = useAuth()
+  const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const { locale } = useLocale()
   const [isSubmitting, setSubmitting] = useState(false)
@@ -60,11 +61,17 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
         setSubmitting(true)
 
         try {
-          const auth = await authService.login({
-            email: formValues.email.trim(),
-            password: formValues.password,
-            role,
-          })
+          const auth = await trackGlobalLoader(
+            authService.login({
+              email: formValues.email.trim(),
+              password: formValues.password,
+              role,
+            }),
+            {
+              label: form.submitLoading,
+              mode: 'overlay',
+            },
+          )
 
           login(auth, formValues.rememberMe ? 'local' : 'session')
           toast.success(authFeedback.loginSuccess)
@@ -89,10 +96,16 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
     setGoogleSubmitting(true)
 
     try {
-      const auth = await authService.googleLogin({
-        idToken,
-        role,
-      })
+      const auth = await trackGlobalLoader(
+        authService.googleLogin({
+          idToken,
+          role,
+        }),
+        {
+          label: form.googleLoading,
+          mode: 'overlay',
+        },
+      )
 
       login(auth, values.rememberMe ? 'local' : 'session')
       toast.success(authFeedback.googleLoginSuccess)

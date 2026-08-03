@@ -7,10 +7,12 @@ import {
 } from 'react'
 import axios from 'axios'
 import type { PropsWithChildren } from 'react'
+import { useTranslations } from '../i18n'
 import { authTokenStorage } from '../lib/api'
 import { authService } from '../services/auth.service'
 import { currentUserService } from '../services/currentUser.service'
 import { AuthContext } from './authContextValue'
+import { useGlobalLoader } from './useGlobalLoader'
 import type { AuthResponse, AuthUser } from '../services/auth.service'
 import type { AuthContextValue, AuthPersistence } from './authContextValue'
 
@@ -53,7 +55,10 @@ function isSessionExpiredError(error: unknown) {
 }
 
 export function AuthProvider({ children }: PropsWithChildren) {
+  const { common } = useTranslations()
+  const { track: trackGlobalLoader } = useGlobalLoader()
   const hydratedIdentityRef = useRef<string | null>(null)
+  const hydrationRequestRef = useRef(0)
   const userPersistenceRef = useRef<AuthPersistence>(getStoredUserPersistence())
   const [profileRefreshKey, setProfileRefreshKey] = useState(0)
   const [isHydratingUser, setHydratingUser] = useState(false)
@@ -80,6 +85,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (!authTokenStorage.getAccessToken()) {
         clearStoredUser()
         hydratedIdentityRef.current = null
+        setHydratingUser(false)
         setUser((current) => (current ? null : current))
       }
     }, 1000)
@@ -108,11 +114,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     try {
-      await authService.logout(refreshToken)
+      await trackGlobalLoader(authService.logout(refreshToken), {
+        label: common.loader.logoutLabel,
+        mode: 'bar',
+      })
     } catch {
       // Logout on the client should still complete if the server token is already invalid.
     }
-  }, [clearSession])
+  }, [clearSession, common.loader.logoutLabel, trackGlobalLoader])
 
   const refreshUser = useCallback(() => {
     hydratedIdentityRef.current = null
@@ -121,16 +130,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (!user || !authTokenStorage.getAccessToken()) {
+      setHydratingUser(false)
       return
     }
 
     const identityKey = `${user.id}:${user.role}:${profileRefreshKey}`
 
     if (hydratedIdentityRef.current === identityKey) {
+      setHydratingUser(false)
       return
     }
 
     let isActive = true
+    const requestId = hydrationRequestRef.current + 1
+    hydrationRequestRef.current = requestId
     hydratedIdentityRef.current = identityKey
     setHydratingUser(true)
 
@@ -166,7 +179,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
       })
       .finally(() => {
-        if (isActive) {
+        if (isActive && hydrationRequestRef.current === requestId) {
           setHydratingUser(false)
         }
       })

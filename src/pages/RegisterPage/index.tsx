@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslations } from '../../i18n'
-import { useAuth, useToast } from '../../context'
+import { useAuth, useGlobalLoader, useToast } from '../../context'
 import { getApiErrorMessage } from '../../i18n/apiErrors'
 import { authService } from '../../services/auth.service'
 import { AuthPageShell } from '../_components'
@@ -44,6 +44,7 @@ export function RegisterPage({ role }: RegisterPageProps) {
   const { common, pages } = useTranslations()
   const navigate = useNavigate()
   const { login } = useAuth()
+  const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const register = pages.register
   const forgotPassword = pages.forgotPassword
@@ -82,16 +83,24 @@ export function RegisterPage({ role }: RegisterPageProps) {
     setVerifying(true)
 
     try {
-      await authService.verifyEmail({
-        email: pendingRegistration.email,
-        token,
-      })
+      const auth = await trackGlobalLoader(
+        (async () => {
+          await authService.verifyEmail({
+            email: pendingRegistration.email,
+            token,
+          })
 
-      const auth = await authService.login({
-        email: pendingRegistration.email,
-        password: pendingRegistration.password,
-        role: pendingRegistration.role,
-      })
+          return authService.login({
+            email: pendingRegistration.email,
+            password: pendingRegistration.password,
+            role: pendingRegistration.role,
+          })
+        })(),
+        {
+          label: common.loader.verifyEmailLabel,
+          mode: 'overlay',
+        },
+      )
 
       login(auth, 'session')
       toast.success(common.authFeedback.emailVerifiedSuccess)

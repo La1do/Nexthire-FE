@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useTranslations } from '../../i18n'
-import { useToast } from '../../context'
+import { useGlobalLoader, useToast } from '../../context'
 import { getApiErrorMessage } from '../../i18n/apiErrors'
 import { authService } from '../../services/auth.service'
 import { AuthPageShell } from '../_components'
@@ -33,6 +33,7 @@ function renderTemplateWithEmail(template: string, email: string) {
 
 export function ForgotPasswordPage() {
   const { common, pages } = useTranslations()
+  const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const forgotPassword = pages.forgotPassword
   const [step, setStep] = useState<ForgotPasswordStep>('request')
@@ -64,7 +65,10 @@ export function ForgotPasswordPage() {
     setRequestError(undefined)
 
     try {
-      await requestPasswordReset(nextEmail)
+      await trackGlobalLoader(requestPasswordReset(nextEmail), {
+        label: common.loader.passwordResetRequestLabel,
+        mode: 'overlay',
+      })
       setStep('sent')
       toast.success(common.authFeedback.passwordResetEmailSent)
     } catch (error) {
@@ -85,7 +89,10 @@ export function ForgotPasswordPage() {
     setVerifyError(undefined)
 
     try {
-      await requestPasswordReset(email)
+      await trackGlobalLoader(requestPasswordReset(email), {
+        label: common.loader.passwordResetRequestLabel,
+        mode: 'overlay',
+      })
       toast.success(common.authFeedback.passwordResetEmailSent)
     } catch (error) {
       const message = getApiErrorMessage(error, common.apiErrors)
@@ -113,11 +120,17 @@ export function ForgotPasswordPage() {
     setResetError(undefined)
 
     try {
-      await authService.resetPassword({
-        email,
-        newPassword: values.password,
-        token: resetToken,
-      })
+      await trackGlobalLoader(
+        authService.resetPassword({
+          email,
+          newPassword: values.password,
+          token: resetToken,
+        }),
+        {
+          label: common.loader.passwordResetSaveLabel,
+          mode: 'overlay',
+        },
+      )
       setStep('success')
       toast.success(common.authFeedback.passwordResetSuccess)
     } catch (error) {

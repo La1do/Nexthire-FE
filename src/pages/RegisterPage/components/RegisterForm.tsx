@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
-import { useToast } from '../../../context'
+import { useGlobalLoader, useToast } from '../../../context'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, RegisterTranslations } from '../../../i18n/types'
@@ -37,6 +37,7 @@ const initialValues: RegisterFormValues = {
 
 export function RegisterForm({ apiErrors, onRegistered, role, translations }: RegisterFormProps) {
   const { form, validation } = translations
+  const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const [isSubmitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
@@ -49,13 +50,19 @@ export function RegisterForm({ apiErrors, onRegistered, role, translations }: Re
       try {
         const email = formValues.email.trim()
 
-        await authService.register({
-          fullName: formValues.fullName.trim(),
-          phone: formValues.phone.trim(),
-          email,
-          password: formValues.password,
-          role,
-        })
+        await trackGlobalLoader(
+          authService.register({
+            fullName: formValues.fullName.trim(),
+            phone: formValues.phone.trim(),
+            email,
+            password: formValues.password,
+            role,
+          }),
+          {
+            label: form.submitLoading,
+            mode: 'overlay',
+          },
+        )
 
         onRegistered({
           email,
