@@ -431,6 +431,9 @@ export function RecruiterCompanyPage() {
         setForm(companyToForm(updatedCompany))
         setLogoFile(null)
         setLogoError(undefined)
+      }
+
+      if (isDirty || selectedLogoFile) {
         void refreshUser()
       }
 
