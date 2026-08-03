@@ -47,9 +47,13 @@ export const adminQueryKeys = {
   jobReviewQueues: () => [...adminQueryKeys.jobs(), 'review-queue'] as const,
   jobReviewQueue: (query: AdminJobReviewQueueQuery) =>
     [...adminQueryKeys.jobReviewQueues(), query] as const,
+  jobDetails: () => [...adminQueryKeys.jobs(), 'detail'] as const,
+  jobDetail: (jobId: string) => [...adminQueryKeys.jobDetails(), jobId] as const,
   revisionReviewQueues: () => [...adminQueryKeys.jobs(), 'revision-review-queue'] as const,
   revisionReviewQueue: (query: AdminRevisionReviewQueueQuery) =>
     [...adminQueryKeys.revisionReviewQueues(), query] as const,
+  revisionDetails: () => [...adminQueryKeys.jobs(), 'revision-detail'] as const,
+  revisionDetail: (revisionId: string) => [...adminQueryKeys.revisionDetails(), revisionId] as const,
   notifications: () => [...adminQueryKeys.all, 'notifications'] as const,
   notificationList: () => [...adminQueryKeys.notifications(), 'list'] as const,
   notificationUnread: () => [...adminQueryKeys.notifications(), 'unread'] as const,

@@ -6,9 +6,15 @@ import type { AdminNotification } from '../../services/admin'
 
 type Props = { content: AdminUsersTranslations['topbar']; isOpen: boolean; onToggle: () => void }
 function routeFor(item: AdminNotification) {
-  if (item.type === 'ADMIN_COMPANY_REVIEW_REQUIRED') return '/admin/companies?status=PENDING'
-  if (item.type === 'ADMIN_JOB_REVIEW_REQUIRED') return '/admin/jobs?tab=review'
-  if (item.type === 'ADMIN_JOB_REVISION_REVIEW_REQUIRED') return '/admin/jobs?tab=revisions'
+  if (item.type === 'ADMIN_COMPANY_REVIEW_REQUIRED') {
+    return item.data?.companyId ? `/admin/companies/${item.data.companyId}` : '/admin/companies?status=PENDING'
+  }
+  if (item.type === 'ADMIN_JOB_REVIEW_REQUIRED') {
+    return item.data?.jobId ? `/admin/jobs?tab=review&jobId=${item.data.jobId}` : '/admin/jobs?tab=review'
+  }
+  if (item.type === 'ADMIN_JOB_REVISION_REVIEW_REQUIRED') {
+    return item.data?.revisionId ? `/admin/jobs?tab=revisions&revisionId=${item.data.revisionId}` : '/admin/jobs?tab=revisions'
+  }
   if (item.type === 'ADMIN_USER_RISK_DETECTED' && item.data?.userId) return `/admin/users/${item.data.userId}`
   return '/admin/dashboard'
 }
