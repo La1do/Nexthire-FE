@@ -5,7 +5,9 @@ import type { ResetPasswordFormValues } from '../types'
 import { validateResetPasswordForm } from '../utils/forgotPasswordValidation'
 
 type ResetPasswordFormProps = {
-  onSaved: () => void
+  isSubmitting?: boolean
+  onSaved: (values: ResetPasswordFormValues) => Promise<void> | void
+  submitError?: string
   translations: ForgotPasswordTranslations
 }
 
@@ -14,12 +16,19 @@ const initialValues: ResetPasswordFormValues = {
   password: '',
 }
 
-export function ResetPasswordForm({ onSaved, translations }: ResetPasswordFormProps) {
+export function ResetPasswordForm({
+  isSubmitting = false,
+  onSaved,
+  submitError,
+  translations,
+}: ResetPasswordFormProps) {
   const { form, validation } = translations
   const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, values } =
     useFormState<ResetPasswordFormValues>({
       initialValues,
-      onSubmit: onSaved,
+      onSubmit: (formValues) => {
+        void onSaved(formValues)
+      },
       validate: (formValues) => validateResetPasswordForm(formValues, validation),
     })
 
@@ -49,7 +58,11 @@ export function ResetPasswordForm({ onSaved, translations }: ResetPasswordFormPr
         value={values.confirmPassword}
       />
 
-      <Button className="w-full" type="submit">
+      {submitError ? (
+        <p className="text-center text-sm font-medium text-[var(--color-text-danger)]">{submitError}</p>
+      ) : null}
+
+      <Button className="w-full" disabled={isSubmitting} type="submit">
         {form.resetSubmit}
       </Button>
     </form>

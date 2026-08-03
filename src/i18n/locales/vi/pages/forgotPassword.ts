@@ -4,11 +4,11 @@ export const forgotPassword = {
   steps: {
     request: {
       title: 'Quên mật khẩu?',
-      subtitle: 'Nhập email để nhận link đặt lại mật khẩu',
+      subtitle: 'Nhập email để nhận mã đặt lại mật khẩu',
     },
     sent: {
       title: 'Email đã được gửi',
-      subtitle: 'Kiểm tra hộp thư của {{email}} và nhấn link để đặt lại mật khẩu.',
+      subtitle: 'Kiểm tra hộp thư của {{email}} và nhập mã 6 chữ số để đặt lại mật khẩu.',
     },
     verify: {
       title: 'Nhập mã xác thực',
@@ -32,11 +32,13 @@ export const forgotPassword = {
     hidePassword: 'Ẩn mật khẩu',
     passwordLabel: 'Mật khẩu mới',
     passwordPlaceholder: 'Ít nhất 8 ký tự',
-    requestSubmit: 'Gửi link đặt lại',
+    requestSubmit: 'Gửi mã đặt lại',
+    codeContinueSubmit: 'Tiếp tục',
     resendPrefix: 'Gửi lại sau',
-    resendTime: '00:54',
+    resendAction: 'Gửi lại mã',
+    resendingAction: 'Đang gửi lại...',
     resetSubmit: 'Lưu mật khẩu mới',
-    sentSubmit: 'Tôi đã nhận được link',
+    sentSubmit: 'Nhập mã xác thực',
     showPassword: 'Hiện mật khẩu',
     verifySubmit: 'Xác thực',
   },

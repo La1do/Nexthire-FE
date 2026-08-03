@@ -4,11 +4,11 @@ export const forgotPassword = {
   steps: {
     request: {
       title: 'Forgot password?',
-      subtitle: 'Enter your email to receive a password reset link',
+      subtitle: 'Enter your email to receive a password reset code',
     },
     sent: {
       title: 'Email sent',
-      subtitle: 'Check the inbox for {{email}} and open the link to reset your password.',
+      subtitle: 'Check the inbox for {{email}} and enter the 6-digit code to reset your password.',
     },
     verify: {
       title: 'Enter verification code',
@@ -32,11 +32,13 @@ export const forgotPassword = {
     hidePassword: 'Hide password',
     passwordLabel: 'New password',
     passwordPlaceholder: 'At least 8 characters',
-    requestSubmit: 'Send reset link',
+    requestSubmit: 'Send reset code',
+    codeContinueSubmit: 'Continue',
     resendPrefix: 'Resend in',
-    resendTime: '00:54',
+    resendAction: 'Resend code',
+    resendingAction: 'Resending...',
     resetSubmit: 'Save new password',
-    sentSubmit: 'I received the link',
+    sentSubmit: 'Enter verification code',
     showPassword: 'Show password',
     verifySubmit: 'Verify',
   },

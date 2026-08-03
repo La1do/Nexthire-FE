@@ -53,6 +53,15 @@ export type ChangePasswordPayload = {
   newPassword: string
 }
 
+export type ForgotPasswordPayload = {
+  email: string
+}
+
+export type ForgotPasswordResponse = {
+  message: string
+  resendCooldownSeconds: number
+}
+
 export type LoginPayload = {
   email: string
   password: string
@@ -71,6 +80,16 @@ export type RegisterPayload = {
   email: string
   password: string
   role: AuthApiRole
+}
+
+export type ResetPasswordPayload = {
+  email: string
+  newPassword: string
+  token: string
+}
+
+export type ResetPasswordResponse = {
+  message: string
 }
 
 export type VerifyEmailPayload = {
@@ -113,6 +132,11 @@ export const authService = {
     return response.data.data
   },
 
+  async forgotPassword(payload: ForgotPasswordPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<ForgotPasswordResponse>>('/auth/forgot-password', payload)
+    return response.data.data
+  },
+
   async login(payload: LoginPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/login', payload)
     return response.data.data
@@ -125,6 +149,11 @@ export const authService = {
 
   async register(payload: RegisterPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/register', payload)
+    return response.data.data
+  },
+
+  async resetPassword(payload: ResetPasswordPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<ResetPasswordResponse>>('/auth/reset-password', payload)
     return response.data.data
   },
 

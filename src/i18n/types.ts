@@ -222,8 +222,10 @@ export type ForgotPasswordTranslations = {
     passwordLabel: string
     passwordPlaceholder: string
     requestSubmit: string
+    codeContinueSubmit: string
     resendPrefix: string
-    resendTime: string
+    resendAction: string
+    resendingAction: string
     resetSubmit: string
     sentSubmit: string
     showPassword: string

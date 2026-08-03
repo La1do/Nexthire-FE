@@ -4,11 +4,11 @@ export const forgotPassword = {
   steps: {
     request: {
       title: 'パスワードをお忘れですか？',
-      subtitle: 'パスワード再設定リンクを受け取るメールを入力してください',
+      subtitle: 'パスワード再設定コードを受け取るメールを入力してください',
     },
     sent: {
       title: 'メールを送信しました',
-      subtitle: '{{email}} の受信箱を確認し、リンクからパスワードを再設定してください。',
+      subtitle: '{{email}} の受信箱を確認し、6桁のコードでパスワードを再設定してください。',
     },
     verify: {
       title: '認証コードを入力',
@@ -32,11 +32,13 @@ export const forgotPassword = {
     hidePassword: 'パスワードを隠す',
     passwordLabel: '新しいパスワード',
     passwordPlaceholder: '8文字以上',
-    requestSubmit: '再設定リンクを送信',
+    requestSubmit: '再設定コードを送信',
+    codeContinueSubmit: '続ける',
     resendPrefix: '再送信まで',
-    resendTime: '00:54',
+    resendAction: 'コードを再送信',
+    resendingAction: '再送信中...',
     resetSubmit: '新しいパスワードを保存',
-    sentSubmit: 'リンクを受け取りました',
+    sentSubmit: '認証コードを入力',
     showPassword: 'パスワードを表示',
     verifySubmit: '認証',
   },

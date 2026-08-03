@@ -5,7 +5,9 @@ import type { ForgotPasswordRequestValues } from '../types'
 import { validateForgotPasswordRequest } from '../utils/forgotPasswordValidation'
 
 type ForgotPasswordFormProps = {
-  onSent: (email: string) => void
+  isSubmitting?: boolean
+  onSent: (email: string) => Promise<void> | void
+  submitError?: string
   translations: ForgotPasswordTranslations
 }
 
@@ -13,12 +15,19 @@ const initialValues: ForgotPasswordRequestValues = {
   email: '',
 }
 
-export function ForgotPasswordForm({ onSent, translations }: ForgotPasswordFormProps) {
+export function ForgotPasswordForm({
+  isSubmitting = false,
+  onSent,
+  submitError,
+  translations,
+}: ForgotPasswordFormProps) {
   const { form, validation } = translations
   const { getFieldError, handleFieldChange, handleSubmit, setFieldTouched, values } =
     useFormState<ForgotPasswordRequestValues>({
       initialValues,
-      onSubmit: (formValues) => onSent(formValues.email.trim()),
+      onSubmit: (formValues) => {
+        void onSent(formValues.email.trim())
+      },
       validate: (formValues) => validateForgotPasswordRequest(formValues, validation),
     })
 
@@ -35,9 +44,13 @@ export function ForgotPasswordForm({ onSent, translations }: ForgotPasswordFormP
         value={values.email}
       />
 
-      <Button className="w-full" type="submit">
+      <Button className="w-full" disabled={isSubmitting} type="submit">
         {form.requestSubmit}
       </Button>
+
+      {submitError ? (
+        <p className="text-center text-sm font-medium text-[var(--color-text-danger)]">{submitError}</p>
+      ) : null}
     </form>
   )
 }
