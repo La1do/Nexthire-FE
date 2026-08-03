@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AdminShieldIcon, ArchiveIcon, RestoreIcon, SuspendIcon } from '../../assets/icons/admin'
 import { useToast } from '../../context'
-import { useAdminCompanies, useAdminDashboardOverview, useAdminJobs, useAdminJobReviewQueue, useAdminJobStatusAction, useAdminRevisionReviewQueue, useReviewAdminJob, useReviewAdminRevision } from '../../hooks/useAdminQueries'
+import { useAdminCompanies, useAdminDashboardOverview, useAdminJobs, useAdminJobReviewQueue, useAdminJobStatusAction, useAdminRevisionReviewQueue, useReviewAdminJob, useReviewAdminRevision, useAdminJobDetail, useAdminJobRevisionDetail } from '../../hooks/useAdminQueries'
 import { useTranslations } from '../../i18n'
 import { getApiErrorCode } from '../../lib/api/apiError'
 import type { AdminJobReviewStatus, AdminJobSort, AdminRevisionReviewStatus } from '../../types/admin.types'
@@ -48,6 +48,25 @@ export function AdminJobsPage() {
   useEffect(() => { const external = searchParams.get('search') ?? ''; setQuery((current) => current === external ? current : external) }, [searchParams])
   useEffect(() => { setSearchParams((current) => { const next = new URLSearchParams(current); if (debouncedQuery) next.set('search', debouncedQuery); else next.delete('search'); return next }, { replace: true }) }, [debouncedQuery, setSearchParams])
   useEffect(() => setPage(1), [debouncedQuery, status, risk, companyId, sort, tab])
+
+  const urlJobId = searchParams.get('jobId')
+  const urlRevisionId = searchParams.get('revisionId')
+  const jobDetailQuery = useAdminJobDetail(urlJobId ?? undefined)
+  const revisionDetailQuery = useAdminJobRevisionDetail(urlRevisionId ?? undefined)
+
+  useEffect(() => {
+    if (jobDetailQuery.data) {
+      setDetailItem(jobDetailQuery.data)
+      setSearchParams((current) => { const next = new URLSearchParams(current); next.delete('jobId'); return next }, { replace: true })
+    }
+  }, [jobDetailQuery.data, setSearchParams])
+
+  useEffect(() => {
+    if (revisionDetailQuery.data) {
+      setDetailItem(revisionDetailQuery.data)
+      setSearchParams((current) => { const next = new URLSearchParams(current); next.delete('revisionId'); return next }, { replace: true })
+    }
+  }, [revisionDetailQuery.data, setSearchParams])
 
   const allQuery = useAdminJobs({ page, limit: PAGE_SIZE, search: debouncedQuery || undefined, status: status === 'all' ? undefined : status, riskLevel: risk === 'all' ? undefined : risk, companyId: companyId === 'all' ? undefined : companyId, sort }, tab === 'all')
   const reviewQuery = useAdminJobReviewQueue({ page, limit: PAGE_SIZE, search: debouncedQuery || undefined, status: status === 'all' ? undefined : status as AdminJobReviewStatus }, tab === 'review')

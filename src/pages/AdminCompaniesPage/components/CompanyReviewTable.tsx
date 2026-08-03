@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom'
 import { ApproveIcon, RejectIcon, ViewIcon } from '../../../assets/icons/admin'
 import type { AdminCompaniesTranslations } from '../../../i18n/types'
 import type { AdminCompany } from '../../../types/admin.types'
 import { CompanyStatusBadge } from '../../_components/admin/CompanyStatusBadge'
+import { AdminActionMenu } from '../../_components/admin/AdminActionMenu'
 
 type Handlers = { onApprove: (company: AdminCompany) => void; onReject: (company: AdminCompany) => void }
 type Props = { actions: AdminCompaniesTranslations['results']['actions']; columns: AdminCompaniesTranslations['results']['columns']; companies: ReadonlyArray<AdminCompany>; handlers: Handlers; statusesLabel: AdminCompaniesTranslations['statuses']; trustLevelsLabel: AdminCompaniesTranslations['trustLevels'] }
@@ -19,7 +19,7 @@ export function CompanyReviewTable({ actions, columns, companies, handlers, stat
       <td className="admin-users-table__meta">{formatDate(company.submittedAt ?? company.createdAt)}</td>
       <td><CompanyStatusBadge labels={statusesLabel} status={company.status} />{company.lastVerificationRejectedReason ? <p className="admin-company-last-reason" title={company.lastVerificationRejectedReason}>{company.lastVerificationRejectedReason}</p> : null}</td>
       <td><span className={`admin-company-trust admin-company-trust--${company.trustLevel.toLowerCase()}`}>{trustLevelsLabel[company.trustLevel.toLowerCase() as 'low' | 'medium' | 'high']}</span></td>
-      <td><div className="admin-company-table__actions"><Link className="admin-company-action admin-company-action--ghost" to={`/admin/companies/${company.id}`}><ViewIcon /><span>{actions.viewDetail}</span></Link>{company.status === 'PENDING' ? <><button aria-label={actions.approve} className="admin-company-action admin-company-action--approve admin-action--compactable" onClick={() => handlers.onApprove(company)} title={actions.approve} type="button"><ApproveIcon /><span>{actions.approve}</span></button><button aria-label={actions.reject} className="admin-company-action admin-company-action--reject admin-action--compactable" onClick={() => handlers.onReject(company)} title={actions.reject} type="button"><RejectIcon /><span>{actions.reject}</span></button></> : null}</div></td>
+      <td><div className="admin-company-table__actions"><AdminActionMenu label={`${columns.actions}: ${company.name}`} items={[{ icon: <ViewIcon />, label: actions.viewDetail, to: `/admin/companies/${company.id}` }, ...(company.status === 'PENDING' ? [{ icon: <ApproveIcon />, label: actions.approve, onClick: () => handlers.onApprove(company), tone: 'success' as const }, { icon: <RejectIcon />, label: actions.reject, onClick: () => handlers.onReject(company), tone: 'danger' as const }] : [])]} /></div></td>
     </tr>)}</tbody>
   </table></div>
 }

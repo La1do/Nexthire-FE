@@ -27,6 +27,13 @@ export const adminJobsService = {
     return response.data.data
   },
 
+  async getDetail(jobId: string) {
+    const response = await apiClient.get<ApiSuccessEnvelope<AdminJob>>(
+      `/admin/jobs/${jobId}`,
+    )
+    return response.data.data
+  },
+
   async listReviewQueue(query: AdminJobReviewQueueQuery = {}) {
     const response = await apiClient.get<PaginatedEnvelope<AdminJob>>(
       '/admin/jobs/review-queue',
@@ -78,6 +85,13 @@ export const adminJobsService = {
     const response = await apiClient.post<ApiSuccessEnvelope<AdminJobRevision>>(
       `/admin/jobs/revisions/${revisionId}/review`,
       payload,
+    )
+    return response.data.data
+  },
+
+  async getRevisionDetail(revisionId: string) {
+    const response = await apiClient.get<ApiSuccessEnvelope<AdminJobRevision>>(
+      `/admin/jobs/revisions/${revisionId}`,
     )
     return response.data.data
   },

@@ -147,6 +147,22 @@ export function useAdminRevisionReviewQueue(query: AdminRevisionReviewQueueQuery
   })
 }
 
+export function useAdminJobDetail(jobId?: string) {
+  return useQuery({
+    queryKey: adminQueryKeys.jobDetail(jobId ?? 'missing'),
+    queryFn: () => adminJobsService.getDetail(jobId as string),
+    enabled: Boolean(jobId),
+  })
+}
+
+export function useAdminJobRevisionDetail(revisionId?: string) {
+  return useQuery({
+    queryKey: adminQueryKeys.revisionDetail(revisionId ?? 'missing'),
+    queryFn: () => adminJobsService.getRevisionDetail(revisionId as string),
+    enabled: Boolean(revisionId),
+  })
+}
+
 function useInvalidateAdminUsers() {
   const queryClient = useQueryClient()
   return async (userId: string) => {

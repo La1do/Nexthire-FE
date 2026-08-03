@@ -2,6 +2,7 @@ import { ApproveIcon, CloseIcon, RejectIcon, RestoreIcon, SuspendIcon, ViewIcon 
 import type { AdminJobsTranslations } from '../../../i18n/types'
 import type { AdminJobRow, PendingAdminJobAction } from '../types'
 import { isAdminJobRevision } from '../types'
+import { AdminActionMenu } from '../../_components/admin/AdminActionMenu'
 
 type Props = {
   actions: AdminJobsTranslations['actions']; item: AdminJobRow
@@ -12,11 +13,11 @@ type Props = {
 export function AdminJobActions({ actions, item, onAction, onView }: Props) {
   const revision = isAdminJobRevision(item)
   const reviewable = ['PENDING_REVIEW', 'NEEDS_REVIEW', 'SHOULD_REJECT'].includes(item.status)
-  return <div className="admin-job-actions">
-    <button aria-label={actions.view} className="admin-company-action admin-company-action--ghost" onClick={() => onView(item)} title={actions.view} type="button"><ViewIcon /><span>{actions.view}</span></button>
-    {reviewable ? <><button aria-label={actions.approve} className="admin-company-action admin-company-action--approve admin-action--compactable" onClick={() => onAction('approve', item, revision)} title={actions.approve} type="button"><ApproveIcon /><span>{actions.approve}</span></button><button aria-label={actions.reject} className="admin-company-action admin-company-action--reject admin-action--compactable" onClick={() => onAction('reject', item, revision)} title={actions.reject} type="button"><RejectIcon /><span>{actions.reject}</span></button></> : null}
-    {!revision && item.status === 'PUBLISHED' ? <button aria-label={actions.unpublish} className="admin-company-action admin-job-action--warning admin-action--compactable" onClick={() => onAction('unpublish', item, false)} title={actions.unpublish} type="button"><SuspendIcon /><span>{actions.unpublish}</span></button> : null}
-    {!revision && item.status === 'UNPUBLISHED' ? <button aria-label={actions.republish} className="admin-company-action admin-company-action--approve admin-action--compactable" onClick={() => onAction('republish', item, false)} title={actions.republish} type="button"><RestoreIcon /><span>{actions.republish}</span></button> : null}
-    {!revision && ['PUBLISHED', 'UNPUBLISHED'].includes(item.status) ? <button aria-label={actions.close} className="admin-company-action admin-company-action--reject admin-action--compactable" onClick={() => onAction('close', item, false)} title={actions.close} type="button"><CloseIcon /><span>{actions.close}</span></button> : null}
-  </div>
+  return <div className="admin-job-actions"><AdminActionMenu label={actions.view} items={[
+    { icon: <ViewIcon />, label: actions.view, onClick: () => onView(item) },
+    ...(reviewable ? [{ icon: <ApproveIcon />, label: actions.approve, onClick: () => onAction('approve', item, revision), tone: 'success' as const }, { icon: <RejectIcon />, label: actions.reject, onClick: () => onAction('reject', item, revision), tone: 'danger' as const }] : []),
+    ...(!revision && item.status === 'PUBLISHED' ? [{ icon: <SuspendIcon />, label: actions.unpublish, onClick: () => onAction('unpublish', item, false), tone: 'warning' as const }] : []),
+    ...(!revision && item.status === 'UNPUBLISHED' ? [{ icon: <RestoreIcon />, label: actions.republish, onClick: () => onAction('republish', item, false), tone: 'success' as const }] : []),
+    ...(!revision && ['PUBLISHED', 'UNPUBLISHED'].includes(item.status) ? [{ icon: <CloseIcon />, label: actions.close, onClick: () => onAction('close', item, false), tone: 'danger' as const }] : []),
+  ]} /></div>
 }
