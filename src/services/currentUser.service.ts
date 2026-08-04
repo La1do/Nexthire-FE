@@ -23,7 +23,8 @@ type CandidateMeResponse = {
 type CompanyMeResponse = {
   id: string
   name: string
-  logo: string | null
+  logoUrl: string | null
+  logoDocumentId: string | null
   ownerId: string
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED'
 }
@@ -67,7 +68,7 @@ async function getRecruiterUser(user: AuthUser) {
     phone: account.phone,
     companyId: company?.id ?? null,
     companyName: company?.name ?? null,
-    logoUrl: company ? company.logo : account.logoUrl ?? null,
+    logoUrl: company ? company.logoUrl : account.logoUrl ?? null,
   })
 }
 
