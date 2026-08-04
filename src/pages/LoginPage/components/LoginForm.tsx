@@ -6,7 +6,6 @@ import { useFormState } from '../../../hooks/useFormState'
 import { useAuth, useGlobalLoader, useToast } from '../../../context'
 import { useLocale } from '../../../i18n'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
-import { getApiErrorCode } from '../../../lib/api/apiError'
 import { authService } from '../../../services/auth.service'
 import type { CommonTranslations, LoginTranslations, RegisterTranslations } from '../../../i18n/types'
 import type { AuthApiRole } from '../../../lib/auth/authRole'
@@ -100,7 +99,19 @@ export function LoginForm({
     role,
   })
 
-  const resendVerificationCode = async (email: string) => {
+  const prepareVerificationRequest = async (email: string) => {
+    try {
+      await authService.createManualEmailVerification({ email })
+    } catch {
+      // The manual endpoint is disabled outside dev/test; resend still works when a verification row already exists.
+    }
+  }
+
+  const resendVerificationCode = async (email: string, shouldPrepare = false) => {
+    if (shouldPrepare) {
+      await prepareVerificationRequest(email)
+    }
+
     const result = await authService.resendVerificationEmail({ email })
     setResendCooldownSeconds(result.resendCooldownSeconds)
     toast.success(verificationTranslations.resendSuccessMessage)
@@ -114,7 +125,7 @@ export function LoginForm({
     setResendingVerification(true)
 
     try {
-      await resendVerificationCode(email)
+      await resendVerificationCode(email, true)
     } catch (error) {
       const message = getApiErrorMessage(error, apiErrors)
       setVerifyError(message)
@@ -171,7 +182,7 @@ export function LoginForm({
         },
       )
 
-      if (!auth.user.emailVerified) {
+      if (auth.user.emailVerified === false) {
         const message = apiErrors.byCode['AUTH.EMAIL_NOT_VERIFIED'] ?? apiErrors.default
         setVerifyError(message)
         toast.error(message)
@@ -217,7 +228,7 @@ export function LoginForm({
             },
           )
 
-          if (!auth.user.emailVerified) {
+          if (auth.user.emailVerified === false) {
             await startEmailVerification(formValues, auth.user.email)
             return
           }
@@ -226,11 +237,6 @@ export function LoginForm({
           toast.success(authFeedback.loginSuccess)
           navigate(loginRedirect, { replace: true })
         } catch (error) {
-          if (getApiErrorCode(error) === 'AUTH.EMAIL_NOT_VERIFIED') {
-            await startEmailVerification(formValues)
-            return
-          }
-
           const message = getApiErrorMessage(error, apiErrors)
           setSubmitError(message)
           toast.error(message)

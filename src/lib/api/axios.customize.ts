@@ -75,6 +75,7 @@ function isPublicAuthRequest(url?: string) {
       url?.startsWith('/auth/reset-password') ||
       url?.startsWith('/auth/verify-email') ||
       url?.startsWith('/auth/resend-verification') ||
+      url?.startsWith('/auth/manual/email-verification') ||
       url?.startsWith(REFRESH_TOKEN_ENDPOINT),
   )
 }

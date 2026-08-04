@@ -113,6 +113,18 @@ export type ResendVerificationEmailResponse = {
   resendCooldownSeconds: number
 }
 
+export type ManualEmailVerificationPayload = {
+  email: string
+}
+
+export type ManualEmailVerificationResponse = {
+  message: string
+  verificationId: string
+  email: string
+  token: string
+  expiresAt: string
+}
+
 export const authService = {
   async getMe() {
     const response = await apiClient.get<ApiSuccessEnvelope<AuthProfile>>('/auth/me')
@@ -174,6 +186,14 @@ export const authService = {
   async resendVerificationEmail(payload: ResendVerificationEmailPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<ResendVerificationEmailResponse>>(
       '/auth/resend-verification',
+      payload,
+    )
+    return response.data.data
+  },
+
+  async createManualEmailVerification(payload: ManualEmailVerificationPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<ManualEmailVerificationResponse>>(
+      '/auth/manual/email-verification',
       payload,
     )
     return response.data.data
