@@ -2112,6 +2112,14 @@ export type RecruiterCompanyTranslations = {
     heroImageUrlLabel: string
     heroImageUrlPlaceholder: string
     heroImageUrlHint: string
+    heroImageTitle: string
+    heroImageDescription: string
+    heroImageUpload: string
+    heroImageReplace: string
+    heroImageSelected: string
+    heroImageHint: string
+    heroImageInvalidType: string
+    heroImageTooLarge: string
     websiteLabel: string
     websitePlaceholder: string
     websiteHint: string
@@ -2173,6 +2181,8 @@ export type RecruiterCompanyTranslations = {
     emptyPerks: string
     openReview: string
     reviewHint: string
+    heroImageChangeLabel: string
+    logoChangeLabel: string
   }
   review: {
     kicker: string
