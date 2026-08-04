@@ -134,8 +134,6 @@ export const profile: ProfileTranslations = {
     },
     actions: {
       viewJob: 'Xem việc làm',
-      withdraw: 'Rút đơn',
-      withdrawing: 'Đang rút...',
     },
     cvPreview: {
       open: 'Xem CV đã nộp',
@@ -155,13 +153,28 @@ export const profile: ProfileTranslations = {
       error: 'Chưa mở được CV đã nộp.',
       openExternal: 'Mở CV trong tab mới',
     },
+    progress: {
+      label: 'Tiến trình ứng tuyển',
+      steps: {
+        CV_SUBMITTED: 'Đã nộp CV',
+        CV_RECEIVED: 'Nhà tuyển dụng đã tiếp nhận',
+        CV_VIEWED: 'Nhà tuyển dụng đã xem CV',
+        RESPONDED: 'Đã phản hồi',
+      },
+      descriptions: {
+        CV_SUBMITTED: 'Hồ sơ ứng tuyển đã được gửi thành công.',
+        CV_RECEIVED: 'Hồ sơ đã vào hộp đơn của nhà tuyển dụng.',
+        CV_VIEWED: 'Nhà tuyển dụng đã mở CV của bạn.',
+        RESPONDED: 'Nhà tuyển dụng đã cập nhật kết quả ứng tuyển.',
+      },
+      cancelledTitle: 'Đơn đã bị hủy',
+      cancelledDescription: 'Tiến trình ứng tuyển đã dừng do vị trí hoặc hệ thống không còn khả dụng.',
+    },
     states: {
       loading: 'Đang tải đơn ứng tuyển...',
       errorTitle: 'Chưa tải được đơn ứng tuyển',
       errorDescription: 'Kiểm tra kết nối hoặc đăng nhập lại để xem lịch sử ứng tuyển.',
       retry: 'Tải lại',
-      withdrawSuccess: 'Đã rút đơn ứng tuyển.',
-      withdrawError: 'Chưa thể rút đơn ứng tuyển.',
     },
     empty: {
       title: 'Chưa có đơn phù hợp',

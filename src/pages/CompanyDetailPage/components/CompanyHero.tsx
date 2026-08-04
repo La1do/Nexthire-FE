@@ -16,9 +16,28 @@ export function CompanyHero({ company, content, followControl }: CompanyHeroProp
   const heroImage = company.heroImageUrl ? (
     <img alt="" src={company.heroImageUrl} />
   ) : null
+  const heroMedia = company.heroImageUrl ? (
+    company.website ? (
+      <a
+        aria-label={content.hero.websiteLabel}
+        className="company-detail-hero-media"
+        href={company.website}
+        rel="noreferrer"
+        target="_blank"
+      >
+        {heroImage}
+      </a>
+    ) : (
+      <div className="company-detail-hero-media">{heroImage}</div>
+    )
+  ) : (
+    <div className="company-detail-hero-media company-detail-hero-media-fallback" aria-hidden="true" />
+  )
 
   return (
     <section className={heroClassName}>
+      {heroMedia}
+
       <div className="company-detail-hero-copy">
         <div className="company-detail-brand-row">
           <CompanyLogoMark
@@ -60,21 +79,6 @@ export function CompanyHero({ company, content, followControl }: CompanyHeroProp
           ) : null}
         </div>
       </div>
-
-      {company.heroImageUrl && company.website ? (
-        <a
-          aria-label={content.hero.websiteLabel}
-          className="company-detail-hero-media"
-          href={company.website}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {heroImage}
-        </a>
-      ) : null}
-      {company.heroImageUrl && !company.website ? (
-        <div className="company-detail-hero-media">{heroImage}</div>
-      ) : null}
     </section>
   )
 }

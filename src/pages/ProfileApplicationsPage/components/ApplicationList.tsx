@@ -10,7 +10,7 @@ type ApplicationListProps = {
   formatDate: (value: string) => string
   meta: ProfileTranslations['applications']['meta']
   onLoadCv: (applicationId: string) => Promise<ApplicationCvDownloadResponse>
-  onWithdraw: (application: CandidateApplication) => Promise<void>
+  progressLabels: ProfileTranslations['applications']['progress']
   statusLabels: ProfileTranslations['applications']['statusLabels']
 }
 
@@ -21,7 +21,7 @@ export function ApplicationList({
   formatDate,
   meta,
   onLoadCv,
-  onWithdraw,
+  progressLabels,
   statusLabels,
 }: ApplicationListProps) {
   return (
@@ -35,7 +35,7 @@ export function ApplicationList({
           key={application.id}
           meta={meta}
           onLoadCv={onLoadCv}
-          onWithdraw={onWithdraw}
+          progressLabels={progressLabels}
           statusLabels={statusLabels}
         />
       ))}

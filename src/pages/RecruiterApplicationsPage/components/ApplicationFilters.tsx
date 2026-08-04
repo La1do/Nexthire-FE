@@ -25,12 +25,11 @@ type ApplicationFiltersProps = {
 }
 
 const statusOrder: ReadonlyArray<RecruiterApplicationStatus> = [
-  'new',
-  'screening',
-  'interview',
-  'offer',
-  'hired',
-  'rejected',
+  'SUBMITTED',
+  'OFFERED',
+  'REJECTED',
+  'WITHDRAWN',
+  'CANCELLED',
 ]
 
 function SearchIcon() {

@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useTranslations } from '../../../../i18n';
 import { useCanvasStore } from '../store/useCanvasStore';
 import { CV_TEMPLATES, type CvTemplate } from '../templates';
 import { ElementView } from './ElementView';
 import { CANVAS_PAGE_WIDTH, CANVAS_PAGE_HEIGHT } from '../canvas.types';
+import { TemplateReplaceDialog } from './TemplateReplaceDialog';
 
 const THUMB_WIDTH = 232;
 const SCALE = THUMB_WIDTH / CANVAS_PAGE_WIDTH;
@@ -54,21 +56,33 @@ const TemplateThumb = ({ template }: { template: CvTemplate }) => {
 };
 
 export const TemplatesPanel = () => {
+  const { pages } = useTranslations();
   const applyTemplate = useCanvasStore((s) => s.applyTemplate);
   const document = useCanvasStore((s) => s.document);
+  const [pendingTemplate, setPendingTemplate] = useState<CvTemplate | null>(null);
 
   const hasContent = document.pages.some((p) => p.elements.length > 0);
 
+  const applySelectedTemplate = (template: CvTemplate) => {
+    applyTemplate(template.build());
+  };
+
   const handleApply = (template: CvTemplate) => {
-    if (
-      hasContent &&
-      !window.confirm(
-        'Áp dụng mẫu sẽ thay thế toàn bộ nội dung hiện tại. Tiếp tục?',
-      )
-    ) {
+    if (hasContent) {
+      setPendingTemplate(template);
       return;
     }
-    applyTemplate(template.build());
+
+    applySelectedTemplate(template);
+  };
+
+  const handleConfirmApply = () => {
+    if (!pendingTemplate) {
+      return;
+    }
+
+    applySelectedTemplate(pendingTemplate);
+    setPendingTemplate(null);
   };
 
   return (
@@ -93,11 +107,18 @@ export const TemplatesPanel = () => {
               className="rounded-md px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
               style={{ background: template.accent }}
             >
-              Dùng mẫu này
+              {pages.cvTemplates.card.useTemplate}
             </button>
           </div>
         ))}
       </div>
+      <TemplateReplaceDialog
+        isOpen={Boolean(pendingTemplate)}
+        onCancel={() => setPendingTemplate(null)}
+        onConfirm={handleConfirmApply}
+        templateName={pendingTemplate?.name ?? ''}
+        translations={pages.cvTemplates.templateReplaceDialog}
+      />
     </div>
   );
 };

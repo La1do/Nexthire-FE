@@ -32,6 +32,13 @@ export const cvTemplates = {
     useTemplate: 'Dùng mẫu này',
     previewAlt: 'Xem trước mẫu CV {{name}}',
   },
+  templateReplaceDialog: {
+    title: 'Thay mẫu CV?',
+    description: 'Mẫu mới sẽ thay thế toàn bộ nội dung hiện tại trong bản thiết kế.',
+    templateLabel: 'Mẫu sắp áp dụng',
+    cancel: 'Hủy',
+    confirm: 'Áp dụng mẫu',
+  },
   notes: {
     title: 'Flow hiện tại',
     items: [

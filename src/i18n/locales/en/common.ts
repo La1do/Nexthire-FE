@@ -61,6 +61,7 @@ export const common = {
       'COMMON.RATE_LIMITED': 'You are doing that too quickly. Please try again later.',
       'COMMON.INTERNAL_ERROR': 'The system is having trouble. Please try again later.',
       'AUTH.INVALID_CREDENTIALS': 'Email or password is incorrect.',
+      'AUTH.EMAIL_NOT_VERIFIED': 'You need to verify your email before signing in.',
       'AUTH.GOOGLE_TOKEN_INVALID': 'The Google sign-in token is invalid. Please try again.',
       'AUTH.GOOGLE_EMAIL_NOT_VERIFIED': 'Your Google email is not verified.',
       'AUTH.GOOGLE_LOGIN_NOT_CONFIGURED': 'Google sign-in has not been configured.',
@@ -127,6 +128,8 @@ export const common = {
     description: 'Connect with businesses through a modern, fast, and trustworthy hiring experience.',
     legalLabel: 'Registered with the Ministry of Labor',
     copyright: '2026 NexHire',
+    supportLabel: 'Support:',
+    supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
       { title: 'Jobs', links: ['Latest jobs', 'IT jobs', 'Marketing'] },
       { title: 'Employers', links: ['Post a job', 'Business hiring'] },

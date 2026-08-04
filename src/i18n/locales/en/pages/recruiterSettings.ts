@@ -48,9 +48,14 @@ export const recruiterSettings: RecruiterSettingsTranslations = {
   },
   language: {
     title: 'Display language',
-    description: 'Choose the language used by NexHire on this device.',
+    description: 'Save the default language for your recruiter account.',
     controlLabel: 'Language',
-    helper: 'The change applies immediately and is remembered for your next visit.',
+    helper: 'The header dropdown only changes this device temporarily. Save here to sync it to your account.',
+    reset: 'Reset',
+    save: 'Save language',
+    saveError: 'Language could not be saved. Please try again.',
+    saveLoading: 'Saving…',
+    saveSuccess: 'Display language has been saved.',
   },
   security: {
     title: 'Change password',

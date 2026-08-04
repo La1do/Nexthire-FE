@@ -177,7 +177,7 @@ export function ForgotPasswordPage() {
             onVerified={handleCodeVerified}
             submitError={verifyError}
             submitLabel={forgotPassword.form.codeContinueSubmit}
-            translations={forgotPassword}
+            translations={{ form: forgotPassword.form, validation: forgotPassword.validation }}
           />
         ) : null}
         {step === 'reset' ? (

@@ -61,6 +61,7 @@ export const common = {
       'COMMON.RATE_LIMITED': '操作が速すぎます。しばらくしてからお試しください。',
       'COMMON.INTERNAL_ERROR': 'システムで問題が発生しています。後でもう一度お試しください。',
       'AUTH.INVALID_CREDENTIALS': 'メールまたはパスワードが正しくありません。',
+      'AUTH.EMAIL_NOT_VERIFIED': 'ログインの前にメール認証が必要です。',
       'AUTH.GOOGLE_TOKEN_INVALID': 'Googleログイントークンが無効です。もう一度お試しください。',
       'AUTH.GOOGLE_EMAIL_NOT_VERIFIED': 'Googleメールが確認されていません。',
       'AUTH.GOOGLE_LOGIN_NOT_CONFIGURED': 'Googleログインが設定されていません。',
@@ -127,6 +128,8 @@ export const common = {
     description: '企業と候補者を、わかりやすく信頼できる採用体験でつなぎます。',
     legalLabel: '商工省登録済み',
     copyright: '2026 NexHire',
+    supportLabel: 'サポート：',
+    supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
       { title: '求人', links: ['最新求人', 'IT求人', 'マーケティング'] },
       { title: '採用企業', links: ['求人を掲載', '法人向け採用'] },

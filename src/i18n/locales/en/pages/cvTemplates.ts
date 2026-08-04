@@ -32,6 +32,13 @@ export const cvTemplates = {
     useTemplate: 'Use this template',
     previewAlt: 'Preview of the {{name}} CV template',
   },
+  templateReplaceDialog: {
+    title: 'Replace CV template?',
+    description: 'The new template will replace all current content in this design.',
+    templateLabel: 'Template to apply',
+    cancel: 'Cancel',
+    confirm: 'Apply template',
+  },
   notes: {
     title: 'Current flow',
     items: [

@@ -24,13 +24,7 @@ export function LanguageSwitch({ className = '', compact = false }: LanguageSwit
     value: option,
   }))
 
-  const handleChange = (value: string) => {
-    const nextLocale = value as Locale
-
-    if (nextLocale === locale) {
-      return
-    }
-
+  const applyLocale = (nextLocale: Locale) => {
     const transitionDocument = document as ViewTransitionDocument
 
     if (!transitionDocument.startViewTransition || prefersReducedMotion()) {
@@ -41,6 +35,16 @@ export function LanguageSwitch({ className = '', compact = false }: LanguageSwit
     transitionDocument.startViewTransition(() => {
       flushSync(() => setLocale(nextLocale))
     })
+  }
+
+  const handleChange = (value: string) => {
+    const nextLocale = value as Locale
+
+    if (nextLocale === locale) {
+      return
+    }
+
+    applyLocale(nextLocale)
   }
 
   return (

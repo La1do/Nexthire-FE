@@ -1,5 +1,6 @@
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
+import { AiMatchBadge } from './AiMatchBadge'
 
 type ApplicationTableHandlers = {
   onEmail: (application: RecruiterApplicationItem) => void
@@ -12,6 +13,7 @@ type ApplicationTableProps = {
   applications: ReadonlyArray<RecruiterApplicationItem>
   columns: RecruiterApplicationsTranslations['results']['columns']
   handlers: ApplicationTableHandlers
+  matchLabels: RecruiterApplicationsTranslations['match']
   statusLabels: RecruiterApplicationsTranslations['statusLabels']
 }
 
@@ -56,6 +58,7 @@ export function ApplicationTable({
   applications,
   columns,
   handlers,
+  matchLabels,
   statusLabels,
 }: ApplicationTableProps) {
   return (
@@ -98,7 +101,7 @@ export function ApplicationTable({
                 </span>
               </td>
               <td>
-                <span className="recruiter-applications-score">{application.score}%</span>
+                <AiMatchBadge application={application} labels={matchLabels} />
               </td>
               <td className="recruiter-applications-table__meta">{application.submittedAt}</td>
               <td className="recruiter-applications-table__actions">

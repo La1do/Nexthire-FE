@@ -1,10 +1,13 @@
-export type RecruiterApplicationStatus =
-  | 'new'
-  | 'screening'
-  | 'interview'
-  | 'offer'
-  | 'hired'
-  | 'rejected'
+import type {
+  ApplicationCvParseStatus,
+  ApplicationMatchDecision,
+  ApplicationMatchLevel,
+  ApplicationMatchPriority,
+  ApplicationMatchRecommendation,
+  ApplicationStatus,
+} from '../../types/application.types'
+
+export type RecruiterApplicationStatus = ApplicationStatus
 
 export type RecruiterApplicationSort = 'newest' | 'score-desc' | 'score-asc'
 
@@ -23,13 +26,24 @@ export type RecruiterApplicationItem = {
   candidateName: string
   candidatePhone: string
   coverLetter: string
+  cvFileName: string
+  cvParseStatus: ApplicationCvParseStatus
   expectedSalary: string
   experience: string
   jobId: string
   jobTitle: string
+  matchDecision: ApplicationMatchDecision | null
+  matchLevel: ApplicationMatchLevel | null
+  matchMatchedSkills: ReadonlyArray<string>
+  matchMissingSkills: ReadonlyArray<string>
+  matchNextActions: ReadonlyArray<string>
+  matchPriority: ApplicationMatchPriority | null
+  matchRecommendation: ApplicationMatchRecommendation | null
+  matchRiskFlags: ReadonlyArray<string>
+  matchScore: number | null
+  matchSummary: string | null
   portfolioUrl?: string
-  resumeUrl: string
-  score: number
+  resumeUrl?: string
   skills: ReadonlyArray<string>
   status: RecruiterApplicationStatus
   submittedAt: string

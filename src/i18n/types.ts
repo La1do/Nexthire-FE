@@ -43,6 +43,8 @@ export type CommonTranslations = {
     description: string
     legalLabel: string
     copyright: string
+    supportLabel: string
+    supportEmail: string
     columns: ReadonlyArray<{
       title: string
       links: ReadonlyArray<string>
@@ -166,17 +168,19 @@ export type RegisterTranslations = {
     form: RegisterFormCopy
   }
   verification: {
-    sent: {
-      title: string
-      subtitle: string
-    }
-    sentSubmit: string
     verify: {
       title: string
       subtitle: string
+      codeDigitLabel: string
+      resendPrefix: string
+      resendAction: string
+      resendingAction: string
+      verifySubmit: string
+      resendSuccessMessage: string
     }
   }
   validation: {
+    codeRequired: string
     emailRequired: string
     emailInvalid: string
     fullNameRequired: string
@@ -420,6 +424,13 @@ export type CvTemplatesTranslations = {
     categoriesLabel: string
     useTemplate: string
     previewAlt: string
+  }
+  templateReplaceDialog: {
+    title: string
+    description: string
+    templateLabel: string
+    cancel: string
+    confirm: string
   }
   notes: {
     title: string
@@ -892,6 +903,8 @@ export type ProfileApplicationStatus =
   | 'WITHDRAWN'
   | 'CANCELLED'
 
+export type ApplicationProgressDisplayStep = 'CV_SUBMITTED' | 'CV_RECEIVED' | 'CV_VIEWED' | 'RESPONDED'
+
 export type CandidateManagedJobsTab = 'all' | 'saved' | 'applied' | 'active' | 'closed'
 export type CandidateManagedJobsSort = 'newest' | 'deadline' | 'salary'
 export type CandidateManagedJobsStatus =
@@ -906,6 +919,96 @@ export type CandidateManagedJobsStatus =
   | 'CLOSED'
   | 'EXPIRED'
   | 'needsAttention'
+
+export type CandidateCvsTab = 'editing' | 'submitted' | 'profile'
+export type CandidateCvsParseStatus = 'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED'
+
+export type CandidateCvsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+    primaryAction: string
+    secondaryAction: string
+  }
+  stats: {
+    drafts: string
+    submitted: string
+    profileCvs: string
+    defaultCv: string
+  }
+  tabs: Record<CandidateCvsTab, string>
+  sections: {
+    editingTitle: string
+    editingDescription: string
+    submittedTitle: string
+    submittedDescription: string
+    profileTitle: string
+    profileDescription: string
+  }
+  actions: {
+    newCv: string
+    continueEditing: string
+    rename: string
+    saveName: string
+    cancel: string
+    delete: string
+    confirmDelete: string
+    keepCv: string
+    upload: string
+    uploading: string
+    parse: string
+    parsing: string
+    openSubmitted: string
+    opening: string
+    viewJob: string
+    retry: string
+  }
+  meta: {
+    updatedAt: string
+    createdAt: string
+    submittedAt: string
+    job: string
+    company: string
+    status: string
+    pages: string
+    defaultBadge: string
+    localDraft: string
+    notAvailable: string
+    fileSize: string
+  }
+  parseStatus: Record<CandidateCvsParseStatus, string>
+  applicationStatus: Record<ProfileApplicationStatus, string>
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    emptyDraftsTitle: string
+    emptyDraftsDescription: string
+    emptySubmittedTitle: string
+    emptySubmittedDescription: string
+    emptyProfileTitle: string
+    emptyProfileDescription: string
+    renameSuccess: string
+    renameError: string
+    deleteSuccess: string
+    deleteError: string
+    profileDeleteSuccess: string
+    profileDeleteError: string
+    uploadSuccess: string
+    uploadError: string
+    parseStarted: string
+    parseError: string
+    openSubmittedError: string
+  }
+  validation: {
+    nameRequired: string
+    invalidType: string
+    tooLarge: string
+  }
+}
 
 export type UserNotificationTranslations = {
   label: string
@@ -1035,8 +1138,6 @@ export type ProfileTranslations = {
     }
     actions: {
       viewJob: string
-      withdraw: string
-      withdrawing: string
     }
     cvPreview: {
       open: string
@@ -1056,13 +1157,18 @@ export type ProfileTranslations = {
       error: string
       openExternal: string
     }
+    progress: {
+      label: string
+      steps: Record<ApplicationProgressDisplayStep, string>
+      descriptions: Record<ApplicationProgressDisplayStep, string>
+      cancelledTitle: string
+      cancelledDescription: string
+    }
     states: {
       loading: string
       errorTitle: string
       errorDescription: string
       retry: string
-      withdrawSuccess: string
-      withdrawError: string
     }
     empty: {
       title: string
@@ -1800,13 +1906,57 @@ export type RecruiterApplicationsTranslations = {
     actionEmail: string
     actionDownload: string
   }
+  meta: {
+    cvFile: string
+    noCoverLetter: string
+    notAvailable: string
+  }
+  states: {
+    cvError: string
+    detailError: string
+    errorDescription: string
+    errorTitle: string
+    loading: string
+    retry: string
+    statusError: string
+    statusSuccess: string
+  }
+  match: {
+    title: string
+    description: string
+    processing: string
+    cvFailed: string
+    notScored: string
+    scored: string
+    emptySummary: string
+    runAction: string
+    refreshAction: string
+    retryAction: string
+    processingAction: string
+    started: string
+    error: string
+    timeout: string
+    cvParseStatusLabel: string
+    levels: Record<'LOW' | 'MEDIUM' | 'HIGH' | 'EXCELLENT', string>
+    cvParseStatus: Record<'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED', string>
+    recommendationLabel: string
+    decisionLabel: string
+    priorityLabel: string
+    recommendations: Record<'GOOD_FIT' | 'PARTIAL_FIT' | 'LOW_FIT' | 'INSUFFICIENT_DATA', string>
+    decisions: Record<'SHORTLIST' | 'REVIEW_MANUALLY' | 'REJECT' | 'INSUFFICIENT_DATA', string>
+    priorities: Record<'LOW' | 'MEDIUM' | 'HIGH', string>
+    matchedSkills: string
+    missingSkills: string
+    nextActions: string
+    riskFlags: string
+    emptyList: string
+  }
   statusLabels: {
-    new: string
-    screening: string
-    interview: string
-    offer: string
-    hired: string
-    rejected: string
+    SUBMITTED: string
+    OFFERED: string
+    REJECTED: string
+    WITHDRAWN: string
+    CANCELLED: string
   }
   drawer: {
     title: string
@@ -1826,6 +1976,8 @@ export type RecruiterApplicationsTranslations = {
     resumeAction: string
     emailAction: string
     portfolioAction: string
+    offerAction: string
+    rejectAction: string
     appliedJobLabel: string
     submittedLabel: string
     updatedLabel: string
@@ -1889,6 +2041,11 @@ export type RecruiterSettingsTranslations = {
     description: string
     controlLabel: string
     helper: string
+    reset: string
+    save: string
+    saveError: string
+    saveLoading: string
+    saveSuccess: string
   }
   security: {
     title: string
@@ -2026,6 +2183,17 @@ export type CandidateSettingsTranslations = {
   routeLabel: string
   pageTitle: string
   pageSubtitle: string
+  language: {
+    title: string
+    description: string
+    controlLabel: string
+    helper: string
+    reset: string
+    save: string
+    saveError: string
+    saveLoading: string
+    saveSuccess: string
+  }
   security: {
     title: string
     description: string
@@ -2107,6 +2275,14 @@ export type RecruiterCompanyTranslations = {
     heroImageUrlLabel: string
     heroImageUrlPlaceholder: string
     heroImageUrlHint: string
+    heroImageTitle: string
+    heroImageDescription: string
+    heroImageUpload: string
+    heroImageReplace: string
+    heroImageSelected: string
+    heroImageHint: string
+    heroImageInvalidType: string
+    heroImageTooLarge: string
     websiteLabel: string
     websitePlaceholder: string
     websiteHint: string
@@ -2168,6 +2344,8 @@ export type RecruiterCompanyTranslations = {
     emptyPerks: string
     openReview: string
     reviewHint: string
+    heroImageChangeLabel: string
+    logoChangeLabel: string
   }
   review: {
     kicker: string
@@ -2336,6 +2514,8 @@ export type AdminSettingsTranslations = {
   }
   preferences: {
     title: string; description: string; language: string; languageHint: string
+    languageReset: string; languageSave: string; languageSaveError: string
+    languageSaveSuccess: string; languageSaving: string
     sessionTitle: string; sessionDescription: string; logout: string
   }
   logout: { title: string; description: string; confirm: string; cancel: string }
@@ -2384,6 +2564,7 @@ export type Translations = {
     adminJobs: AdminJobsTranslations
     adminSettings: AdminSettingsTranslations
     adminUsers: AdminUsersTranslations
+    candidateCvs: CandidateCvsTranslations
     comingSoon: ComingSoonTranslations
     candidateSettings: CandidateSettingsTranslations
     companyDetail: CompanyDetailTranslations

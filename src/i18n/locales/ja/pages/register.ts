@@ -50,17 +50,19 @@ export const register = {
     },
   },
   verification: {
-    sent: {
-      title: 'メールを確認',
-      subtitle: '{{email}} に6桁の確認コードを送信しました。',
-    },
-    sentSubmit: 'コードを入力する',
     verify: {
       title: '確認コードを入力',
-      subtitle: 'メールを確認して NexHire アカウントを有効化します。',
+      subtitle: '{{email}} に6桁の確認コードを送信しました。',
+      codeDigitLabel: '確認コードの桁',
+      resendPrefix: '再送信まで',
+      resendAction: 'コードを再送信',
+      resendingAction: '送信中…',
+      verifySubmit: 'メールを確認',
+      resendSuccessMessage: '新しい確認コードを送信しました。',
     },
   },
   validation: {
+    codeRequired: '6桁の確認コードを入力してください。',
     emailRequired: 'メールを入力してください。',
     emailInvalid: '有効なメールを入力してください。',
     fullNameRequired: '氏名を入力してください。',

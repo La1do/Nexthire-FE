@@ -32,6 +32,13 @@ export const cvTemplates = {
     useTemplate: 'このテンプレートを使う',
     previewAlt: '{{name}} CVテンプレートのプレビュー',
   },
+  templateReplaceDialog: {
+    title: 'CVテンプレートを置き換えますか？',
+    description: '新しいテンプレートは、現在のデザイン内のすべての内容を置き換えます。',
+    templateLabel: '適用するテンプレート',
+    cancel: 'キャンセル',
+    confirm: 'テンプレートを適用',
+  },
   notes: {
     title: '現在のフロー',
     items: [

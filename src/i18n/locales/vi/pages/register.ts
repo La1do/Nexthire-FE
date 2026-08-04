@@ -50,17 +50,19 @@ export const register = {
     },
   },
   verification: {
-    sent: {
-      title: 'Xác thực email',
-      subtitle: 'Chúng tôi đã gửi mã xác thực 6 chữ số đến {{email}}.',
-    },
-    sentSubmit: 'Tôi đã có mã',
     verify: {
       title: 'Nhập mã xác thực',
-      subtitle: 'Xác nhận email để kích hoạt tài khoản NexHire của bạn.',
+      subtitle: 'Chúng tôi đã gửi mã xác thực 6 chữ số đến {{email}}.',
+      codeDigitLabel: 'Chữ số của mã xác thực',
+      resendPrefix: 'Gửi lại sau',
+      resendAction: 'Gửi lại mã',
+      resendingAction: 'Đang gửi…',
+      verifySubmit: 'Xác thực email',
+      resendSuccessMessage: 'Đã gửi lại mã xác thực mới.',
     },
   },
   validation: {
+    codeRequired: 'Vui lòng nhập mã xác thực 6 chữ số.',
     emailRequired: 'Vui lòng nhập email.',
     emailInvalid: 'Email không hợp lệ.',
     fullNameRequired: 'Vui lòng nhập họ và tên.',

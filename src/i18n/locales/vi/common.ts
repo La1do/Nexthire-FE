@@ -61,6 +61,7 @@ export const common = {
       'COMMON.RATE_LIMITED': 'Bạn thao tác quá nhanh, vui lòng thử lại sau.',
       'COMMON.INTERNAL_ERROR': 'Hệ thống đang gặp lỗi, vui lòng thử lại sau.',
       'AUTH.INVALID_CREDENTIALS': 'Email hoặc mật khẩu không đúng.',
+      'AUTH.EMAIL_NOT_VERIFIED': 'Bạn cần xác thực email trước khi đăng nhập.',
       'AUTH.GOOGLE_TOKEN_INVALID': 'Phiên đăng nhập Google không hợp lệ. Vui lòng thử lại.',
       'AUTH.GOOGLE_EMAIL_NOT_VERIFIED': 'Email Google của bạn chưa được xác minh.',
       'AUTH.GOOGLE_LOGIN_NOT_CONFIGURED': 'Đăng nhập Google chưa được cấu hình.',
@@ -127,6 +128,8 @@ export const common = {
     description: 'Kết nối ứng viên và doanh nghiệp bằng trải nghiệm tuyển dụng rõ ràng, đáng tin cậy.',
     legalLabel: 'Đã đăng ký Bộ Công Thương',
     copyright: '2026 NexHire',
+    supportLabel: 'Hỗ trợ:',
+    supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
       { title: 'Việc làm', links: ['Việc làm mới nhất', 'IT Jobs', 'Marketing'] },
       { title: 'Nhà tuyển dụng', links: ['Đăng tin tuyển dụng', 'Đồng hành doanh nghiệp'] },
