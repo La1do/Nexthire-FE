@@ -563,6 +563,186 @@ select {
   }
 }
 
+.template-replace-dialog {
+  align-items: center;
+  display: grid;
+  inset: 0;
+  justify-items: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  pointer-events: auto;
+  position: fixed;
+  z-index: 1200;
+}
+
+.template-replace-dialog__backdrop {
+  background: rgba(17, 24, 39, 0.58);
+  inset: 0;
+  position: absolute;
+  backdrop-filter: blur(5px);
+}
+
+.template-replace-dialog__panel {
+  animation: template-replace-dialog-enter 180ms var(--motion-ease-out) both;
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(17, 24, 39, 0.24);
+  display: grid;
+  gap: 1rem;
+  max-width: min(30rem, 100%);
+  padding: clamp(1rem, 3vw, 1.25rem);
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.template-replace-dialog__header {
+  align-items: start;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.template-replace-dialog__header h2 {
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 850;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.template-replace-dialog__header p {
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0.35rem 0 0;
+}
+
+.template-replace-dialog__icon {
+  align-items: center;
+  background: var(--color-home-warning-soft);
+  border: 1px solid rgba(215, 144, 22, 0.22);
+  border-radius: 8px;
+  color: var(--color-status-locked);
+  display: inline-flex;
+  height: 2.35rem;
+  justify-content: center;
+  width: 2.35rem;
+}
+
+.template-replace-dialog__close {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 2rem;
+  justify-content: center;
+  margin: -0.35rem -0.35rem 0 0;
+  padding: 0;
+  transition:
+    background-color 160ms var(--motion-ease-standard),
+    color 160ms var(--motion-ease-standard);
+  width: 2rem;
+}
+
+.template-replace-dialog__close:hover,
+.template-replace-dialog__close:focus-visible {
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.template-replace-dialog__template {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem 0.95rem;
+}
+
+.template-replace-dialog__template span {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.template-replace-dialog__template strong {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.template-replace-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+.template-replace-dialog__button {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 800;
+  min-height: 2.5rem;
+  padding: 0.65rem 1rem;
+  transition:
+    background-color 160ms var(--motion-ease-standard),
+    border-color 160ms var(--motion-ease-standard),
+    box-shadow 160ms var(--motion-ease-standard),
+    color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.template-replace-dialog__button:focus-visible {
+  outline: 2px solid var(--color-brand-solid);
+  outline-offset: 2px;
+}
+
+.template-replace-dialog__button:hover {
+  transform: translateY(-1px);
+}
+
+.template-replace-dialog__button--secondary {
+  background: var(--color-surface-card);
+  border-color: var(--color-border-default);
+  color: var(--color-text-secondary);
+}
+
+.template-replace-dialog__button--secondary:hover {
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+}
+
+.template-replace-dialog__button--primary {
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+  box-shadow: 0 12px 28px rgba(242, 85, 85, 0.2);
+  color: var(--color-text-inverse);
+}
+
+.template-replace-dialog__button--primary:hover {
+  box-shadow: 0 14px 34px rgba(242, 85, 85, 0.28);
+}
+
+@keyframes template-replace-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (max-width: 640px) {
   .toast-viewport {
     left: 0.75rem;
@@ -570,11 +750,43 @@ select {
     top: 0.75rem;
     width: auto;
   }
+
+  .template-replace-dialog {
+    align-items: end;
+    padding: 0.75rem;
+  }
+
+  .template-replace-dialog__panel {
+    max-width: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .template-replace-dialog__header {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .template-replace-dialog__close {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .template-replace-dialog__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .template-replace-dialog__panel,
   .toast {
     animation: none;
+  }
+
+  .template-replace-dialog__button,
+  .template-replace-dialog__close {
+    transition-duration: 0.01ms;
   }
 }
 
