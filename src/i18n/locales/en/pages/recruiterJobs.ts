@@ -1,4 +1,5 @@
 import type { RecruiterJobsTranslations } from '../../../types'
+import { adminJobs } from './adminJobs'
 
 export const recruiterJobs: RecruiterJobsTranslations = {
   routeLabel: 'Manage job posts',
@@ -108,6 +109,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     moderationDecision: 'Moderation decision',
     moderationReasons: 'Moderation reasons',
     matchedRules: 'Matched rules',
+    ruleLabels: { LOW_DESCRIPTION_LENGTH: 'Job description is too short', MISSING_OR_WEAK_REQUIREMENTS: 'Job requirements are missing or too vague', CLIENT_SITE_SCOPE: 'Client-site scope', MULTI_LEVEL_PATTERN: 'Potential multi-level marketing pattern', MISSING_COMPENSATION: 'Compensation information is missing' },
     noModeration: 'No moderation data yet.',
     publicLinkUnavailable: 'Public link is available only after the job is published.',
   },
@@ -122,3 +124,5 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     deadlineSoonAria: 'Application deadline approaching',
   },
 }
+
+Object.assign(recruiterJobs.detail.ruleLabels, adminJobs.detail.ruleLabels)

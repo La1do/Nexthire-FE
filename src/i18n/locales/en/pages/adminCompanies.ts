@@ -58,6 +58,7 @@ export const adminCompanies: AdminCompaniesTranslations = {
   detail: {
     pageTitle: 'Company details',
     backToList: 'Back to list',
+    viewPublicPage: 'View company page',
     taxCodeLabel: 'Tax code',
     submittedAtLabel: 'Submitted',
     addressLabel: 'Address',
