@@ -134,8 +134,6 @@ export const profile: ProfileTranslations = {
     },
     actions: {
       viewJob: 'Xem việc làm',
-      withdraw: 'Rút đơn',
-      withdrawing: 'Đang rút...',
     },
     cvPreview: {
       open: 'Xem CV đã nộp',
@@ -160,8 +158,6 @@ export const profile: ProfileTranslations = {
       errorTitle: 'Chưa tải được đơn ứng tuyển',
       errorDescription: 'Kiểm tra kết nối hoặc đăng nhập lại để xem lịch sử ứng tuyển.',
       retry: 'Tải lại',
-      withdrawSuccess: 'Đã rút đơn ứng tuyển.',
-      withdrawError: 'Chưa thể rút đơn ứng tuyển.',
     },
     empty: {
       title: 'Chưa có đơn phù hợp',

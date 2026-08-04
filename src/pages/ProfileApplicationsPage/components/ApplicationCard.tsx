@@ -11,7 +11,6 @@ type ApplicationCardProps = {
   formatDate: (value: string) => string
   meta: ProfileTranslations['applications']['meta']
   onLoadCv: (applicationId: string) => Promise<ApplicationCvDownloadResponse>
-  onWithdraw: (application: CandidateApplication) => Promise<void>
   statusLabels: ProfileTranslations['applications']['statusLabels']
 }
 
@@ -22,16 +21,13 @@ export function ApplicationCard({
   formatDate,
   meta,
   onLoadCv,
-  onWithdraw,
   statusLabels,
 }: ApplicationCardProps) {
   const [isCvOpen, setCvOpen] = useState(false)
   const [cvDownload, setCvDownload] = useState<ApplicationCvDownloadResponse | undefined>(undefined)
   const [cvDownloadError, setCvDownloadError] = useState<string | undefined>(undefined)
   const [isCvLoading, setCvLoading] = useState(false)
-  const [isWithdrawing, setWithdrawing] = useState(false)
   const statusClassName = `profile-application-status profile-application-status--${application.status.toLowerCase()}`
-  const canWithdraw = application.status === 'SUBMITTED' || application.status === 'OFFERED'
 
   async function openCvPreview() {
     setCvOpen(true)
@@ -49,16 +45,6 @@ export function ApplicationCard({
       setCvDownloadError(cvPreview.error)
     } finally {
       setCvLoading(false)
-    }
-  }
-
-  async function withdrawApplication() {
-    setWithdrawing(true)
-
-    try {
-      await onWithdraw(application)
-    } finally {
-      setWithdrawing(false)
     }
   }
 
@@ -120,11 +106,6 @@ export function ApplicationCard({
               </dd>
             </div>
           </dl>
-          {canWithdraw ? (
-            <button disabled={isWithdrawing} onClick={() => void withdrawApplication()} type="button">
-              {isWithdrawing ? actions.withdrawing : actions.withdraw}
-            </button>
-          ) : null}
           <a href={`/jobs/${application.jobId}`}>{actions.viewJob}</a>
         </div>
       </article>

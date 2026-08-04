@@ -134,8 +134,6 @@ export const profile: ProfileTranslations = {
     },
     actions: {
       viewJob: 'View job',
-      withdraw: 'Withdraw',
-      withdrawing: 'Withdrawing...',
     },
     cvPreview: {
       open: 'View submitted CV',
@@ -160,8 +158,6 @@ export const profile: ProfileTranslations = {
       errorTitle: 'Applications could not be loaded',
       errorDescription: 'Check your connection or sign in again to view your application history.',
       retry: 'Retry',
-      withdrawSuccess: 'Application withdrawn.',
-      withdrawError: 'Application could not be withdrawn.',
     },
     empty: {
       title: 'No matching applications',

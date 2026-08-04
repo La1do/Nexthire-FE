@@ -134,8 +134,6 @@ export const profile: ProfileTranslations = {
     },
     actions: {
       viewJob: '求人を見る',
-      withdraw: '応募を辞退',
-      withdrawing: '辞退中...',
     },
     cvPreview: {
       open: '提出したCVを見る',
@@ -160,8 +158,6 @@ export const profile: ProfileTranslations = {
       errorTitle: '応募一覧を読み込めません',
       errorDescription: '応募履歴を見るには、接続を確認するか再ログインしてください。',
       retry: '再読み込み',
-      withdrawSuccess: '応募を取り下げました。',
-      withdrawError: '応募を辞退できませんでした。',
     },
     empty: {
       title: '一致する応募はありません',

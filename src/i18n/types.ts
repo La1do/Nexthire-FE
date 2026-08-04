@@ -1034,8 +1034,6 @@ export type ProfileTranslations = {
     }
     actions: {
       viewJob: string
-      withdraw: string
-      withdrawing: string
     }
     cvPreview: {
       open: string
@@ -1060,8 +1058,6 @@ export type ProfileTranslations = {
       errorTitle: string
       errorDescription: string
       retry: string
-      withdrawSuccess: string
-      withdrawError: string
     }
     empty: {
       title: string

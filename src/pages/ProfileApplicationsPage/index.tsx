@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useToast } from '../../context'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { applicationService } from '../../services/application.service'
@@ -15,13 +14,11 @@ import { createCandidateApplicationFromApi } from './utils/applicationApi'
 export function ProfileApplicationsPage() {
   const { locale } = useLocale()
   const { pages } = useTranslations()
-  const toast = useToast()
   const content = pages.profile.applications
   const [activeFilter, setActiveFilter] = useState<ApplicationFilter>('all')
   const [applications, setApplications] = useState<CandidateApplication[]>([])
   const [isLoading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | undefined>(undefined)
-  const [actionError, setActionError] = useState<string | undefined>(undefined)
   const filteredApplications = useMemo(
     () => filterCandidateApplications(applications, activeFilter),
     [activeFilter, applications],
@@ -40,7 +37,6 @@ export function ProfileApplicationsPage() {
   const loadApplications = useCallback(async () => {
     setLoading(true)
     setLoadError(undefined)
-    setActionError(undefined)
 
     try {
       const response = await applicationService.getMyApplications({ limit: 50, page: 1 })
@@ -65,30 +61,6 @@ export function ProfileApplicationsPage() {
   }, [loadApplications])
 
   const formatDate = (value: string) => dateFormatter.format(new Date(value))
-
-  async function withdrawApplication(application: CandidateApplication) {
-    setActionError(undefined)
-
-    try {
-      const updatedApplication = await applicationService.withdrawMyApplication(application.id)
-      const nextApplication = createCandidateApplicationFromApi(
-        updatedApplication,
-        content.meta.notAvailable,
-        content.meta.noCoverLetter,
-      )
-
-      setApplications((currentApplications) =>
-        currentApplications.map((currentApplication) =>
-          currentApplication.id === application.id ? nextApplication : currentApplication,
-        ),
-      )
-      toast.success(content.states.withdrawSuccess)
-    } catch (error) {
-      const message = getApiErrorEnvelope(error)?.error.message ?? content.states.withdrawError
-      setActionError(message)
-      toast.error(message)
-    }
-  }
 
   if (isLoading) {
     return (
@@ -125,8 +97,6 @@ export function ProfileApplicationsPage() {
 
       <ApplicationStats labels={content.stats} stats={stats} />
 
-      {actionError ? <p className="profile-api-message profile-api-message-error">{actionError}</p> : null}
-
       <section className="profile-applications-panel">
         <ApplicationFilters
           activeFilter={activeFilter}
@@ -144,7 +114,6 @@ export function ProfileApplicationsPage() {
             formatDate={formatDate}
             meta={content.meta}
             onLoadCv={applicationService.getMyApplicationCv}
-            onWithdraw={withdrawApplication}
             statusLabels={content.statusLabels}
           />
         ) : (
