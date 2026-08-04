@@ -1,22 +1,36 @@
 import { useState } from 'react'
+import { MailCheck } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Checkbox, Input, PasswordInput } from '../../_components'
 import { useFormState } from '../../../hooks/useFormState'
 import { useAuth, useGlobalLoader, useToast } from '../../../context'
 import { useLocale } from '../../../i18n'
 import { getApiErrorMessage } from '../../../i18n/apiErrors'
+import { getApiErrorCode } from '../../../lib/api/apiError'
 import { authService } from '../../../services/auth.service'
-import type { CommonTranslations, LoginTranslations } from '../../../i18n/types'
+import type { CommonTranslations, LoginTranslations, RegisterTranslations } from '../../../i18n/types'
 import type { AuthApiRole } from '../../../lib/auth/authRole'
 import type { LoginFormValues } from '../types'
+import { VerificationCodeForm } from '../../ForgotPasswordPage/components/VerificationCodeForm'
 import { GoogleLoginButton } from './GoogleLoginButton'
 import { validateLoginForm } from '../utils/loginValidation'
 
 type LoginFormProps = {
   apiErrors: CommonTranslations['apiErrors']
   authFeedback: CommonTranslations['authFeedback']
+  backToLoginLabel: string
   role: AuthApiRole
   translations: LoginTranslations
+  verificationTranslations: RegisterTranslations['verification']['verify']
+  verificationValidation: Pick<RegisterTranslations['validation'], 'codeRequired'>
+  verifyEmailLabel: string
+}
+
+type PendingEmailVerification = {
+  email: string
+  password: string
+  rememberMe: boolean
+  role: AuthApiRole
 }
 
 const initialValues: LoginFormValues = {
@@ -39,7 +53,28 @@ function getSafeRedirect(value: string | null) {
   return value
 }
 
-export function LoginForm({ apiErrors, authFeedback, role, translations }: LoginFormProps) {
+function renderTemplateWithEmail(template: string, email: string) {
+  const [prefix, suffix = ''] = template.split('{{email}}')
+
+  return (
+    <>
+      {prefix}
+      <strong className="font-semibold text-[var(--color-text-secondary)]">{email}</strong>
+      {suffix}
+    </>
+  )
+}
+
+export function LoginForm({
+  apiErrors,
+  authFeedback,
+  backToLoginLabel,
+  role,
+  translations,
+  verificationTranslations,
+  verificationValidation,
+  verifyEmailLabel,
+}: LoginFormProps) {
   const { form, validation } = translations
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -50,9 +85,118 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
   const [isSubmitting, setSubmitting] = useState(false)
   const [isGoogleSubmitting, setGoogleSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
+  const [pendingVerification, setPendingVerification] = useState<PendingEmailVerification | null>(null)
+  const [verifyError, setVerifyError] = useState<string | undefined>()
+  const [isVerifying, setVerifying] = useState(false)
+  const [isResendingVerification, setResendingVerification] = useState(false)
+  const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0)
   const isBusy = isSubmitting || isGoogleSubmitting
   const canUseGoogleLogin = role !== 'ADMIN'
   const loginRedirect = getSafeRedirect(searchParams.get('redirect')) ?? getDefaultLoginRedirect(role)
+  const buildPendingVerification = (formValues: LoginFormValues, email = formValues.email.trim()) => ({
+    email,
+    password: formValues.password,
+    rememberMe: formValues.rememberMe,
+    role,
+  })
+
+  const resendVerificationCode = async (email: string) => {
+    const result = await authService.resendVerificationEmail({ email })
+    setResendCooldownSeconds(result.resendCooldownSeconds)
+    toast.success(verificationTranslations.resendSuccessMessage)
+  }
+
+  const startEmailVerification = async (formValues: LoginFormValues, email = formValues.email.trim()) => {
+    setPendingVerification(buildPendingVerification(formValues, email))
+    setSubmitError(undefined)
+    setVerifyError(undefined)
+    setResendCooldownSeconds(0)
+    setResendingVerification(true)
+
+    try {
+      await resendVerificationCode(email)
+    } catch (error) {
+      const message = getApiErrorMessage(error, apiErrors)
+      setVerifyError(message)
+      toast.error(message)
+    } finally {
+      setResendingVerification(false)
+    }
+  }
+
+  const handleResendVerification = async () => {
+    if (!pendingVerification) {
+      return
+    }
+
+    setVerifyError(undefined)
+    setResendingVerification(true)
+
+    try {
+      await resendVerificationCode(pendingVerification.email)
+    } catch (error) {
+      const message = getApiErrorMessage(error, apiErrors)
+      setVerifyError(message)
+      toast.error(message)
+    } finally {
+      setResendingVerification(false)
+    }
+  }
+
+  const handleVerifyEmail = async (token: string) => {
+    if (!pendingVerification) {
+      return
+    }
+
+    setVerifyError(undefined)
+    setVerifying(true)
+
+    try {
+      const auth = await trackGlobalLoader(
+        (async () => {
+          await authService.verifyEmail({
+            email: pendingVerification.email,
+            token,
+          })
+
+          return authService.login({
+            email: pendingVerification.email,
+            password: pendingVerification.password,
+            role: pendingVerification.role,
+          })
+        })(),
+        {
+          label: verifyEmailLabel,
+          mode: 'overlay',
+        },
+      )
+
+      if (!auth.user.emailVerified) {
+        const message = apiErrors.byCode['AUTH.EMAIL_NOT_VERIFIED'] ?? apiErrors.default
+        setVerifyError(message)
+        toast.error(message)
+        return
+      }
+
+      login(auth, pendingVerification.rememberMe ? 'local' : 'session')
+      toast.success(authFeedback.emailVerifiedSuccess)
+      navigate(loginRedirect, { replace: true })
+    } catch (error) {
+      const message = getApiErrorMessage(error, apiErrors)
+      setVerifyError(message)
+      toast.error(message)
+    } finally {
+      setVerifying(false)
+    }
+  }
+
+  const handleBackToLogin = () => {
+    setPendingVerification(null)
+    setSubmitError(undefined)
+    setVerifyError(undefined)
+    setResendCooldownSeconds(0)
+  }
+
   const { getFieldError, handleCheckboxChange, handleFieldChange, handleSubmit, setFieldTouched, values } =
     useFormState<LoginFormValues>({
       initialValues,
@@ -74,9 +218,7 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
           )
 
           if (!auth.user.emailVerified) {
-            const message = apiErrors.byCode['AUTH.EMAIL_NOT_VERIFIED'] ?? apiErrors.default
-            setSubmitError(message)
-            toast.error(message)
+            await startEmailVerification(formValues, auth.user.email)
             return
           }
 
@@ -84,6 +226,11 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
           toast.success(authFeedback.loginSuccess)
           navigate(loginRedirect, { replace: true })
         } catch (error) {
+          if (getApiErrorCode(error) === 'AUTH.EMAIL_NOT_VERIFIED') {
+            await startEmailVerification(formValues)
+            return
+          }
+
           const message = getApiErrorMessage(error, apiErrors)
           setSubmitError(message)
           toast.error(message)
@@ -124,6 +271,48 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
     } finally {
       setGoogleSubmitting(false)
     }
+  }
+
+  if (pendingVerification) {
+    return (
+      <div className="grid gap-6">
+        <div className="grid gap-3 text-center">
+          <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-brand-soft)] text-[var(--color-brand-solid)]">
+            <MailCheck size={22} />
+          </span>
+          <div className="grid gap-2">
+            <h2 className="text-lg font-extrabold text-[var(--color-text-primary)]">
+              {verificationTranslations.title}
+            </h2>
+            <p className="text-sm font-medium leading-6 text-[var(--color-text-muted)]">
+              {renderTemplateWithEmail(verificationTranslations.subtitle, pendingVerification.email)}
+            </p>
+          </div>
+        </div>
+
+        <VerificationCodeForm
+          cooldownSeconds={resendCooldownSeconds}
+          isResending={isResendingVerification}
+          isSubmitting={isVerifying}
+          onResend={handleResendVerification}
+          onVerified={handleVerifyEmail}
+          submitError={verifyError}
+          translations={{
+            form: verificationTranslations,
+            validation: verificationValidation,
+          }}
+        />
+
+        <button
+          className="mx-auto text-sm font-bold text-[var(--color-brand-solid)] transition hover:opacity-80"
+          disabled={isResendingVerification || isVerifying}
+          onClick={handleBackToLogin}
+          type="button"
+        >
+          {backToLoginLabel}
+        </button>
+      </div>
+    )
   }
 
   return (
