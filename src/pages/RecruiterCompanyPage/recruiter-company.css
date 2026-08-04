@@ -592,6 +592,8 @@ body {
   display: grid;
   gap: var(--space-sm);
   padding-block-start: var(--space-md);
+  position: relative;
+  z-index: 2;
 }
 
 .recruiter-company-review-modal {
@@ -1106,6 +1108,7 @@ body {
   display: grid;
   gap: var(--space-2xs);
   min-width: 0;
+  position: relative;
 }
 
 .company-profile-preview__logo-wrap,
@@ -1147,14 +1150,14 @@ body {
   height: 1.125rem;
 }
 
-.company-profile-preview__media:hover .company-profile-preview__media-edit,
-.company-profile-preview__media:focus-within .company-profile-preview__media-edit,
-.company-profile-preview__logo:hover .company-profile-preview__logo-edit,
-.company-profile-preview__logo:focus-within .company-profile-preview__logo-edit,
-.company-review__media:hover .company-review__media-edit,
-.company-review__media:focus-within .company-review__media-edit,
-.company-review__logo:hover .company-review__logo-edit,
-.company-review__logo:focus-within .company-review__logo-edit {
+.company-profile-preview__media-wrap:hover .company-profile-preview__media-edit,
+.company-profile-preview__media-wrap:focus-within .company-profile-preview__media-edit,
+.company-profile-preview__logo-wrap:hover .company-profile-preview__logo-edit,
+.company-profile-preview__logo-wrap:focus-within .company-profile-preview__logo-edit,
+.company-review__media-wrap:hover .company-review__media-edit,
+.company-review__media-wrap:focus-within .company-review__media-edit,
+.company-review__logo-wrap:hover .company-review__logo-edit,
+.company-review__logo-wrap:focus-within .company-review__logo-edit {
   opacity: 1;
 }
 
