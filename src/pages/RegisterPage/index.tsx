@@ -5,18 +5,15 @@ import { useAuth, useGlobalLoader, useToast } from '../../context'
 import { getApiErrorMessage } from '../../i18n/apiErrors'
 import { authService } from '../../services/auth.service'
 import { AuthPageShell } from '../_components'
-import { EmailSentIllustration } from '../ForgotPasswordPage/components/EmailSentIllustration'
-import { EmailSentState } from '../ForgotPasswordPage/components/EmailSentState'
 import { VerificationCodeForm } from '../ForgotPasswordPage/components/VerificationCodeForm'
 import { RegisterForm } from './components/RegisterForm'
-import type { ReactNode } from 'react'
 import type { AuthApiRole, PublicAuthApiRole } from '../../lib/auth/authRole'
 import type { PendingRegistration } from './components/RegisterForm'
 
-type RegisterStep = 'form' | 'sent' | 'verify'
+type RegisterStep = 'form' | 'verify'
 type RegisterRole = PublicAuthApiRole
 
-const centeredSteps: ReadonlyArray<RegisterStep> = ['sent', 'verify']
+const centeredSteps: ReadonlyArray<RegisterStep> = ['verify']
 
 function getRegisterRedirect(role: AuthApiRole) {
   if (role === 'CANDIDATE') return '/home'
@@ -47,7 +44,6 @@ export function RegisterPage({ role }: RegisterPageProps) {
   const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const register = pages.register
-  const forgotPassword = pages.forgotPassword
   const roleContent = role === 'RECRUITER' ? register.recruiter : register.candidate
   const switchHref = role === 'RECRUITER' ? '/register' : '/recruiter/register'
   const loginHref = role === 'RECRUITER' ? '/recruiter/login' : '/login'
@@ -55,23 +51,43 @@ export function RegisterPage({ role }: RegisterPageProps) {
   const [pendingRegistration, setPendingRegistration] = useState<PendingRegistration | null>(null)
   const [verifyError, setVerifyError] = useState<string | undefined>()
   const [isVerifying, setVerifying] = useState(false)
+  const [isResendingVerification, setResendingVerification] = useState(false)
+  const [resendCooldownSeconds, setResendCooldownSeconds] = useState(0)
   const isCentered = centeredSteps.includes(step)
-  const visualByStep: Partial<Record<RegisterStep, ReactNode>> = {
-    sent: <EmailSentIllustration />,
-  }
-  const title = step === 'form' ? roleContent.title : register.verification[step].title
+  const title = step === 'form' ? roleContent.title : register.verification.verify.title
   const subtitle =
-    step === 'sent' && pendingRegistration
-      ? renderTemplateWithEmail(register.verification.sent.subtitle, pendingRegistration.email)
-      : step === 'form'
-        ? roleContent.subtitle
-        : register.verification[step].subtitle
+    step === 'form'
+      ? roleContent.subtitle
+      : pendingRegistration
+        ? renderTemplateWithEmail(register.verification.verify.subtitle, pendingRegistration.email)
+        : register.verification.verify.subtitle
 
   const handleRegistered = (registration: PendingRegistration) => {
     setPendingRegistration(registration)
     setVerifyError(undefined)
-    setStep('sent')
+    setResendCooldownSeconds(0)
+    setStep('verify')
     toast.success(common.authFeedback.registerSuccess)
+  }
+
+  const handleResendVerification = async () => {
+    if (!pendingRegistration) {
+      return
+    }
+
+    setResendingVerification(true)
+    try {
+      const result = await authService.resendVerificationEmail({
+        email: pendingRegistration.email,
+      })
+      setResendCooldownSeconds(result.resendCooldownSeconds)
+      toast.success(register.verification.verify.resendSuccessMessage)
+    } catch (error) {
+      const message = getApiErrorMessage(error, common.apiErrors)
+      toast.error(message)
+    } finally {
+      setResendingVerification(false)
+    }
   }
 
   const handleVerifyEmail = async (token: string) => {
@@ -136,7 +152,6 @@ export function RegisterPage({ role }: RegisterPageProps) {
       }
       subtitle={subtitle}
       title={title}
-      visual={visualByStep[step]}
     >
       <div className="auth-step-motion" key={step}>
         {step === 'form' ? (
@@ -147,19 +162,15 @@ export function RegisterPage({ role }: RegisterPageProps) {
             translations={{ form: roleContent.form, validation: register.validation }}
           />
         ) : null}
-        {step === 'sent' ? (
-          <EmailSentState
-            buttonLabel={register.verification.sentSubmit}
-            onContinue={() => setStep('verify')}
-            translations={forgotPassword}
-          />
-        ) : null}
         {step === 'verify' ? (
           <VerificationCodeForm
+            cooldownSeconds={resendCooldownSeconds}
+            isResending={isResendingVerification}
             isSubmitting={isVerifying}
+            onResend={handleResendVerification}
             onVerified={handleVerifyEmail}
             submitError={verifyError}
-            translations={forgotPassword}
+            translations={{ form: register.verification.verify, validation: register.validation }}
           />
         ) : null}
       </div>

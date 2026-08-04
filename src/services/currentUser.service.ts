@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { apiClient } from '../lib/api'
+import type { Locale } from '../i18n'
 import { authService } from './auth.service'
 import type { AuthUser } from './auth.service'
 
@@ -14,6 +15,7 @@ type CandidateProfile = {
   contactEmail: string | null
   avatarDocumentId: string | null
   avatarUrl: string | null
+  language?: Locale | null
 }
 
 type CandidateMeResponse = {
@@ -23,7 +25,8 @@ type CandidateMeResponse = {
 type CompanyMeResponse = {
   id: string
   name: string
-  logo: string | null
+  logoUrl: string | null
+  logoDocumentId: string | null
   ownerId: string
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED'
 }
@@ -43,6 +46,7 @@ async function getCandidateUser(user: AuthUser) {
 
   return mergeDefinedUserFields(user, {
     fullName: profile.fullName ?? user.fullName,
+    language: profile.language ?? user.language ?? null,
     phone: profile.phone ?? user.phone,
     avatarUrl: profile.avatarUrl ?? user.avatarUrl ?? null,
   })
@@ -64,10 +68,11 @@ async function getRecruiterUser(user: AuthUser) {
   return mergeDefinedUserFields(user, {
     email: account.email,
     fullName: account.fullName,
+    language: account.language ?? user.language ?? null,
     phone: account.phone,
     companyId: company?.id ?? null,
     companyName: company?.name ?? null,
-    logoUrl: company ? company.logo : account.logoUrl ?? null,
+    logoUrl: company ? company.logoUrl : account.logoUrl ?? null,
   })
 }
 
@@ -76,6 +81,7 @@ async function getAdminUser(user: AuthUser) {
   return mergeDefinedUserFields(user, {
     email: account.email,
     fullName: account.fullName,
+    language: account.language ?? user.language ?? null,
     phone: account.phone,
     avatarUrl: account.avatarUrl ?? account.logoUrl ?? null,
   })

@@ -22,6 +22,7 @@ import { HomePage } from '../../pages/HomePage'
 import { JobDetailPage } from '../../pages/JobDetailPage'
 import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pages/LoginPage'
 import { CandidateJobsPage } from '../../pages/CandidateJobsPage'
+import { CandidateCvsPage } from '../../pages/CandidateCvsPage'
 import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
 import { CandidateSettingsPage } from '../../pages/CandidateSettingsPage'
@@ -148,6 +149,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/profile/applications',
       label: pages.profile.applications.routeLabel,
       element: <ProfileApplicationsPage />,
+      layout: CandidateLayout,
+      access: candidateAccess,
+    },
+    {
+      path: '/profile/cvs',
+      label: pages.candidateCvs.routeLabel,
+      element: <CandidateCvsPage />,
       layout: CandidateLayout,
       access: candidateAccess,
     },

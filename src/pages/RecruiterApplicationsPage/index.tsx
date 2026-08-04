@@ -1,5 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useTranslations } from '../../i18n'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useToast } from '../../context'
+import { useLocale, useTranslations } from '../../i18n'
+import { getApiErrorEnvelope } from '../../lib/api/apiError'
+import { applicationService } from '../../services/application.service'
+import type { ApplicationResponse } from '../../types/application.types'
+import { Button } from '../_components'
 import { AdminPagination } from '../_components/admin/AdminPagination'
 import { AdminStatCard } from '../_components/admin/AdminStatCard'
 import { ApplicationDetailDrawer } from './components/ApplicationDetailDrawer'
@@ -11,10 +16,8 @@ import type {
   RecruiterApplicationItem,
   RecruiterApplicationStatus,
 } from './types'
-import {
-  computeRecruiterApplicationStats,
-  recruiterApplicationsFixture,
-} from './utils/recruiterApplicationsData'
+import { createRecruiterApplicationFromApi } from './utils/recruiterApplicationApi'
+import { computeRecruiterApplicationStats } from './utils/recruiterApplicationsData'
 import {
   filterRecruiterApplications,
   getRecruiterApplicationJobs,
@@ -22,6 +25,10 @@ import {
 } from './utils/recruiterApplicationsFilters'
 
 const PAGE_SIZE = 6
+const MATCH_POLL_INTERVAL_MS = 4_000
+const MATCH_POLL_TIMEOUT_MS = 90_000
+
+type RecruiterDecisionStatus = Extract<RecruiterApplicationStatus, 'OFFERED' | 'REJECTED'>
 
 function ApplicationsIcon() {
   return (
@@ -65,57 +72,174 @@ function RateIcon() {
   )
 }
 
-function updateApplicationStatus(
-  applications: ReadonlyArray<RecruiterApplicationItem>,
-  applicationId: string,
-  status: RecruiterApplicationStatus,
-) {
-  return applications.map((application) =>
-    application.id === applicationId
-      ? {
-          ...application,
-          status,
-          updatedAt: '22/07/2026',
-          timeline: [
-            ...application.timeline,
-            {
-              id: `${application.id}-${status}`,
-              date: '22/07/2026',
-              description: `Status changed to ${status}.`,
-              label: 'Status updated',
-            },
-          ],
-        }
-      : application,
-  )
+function isApplicationPolling(application: RecruiterApplicationItem, matchingIds: ReadonlySet<string>) {
+  if (application.cvParseStatus === 'PARSING') {
+    return true
+  }
+
+  return matchingIds.has(application.id) && application.cvParseStatus !== 'FAILED' && application.matchScore === null
 }
 
 export function RecruiterApplicationsPage() {
+  const { locale } = useLocale()
   const { pages } = useTranslations()
+  const toast = useToast()
   const content = pages.recruiterApplications
-  const [applications, setApplications] = useState<ReadonlyArray<RecruiterApplicationItem>>(recruiterApplicationsFixture)
+  const [applications, setApplications] = useState<ReadonlyArray<RecruiterApplicationItem>>([])
   const [criteria, setCriteria] = useState<RecruiterApplicationCriteria>({
     jobId: 'all',
     query: '',
     sort: 'newest',
     status: 'all',
   })
+  const [isLoading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | undefined>(undefined)
+  const [matchingApplicationIds, setMatchingApplicationIds] = useState<ReadonlySet<string>>(new Set())
+  const [statusUpdatingIds, setStatusUpdatingIds] = useState<ReadonlySet<string>>(new Set())
+  const [isPollingPaused, setPollingPaused] = useState(false)
   const [page, setPage] = useState(1)
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null)
+  const pollingStartedAtRef = useRef<number | null>(null)
+
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+    [locale],
+  )
+
+  const formatDate = useCallback(
+    (value: string) => {
+      const date = new Date(value)
+      return Number.isNaN(date.getTime()) ? content.meta.notAvailable : dateFormatter.format(date)
+    },
+    [content.meta.notAvailable, dateFormatter],
+  )
+
+  const mapApplication = useCallback(
+    (application: ApplicationResponse) =>
+      createRecruiterApplicationFromApi(application, {
+        formatDate,
+        meta: content.meta,
+      }),
+    [content.meta, formatDate],
+  )
+
+  const upsertMappedApplication = useCallback((application: RecruiterApplicationItem) => {
+    setApplications((currentApplications) => {
+      if (currentApplications.some((currentApplication) => currentApplication.id === application.id)) {
+        return currentApplications.map((currentApplication) =>
+          currentApplication.id === application.id ? application : currentApplication,
+        )
+      }
+
+      return [application, ...currentApplications]
+    })
+
+    setMatchingApplicationIds((currentIds) => {
+      if (!currentIds.has(application.id)) {
+        return currentIds
+      }
+
+      if (application.cvParseStatus === 'FAILED' || application.matchScore !== null) {
+        const nextIds = new Set(currentIds)
+        nextIds.delete(application.id)
+        return nextIds
+      }
+
+      return currentIds
+    })
+
+    return application
+  }, [])
+
+  const loadApplications = useCallback(
+    async ({ silent = false }: { silent?: boolean } = {}) => {
+      if (!silent) {
+        setLoading(true)
+        setLoadError(undefined)
+      }
+
+      try {
+        const response = await applicationService.getRecruiterApplications({ limit: 50, page: 1 })
+        const nextApplications = response.data.map(mapApplication)
+
+        setApplications(nextApplications)
+        setMatchingApplicationIds((currentIds) => {
+          const nextIds = new Set<string>()
+
+          for (const id of currentIds) {
+            const application = nextApplications.find((item) => item.id === id)
+
+            if (application && application.cvParseStatus !== 'FAILED' && application.matchScore === null) {
+              nextIds.add(id)
+            }
+          }
+
+          return nextIds
+        })
+      } catch (error) {
+        const errorMessage = getApiErrorEnvelope(error)?.error.message ?? content.states.errorDescription
+
+        if (silent) {
+          toast.error(errorMessage)
+          return
+        }
+
+        setLoadError(errorMessage)
+      } finally {
+        if (!silent) {
+          setLoading(false)
+        }
+      }
+    },
+    [content.states.errorDescription, mapApplication, toast],
+  )
+
+  const refreshApplicationDetail = useCallback(
+    async (applicationId: string, { silent = false }: { silent?: boolean } = {}) => {
+      try {
+        const application = await applicationService.getRecruiterApplication(applicationId)
+        return upsertMappedApplication(mapApplication(application))
+      } catch (error) {
+        if (!silent) {
+          toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.detailError)
+        }
+
+        return null
+      }
+    },
+    [content.states.detailError, mapApplication, toast, upsertMappedApplication],
+  )
 
   const stats = useMemo(() => computeRecruiterApplicationStats(applications), [applications])
   const jobs = useMemo(() => getRecruiterApplicationJobs(applications), [applications])
-
   const filtered = useMemo(
     () => filterRecruiterApplications(applications, criteria),
     [applications, criteria],
   )
-
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const selectedApplication = useMemo(
     () => applications.find((application) => application.id === selectedApplicationId) ?? null,
     [applications, selectedApplicationId],
   )
+  const hasPollingApplications = useMemo(
+    () => applications.some((application) => isApplicationPolling(application, matchingApplicationIds)),
+    [applications, matchingApplicationIds],
+  )
+
+  useEffect(() => {
+    void loadApplications()
+  }, [loadApplications])
+
+  useEffect(() => {
+    if (selectedApplicationId) {
+      void refreshApplicationDetail(selectedApplicationId)
+    }
+  }, [refreshApplicationDetail, selectedApplicationId])
 
   useEffect(() => {
     setPage(1)
@@ -137,20 +261,124 @@ export function RecruiterApplicationsPage() {
     }
   }, [filtered, selectedApplicationId])
 
+  useEffect(() => {
+    if (!hasPollingApplications || isPollingPaused) {
+      pollingStartedAtRef.current = null
+      return undefined
+    }
+
+    pollingStartedAtRef.current ??= Date.now()
+
+    const interval = window.setInterval(() => {
+      const startedAt = pollingStartedAtRef.current ?? Date.now()
+
+      if (Date.now() - startedAt > MATCH_POLL_TIMEOUT_MS) {
+        setPollingPaused(true)
+        setMatchingApplicationIds(new Set())
+        toast.warning(content.match.timeout)
+        return
+      }
+
+      void loadApplications({ silent: true })
+
+      if (selectedApplicationId) {
+        void refreshApplicationDetail(selectedApplicationId, { silent: true })
+      }
+    }, MATCH_POLL_INTERVAL_MS)
+
+    return () => window.clearInterval(interval)
+  }, [
+    content.match.timeout,
+    hasPollingApplications,
+    isPollingPaused,
+    loadApplications,
+    refreshApplicationDetail,
+    selectedApplicationId,
+    toast,
+  ])
+
   const pagedApplications = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
   const hasActiveFilters = isActiveRecruiterApplicationFilters(criteria)
 
-  function handleApplicationAction(prefix: string, application: RecruiterApplicationItem) {
-    if (typeof window === 'undefined') {
+  function openExternalUrl(url: string) {
+    if (typeof window !== 'undefined') {
+      window.open(url, '_blank', 'noopener,noreferrer')
+    }
+  }
+
+  async function handleApplicationAction(prefix: 'mailto' | 'resume', application: RecruiterApplicationItem) {
+    if (prefix === 'mailto') {
+      openExternalUrl(`mailto:${application.candidateEmail}?subject=Regarding%20your%20application`)
       return
     }
 
-    const url =
-      prefix === 'mailto'
-        ? `mailto:${application.candidateEmail}?subject=Regarding%20your%20application`
-        : application.resumeUrl
+    try {
+      const cvDownload = await applicationService.getRecruiterApplicationCv(application.id)
+      openExternalUrl(cvDownload.url)
+      void refreshApplicationDetail(application.id, { silent: true })
+    } catch (error) {
+      toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.cvError)
+    }
+  }
 
-    window.open(url, '_blank', 'noopener,noreferrer')
+  async function handleRunMatch(application: RecruiterApplicationItem) {
+    setPollingPaused(false)
+    setMatchingApplicationIds((currentIds) => new Set(currentIds).add(application.id))
+
+    try {
+      await applicationService.runRecruiterApplicationMatch(application.id)
+      toast.success(content.match.started)
+      await refreshApplicationDetail(application.id, { silent: true })
+    } catch (error) {
+      setMatchingApplicationIds((currentIds) => {
+        const nextIds = new Set(currentIds)
+        nextIds.delete(application.id)
+        return nextIds
+      })
+      toast.error(getApiErrorEnvelope(error)?.error.message ?? content.match.error)
+    }
+  }
+
+  async function handleStatusChange(applicationId: string, status: RecruiterDecisionStatus) {
+    setStatusUpdatingIds((currentIds) => new Set(currentIds).add(applicationId))
+
+    try {
+      const updatedApplication = await applicationService.updateRecruiterApplicationStatus(applicationId, {
+        status,
+      })
+      upsertMappedApplication(mapApplication(updatedApplication))
+      toast.success(content.states.statusSuccess)
+    } catch (error) {
+      toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.statusError)
+    } finally {
+      setStatusUpdatingIds((currentIds) => {
+        const nextIds = new Set(currentIds)
+        nextIds.delete(applicationId)
+        return nextIds
+      })
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="recruiter-applications-page">
+        <section className="recruiter-applications-empty">
+          <p className="recruiter-applications-empty__title">{content.states.loading}</p>
+        </section>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="recruiter-applications-page">
+        <section className="recruiter-applications-empty">
+          <p className="recruiter-applications-empty__title">{content.states.errorTitle}</p>
+          <p className="recruiter-applications-empty__description">{loadError}</p>
+          <Button onClick={() => void loadApplications()}>{content.states.retry}</Button>
+        </section>
+      </div>
+    )
   }
 
   return (
@@ -164,34 +392,10 @@ export function RecruiterApplicationsPage() {
       </section>
 
       <section className="recruiter-applications-stats" aria-label={content.stats.title}>
-        <AdminStatCard
-          delta={content.stats.totalDelta}
-          icon={<ApplicationsIcon />}
-          label={content.stats.totalLabel}
-          tone="blue"
-          value={stats.total}
-        />
-        <AdminStatCard
-          delta={content.stats.newDelta}
-          icon={<NewIcon />}
-          label={content.stats.newLabel}
-          tone="coral"
-          value={stats.new}
-        />
-        <AdminStatCard
-          delta={content.stats.interviewDelta}
-          icon={<InterviewIcon />}
-          label={content.stats.interviewLabel}
-          tone="amber"
-          value={stats.interview}
-        />
-        <AdminStatCard
-          delta={content.stats.responseRateDelta}
-          icon={<RateIcon />}
-          label={content.stats.responseRateLabel}
-          tone="violet"
-          value={stats.responseRate}
-        />
+        <AdminStatCard delta={content.stats.totalDelta} icon={<ApplicationsIcon />} label={content.stats.totalLabel} tone="blue" value={stats.total} />
+        <AdminStatCard delta={content.stats.newDelta} icon={<NewIcon />} label={content.stats.newLabel} tone="coral" value={stats.new} />
+        <AdminStatCard delta={content.stats.interviewDelta} icon={<InterviewIcon />} label={content.stats.interviewLabel} tone="amber" value={stats.interview} />
+        <AdminStatCard delta={content.stats.responseRateDelta} icon={<RateIcon />} label={content.stats.responseRateLabel} tone="violet" value={stats.responseRate} />
       </section>
 
       <ApplicationFilters
@@ -237,10 +441,11 @@ export function RecruiterApplicationsPage() {
               applications={pagedApplications}
               columns={content.results.columns}
               handlers={{
-                onEmail: (application) => handleApplicationAction('mailto', application),
-                onOpenResume: (application) => handleApplicationAction('resume', application),
+                onEmail: (application) => void handleApplicationAction('mailto', application),
+                onOpenResume: (application) => void handleApplicationAction('resume', application),
                 onView: (application) => setSelectedApplicationId(application.id),
               }}
+              matchLabels={content.match}
               statusLabels={content.statusLabels}
             />
             <ApplicationMobileList
@@ -248,32 +453,31 @@ export function RecruiterApplicationsPage() {
               applications={pagedApplications}
               columns={content.results.columns}
               handlers={{
-                onEmail: (application) => handleApplicationAction('mailto', application),
-                onOpenResume: (application) => handleApplicationAction('resume', application),
+                onEmail: (application) => void handleApplicationAction('mailto', application),
+                onOpenResume: (application) => void handleApplicationAction('resume', application),
                 onView: (application) => setSelectedApplicationId(application.id),
               }}
+              matchLabels={content.match}
               statusLabels={content.statusLabels}
             />
           </>
         )}
       </section>
 
-      <AdminPagination
-        labels={content.pagination}
-        onPageChange={setPage}
-        page={page}
-        totalPages={totalPages}
-      />
+      <AdminPagination labels={content.pagination} onPageChange={setPage} page={page} totalPages={totalPages} />
 
       {selectedApplication ? (
         <ApplicationDetailDrawer
           application={selectedApplication}
+          isMatching={matchingApplicationIds.has(selectedApplication.id)}
+          isStatusUpdating={statusUpdatingIds.has(selectedApplication.id)}
+          matchLabels={content.match}
+          meta={content.meta}
           onClose={() => setSelectedApplicationId(null)}
-          onEmail={(application) => handleApplicationAction('mailto', application)}
-          onOpenResume={(application) => handleApplicationAction('resume', application)}
-          onStatusChange={(applicationId, status) => {
-            setApplications((currentApplications) => updateApplicationStatus(currentApplications, applicationId, status))
-          }}
+          onEmail={(application) => void handleApplicationAction('mailto', application)}
+          onOpenResume={(application) => void handleApplicationAction('resume', application)}
+          onRunMatch={(application) => void handleRunMatch(application)}
+          onStatusChange={(applicationId, status) => void handleStatusChange(applicationId, status)}
           statusLabels={content.statusLabels}
           translations={content.drawer}
         />

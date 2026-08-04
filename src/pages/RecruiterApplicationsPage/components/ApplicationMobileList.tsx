@@ -1,5 +1,6 @@
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
+import { AiMatchBadge } from './AiMatchBadge'
 
 type ApplicationMobileListHandlers = {
   onEmail: (application: RecruiterApplicationItem) => void
@@ -12,6 +13,7 @@ type ApplicationMobileListProps = {
   applications: ReadonlyArray<RecruiterApplicationItem>
   columns: RecruiterApplicationsTranslations['results']['columns']
   handlers: ApplicationMobileListHandlers
+  matchLabels: RecruiterApplicationsTranslations['match']
   statusLabels: RecruiterApplicationsTranslations['statusLabels']
 }
 
@@ -27,6 +29,7 @@ export function ApplicationMobileList({
   applications,
   columns,
   handlers,
+  matchLabels,
   statusLabels,
 }: ApplicationMobileListProps) {
   return (
@@ -47,7 +50,7 @@ export function ApplicationMobileList({
             <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
               {statusLabels[application.status]}
             </span>
-            <span className="recruiter-applications-score">{application.score}%</span>
+            <AiMatchBadge application={application} labels={matchLabels} />
           </div>
 
           <dl className="recruiter-applications-mobile-card__meta">

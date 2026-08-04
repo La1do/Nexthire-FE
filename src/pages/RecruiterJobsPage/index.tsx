@@ -350,6 +350,9 @@ export function RecruiterJobDetailPage() {
       <section className="recruiter-jobs-page-header recruiter-job-detail-header">
         <div>
           <Link className="recruiter-job-detail-back" to="/recruiter/jobs">
+            <span aria-hidden="true" className="recruiter-job-detail-back__icon">
+              ←
+            </span>
             {content.actions.backToList}
           </Link>
           <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>

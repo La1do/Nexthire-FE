@@ -13,6 +13,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const { logout, user } = useAuth()
   const toast = useToast()
   const profile = pages.profile
+  const candidateCvs = pages.candidateCvs
   const candidateSettings = pages.candidateSettings
   const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
   const [avatarFailed, setAvatarFailed] = useState(false)
@@ -32,6 +33,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
     { href: '/search', label: profile.sidebar.searchJobs },
     { href: '/profile/jobs', label: profile.sidebar.managedJobs },
     { href: '/profile/applications', label: profile.sidebar.applications },
+    { href: '/profile/cvs', label: candidateCvs.routeLabel },
     { href: '/profile', label: profile.sidebar.profile },
     { href: '/profile/messages', label: profile.sidebar.messages },
     { href: '/profile/settings', label: candidateSettings.routeLabel },
@@ -39,6 +41,8 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const pageTitle =
     pathname === '/profile/applications'
       ? profile.applications.pageTitle
+      : pathname === '/profile/cvs'
+        ? candidateCvs.pageTitle
       : pathname === '/profile/jobs'
         ? profile.managedJobs.pageTitle
         : pathname === '/profile/settings'

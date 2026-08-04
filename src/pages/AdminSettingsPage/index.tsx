@@ -25,7 +25,13 @@ export function AdminSettingsPage() {
     <div className="admin-settings-layout">
       <aside className="admin-settings-layout__aside">
         <AdminAccountSummary content={content.summary} isPending={updateAvatar.isPending || deleteAvatar.isPending} onDelete={deleteAvatar.mutateAsync} onUpload={updateAvatar.mutateAsync} profile={profileQuery.data} />
-        <AdminPreferencesCard content={content.preferences} onLogout={() => setLogoutOpen(true)} />
+        <AdminPreferencesCard
+          content={content.preferences}
+          isPending={updateProfile.isPending}
+          onLogout={() => setLogoutOpen(true)}
+          onSaveLanguage={updateProfile.mutateAsync}
+          profile={profileQuery.data}
+        />
       </aside>
       <div className="admin-settings-layout__main">
         <AdminProfileForm content={content.profile} isPending={updateProfile.isPending} onSave={updateProfile.mutateAsync} profile={profileQuery.data} />

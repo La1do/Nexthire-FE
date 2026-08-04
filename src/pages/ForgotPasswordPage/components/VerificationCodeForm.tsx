@@ -1,7 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, ClipboardEvent, FormEvent, KeyboardEvent } from 'react'
 import { Button } from '../../_components'
-import type { ForgotPasswordTranslations } from '../../../i18n/types'
+
+export type VerificationFormTranslations = {
+  form: {
+    codeDigitLabel: string
+    resendPrefix: string
+    resendAction: string
+    resendingAction: string
+    verifySubmit: string
+  }
+  validation: {
+    codeRequired: string
+  }
+}
 
 type VerificationCodeFormProps = {
   cooldownSeconds?: number
@@ -11,7 +23,7 @@ type VerificationCodeFormProps = {
   onVerified: (code: string) => Promise<void> | void
   submitError?: string
   submitLabel?: string
-  translations: ForgotPasswordTranslations
+  translations: VerificationFormTranslations
 }
 
 const digitCount = 6

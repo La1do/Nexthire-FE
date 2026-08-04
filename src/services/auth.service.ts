@@ -1,5 +1,6 @@
 import { apiClient } from '../lib/api'
 import type { AuthApiRole, PublicAuthApiRole } from '../lib/auth/authRole'
+import type { Locale } from '../i18n'
 
 type ApiSuccessEnvelope<TData> = {
   success: true
@@ -17,6 +18,7 @@ export type AuthUser = {
   emailVerified: boolean
   avatarUrl?: string | null
   logoUrl?: string | null
+  language?: Locale | null
 }
 
 export type AuthTokens = {
@@ -41,10 +43,12 @@ export type AuthProfile = {
   logoDocumentId?: string | null
   avatarUrl?: string | null
   avatarDocumentId?: string | null
+  language?: Locale | null
 }
 
 export type UpdateAuthProfilePayload = {
   fullName?: string | null
+  language?: Locale
   phone?: string | null
 }
 
@@ -104,6 +108,27 @@ export type VerifyEmailResponse = {
   verifiedAt: string
 }
 
+export type ResendVerificationEmailPayload = {
+  email: string
+}
+
+export type ResendVerificationEmailResponse = {
+  message: string
+  resendCooldownSeconds: number
+}
+
+export type ManualEmailVerificationPayload = {
+  email: string
+}
+
+export type ManualEmailVerificationResponse = {
+  message: string
+  verificationId: string
+  email: string
+  token: string
+  expiresAt: string
+}
+
 export const authService = {
   async getMe() {
     const response = await apiClient.get<ApiSuccessEnvelope<AuthProfile>>('/auth/me')
@@ -159,6 +184,22 @@ export const authService = {
 
   async verifyEmail(payload: VerifyEmailPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<VerifyEmailResponse>>('/auth/verify-email', payload)
+    return response.data.data
+  },
+
+  async resendVerificationEmail(payload: ResendVerificationEmailPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<ResendVerificationEmailResponse>>(
+      '/auth/resend-verification',
+      payload,
+    )
+    return response.data.data
+  },
+
+  async createManualEmailVerification(payload: ManualEmailVerificationPayload) {
+    const response = await apiClient.post<ApiSuccessEnvelope<ManualEmailVerificationResponse>>(
+      '/auth/manual/email-verification',
+      payload,
+    )
     return response.data.data
   },
 

@@ -50,17 +50,19 @@ export const register = {
     },
   },
   verification: {
-    sent: {
-      title: 'Verify your email',
-      subtitle: 'We sent a 6-digit verification code to {{email}}.',
-    },
-    sentSubmit: 'I have the code',
     verify: {
       title: 'Enter verification code',
-      subtitle: 'Confirm your email to activate your NexHire account.',
+      subtitle: 'We sent a 6-digit verification code to {{email}}.',
+      codeDigitLabel: 'Verification code digit',
+      resendPrefix: 'Resend available in',
+      resendAction: 'Resend code',
+      resendingAction: 'Sending…',
+      verifySubmit: 'Verify email',
+      resendSuccessMessage: 'A new verification code has been sent.',
     },
   },
   validation: {
+    codeRequired: 'Please enter the 6-digit verification code.',
     emailRequired: 'Please enter your email.',
     emailInvalid: 'Please enter a valid email.',
     fullNameRequired: 'Please enter your full name.',
