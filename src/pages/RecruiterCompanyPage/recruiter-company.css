@@ -1015,3 +1015,139 @@ body {
     transition-duration: 150ms !important;
   }
 }
+
+.recruiter-company-form__grid--full { grid-column: 1 / -1; }
+
+.recruiter-company-hero-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.recruiter-company-hero-field.has-error {
+  border-color: var(--color-danger);
+}
+
+.recruiter-company-hero-field__preview {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-sm);
+  overflow: clip;
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.recruiter-company-hero-field__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recruiter-company-hero-field__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.recruiter-company-hero-field__copy strong {
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.recruiter-company-hero-field__copy p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.recruiter-company-hero-field__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.recruiter-company-hero-field__actions small {
+  color: var(--color-success);
+  font-size: var(--text-sm);
+}
+
+.recruiter-company-hero-field__copy small.is-error {
+  color: var(--color-danger);
+}
+
+@media (max-width: 720px) {
+  .recruiter-company-hero-field {
+    grid-template-columns: 1fr;
+  }
+}
+
+.company-profile-preview__media,
+.company-review__media {
+  position: relative;
+}
+
+.company-profile-preview__logo,
+.company-review__logo {
+  position: relative;
+}
+
+.company-profile-preview__media-edit,
+.company-profile-preview__logo-edit,
+.company-review__media-edit,
+.company-review__logo-edit {
+  position: absolute;
+  inset-inline-end: var(--space-sm);
+  inset-block-end: var(--space-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.65);
+  color: #fff;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 160ms ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.company-profile-preview__media:hover .company-profile-preview__media-edit,
+.company-profile-preview__media:focus-within .company-profile-preview__media-edit,
+.company-profile-preview__logo:hover .company-profile-preview__logo-edit,
+.company-profile-preview__logo:focus-within .company-profile-preview__logo-edit,
+.company-review__media:hover .company-review__media-edit,
+.company-review__media:focus-within .company-review__media-edit,
+.company-review__logo:hover .company-review__logo-edit,
+.company-review__logo:focus-within .company-review__logo-edit {
+  opacity: 1;
+}
+
+.company-profile-preview__media-edit input[type='file'],
+.company-profile-preview__logo-edit input[type='file'],
+.company-review__media-edit input[type='file'],
+.company-review__logo-edit input[type='file'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.company-profile-preview__media-edit.is-disabled,
+.company-profile-preview__logo-edit.is-disabled,
+.company-review__media-edit.is-disabled,
+.company-review__logo-edit.is-disabled {
+  pointer-events: none;
+  opacity: 0;
+}
