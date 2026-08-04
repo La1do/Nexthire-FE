@@ -5,6 +5,7 @@ import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminComp
 import { adminJobs as enAdminJobs } from './locales/en/pages/adminJobs'
 import { adminSettings as enAdminSettings } from './locales/en/pages/adminSettings'
 import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
+import { candidateCvs as enCandidateCvs } from './locales/en/pages/candidateCvs'
 import { candidateSettings as enCandidateSettings } from './locales/en/pages/candidateSettings'
 import { comingSoon as enComingSoon } from './locales/en/pages/comingSoon'
 import { companyDetail as enCompanyDetail } from './locales/en/pages/companyDetail'
@@ -30,6 +31,7 @@ import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminComp
 import { adminJobs as jaAdminJobs } from './locales/ja/pages/adminJobs'
 import { adminSettings as jaAdminSettings } from './locales/ja/pages/adminSettings'
 import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
+import { candidateCvs as jaCandidateCvs } from './locales/ja/pages/candidateCvs'
 import { candidateSettings as jaCandidateSettings } from './locales/ja/pages/candidateSettings'
 import { comingSoon as jaComingSoon } from './locales/ja/pages/comingSoon'
 import { companyDetail as jaCompanyDetail } from './locales/ja/pages/companyDetail'
@@ -55,6 +57,7 @@ import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminComp
 import { adminJobs as viAdminJobs } from './locales/vi/pages/adminJobs'
 import { adminSettings as viAdminSettings } from './locales/vi/pages/adminSettings'
 import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
+import { candidateCvs as viCandidateCvs } from './locales/vi/pages/candidateCvs'
 import { candidateSettings as viCandidateSettings } from './locales/vi/pages/candidateSettings'
 import { comingSoon as viComingSoon } from './locales/vi/pages/comingSoon'
 import { companyDetail as viCompanyDetail } from './locales/vi/pages/companyDetail'
@@ -88,6 +91,7 @@ export const translations = {
       adminJobs: enAdminJobs,
       adminSettings: enAdminSettings,
       adminUsers: enAdminUsers,
+      candidateCvs: enCandidateCvs,
       candidateSettings: enCandidateSettings,
       comingSoon: enComingSoon,
       companyDetail: enCompanyDetail,
@@ -117,6 +121,7 @@ export const translations = {
       adminJobs: viAdminJobs,
       adminSettings: viAdminSettings,
       adminUsers: viAdminUsers,
+      candidateCvs: viCandidateCvs,
       candidateSettings: viCandidateSettings,
       comingSoon: viComingSoon,
       companyDetail: viCompanyDetail,
@@ -146,6 +151,7 @@ export const translations = {
       adminJobs: jaAdminJobs,
       adminSettings: jaAdminSettings,
       adminUsers: jaAdminUsers,
+      candidateCvs: jaCandidateCvs,
       candidateSettings: jaCandidateSettings,
       comingSoon: jaComingSoon,
       companyDetail: jaCompanyDetail,

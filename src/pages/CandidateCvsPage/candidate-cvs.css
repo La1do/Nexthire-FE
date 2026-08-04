@@ -1,0 +1,519 @@
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4
+ * genre: modern-minimal · macrostructure: Catalogue · theme: Nexhire Home · tone: utilitarian CV manager · enrichment: none · nav: existing CandidateLayout
+ */
+@import "../../../tokens.css";
+
+.candidate-cvs-page {
+  display: grid;
+  font-family: var(--font-home-body);
+  gap: var(--space-lg);
+}
+
+.candidate-cvs-hero,
+.candidate-cvs-panel,
+.candidate-cvs-state,
+.candidate-cvs-empty,
+.candidate-cv-card,
+.candidate-submitted-cv,
+.candidate-cv-upload-card {
+  background: var(--color-surface-card);
+  border: var(--rule-home-hair) solid var(--color-border-default);
+  border-radius: var(--radius-home-md);
+  box-shadow: var(--shadow-home-card);
+}
+
+.candidate-cvs-hero {
+  align-items: stretch;
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.58fr);
+  padding: var(--space-lg);
+}
+
+.candidate-cvs-hero__copy {
+  align-content: center;
+  display: grid;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.candidate-cvs-hero__copy > span,
+.candidate-cvs-panel__header > span {
+  color: var(--color-brand-solid);
+}
+
+.candidate-cvs-hero__copy > span {
+  font-size: var(--text-xs);
+  font-weight: 950;
+}
+
+.candidate-cvs-hero h2,
+.candidate-cvs-panel h2,
+.candidate-cvs-state h2,
+.candidate-cvs-empty h2 {
+  color: var(--color-text-primary);
+  font-family: var(--font-home-display);
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.candidate-cvs-hero h2 {
+  font-size: clamp(var(--text-lg), 4vw, var(--text-2xl));
+  line-height: 1.08;
+}
+
+.candidate-cvs-hero p,
+.candidate-cvs-panel p,
+.candidate-cvs-state p,
+.candidate-cvs-empty p,
+.candidate-cv-upload-card p {
+  color: var(--color-text-muted);
+  line-height: 1.58;
+  margin: 0;
+}
+
+.candidate-cvs-hero p {
+  max-width: 48rem;
+}
+
+.candidate-cvs-hero__actions,
+.candidate-cv-card__actions,
+.candidate-submitted-cv__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.candidate-cvs-hero__actions button,
+.candidate-cvs-empty a,
+.candidate-cvs-empty button,
+.candidate-cv-card__actions button,
+.candidate-submitted-cv__actions a,
+.candidate-submitted-cv__actions button,
+.candidate-cv-upload-card button,
+.candidate-cv-inline-form button,
+.candidate-cv-confirm button {
+  align-items: center;
+  border-radius: var(--radius-home-pill);
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 950;
+  gap: var(--space-xs);
+  justify-content: center;
+  min-height: var(--size-home-touch);
+  padding-inline: var(--space-md);
+  transition:
+    border-color var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out),
+    box-shadow var(--dur-micro) var(--ease-out),
+    color var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-out);
+}
+
+.candidate-cvs-hero__actions button:first-child,
+.candidate-cvs-empty a,
+.candidate-cvs-empty button,
+.candidate-submitted-cv__actions button,
+.candidate-cv-upload-card button {
+  background: var(--color-brand-solid);
+  border: var(--rule-home-hair) solid var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+}
+
+.candidate-cvs-hero__actions button:last-child,
+.candidate-cv-card__actions button,
+.candidate-submitted-cv__actions a,
+.candidate-cv-inline-form button,
+.candidate-cv-confirm button {
+  background: var(--color-surface-subtle);
+  border: var(--rule-home-hair) solid var(--color-border-default);
+  color: var(--color-text-secondary);
+}
+
+.candidate-cvs-hero__actions svg,
+.candidate-cv-card__actions svg,
+.candidate-submitted-cv__actions svg,
+.candidate-cv-upload-card svg,
+.candidate-cv-inline-form svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.candidate-cvs-hero__actions button:hover,
+.candidate-cvs-empty a:hover,
+.candidate-cvs-empty button:hover,
+.candidate-cv-card__actions button:hover:not(:disabled),
+.candidate-submitted-cv__actions a:hover,
+.candidate-submitted-cv__actions button:hover:not(:disabled),
+.candidate-cv-upload-card button:hover:not(:disabled),
+.candidate-cv-inline-form button:hover:not(:disabled),
+.candidate-cv-confirm button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.candidate-cvs-stats {
+  display: grid;
+  gap: var(--space-xs);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.candidate-cvs-stats div {
+  background: var(--color-surface-subtle);
+  border: var(--rule-home-hair) solid var(--color-border-subtle);
+  border-radius: var(--radius-home-sm);
+  display: grid;
+  gap: var(--space-2xs);
+  min-width: 0;
+  padding: var(--space-md);
+}
+
+.candidate-cvs-stats dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 850;
+}
+
+.candidate-cvs-stats dd {
+  color: var(--color-text-primary);
+  font-family: var(--font-home-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+}
+
+.candidate-cvs-tabs {
+  background: var(--color-surface-card);
+  border: var(--rule-home-hair) solid var(--color-border-default);
+  border-radius: var(--radius-home-md);
+  box-shadow: var(--shadow-home-card);
+  display: flex;
+  gap: var(--space-xs);
+  overflow-x: auto;
+  padding: var(--space-xs);
+}
+
+.candidate-cvs-tabs button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-home-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 900;
+  gap: var(--space-xs);
+  min-height: var(--size-home-touch);
+  padding-inline: var(--space-md);
+}
+
+.candidate-cvs-tabs button.is-active {
+  background: var(--color-brand-soft);
+  color: var(--color-brand-solid);
+}
+
+.candidate-cvs-tabs strong {
+  align-items: center;
+  background: var(--color-surface-card);
+  border-radius: var(--radius-home-pill);
+  color: var(--color-text-primary);
+  display: inline-flex;
+  font-size: var(--text-xs);
+  height: 1.45rem;
+  justify-content: center;
+  min-width: 1.45rem;
+  padding-inline: var(--space-xs);
+}
+
+.candidate-cvs-panel {
+  display: grid;
+  gap: var(--space-md);
+  padding: var(--space-md);
+}
+
+.candidate-cvs-panel__header {
+  align-items: center;
+  display: grid;
+  gap: var(--space-sm);
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.candidate-cvs-panel__header > span,
+.candidate-cvs-empty > span,
+.candidate-cvs-state > svg {
+  align-items: center;
+  background: var(--color-brand-soft);
+  border-radius: var(--radius-home-sm);
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.candidate-cvs-panel__header svg,
+.candidate-cvs-empty svg,
+.candidate-cvs-state svg {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.candidate-cvs-panel h2 {
+  font-size: var(--text-lg);
+  line-height: 1.2;
+}
+
+.candidate-cvs-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.candidate-cv-card {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: var(--space-md);
+  position: relative;
+}
+
+.candidate-cv-card.is-active,
+.candidate-cv-card.is-default,
+.candidate-cv-card.is-local {
+  border-color: var(--color-border-brand-soft);
+}
+
+.candidate-cv-card__mark {
+  align-items: center;
+  background: var(--color-surface-subtle);
+  border: var(--rule-home-hair) solid var(--color-border-subtle);
+  border-radius: var(--radius-home-sm);
+  color: var(--color-brand-solid);
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.candidate-cv-card__mark svg {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.candidate-cv-card__body {
+  display: grid;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.candidate-cv-card__body > span,
+.candidate-submitted-cv > div > span {
+  color: var(--color-brand-solid);
+  font-size: var(--text-xs);
+  font-weight: 950;
+}
+
+.candidate-cv-card h3,
+.candidate-submitted-cv h3 {
+  color: var(--color-text-primary);
+  font-size: var(--text-md);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1.25;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.candidate-cv-card p,
+.candidate-submitted-cv p {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.candidate-cv-card small {
+  background: var(--color-home-accent-soft);
+  border-radius: var(--radius-home-pill);
+  color: var(--color-home-accent);
+  font-size: var(--text-xs);
+  font-weight: 950;
+  justify-self: start;
+  padding: var(--space-2xs) var(--space-xs);
+}
+
+.candidate-cv-card__actions {
+  grid-column: 1 / -1;
+}
+
+.candidate-cv-card__actions button.is-danger,
+.candidate-cv-confirm button:first-of-type {
+  border-color: var(--color-home-danger-soft);
+  color: var(--color-text-danger);
+}
+
+.candidate-cv-card__actions button:disabled,
+.candidate-submitted-cv__actions button:disabled,
+.candidate-cv-upload-card button:disabled,
+.candidate-cv-inline-form button:disabled,
+.candidate-cv-confirm button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.candidate-cv-inline-form {
+  display: grid;
+  gap: var(--space-xs);
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.candidate-cv-inline-form input {
+  background: var(--color-surface-subtle);
+  border: var(--rule-home-hair) solid var(--color-border-default);
+  border-radius: var(--radius-home-sm);
+  color: var(--color-text-primary);
+  min-height: var(--size-home-touch);
+  min-width: 0;
+  padding-inline: var(--space-md);
+}
+
+.candidate-cv-inline-form input:focus,
+.candidate-cvs-tabs button:focus-visible,
+.candidate-cv-card__actions button:focus-visible,
+.candidate-submitted-cv__actions a:focus-visible,
+.candidate-submitted-cv__actions button:focus-visible,
+.candidate-cv-upload-card button:focus-visible,
+.candidate-cvs-empty a:focus-visible,
+.candidate-cvs-empty button:focus-visible {
+  outline: 2px solid var(--color-brand-solid);
+  outline-offset: 3px;
+}
+
+.candidate-cv-confirm {
+  align-items: center;
+  background: var(--color-surface-subtle);
+  border: var(--rule-home-hair) dashed var(--color-border-default);
+  border-radius: var(--radius-home-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+}
+
+.candidate-cv-confirm > span {
+  color: var(--color-text-secondary);
+  font-weight: 900;
+  margin-inline-end: auto;
+}
+
+.candidate-cvs-list {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.candidate-submitted-cv {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.55fr) auto;
+  padding: var(--space-md);
+}
+
+.candidate-submitted-cv dl {
+  display: grid;
+  gap: var(--space-xs);
+  margin: 0;
+}
+
+.candidate-submitted-cv dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 850;
+}
+
+.candidate-submitted-cv dd {
+  color: var(--color-text-primary);
+  font-weight: 900;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.candidate-submitted-cv__actions {
+  align-content: start;
+  display: grid;
+}
+
+.candidate-cv-upload-card {
+  align-items: center;
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: var(--space-md);
+}
+
+.candidate-cv-upload-card strong {
+  color: var(--color-text-primary);
+  font-size: var(--text-md);
+  font-weight: 950;
+}
+
+.candidate-cvs-state,
+.candidate-cvs-empty {
+  display: grid;
+  gap: var(--space-md);
+  justify-items: center;
+  padding: clamp(var(--space-lg), 6vw, var(--space-2xl));
+  text-align: center;
+}
+
+.candidate-cvs-empty > span {
+  color: var(--color-brand-solid);
+}
+
+@media (max-width: 1180px) {
+  .candidate-cvs-hero,
+  .candidate-submitted-cv {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .candidate-cvs-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .candidate-cv-upload-card,
+  .candidate-cv-inline-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .candidate-cv-upload-card button,
+  .candidate-cv-inline-form button,
+  .candidate-cv-card__actions button,
+  .candidate-submitted-cv__actions a,
+  .candidate-submitted-cv__actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .candidate-cvs-hero,
+  .candidate-cvs-panel,
+  .candidate-cv-card,
+  .candidate-submitted-cv,
+  .candidate-cv-upload-card {
+    border-radius: var(--radius-home-sm);
+  }
+
+  .candidate-cvs-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .candidate-cvs-panel__header,
+  .candidate-cv-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

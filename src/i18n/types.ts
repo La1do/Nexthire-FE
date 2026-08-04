@@ -919,6 +919,96 @@ export type CandidateManagedJobsStatus =
   | 'EXPIRED'
   | 'needsAttention'
 
+export type CandidateCvsTab = 'editing' | 'submitted' | 'profile'
+export type CandidateCvsParseStatus = 'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED'
+
+export type CandidateCvsTranslations = {
+  routeLabel: string
+  pageTitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+    primaryAction: string
+    secondaryAction: string
+  }
+  stats: {
+    drafts: string
+    submitted: string
+    profileCvs: string
+    defaultCv: string
+  }
+  tabs: Record<CandidateCvsTab, string>
+  sections: {
+    editingTitle: string
+    editingDescription: string
+    submittedTitle: string
+    submittedDescription: string
+    profileTitle: string
+    profileDescription: string
+  }
+  actions: {
+    newCv: string
+    continueEditing: string
+    rename: string
+    saveName: string
+    cancel: string
+    delete: string
+    confirmDelete: string
+    keepCv: string
+    upload: string
+    uploading: string
+    parse: string
+    parsing: string
+    openSubmitted: string
+    opening: string
+    viewJob: string
+    retry: string
+  }
+  meta: {
+    updatedAt: string
+    createdAt: string
+    submittedAt: string
+    job: string
+    company: string
+    status: string
+    pages: string
+    defaultBadge: string
+    localDraft: string
+    notAvailable: string
+    fileSize: string
+  }
+  parseStatus: Record<CandidateCvsParseStatus, string>
+  applicationStatus: Record<ProfileApplicationStatus, string>
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    emptyDraftsTitle: string
+    emptyDraftsDescription: string
+    emptySubmittedTitle: string
+    emptySubmittedDescription: string
+    emptyProfileTitle: string
+    emptyProfileDescription: string
+    renameSuccess: string
+    renameError: string
+    deleteSuccess: string
+    deleteError: string
+    profileDeleteSuccess: string
+    profileDeleteError: string
+    uploadSuccess: string
+    uploadError: string
+    parseStarted: string
+    parseError: string
+    openSubmittedError: string
+  }
+  validation: {
+    nameRequired: string
+    invalidType: string
+    tooLarge: string
+  }
+}
+
 export type UserNotificationTranslations = {
   label: string
   title: string
@@ -2472,6 +2562,7 @@ export type Translations = {
     adminJobs: AdminJobsTranslations
     adminSettings: AdminSettingsTranslations
     adminUsers: AdminUsersTranslations
+    candidateCvs: CandidateCvsTranslations
     comingSoon: ComingSoonTranslations
     candidateSettings: CandidateSettingsTranslations
     companyDetail: CompanyDetailTranslations
