@@ -127,6 +127,8 @@ export const common = {
     description: '企業と候補者を、わかりやすく信頼できる採用体験でつなぎます。',
     legalLabel: '商工省登録済み',
     copyright: '2026 NexHire',
+    supportLabel: 'サポート：',
+    supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
       { title: '求人', links: ['最新求人', 'IT求人', 'マーケティング'] },
       { title: '採用企業', links: ['求人を掲載', '法人向け採用'] },

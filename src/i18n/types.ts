@@ -43,6 +43,8 @@ export type CommonTranslations = {
     description: string
     legalLabel: string
     copyright: string
+    supportLabel: string
+    supportEmail: string
     columns: ReadonlyArray<{
       title: string
       links: ReadonlyArray<string>

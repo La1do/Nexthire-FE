@@ -127,6 +127,8 @@ export const common = {
     description: 'Connect with businesses through a modern, fast, and trustworthy hiring experience.',
     legalLabel: 'Registered with the Ministry of Labor',
     copyright: '2026 NexHire',
+    supportLabel: 'Support:',
+    supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
       { title: 'Jobs', links: ['Latest jobs', 'IT jobs', 'Marketing'] },
       { title: 'Employers', links: ['Post a job', 'Business hiring'] },

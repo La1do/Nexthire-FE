@@ -243,6 +243,15 @@ export function MainLayout({ children }: PropsWithChildren) {
               <BrandMark compact label={common.brandName} />
             </a>
             <p className="main-footer-description mt-4 max-w-sm text-sm leading-6">{common.footer.description}</p>
+            <p className="main-footer-support mt-3 text-sm leading-6">
+              <span>{common.footer.supportLabel}</span>{' '}
+              <a
+                className="main-footer-link"
+                href={`mailto:${common.footer.supportEmail}`}
+              >
+                {common.footer.supportEmail}
+              </a>
+            </p>
           </div>
           <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
             {common.footer.columns.map((column) => (

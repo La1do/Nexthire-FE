@@ -127,6 +127,8 @@ export const common = {
     description: 'Kết nối ứng viên và doanh nghiệp bằng trải nghiệm tuyển dụng rõ ràng, đáng tin cậy.',
     legalLabel: 'Đã đăng ký Bộ Công Thương',
     copyright: '2026 NexHire',
+    supportLabel: 'Hỗ trợ:',
+    supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
       { title: 'Việc làm', links: ['Việc làm mới nhất', 'IT Jobs', 'Marketing'] },
       { title: 'Nhà tuyển dụng', links: ['Đăng tin tuyển dụng', 'Đồng hành doanh nghiệp'] },
