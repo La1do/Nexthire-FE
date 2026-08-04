@@ -168,17 +168,19 @@ export type RegisterTranslations = {
     form: RegisterFormCopy
   }
   verification: {
-    sent: {
-      title: string
-      subtitle: string
-    }
-    sentSubmit: string
     verify: {
       title: string
       subtitle: string
+      codeDigitLabel: string
+      resendPrefix: string
+      resendAction: string
+      resendingAction: string
+      verifySubmit: string
+      resendSuccessMessage: string
     }
   }
   validation: {
+    codeRequired: string
     emailRequired: string
     emailInvalid: string
     fullNameRequired: string
@@ -422,6 +424,13 @@ export type CvTemplatesTranslations = {
     categoriesLabel: string
     useTemplate: string
     previewAlt: string
+  }
+  templateReplaceDialog: {
+    title: string
+    description: string
+    templateLabel: string
+    cancel: string
+    confirm: string
   }
   notes: {
     title: string

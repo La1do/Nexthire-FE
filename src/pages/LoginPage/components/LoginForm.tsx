@@ -73,6 +73,13 @@ export function LoginForm({ apiErrors, authFeedback, role, translations }: Login
             },
           )
 
+          if (!auth.user.emailVerified) {
+            const message = apiErrors.byCode['AUTH.EMAIL_NOT_VERIFIED'] ?? apiErrors.default
+            setSubmitError(message)
+            toast.error(message)
+            return
+          }
+
           login(auth, formValues.rememberMe ? 'local' : 'session')
           toast.success(authFeedback.loginSuccess)
           navigate(loginRedirect, { replace: true })

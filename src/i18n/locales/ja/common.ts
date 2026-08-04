@@ -61,6 +61,7 @@ export const common = {
       'COMMON.RATE_LIMITED': '操作が速すぎます。しばらくしてからお試しください。',
       'COMMON.INTERNAL_ERROR': 'システムで問題が発生しています。後でもう一度お試しください。',
       'AUTH.INVALID_CREDENTIALS': 'メールまたはパスワードが正しくありません。',
+      'AUTH.EMAIL_NOT_VERIFIED': 'ログインの前にメール認証が必要です。',
       'AUTH.GOOGLE_TOKEN_INVALID': 'Googleログイントークンが無効です。もう一度お試しください。',
       'AUTH.GOOGLE_EMAIL_NOT_VERIFIED': 'Googleメールが確認されていません。',
       'AUTH.GOOGLE_LOGIN_NOT_CONFIGURED': 'Googleログインが設定されていません。',
