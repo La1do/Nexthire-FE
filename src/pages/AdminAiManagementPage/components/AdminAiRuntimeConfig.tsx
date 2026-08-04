@@ -38,7 +38,7 @@ export function AdminAiRuntimeConfig({ config, content, isPending, onSave }: Pro
       <label><span>{content.config.selectedModel}</span><select onChange={(event) => selectModel(event.target.value)} value={activeModel}>{activeModels.map((model) => <option key={model.id} value={model.id}>{model.name}{model.isDefault ? ' · Default' : ''}</option>)}</select></label>
     </div>
     <div className="admin-ai-config__meta">{updatedAt ? <><span>{content.config.updatedAt}: <strong>{updatedAt}</strong></span><span>{content.config.updatedBy}: <strong>{config.currentConfig.updatedByUserId ?? '—'}</strong></span></> : <span>{content.config.neverUpdated}</span>}</div>
-    <div className="admin-ai-note-list"><p>{content.notes.newRequests}</p><p>{content.notes.apiKeys}</p></div>
+    <div className="admin-ai-note-list"><p>{content.notes.newRequests}</p></div>
     <footer><button className="admin-ai-secondary-button" disabled={!isDirty || isPending} onClick={reset} type="button">{content.config.undo}</button><button className="admin-ai-primary-button" disabled={!isDirty || isPending} onClick={() => onSave({ activeProvider: provider, geminiModel, openAiModel })} type="button">{isPending ? content.config.saving : content.config.save}</button></footer>
   </section>
 }
