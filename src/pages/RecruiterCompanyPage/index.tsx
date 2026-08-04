@@ -800,13 +800,45 @@ export function RecruiterCompanyPage() {
           </div>
 
           <div className="company-profile-preview">
-            <div className="company-profile-preview__media">
-              {heroImage ? <img alt="" src={heroImage} /> : <span>{content.preview.heroImageFallback}</span>}
+            <div className="company-profile-preview__cover">
+              <div className="company-profile-preview__media-wrap">
+                <div className="company-profile-preview__media">
+                  {heroImage ? <img alt="" src={heroImage} /> : <span>{content.preview.heroImageFallback}</span>}
+                </div>
+                <label
+                  aria-disabled={isReadOnly}
+                  className={`company-profile-preview__media-edit${isReadOnly ? ' is-disabled' : ''}`}
+                >
+                  <span>{content.preview.heroImageChangeLabel}</span>
+                  <input
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={isReadOnly}
+                    type="file"
+                    onChange={handleHeroFileChange}
+                  />
+                </label>
+              </div>
+              <div className="company-profile-preview__identity">
+                <div className="company-profile-preview__logo-wrap">
+                  <div className="company-profile-preview__logo">
+                    {logo ? <img alt="" src={logo} /> : <span>{getCompanyInitials(company.name)}</span>}
+                  </div>
+                  <label
+                    aria-disabled={isReadOnly}
+                    className={`company-profile-preview__logo-edit${isReadOnly ? ' is-disabled' : ''}`}
+                  >
+                    <span>{content.preview.logoChangeLabel}</span>
+                    <input
+                      accept="image/jpeg,image/png,image/webp"
+                      disabled={isReadOnly}
+                      type="file"
+                      onChange={handleLogoChange}
+                    />
+                  </label>
+                </div>
+              </div>
             </div>
             <div className="company-profile-preview__hero">
-              <div className="company-profile-preview__logo">
-                {logo ? <img alt="" src={logo} /> : <span>{getCompanyInitials(company.name)}</span>}
-              </div>
               <div>
                 <strong>{company.name}</strong>
                 <span>{form.industry.trim() || content.preview.industryFallback}</span>
@@ -902,16 +934,54 @@ export function RecruiterCompanyPage() {
 
             <div className="company-review__body">
               <section className="company-review__hero">
-                <div className="company-review__hero-copy">
+                <div className="company-review__cover">
+                  <div className="company-review__media-wrap">
+                    <div className="company-review__media">
+                      {heroImage ? (
+                        <img alt="" src={heroImage} />
+                      ) : (
+                        <span>{content.review.heroImageFallback}</span>
+                      )}
+                    </div>
+                    <label
+                      aria-disabled={isReadOnly}
+                      className={`company-review__media-edit${isReadOnly ? ' is-disabled' : ''}`}
+                    >
+                      <span>{content.preview.heroImageChangeLabel}</span>
+                      <input
+                        accept="image/jpeg,image/png,image/webp"
+                        disabled={isReadOnly}
+                        type="file"
+                        onChange={handleHeroFileChange}
+                      />
+                    </label>
+                  </div>
                   <div className="company-review__brand">
-                    <div className="company-review__logo" aria-hidden="true">
-                      {logo ? <img alt="" src={logo} /> : <span>{getCompanyInitials(company.name)}</span>}
+                    <div className="company-review__logo-wrap">
+                      <div className="company-review__logo">
+                        {logo ? <img alt="" src={logo} /> : <span>{getCompanyInitials(company.name)}</span>}
+                      </div>
+                      <label
+                        aria-disabled={isReadOnly}
+                        className={`company-review__logo-edit${isReadOnly ? ' is-disabled' : ''}`}
+                      >
+                        <span>{content.preview.logoChangeLabel}</span>
+                        <input
+                          accept="image/jpeg,image/png,image/webp"
+                          disabled={isReadOnly}
+                          type="file"
+                          onChange={handleLogoChange}
+                        />
+                      </label>
                     </div>
                     <div>
                       <span>{form.industry.trim() || content.preview.industryFallback}</span>
                       <h3>{company.name}</h3>
                     </div>
                   </div>
+                </div>
+
+                <div className="company-review__hero-copy">
                   <p>{form.description.trim() || content.review.emptyDescription}</p>
                   <dl className="company-review__facts" aria-label={content.review.factsLabel}>
                     {previewFacts.map((fact) => (
@@ -921,14 +991,6 @@ export function RecruiterCompanyPage() {
                       </div>
                     ))}
                   </dl>
-                </div>
-
-                <div className="company-review__media">
-                  {form.heroImageUrl.trim() ? (
-                    <img alt="" src={form.heroImageUrl.trim()} />
-                  ) : (
-                    <span>{content.review.heroImageFallback}</span>
-                  )}
                 </div>
               </section>
 

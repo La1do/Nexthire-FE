@@ -1099,37 +1099,45 @@ body {
   position: relative;
 }
 
+.company-profile-preview__media-wrap,
+.company-profile-preview__logo-wrap,
+.company-review__media-wrap,
+.company-review__logo-wrap {
+  display: grid;
+  gap: var(--space-2xs);
+  min-width: 0;
+}
+
+.company-profile-preview__logo-wrap,
+.company-review__logo-wrap {
+  justify-items: start;
+}
+
 .company-profile-preview__media-edit,
 .company-profile-preview__logo-edit,
 .company-review__media-edit,
 .company-review__logo-edit {
-  position: absolute;
-  inset-inline-end: var(--space-sm);
-  inset-block-end: var(--space-sm);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2xs);
   padding: var(--space-2xs) var(--space-sm);
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(15, 23, 42, 0.78);
   color: #fff;
   font-size: var(--text-sm);
+  font-weight: 600;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 160ms ease;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  align-self: start;
+  transition:
+    background-color 160ms ease,
+    transform 120ms ease;
 }
 
-.company-profile-preview__media:hover .company-profile-preview__media-edit,
-.company-profile-preview__media:focus-within .company-profile-preview__media-edit,
-.company-profile-preview__logo:hover .company-profile-preview__logo-edit,
-.company-profile-preview__logo:focus-within .company-profile-preview__logo-edit,
-.company-review__media:hover .company-review__media-edit,
-.company-review__media:focus-within .company-review__media-edit,
-.company-review__logo:hover .company-review__logo-edit,
-.company-review__logo:focus-within .company-review__logo-edit {
-  opacity: 1;
+.company-profile-preview__media-edit:hover,
+.company-profile-preview__logo-edit:hover,
+.company-review__media-edit:hover,
+.company-review__logo-edit:hover {
+  background: rgba(15, 23, 42, 0.9);
 }
 
 .company-profile-preview__media-edit input[type='file'],
@@ -1149,5 +1157,5 @@ body {
 .company-review__media-edit.is-disabled,
 .company-review__logo-edit.is-disabled {
   pointer-events: none;
-  opacity: 0;
+  opacity: 0.4;
 }
