@@ -1117,27 +1117,52 @@ body {
 .company-profile-preview__logo-edit,
 .company-review__media-edit,
 .company-review__logo-edit {
+  position: absolute;
+  inset-block-start: var(--space-sm);
+  inset-inline-end: var(--space-sm);
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2xs);
-  padding: var(--space-2xs) var(--space-sm);
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.78);
+  background: rgba(15, 23, 42, 0.72);
   color: #fff;
-  font-size: var(--text-sm);
-  font-weight: 600;
   cursor: pointer;
-  align-self: start;
+  opacity: 0;
   transition:
     background-color 160ms ease,
+    opacity 160ms ease,
     transform 120ms ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2;
+}
+
+.company-profile-preview__media-edit svg,
+.company-profile-preview__logo-edit svg,
+.company-review__media-edit svg,
+.company-review__logo-edit svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.company-profile-preview__media:hover .company-profile-preview__media-edit,
+.company-profile-preview__media:focus-within .company-profile-preview__media-edit,
+.company-profile-preview__logo:hover .company-profile-preview__logo-edit,
+.company-profile-preview__logo:focus-within .company-profile-preview__logo-edit,
+.company-review__media:hover .company-review__media-edit,
+.company-review__media:focus-within .company-review__media-edit,
+.company-review__logo:hover .company-review__logo-edit,
+.company-review__logo:focus-within .company-review__logo-edit {
+  opacity: 1;
 }
 
 .company-profile-preview__media-edit:hover,
 .company-profile-preview__logo-edit:hover,
 .company-review__media-edit:hover,
 .company-review__logo-edit:hover {
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.92);
 }
 
 .company-profile-preview__media-edit input[type='file'],
@@ -1157,5 +1182,5 @@ body {
 .company-review__media-edit.is-disabled,
 .company-review__logo-edit.is-disabled {
   pointer-events: none;
-  opacity: 0.4;
+  opacity: 0;
 }
