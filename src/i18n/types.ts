@@ -323,10 +323,21 @@ export type HomeTranslations = {
     title: string
     readMore: string
     items: ReadonlyArray<{
+      slug: string
       category: string
       title: string
       description: string
       tone: 'blue' | 'coral' | 'green'
+      author: string
+      authorRole: string
+      date: string
+      readingTime: string
+      content: ReadonlyArray<
+        | { type: 'paragraph'; text: string }
+        | { type: 'heading'; text: string }
+        | { type: 'quote'; text: string; attribution: string }
+        | { type: 'list'; items: ReadonlyArray<string> }
+      >
     }>
   }
   newsletter: {

@@ -1206,11 +1206,14 @@ body {
   padding-block: var(--space-md) var(--space-xl);
 }
 
-.home-article-media {
+.home-article-card .home-article-media {
   aspect-ratio: 16 / 10;
   border-radius: var(--radius-home-sm);
+  display: block;
+  min-height: 0;
   overflow: clip;
   position: relative;
+  white-space: normal;
 }
 
 .home-article-media::before {
@@ -1262,6 +1265,22 @@ body {
   color: var(--color-home-ink);
   font-size: var(--text-lg);
   line-height: 1.22;
+}
+
+.home-article-card h3 a {
+  color: inherit;
+  display: inline;
+  font: inherit;
+  min-height: 0;
+  text-decoration: none;
+  white-space: normal;
+}
+
+.home-article-card h3 a:hover,
+.home-article-card h3 a:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: var(--color-home-rule-strong);
+  text-underline-offset: var(--space-3xs);
 }
 
 .home-article-card p {
