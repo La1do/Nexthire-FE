@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   getAuthUserDisplayName,
   getInitials,
@@ -172,8 +172,31 @@ export function MainLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
   const { user, isAuthenticated, logout } = useAuth()
   const toast = useToast()
+  const { pathname } = useLocation()
   const navigate = useNavigate()
   const showCandidateNotifications = user?.role === 'CANDIDATE'
+  const navigationItems = [
+    {
+      href: '/search',
+      label: common.navigation.jobs,
+      current: pathname === '/search' || pathname.startsWith('/jobs'),
+    },
+    {
+      href: '/companies',
+      label: common.navigation.companies,
+      current: pathname === '/companies' || pathname.startsWith('/companies/'),
+    },
+    {
+      href: '/cv-templates',
+      label: common.navigation.cvTemplates,
+      current: pathname === '/cv-templates',
+    },
+    {
+      href: '/career-guide',
+      label: common.navigation.guide,
+      current: pathname === '/career-guide',
+    },
+  ]
 
   const handleLogout = () => {
     void logout().then(() => {
@@ -185,23 +208,24 @@ export function MainLayout({ children }: PropsWithChildren) {
   return (
     <div className="main-shell min-h-screen text-[var(--color-text-primary)]">
       <header className="main-header">
-        <div className="main-container flex items-center justify-between gap-5 py-4">
+        <div className="main-container main-header-inner flex items-center justify-between gap-5 py-4">
           <a className="main-brand" href="/">
             <BrandMark compact label={common.brandName} />
           </a>
           <nav className="main-nav">
-            <a href="/search">
-              {common.navigation.jobs}
-            </a>
-            <a href="/companies">
-              {common.navigation.companies}
-            </a>
-            <a href="/cv-templates">
-              {common.navigation.cvTemplates}
-            </a>
-            <a href="/career-guide">
-              {common.navigation.guide}
-            </a>
+            {navigationItems.map((item) => (
+              <NavLink
+                className={({ isActive }) =>
+                  ['main-nav-link', isActive || item.current ? 'is-active' : '']
+                    .filter(Boolean)
+                    .join(' ')
+                }
+                key={item.href}
+                to={item.href}
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
           <div className="main-header-actions">
             <LanguageSwitch className="main-language-switch" compact />
