@@ -426,6 +426,7 @@ select {
 }
 
 .brand-mark--full {
+  margin-inline: auto;
   width: min(13rem, 100%);
 }
 
