@@ -48,9 +48,14 @@ export const recruiterSettings: RecruiterSettingsTranslations = {
   },
   language: {
     title: '表示言語',
-    description: 'この端末でNexHireに使用する言語を選択します。',
+    description: '採用担当アカウントの既定言語を保存します。',
     controlLabel: '言語',
-    helper: '変更はすぐに反映され、次回アクセス時にも使用されます。',
+    helper: 'ヘッダーのドロップダウンはこの端末だけで一時的に変更されます。アカウントに同期するにはここで保存してください。',
+    reset: '元に戻す',
+    save: '言語を保存',
+    saveError: '言語設定を保存できませんでした。もう一度お試しください。',
+    saveLoading: '保存中…',
+    saveSuccess: '表示言語を保存しました。',
   },
   security: {
     title: 'パスワードを変更',

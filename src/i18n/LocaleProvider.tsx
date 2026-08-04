@@ -6,44 +6,52 @@ import type { Locale } from './types'
 
 const LOCALE_STORAGE_KEY = 'nexhire_locale'
 
-function getInitialLocale(): Locale {
+function readStoredLocale(): Locale | null {
   if (typeof window === 'undefined') {
-    return defaultLocale
+    return null
   }
 
   try {
     const storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY)
-    return isLocale(storedLocale) ? storedLocale : defaultLocale
+    return isLocale(storedLocale) ? storedLocale : null
   } catch {
-    return defaultLocale
+    return null
   }
 }
 
 export function LocaleProvider({ children }: PropsWithChildren) {
-  const [locale, setLocaleState] = useState<Locale>(getInitialLocale)
+  const [storedLocale] = useState(readStoredLocale)
+  const [locale, setLocaleState] = useState<Locale>(storedLocale ?? defaultLocale)
+  const [hasStoredLocalePreference, setHasStoredLocalePreference] = useState(() => storedLocale !== null)
 
   const setLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale)
+    setHasStoredLocalePreference(true)
   }, [])
 
   useEffect(() => {
     document.documentElement.lang = locale
+
+    if (!hasStoredLocalePreference) {
+      return
+    }
 
     try {
       window.localStorage.setItem(LOCALE_STORAGE_KEY, locale)
     } catch {
       // Keep the selected locale in memory when localStorage is unavailable.
     }
-  }, [locale])
+  }, [hasStoredLocalePreference, locale])
 
   const translations = useMemo(() => getTranslations(locale), [locale])
   const value = useMemo(
     () => ({
+      hasStoredLocalePreference,
       locale,
       setLocale,
       translations,
     }),
-    [locale, setLocale, translations],
+    [hasStoredLocalePreference, locale, setLocale, translations],
   )
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>

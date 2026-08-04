@@ -3,7 +3,18 @@ import type { CandidateSettingsTranslations } from '../../../types'
 export const candidateSettings: CandidateSettingsTranslations = {
   routeLabel: '設定',
   pageTitle: 'アカウント設定',
-  pageSubtitle: '候補者アカウントへのログインに使用するパスワードを更新します。',
+  pageSubtitle: '表示言語と候補者アカウントへのログインに使用するパスワードを更新します。',
+  language: {
+    title: '表示言語',
+    description: '候補者アカウントの既定言語を保存します。',
+    controlLabel: '言語',
+    helper: 'ヘッダーのドロップダウンはこの端末だけで一時的に変更されます。アカウントに同期するにはここで保存してください。',
+    reset: '元に戻す',
+    save: '言語を保存',
+    saveError: '言語設定を保存できませんでした。もう一度お試しください。',
+    saveLoading: '保存中…',
+    saveSuccess: '表示言語を保存しました。',
+  },
   security: {
     title: 'パスワードを変更',
     description: 'NexHire専用のパスワードを設定し、以前のパスワードは再利用しないでください。',

@@ -73,7 +73,15 @@ export function RecruiterSettingsPage() {
           profile={profile}
           translations={content.account}
         />
-        <LanguageSettingsSection translations={content.language} />
+        <LanguageSettingsSection
+          loading={loading}
+          onSaved={(updatedProfile) => {
+            setProfile(updatedProfile)
+            refreshUser()
+          }}
+          profile={profile}
+          translations={content.language}
+        />
         <SecuritySettingsForm translations={content.security} />
       </div>
     </div>

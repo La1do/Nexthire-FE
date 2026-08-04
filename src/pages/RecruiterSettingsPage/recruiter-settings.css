@@ -288,13 +288,13 @@ body {
 }
 
 .recruiter-settings-actions button:first-child {
-  background: var(--color-settings-accent);
-  box-shadow: none;
-  color: var(--color-settings-accent-ink);
+  background: var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
 }
 
 .recruiter-settings-actions button:first-child:hover:not(:disabled) {
-  filter: brightness(0.94);
+  filter: brightness(1.04);
 }
 
 .recruiter-settings-skeleton {

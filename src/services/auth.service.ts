@@ -1,5 +1,6 @@
 import { apiClient } from '../lib/api'
 import type { AuthApiRole, PublicAuthApiRole } from '../lib/auth/authRole'
+import type { Locale } from '../i18n'
 
 type ApiSuccessEnvelope<TData> = {
   success: true
@@ -17,6 +18,7 @@ export type AuthUser = {
   emailVerified: boolean
   avatarUrl?: string | null
   logoUrl?: string | null
+  language?: Locale | null
 }
 
 export type AuthTokens = {
@@ -41,10 +43,12 @@ export type AuthProfile = {
   logoDocumentId?: string | null
   avatarUrl?: string | null
   avatarDocumentId?: string | null
+  language?: Locale | null
 }
 
 export type UpdateAuthProfilePayload = {
   fullName?: string | null
+  language?: Locale
   phone?: string | null
 }
 

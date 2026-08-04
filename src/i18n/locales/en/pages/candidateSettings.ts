@@ -3,7 +3,18 @@ import type { CandidateSettingsTranslations } from '../../../types'
 export const candidateSettings: CandidateSettingsTranslations = {
   routeLabel: 'Settings',
   pageTitle: 'Account settings',
-  pageSubtitle: 'Update the password used to sign in to your candidate account.',
+  pageSubtitle: 'Update your display language and the password used to sign in to your candidate account.',
+  language: {
+    title: 'Display language',
+    description: 'Save the default language for your candidate account.',
+    controlLabel: 'Language',
+    helper: 'The header dropdown only changes this device temporarily. Save here to sync it to your account.',
+    reset: 'Reset',
+    save: 'Save language',
+    saveError: 'Language could not be saved. Please try again.',
+    saveLoading: 'Saving…',
+    saveSuccess: 'Display language has been saved.',
+  },
   security: {
     title: 'Change password',
     description: 'Use a password unique to NexHire and avoid reusing an older password.',

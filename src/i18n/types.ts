@@ -1949,6 +1949,11 @@ export type RecruiterSettingsTranslations = {
     description: string
     controlLabel: string
     helper: string
+    reset: string
+    save: string
+    saveError: string
+    saveLoading: string
+    saveSuccess: string
   }
   security: {
     title: string
@@ -2086,6 +2091,17 @@ export type CandidateSettingsTranslations = {
   routeLabel: string
   pageTitle: string
   pageSubtitle: string
+  language: {
+    title: string
+    description: string
+    controlLabel: string
+    helper: string
+    reset: string
+    save: string
+    saveError: string
+    saveLoading: string
+    saveSuccess: string
+  }
   security: {
     title: string
     description: string
@@ -2406,6 +2422,8 @@ export type AdminSettingsTranslations = {
   }
   preferences: {
     title: string; description: string; language: string; languageHint: string
+    languageReset: string; languageSave: string; languageSaveError: string
+    languageSaveSuccess: string; languageSaving: string
     sessionTitle: string; sessionDescription: string; logout: string
   }
   logout: { title: string; description: string; confirm: string; cancel: string }

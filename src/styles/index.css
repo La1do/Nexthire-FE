@@ -15582,8 +15582,52 @@ select {
   line-height: 1.45;
 }
 
-.admin-settings-preference-row .language-switch {
+.admin-settings-preference-row .language-switch,
+.admin-settings-language-control {
   min-width: 118px;
+}
+
+.admin-settings-language-control {
+  display: grid;
+  gap: .65rem;
+  min-width: min(260px, 100%);
+}
+
+.admin-settings-language-status {
+  margin: 0;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.admin-settings-language-status[data-tone="success"] {
+  color: var(--color-home-success);
+}
+
+.admin-settings-language-status[data-tone="error"] {
+  color: var(--color-text-danger);
+}
+
+.admin-settings-language-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  justify-content: flex-end;
+}
+
+.admin-settings-language-actions button {
+  min-height: 40px;
+  padding: 0 .9rem;
+  font-size: .78rem;
+}
+
+.admin-settings-language-actions button:first-child {
+  background: var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+}
+
+.admin-settings-language-actions button:first-child:hover:not(:disabled) {
+  filter: brightness(1.04);
 }
 
 .admin-settings-preference-row--danger button {
@@ -15642,8 +15686,17 @@ select {
     grid-template-columns: 1fr;
   }
 
-  .admin-settings-preference-row .language-switch {
+  .admin-settings-preference-row .language-switch,
+  .admin-settings-language-control {
     width: 100%;
+  }
+
+  .admin-settings-language-actions {
+    justify-content: stretch;
+  }
+
+  .admin-settings-language-actions button {
+    flex: 1;
   }
 }
 

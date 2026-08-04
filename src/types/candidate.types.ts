@@ -1,4 +1,5 @@
 import type { JobType } from './job.types'
+import type { Locale } from '../i18n'
 
 export type CandidateProfileVisibility = 'PUBLIC' | 'PRIVATE'
 export type CandidateSkillLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT'
@@ -17,6 +18,7 @@ export type CandidateProfileResponse = {
   location: string | null
   portfolioUrl: string | null
   linkedinUrl: string | null
+  language?: Locale | null
   openToWork: boolean
   visibility: CandidateProfileVisibility
   createdAt: string
@@ -108,6 +110,7 @@ export type CandidateProfilePayload = {
   location?: string | null
   portfolioUrl?: string | null
   linkedinUrl?: string | null
+  language?: Locale
   openToWork?: boolean
   visibility?: CandidateProfileVisibility
   avatarDocumentId?: string | null
