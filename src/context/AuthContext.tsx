@@ -7,7 +7,7 @@ import {
 } from 'react'
 import axios from 'axios'
 import type { PropsWithChildren } from 'react'
-import { useTranslations } from '../i18n'
+import { isLocale, useLocale, useTranslations } from '../i18n'
 import { authTokenStorage } from '../lib/api'
 import { authService } from '../services/auth.service'
 import { currentUserService } from '../services/currentUser.service'
@@ -56,6 +56,7 @@ function isSessionExpiredError(error: unknown) {
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const { common } = useTranslations()
+  const { hasStoredLocalePreference, setLocale } = useLocale()
   const { track: trackGlobalLoader } = useGlobalLoader()
   const hydratedIdentityRef = useRef<string | null>(null)
   const hydrationRequestRef = useRef(0)
@@ -95,6 +96,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const login = useCallback(
     (auth: AuthResponse, persistence: AuthPersistence = 'session') => {
+      if (!hasStoredLocalePreference && isLocale(auth.user.language)) {
+        setLocale(auth.user.language)
+      }
+
       authTokenStorage.setTokens(auth.tokens, persistence)
       writeStoredUser(auth.user, persistence)
       userPersistenceRef.current = persistence
@@ -102,7 +107,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setUser(auth.user)
       setProfileRefreshKey((current) => current + 1)
     },
-    [],
+    [hasStoredLocalePreference, setLocale],
   )
 
   const logout = useCallback(async () => {
@@ -154,6 +159,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
           return
         }
 
+        if (!hasStoredLocalePreference && isLocale(nextUser.language)) {
+          setLocale(nextUser.language)
+        }
+
         setUser((currentUser) => {
           if (!currentUser || currentUser.id !== user.id || currentUser.role !== user.role) {
             return currentUser
@@ -187,7 +196,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => {
       isActive = false
     }
-  }, [clearSession, profileRefreshKey, user])
+  }, [clearSession, hasStoredLocalePreference, profileRefreshKey, setLocale, user])
 
   const value = useMemo<AuthContextValue>(
     () => ({

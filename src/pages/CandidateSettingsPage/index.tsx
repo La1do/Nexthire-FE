@@ -1,4 +1,5 @@
 import { useTranslations } from '../../i18n'
+import { LanguageSettingsForm } from './components/LanguageSettingsForm'
 import { PasswordSettingsForm } from './components/PasswordSettingsForm'
 import './candidate-settings.css'
 
@@ -11,6 +12,7 @@ export function CandidateSettingsPage() {
         <p>{translations.pageSubtitle}</p>
       </header>
 
+      <LanguageSettingsForm translations={translations.language} />
       <PasswordSettingsForm translations={translations.security} />
     </div>
   )

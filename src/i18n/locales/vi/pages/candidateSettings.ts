@@ -3,7 +3,18 @@ import type { CandidateSettingsTranslations } from '../../../types'
 export const candidateSettings: CandidateSettingsTranslations = {
   routeLabel: 'Cài đặt',
   pageTitle: 'Cài đặt tài khoản',
-  pageSubtitle: 'Cập nhật mật khẩu dùng để đăng nhập vào tài khoản ứng viên.',
+  pageSubtitle: 'Cập nhật ngôn ngữ hiển thị và mật khẩu dùng để đăng nhập vào tài khoản ứng viên.',
+  language: {
+    title: 'Ngôn ngữ hiển thị',
+    description: 'Lưu ngôn ngữ mặc định cho tài khoản ứng viên của bạn.',
+    controlLabel: 'Ngôn ngữ',
+    helper: 'Dropdown ở header chỉ đổi tạm trên thiết bị này. Bấm lưu tại đây để đồng bộ vào tài khoản.',
+    reset: 'Hoàn tác',
+    save: 'Lưu ngôn ngữ',
+    saveError: 'Chưa thể lưu ngôn ngữ. Vui lòng thử lại.',
+    saveLoading: 'Đang lưu…',
+    saveSuccess: 'Ngôn ngữ hiển thị đã được lưu.',
+  },
   security: {
     title: 'Đổi mật khẩu',
     description: 'Dùng mật khẩu riêng cho NexHire và không sử dụng lại mật khẩu cũ.',

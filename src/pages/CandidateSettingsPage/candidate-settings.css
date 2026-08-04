@@ -177,6 +177,12 @@ body {
   min-height: 1lh;
 }
 
+.candidate-settings-language-control .select-field__button {
+  background: var(--color-settings-paper);
+  border-color: var(--color-settings-rule);
+  min-height: 3rem;
+}
+
 .candidate-settings-field small.is-error {
   color: var(--color-settings-danger);
 }
@@ -205,13 +211,17 @@ body {
   align-items: center;
   border-top: 1px solid var(--color-settings-rule-subtle);
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
   justify-content: flex-end;
   padding-block-start: var(--space-md);
   width: 100%;
 }
 
 .candidate-settings-submit {
-  color: var(--color-accent-ink);
+  background: var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
   gap: var(--space-xs);
   min-height: 3rem;
   white-space: nowrap;
@@ -223,7 +233,7 @@ body {
 }
 
 .candidate-settings-submit:hover:not(:disabled) {
-  filter: none;
+  filter: brightness(1.04);
   transform: translateY(-1px);
 }
 

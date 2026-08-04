@@ -2,6 +2,7 @@ import { createContext } from 'react'
 import type { Locale, Translations } from './types'
 
 export type LocaleContextValue = {
+  hasStoredLocalePreference: boolean
   locale: Locale
   setLocale: (locale: Locale) => void
   translations: Translations

@@ -48,9 +48,14 @@ export const recruiterSettings: RecruiterSettingsTranslations = {
   },
   language: {
     title: 'Ngôn ngữ hiển thị',
-    description: 'Chọn ngôn ngữ dùng cho giao diện NexHire trên thiết bị này.',
+    description: 'Lưu ngôn ngữ mặc định cho tài khoản nhà tuyển dụng của bạn.',
     controlLabel: 'Ngôn ngữ',
-    helper: 'Thay đổi được áp dụng ngay và được ghi nhớ cho lần truy cập sau.',
+    helper: 'Dropdown ở header chỉ đổi tạm trên thiết bị này. Bấm lưu tại đây để đồng bộ vào tài khoản.',
+    reset: 'Hoàn tác',
+    save: 'Lưu ngôn ngữ',
+    saveError: 'Chưa thể lưu ngôn ngữ. Vui lòng thử lại.',
+    saveLoading: 'Đang lưu…',
+    saveSuccess: 'Ngôn ngữ hiển thị đã được lưu.',
   },
   security: {
     title: 'Đổi mật khẩu',
