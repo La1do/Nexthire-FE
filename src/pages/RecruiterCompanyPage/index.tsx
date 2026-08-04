@@ -6,6 +6,7 @@ import { useAuth } from '../../context'
 import { useTranslations } from '../../i18n'
 import { getApiErrorCode, getApiErrorEnvelope } from '../../lib/api/apiError'
 import { companyService } from '../../services/company.service'
+import { CameraIcon } from '../../assets/icons/admin'
 import type { RecruiterCompanyTranslations } from '../../i18n/types'
 import type { CompanyResponse, UpdateCompanyPayload } from '../../types/company.types'
 import { EmptyState, Loading } from '../_components'
@@ -804,37 +805,39 @@ export function RecruiterCompanyPage() {
               <div className="company-profile-preview__media-wrap">
                 <div className="company-profile-preview__media">
                   {heroImage ? <img alt="" src={heroImage} /> : <span>{content.preview.heroImageFallback}</span>}
+                  <label
+                    aria-disabled={isReadOnly}
+                    aria-label={content.preview.heroImageChangeLabel}
+                    className={`company-profile-preview__media-edit${isReadOnly ? ' is-disabled' : ''}`}
+                  >
+                    <CameraIcon aria-hidden="true" focusable="false" />
+                    <input
+                      accept="image/jpeg,image/png,image/webp"
+                      disabled={isReadOnly}
+                      type="file"
+                      onChange={handleHeroFileChange}
+                    />
+                  </label>
                 </div>
-                <label
-                  aria-disabled={isReadOnly}
-                  className={`company-profile-preview__media-edit${isReadOnly ? ' is-disabled' : ''}`}
-                >
-                  <span>{content.preview.heroImageChangeLabel}</span>
-                  <input
-                    accept="image/jpeg,image/png,image/webp"
-                    disabled={isReadOnly}
-                    type="file"
-                    onChange={handleHeroFileChange}
-                  />
-                </label>
               </div>
               <div className="company-profile-preview__identity">
                 <div className="company-profile-preview__logo-wrap">
                   <div className="company-profile-preview__logo">
                     {logo ? <img alt="" src={logo} /> : <span>{getCompanyInitials(company.name)}</span>}
+                    <label
+                      aria-disabled={isReadOnly}
+                      aria-label={content.preview.logoChangeLabel}
+                      className={`company-profile-preview__logo-edit${isReadOnly ? ' is-disabled' : ''}`}
+                    >
+                      <CameraIcon aria-hidden="true" focusable="false" />
+                      <input
+                        accept="image/jpeg,image/png,image/webp"
+                        disabled={isReadOnly}
+                        type="file"
+                        onChange={handleLogoChange}
+                      />
+                    </label>
                   </div>
-                  <label
-                    aria-disabled={isReadOnly}
-                    className={`company-profile-preview__logo-edit${isReadOnly ? ' is-disabled' : ''}`}
-                  >
-                    <span>{content.preview.logoChangeLabel}</span>
-                    <input
-                      accept="image/jpeg,image/png,image/webp"
-                      disabled={isReadOnly}
-                      type="file"
-                      onChange={handleLogoChange}
-                    />
-                  </label>
                 </div>
               </div>
             </div>
@@ -942,37 +945,39 @@ export function RecruiterCompanyPage() {
                       ) : (
                         <span>{content.review.heroImageFallback}</span>
                       )}
+                      <label
+                        aria-disabled={isReadOnly}
+                        aria-label={content.preview.heroImageChangeLabel}
+                        className={`company-review__media-edit${isReadOnly ? ' is-disabled' : ''}`}
+                      >
+                        <CameraIcon aria-hidden="true" focusable="false" />
+                        <input
+                          accept="image/jpeg,image/png,image/webp"
+                          disabled={isReadOnly}
+                          type="file"
+                          onChange={handleHeroFileChange}
+                        />
+                      </label>
                     </div>
-                    <label
-                      aria-disabled={isReadOnly}
-                      className={`company-review__media-edit${isReadOnly ? ' is-disabled' : ''}`}
-                    >
-                      <span>{content.preview.heroImageChangeLabel}</span>
-                      <input
-                        accept="image/jpeg,image/png,image/webp"
-                        disabled={isReadOnly}
-                        type="file"
-                        onChange={handleHeroFileChange}
-                      />
-                    </label>
                   </div>
                   <div className="company-review__brand">
                     <div className="company-review__logo-wrap">
                       <div className="company-review__logo">
                         {logo ? <img alt="" src={logo} /> : <span>{getCompanyInitials(company.name)}</span>}
+                        <label
+                          aria-disabled={isReadOnly}
+                          aria-label={content.preview.logoChangeLabel}
+                          className={`company-review__logo-edit${isReadOnly ? ' is-disabled' : ''}`}
+                        >
+                          <CameraIcon aria-hidden="true" focusable="false" />
+                          <input
+                            accept="image/jpeg,image/png,image/webp"
+                            disabled={isReadOnly}
+                            type="file"
+                            onChange={handleLogoChange}
+                          />
+                        </label>
                       </div>
-                      <label
-                        aria-disabled={isReadOnly}
-                        className={`company-review__logo-edit${isReadOnly ? ' is-disabled' : ''}`}
-                      >
-                        <span>{content.preview.logoChangeLabel}</span>
-                        <input
-                          accept="image/jpeg,image/png,image/webp"
-                          disabled={isReadOnly}
-                          type="file"
-                          onChange={handleLogoChange}
-                        />
-                      </label>
                     </div>
                     <div>
                       <span>{form.industry.trim() || content.preview.industryFallback}</span>
