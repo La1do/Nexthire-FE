@@ -60,6 +60,7 @@ export const adminCompanies: AdminCompaniesTranslations = {
   detail: {
     pageTitle: 'Chi tiết công ty',
     backToList: 'Quay lại danh sách',
+    viewPublicPage: 'Xem trang công ty',
     taxCodeLabel: 'Mã số thuế',
     submittedAtLabel: 'Ngày gửi',
     addressLabel: 'Địa chỉ',

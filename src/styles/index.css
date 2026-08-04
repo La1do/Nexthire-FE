@@ -6260,8 +6260,10 @@ select {
 
 .admin-sidebar__inner {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 1.25rem;
+  min-height: 0;
   width: 100%;
 }
 
@@ -7273,7 +7275,7 @@ select {
 .admin-action-menu__trigger::after { width: .5rem; height: .5rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; content: ''; transform: rotate(45deg) translate(-1px, -1px); transition: transform 180ms var(--motion-ease-standard); }
 .admin-action-menu__trigger[aria-expanded='true']::after { transform: rotate(225deg) translate(-1px, -1px); }
 .admin-action-menu__trigger:hover, .admin-action-menu__trigger:focus-visible { border-color: var(--color-brand-solid); background: var(--color-brand-soft); color: var(--color-brand-solid); }
-.admin-action-menu__popover { position: absolute; z-index: 30; top: calc(100% + .35rem); right: 0; display: grid; min-width: 10.75rem; padding: .35rem; border: 1px solid var(--color-border-subtle); border-radius: 10px; background: var(--color-surface-card); box-shadow: var(--shadow-card); }
+.admin-action-menu__popover { position: fixed; z-index: 100; display: grid; min-width: 10.75rem; padding: .35rem; border: 1px solid var(--color-border-subtle); border-radius: 10px; background: var(--color-surface-card); box-shadow: var(--shadow-card); }
 .admin-action-menu__item { display: flex; align-items: center; gap: .55rem; width: 100%; min-height: 2.2rem; padding: .45rem .55rem; border: 0; border-radius: 7px; background: transparent; color: var(--color-text-secondary); font: inherit; font-size: .8rem; font-weight: 650; text-align: left; text-decoration: none; cursor: pointer; }
 .admin-action-menu__item svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
 .admin-action-menu__item:hover:not(:disabled), .admin-action-menu__item:focus-visible { background: var(--color-surface-muted); color: var(--color-brand-solid); }
@@ -8141,6 +8143,24 @@ select {
   color: var(--color-brand-solid);
   font-weight: 600;
   overflow-wrap: anywhere;
+}
+
+.admin-company-overview__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem 1rem;
+  margin-top: .35rem;
+}
+
+.admin-company-overview__links > a {
+  color: var(--color-brand-solid);
+  font-weight: 600;
+}
+
+.admin-company-overview__links > a:first-child::after {
+  content: '↗';
+  margin-left: .3rem;
+  font-size: .8em;
 }
 
 .admin-company-overview__meta {
@@ -14534,7 +14554,7 @@ select {
 .admin-profile-popover header strong { font-size: .82rem; }
 .admin-profile-popover header span { overflow: hidden; color: var(--color-text-muted); font-size: .68rem; text-overflow: ellipsis; }
 .admin-profile-popover header em { color: var(--color-brand-solid); font-size: .62rem; font-style: normal; font-weight: 750; text-transform: uppercase; }
-.admin-profile-popover > button.is-danger { color: var(--color-text-danger); }
+.admin-profile-popover > button.is-danger { margin-top: .35rem; color: var(--color-text-danger); }
 
 /* ---------- Candidate and recruiter notifications ---------- */
 .user-notification-popover-wrap { position: relative; display: inline-flex; }
@@ -14844,7 +14864,7 @@ select {
 .admin-job-drawer__body p, .admin-job-drawer__body li { color: var(--color-text-secondary); font-size: 0.85rem; line-height: 1.65; white-space: pre-line; }
 .admin-job-drawer__body p, .admin-job-drawer__body ul { margin: 0; }
 .admin-job-drawer__skills, .admin-job-drawer__rules { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-.admin-job-drawer__skills span, .admin-job-drawer__rules code { padding: 0.3rem 0.55rem; border-radius: 7px; background: var(--color-surface-card); color: var(--color-text-secondary); font-size: 0.75rem; }
+.admin-job-drawer__skills span, .admin-job-drawer__rules span { padding: 0.3rem 0.55rem; border-radius: 7px; background: var(--color-surface-card); color: var(--color-text-secondary); font-size: 0.75rem; }
 
 @media (max-width: 1250px) {
   .admin-jobs-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }

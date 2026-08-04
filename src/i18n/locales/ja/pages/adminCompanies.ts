@@ -58,6 +58,7 @@ export const adminCompanies: AdminCompaniesTranslations = {
   detail: {
     pageTitle: '企業詳細',
     backToList: '一覧に戻る',
+    viewPublicPage: '企業ページを見る',
     taxCodeLabel: '税番号',
     submittedAtLabel: '申請日',
     addressLabel: '住所',

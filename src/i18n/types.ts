@@ -657,6 +657,7 @@ export type AdminCompaniesTranslations = {
   detail: {
     pageTitle: string
     backToList: string
+    viewPublicPage: string
     taxCodeLabel: string
     submittedAtLabel: string
     addressLabel: string
@@ -1729,6 +1730,7 @@ export type RecruiterJobsTranslations = {
     moderationDecision: string
     moderationReasons: string
     matchedRules: string
+    ruleLabels: Record<string, string>
     noModeration: string
     publicLinkUnavailable: string
   }
@@ -2299,7 +2301,7 @@ export type AdminJobsTranslations = {
   sorts: { latest: string; oldest: string; risk: string; applications: string }
   detail: {
     title: string; description: string; requirements: string; benefits: string; skills: string
-    moderation: string; reasons: string; rules: string; changeSummary: string; noData: string; close: string
+    moderation: string; reasons: string; rules: string; reasonLabels: Record<string, string>; ruleLabels: Record<string, string>; changeSummary: string; noData: string; close: string
   }
   actions: {
     view: string; approve: string; reject: string; unpublish: string; republish: string; close: string

@@ -1,4 +1,5 @@
 import type { RecruiterJobsTranslations } from '../../../types'
+import { adminJobs } from './adminJobs'
 
 export const recruiterJobs: RecruiterJobsTranslations = {
   routeLabel: 'Quản lý tin tuyển dụng',
@@ -108,6 +109,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     moderationDecision: 'Gợi ý kiểm duyệt',
     moderationReasons: 'Lý do kiểm duyệt',
     matchedRules: 'Rule khớp',
+    ruleLabels: { LOW_DESCRIPTION_LENGTH: 'Mô tả công việc quá ngắn', MISSING_OR_WEAK_REQUIREMENTS: 'Yêu cầu tuyển dụng bị thiếu hoặc chưa rõ ràng', CLIENT_SITE_SCOPE: 'Tin tuyển dụng chỉ áp dụng cho ứng viên tại khu vực của khách hàng', MULTI_LEVEL_PATTERN: 'Nội dung có dấu hiệu mô hình đa cấp', MISSING_COMPENSATION: 'Thiếu thông tin lương hoặc đãi ngộ' },
     noModeration: 'Chưa có dữ liệu kiểm duyệt.',
     publicLinkUnavailable: 'Link public chỉ mở khi tin đã được đăng.',
   },
@@ -122,3 +124,5 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     deadlineSoonAria: 'Hạn nộp hồ sơ sắp đến',
   },
 }
+
+Object.assign(recruiterJobs.detail.ruleLabels, adminJobs.detail.ruleLabels)

@@ -11,6 +11,14 @@ function renderTextSection(title: string, value: string | null | undefined, empt
   return <section><h3>{title}</h3><p>{value || emptyLabel}</p></section>
 }
 
+function getRuleLabel(rule: string, labels: Record<string, string>) {
+  return labels[rule] ?? rule.replaceAll('_', ' ')
+}
+
+function getReasonLabel(reason: string, labels: Record<string, string>) {
+  return labels[reason] ?? reason
+}
+
 export function AdminJobDetailDrawer({ content, item, onClose }: Props) {
   useEffect(() => {
     if (!item) return
@@ -32,7 +40,7 @@ export function AdminJobDetailDrawer({ content, item, onClose }: Props) {
           {renderTextSection(content.detail.requirements, item.requirements, content.detail.noData)}
           {renderTextSection(content.detail.benefits, item.benefits, content.detail.noData)}
           <section><h3>{content.detail.skills}</h3><div className="admin-job-drawer__skills">{item.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></section>
-          <section className="admin-job-moderation"><h3>{content.detail.moderation}</h3><strong>{item.moderation.riskScore ?? 0}/100 · {content.risks[riskKey]}</strong><h4>{content.detail.reasons}</h4>{item.moderation.reasons.length ? <ul>{item.moderation.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul> : <p>{content.detail.noData}</p>}<h4>{content.detail.rules}</h4>{item.moderation.matchedRules.length ? <div className="admin-job-drawer__rules">{item.moderation.matchedRules.map((rule) => <code key={rule}>{rule}</code>)}</div> : <p>{content.detail.noData}</p>}</section>
+          <section className="admin-job-moderation"><h3>{content.detail.moderation}</h3><strong>{item.moderation.riskScore ?? 0}/100 · {content.risks[riskKey]}</strong><h4>{content.detail.reasons}</h4>{item.moderation.reasons.length ? <ul>{item.moderation.reasons.map((reason) => <li key={reason}>{getReasonLabel(reason, content.detail.reasonLabels)}</li>)}</ul> : <p>{content.detail.noData}</p>}<h4>{content.detail.rules}</h4>{item.moderation.matchedRules.length ? <div className="admin-job-drawer__rules">{item.moderation.matchedRules.map((rule) => <span key={rule}>{getRuleLabel(rule, content.detail.ruleLabels)}</span>)}</div> : <p>{content.detail.noData}</p>}</section>
         </div>
       </aside>
     </div>

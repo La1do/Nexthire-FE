@@ -20,6 +20,10 @@ import {
   formatRecruiterJobSalary,
 } from './utils/recruiterJobsData'
 
+function getModerationRuleLabel(rule: string, labels: Record<string, string>) {
+  return labels[rule] ?? rule.replaceAll('_', ' ')
+}
+
 type JobActionResult =
   | {
       job: RecruiterJobResponse
@@ -480,7 +484,7 @@ export function RecruiterJobDetailPage() {
             <h3>{content.detail.matchedRules}</h3>
             <ul>
               {job.moderation.matchedRules.map((rule) => (
-                <li key={rule}>{rule}</li>
+                <li key={rule}>{getModerationRuleLabel(rule, content.detail.ruleLabels)}</li>
               ))}
             </ul>
           </div>
