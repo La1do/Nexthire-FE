@@ -153,6 +153,23 @@ export const profile: ProfileTranslations = {
       error: '提出したCVを開けませんでした。',
       openExternal: '新しいタブでCVを開く',
     },
+    progress: {
+      label: '応募の進捗',
+      steps: {
+        CV_SUBMITTED: 'CV提出済み',
+        CV_RECEIVED: '採用担当者が受領',
+        CV_VIEWED: '採用担当者がCVを閲覧',
+        RESPONDED: '結果連絡済み',
+      },
+      descriptions: {
+        CV_SUBMITTED: '応募は正常に送信されました。',
+        CV_RECEIVED: 'CVは採用担当者の応募一覧に届いています。',
+        CV_VIEWED: '採用担当者が提出済みCVを開きました。',
+        RESPONDED: '採用担当者が応募結果を更新しました。',
+      },
+      cancelledTitle: '応募はキャンセルされました',
+      cancelledDescription: '求人またはシステム状態により、この応募の進捗は停止しました。',
+    },
     states: {
       loading: '応募一覧を読み込んでいます...',
       errorTitle: '応募一覧を読み込めません',

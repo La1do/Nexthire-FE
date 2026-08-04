@@ -153,6 +153,23 @@ export const profile: ProfileTranslations = {
       error: 'Submitted CV could not be opened.',
       openExternal: 'Open CV in new tab',
     },
+    progress: {
+      label: 'Application progress',
+      steps: {
+        CV_SUBMITTED: 'CV submitted',
+        CV_RECEIVED: 'Recruiter received it',
+        CV_VIEWED: 'Recruiter viewed CV',
+        RESPONDED: 'Recruiter responded',
+      },
+      descriptions: {
+        CV_SUBMITTED: 'Your application was submitted successfully.',
+        CV_RECEIVED: 'Your CV is now in the recruiter inbox.',
+        CV_VIEWED: 'The recruiter has opened your submitted CV.',
+        RESPONDED: 'The recruiter updated the application result.',
+      },
+      cancelledTitle: 'Application cancelled',
+      cancelledDescription: 'This application progress stopped because the role or system lifecycle is no longer available.',
+    },
     states: {
       loading: 'Loading applications...',
       errorTitle: 'Applications could not be loaded',

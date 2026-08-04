@@ -3,6 +3,7 @@ import type { ProfileTranslations } from '../../../i18n/types'
 import type { ApplicationCvDownloadResponse } from '../../../types/application.types'
 import type { CandidateApplication } from '../types'
 import { ApplicationCvModal } from './ApplicationCvModal'
+import { ApplicationProgressTimeline } from './ApplicationProgressTimeline'
 
 type ApplicationCardProps = {
   actions: ProfileTranslations['applications']['actions']
@@ -11,6 +12,7 @@ type ApplicationCardProps = {
   formatDate: (value: string) => string
   meta: ProfileTranslations['applications']['meta']
   onLoadCv: (applicationId: string) => Promise<ApplicationCvDownloadResponse>
+  progressLabels: ProfileTranslations['applications']['progress']
   statusLabels: ProfileTranslations['applications']['statusLabels']
 }
 
@@ -21,6 +23,7 @@ export function ApplicationCard({
   formatDate,
   meta,
   onLoadCv,
+  progressLabels,
   statusLabels,
 }: ApplicationCardProps) {
   const [isCvOpen, setCvOpen] = useState(false)
@@ -89,6 +92,12 @@ export function ApplicationCard({
             <summary>{meta.coverLetter}</summary>
             <p>{application.coverLetter}</p>
           </details>
+
+          <ApplicationProgressTimeline
+            application={application}
+            formatDate={formatDate}
+            labels={progressLabels}
+          />
         </div>
 
         <div className="profile-application-card-side">

@@ -902,6 +902,8 @@ export type ProfileApplicationStatus =
   | 'WITHDRAWN'
   | 'CANCELLED'
 
+export type ApplicationProgressDisplayStep = 'CV_SUBMITTED' | 'CV_RECEIVED' | 'CV_VIEWED' | 'RESPONDED'
+
 export type CandidateManagedJobsTab = 'all' | 'saved' | 'applied' | 'active' | 'closed'
 export type CandidateManagedJobsSort = 'newest' | 'deadline' | 'salary'
 export type CandidateManagedJobsStatus =
@@ -1063,6 +1065,13 @@ export type ProfileTranslations = {
       loading: string
       error: string
       openExternal: string
+    }
+    progress: {
+      label: string
+      steps: Record<ApplicationProgressDisplayStep, string>
+      descriptions: Record<ApplicationProgressDisplayStep, string>
+      cancelledTitle: string
+      cancelledDescription: string
     }
     states: {
       loading: string
@@ -1805,13 +1814,57 @@ export type RecruiterApplicationsTranslations = {
     actionEmail: string
     actionDownload: string
   }
+  meta: {
+    cvFile: string
+    noCoverLetter: string
+    notAvailable: string
+  }
+  states: {
+    cvError: string
+    detailError: string
+    errorDescription: string
+    errorTitle: string
+    loading: string
+    retry: string
+    statusError: string
+    statusSuccess: string
+  }
+  match: {
+    title: string
+    description: string
+    processing: string
+    cvFailed: string
+    notScored: string
+    scored: string
+    emptySummary: string
+    runAction: string
+    refreshAction: string
+    retryAction: string
+    processingAction: string
+    started: string
+    error: string
+    timeout: string
+    cvParseStatusLabel: string
+    levels: Record<'LOW' | 'MEDIUM' | 'HIGH' | 'EXCELLENT', string>
+    cvParseStatus: Record<'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED', string>
+    recommendationLabel: string
+    decisionLabel: string
+    priorityLabel: string
+    recommendations: Record<'GOOD_FIT' | 'PARTIAL_FIT' | 'LOW_FIT' | 'INSUFFICIENT_DATA', string>
+    decisions: Record<'SHORTLIST' | 'REVIEW_MANUALLY' | 'REJECT' | 'INSUFFICIENT_DATA', string>
+    priorities: Record<'LOW' | 'MEDIUM' | 'HIGH', string>
+    matchedSkills: string
+    missingSkills: string
+    nextActions: string
+    riskFlags: string
+    emptyList: string
+  }
   statusLabels: {
-    new: string
-    screening: string
-    interview: string
-    offer: string
-    hired: string
-    rejected: string
+    SUBMITTED: string
+    OFFERED: string
+    REJECTED: string
+    WITHDRAWN: string
+    CANCELLED: string
   }
   drawer: {
     title: string
@@ -1831,6 +1884,8 @@ export type RecruiterApplicationsTranslations = {
     resumeAction: string
     emailAction: string
     portfolioAction: string
+    offerAction: string
+    rejectAction: string
     appliedJobLabel: string
     submittedLabel: string
     updatedLabel: string

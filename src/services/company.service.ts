@@ -33,6 +33,12 @@ export const companyService = {
     const response = await apiClient.patch<Envelope<CompanyResponse>>(`/companies/${id}/logo`, formData)
     return response.data.data
   },
+  async uploadHeroImage(id: string, file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await apiClient.patch<Envelope<CompanyResponse>>(`/companies/${id}/hero-image`, formData)
+    return response.data.data
+  },
   async listVerificationDocuments(id: string) {
     const response = await apiClient.get<Envelope<CompanyVerificationDocument[]>>(
       `/companies/${id}/verification-documents`,

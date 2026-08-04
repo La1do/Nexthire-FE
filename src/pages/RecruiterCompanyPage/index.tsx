@@ -251,6 +251,9 @@ export function RecruiterCompanyPage() {
   const [logoError, setLogoError] = useState<string>()
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState('')
+  const [heroFileError, setHeroFileError] = useState<string>()
+  const [heroFile, setHeroFile] = useState<File | null>(null)
+  const [heroFilePreview, setHeroFilePreview] = useState('')
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string>()
   const [saveError, setSaveError] = useState<string>()
@@ -270,6 +273,8 @@ export function RecruiterCompanyPage() {
       setErrors({})
       setLogoError(undefined)
       setLogoFile(null)
+      setHeroFile(null)
+      setHeroFileError(undefined)
       setSaveError(undefined)
       setSaveSuccess(undefined)
     } catch (error) {
@@ -277,6 +282,8 @@ export function RecruiterCompanyPage() {
         setCompany(null)
         setLogoError(undefined)
         setLogoFile(null)
+        setHeroFile(null)
+        setHeroFileError(undefined)
         return
       }
       setLoadError(getApiErrorEnvelope(error)?.error.message ?? content.states.errorDescription)
@@ -301,6 +308,11 @@ export function RecruiterCompanyPage() {
   }, [company, logoFile])
 
   useEffect(() => {
+    if (heroFile) return
+    setHeroFilePreview(company?.heroImageUrl ?? '')
+  }, [company?.heroImageUrl, heroFile])
+
+  useEffect(() => {
     if (!isReviewOpen) return undefined
 
     const activeElement = document.activeElement instanceof HTMLElement ? document.activeElement : null
@@ -322,8 +334,9 @@ export function RecruiterCompanyPage() {
   const savedPayload = useMemo(() => formToPayload(companyToForm(company)), [company])
   const isDirty = company ? !isSamePayload(currentPayload, savedPayload) : false
   const isReadOnly = company?.status === 'SUSPENDED'
-  const hasUnsavedChanges = isDirty || Boolean(logoFile)
+  const hasUnsavedChanges = isDirty || Boolean(logoFile) || Boolean(heroFile)
   const logo = logoPreview || (company ? getCompanyLogo(company) : '')
+  const heroImage = heroFilePreview || form.heroImageUrl.trim() || company?.heroImageUrl || ''
   const values = listFromText(form.valuesText)
   const perks = listFromText(form.perksText)
   const reviewContactFacts = [
@@ -391,11 +404,36 @@ export function RecruiterCompanyPage() {
     event.currentTarget.value = ''
   }
 
+  function handleHeroFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0]
+    if (!file) {
+      setHeroFile(null)
+      setHeroFileError(undefined)
+      return
+    }
+    if (!LOGO_TYPES.has(file.type)) {
+      setHeroFileError(content.form.heroImageInvalidType)
+      event.currentTarget.value = ''
+      return
+    }
+    if (file.size > LOGO_MAX_SIZE) {
+      setHeroFileError(content.form.heroImageTooLarge)
+      event.currentTarget.value = ''
+      return
+    }
+    const objectUrl = URL.createObjectURL(file)
+    setHeroFile(file)
+    setHeroFilePreview(objectUrl)
+    setHeroFileError(undefined)
+    event.currentTarget.value = ''
+  }
   function resetForm() {
     setForm(companyToForm(company))
     setErrors({})
     setLogoError(undefined)
     setLogoFile(null)
+    setHeroFile(null)
+    setHeroFileError(undefined)
     setSaveError(undefined)
     setSaveSuccess(undefined)
   }
@@ -406,12 +444,13 @@ export function RecruiterCompanyPage() {
 
     const nextErrors = validateForm(form, content.form.validation)
     const selectedLogoFile = logoFile
+    const selectedHeroFile = heroFile
     setErrors(nextErrors)
     setSaveError(undefined)
     setSaveSuccess(undefined)
 
     if (Object.keys(nextErrors).length > 0) return
-    if (!isDirty && !selectedLogoFile) {
+    if (!isDirty && !selectedLogoFile && !selectedHeroFile) {
       setSaveSuccess(content.form.noChanges)
       return
     }
@@ -433,7 +472,15 @@ export function RecruiterCompanyPage() {
         setLogoError(undefined)
       }
 
-      if (isDirty || selectedLogoFile) {
+      if (selectedHeroFile) {
+        updatedCompany = await companyService.uploadHeroImage(updatedCompany.id, selectedHeroFile)
+        setCompany(updatedCompany)
+        setForm(companyToForm(updatedCompany))
+        setHeroFile(null)
+        setHeroFileError(undefined)
+      }
+
+      if (isDirty || selectedLogoFile || selectedHeroFile) {
         void refreshUser()
       }
 
@@ -675,16 +722,25 @@ export function RecruiterCompanyPage() {
                   </small>
                 </div>
               </div>
-              <ProfileField
-                disabled={isReadOnly}
-                error={errors.heroImageUrl}
-                helper={content.form.heroImageUrlHint}
-                id="heroImageUrl"
-                label={content.form.heroImageUrlLabel}
-                onChange={updateForm}
-                placeholder={content.form.heroImageUrlPlaceholder}
-                value={form.heroImageUrl}
-              />
+              <div className={`recruiter-company-hero-field${heroFileError ? ' has-error' : ''}`}>
+                <div className="recruiter-company-hero-field__preview" aria-hidden="true">
+                  {heroImage ? <img alt="" src={heroImage} /> : <span>{content.preview.heroImageFallback}</span>}
+                </div>
+                <div className="recruiter-company-hero-field__copy">
+                  <strong>{content.form.heroImageTitle}</strong>
+                  <p>{content.form.heroImageDescription}</p>
+                  <div className="recruiter-company-hero-field__actions">
+                    <label aria-disabled={isReadOnly} className={`recruiter-company-file-action${isReadOnly ? ' is-disabled' : ''}`}>
+                      <span>{heroImage ? content.form.heroImageReplace : content.form.heroImageUpload}</span>
+                      <input accept="image/jpeg,image/png,image/webp" aria-describedby="company-hero-helper" aria-invalid={heroFileError ? true : undefined} disabled={isReadOnly} type="file" onChange={handleHeroFileChange} />
+                    </label>
+                    {heroFile ? <small>{content.form.heroImageSelected}</small> : null}
+                  </div>
+                  <small className={heroFileError ? 'is-error' : undefined} id="company-hero-helper" role={heroFileError ? 'alert' : undefined}>
+                    {heroFileError ?? content.form.heroImageHint}
+                  </small>
+                </div>
+              </div>
               <ProfileField
                 disabled={isReadOnly}
                 error={errors.website}
@@ -745,7 +801,7 @@ export function RecruiterCompanyPage() {
 
           <div className="company-profile-preview">
             <div className="company-profile-preview__media">
-              {form.heroImageUrl.trim() ? <img alt="" src={form.heroImageUrl.trim()} /> : <span>{content.preview.heroImageFallback}</span>}
+              {heroImage ? <img alt="" src={heroImage} /> : <span>{content.preview.heroImageFallback}</span>}
             </div>
             <div className="company-profile-preview__hero">
               <div className="company-profile-preview__logo">

@@ -114,6 +114,7 @@ export function ProfileApplicationsPage() {
             formatDate={formatDate}
             meta={content.meta}
             onLoadCv={applicationService.getMyApplicationCv}
+            progressLabels={content.progress}
             statusLabels={content.statusLabels}
           />
         ) : (

@@ -153,6 +153,23 @@ export const profile: ProfileTranslations = {
       error: 'Chưa mở được CV đã nộp.',
       openExternal: 'Mở CV trong tab mới',
     },
+    progress: {
+      label: 'Tiến trình ứng tuyển',
+      steps: {
+        CV_SUBMITTED: 'Đã nộp CV',
+        CV_RECEIVED: 'Nhà tuyển dụng đã tiếp nhận',
+        CV_VIEWED: 'Nhà tuyển dụng đã xem CV',
+        RESPONDED: 'Đã phản hồi',
+      },
+      descriptions: {
+        CV_SUBMITTED: 'Hồ sơ ứng tuyển đã được gửi thành công.',
+        CV_RECEIVED: 'Hồ sơ đã vào hộp đơn của nhà tuyển dụng.',
+        CV_VIEWED: 'Nhà tuyển dụng đã mở CV của bạn.',
+        RESPONDED: 'Nhà tuyển dụng đã cập nhật kết quả ứng tuyển.',
+      },
+      cancelledTitle: 'Đơn đã bị hủy',
+      cancelledDescription: 'Tiến trình ứng tuyển đã dừng do vị trí hoặc hệ thống không còn khả dụng.',
+    },
     states: {
       loading: 'Đang tải đơn ứng tuyển...',
       errorTitle: 'Chưa tải được đơn ứng tuyển',

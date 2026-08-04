@@ -46,7 +46,10 @@ export function filterRecruiterApplications(
       application.candidateHeadline,
       application.candidateLocation,
       application.candidateName,
+      application.cvFileName,
       application.jobTitle,
+      ...application.matchMatchedSkills,
+      ...application.matchMissingSkills,
       ...application.skills,
     ].join(' ').toLowerCase()
 
@@ -55,11 +58,11 @@ export function filterRecruiterApplications(
 
   return filtered.sort((first, second) => {
     if (criteria.sort === 'score-desc') {
-      return second.score - first.score
+      return (second.matchScore ?? -1) - (first.matchScore ?? -1)
     }
 
     if (criteria.sort === 'score-asc') {
-      return first.score - second.score
+      return (first.matchScore ?? 101) - (second.matchScore ?? 101)
     }
 
     return second.submittedAtOrder - first.submittedAtOrder

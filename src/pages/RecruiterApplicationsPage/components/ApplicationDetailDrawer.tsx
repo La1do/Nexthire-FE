@@ -1,26 +1,24 @@
 import { useEffect, useRef } from 'react'
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
-import { SelectField } from '../../_components'
 import type { RecruiterApplicationItem, RecruiterApplicationStatus } from '../types'
+import { AiMatchBadge } from './AiMatchBadge'
+
+type RecruiterDecisionStatus = Extract<RecruiterApplicationStatus, 'OFFERED' | 'REJECTED'>
 
 type ApplicationDetailDrawerProps = {
   application: RecruiterApplicationItem
+  isMatching: boolean
+  isStatusUpdating: boolean
+  matchLabels: RecruiterApplicationsTranslations['match']
+  meta: RecruiterApplicationsTranslations['meta']
   onClose: () => void
   onEmail: (application: RecruiterApplicationItem) => void
   onOpenResume: (application: RecruiterApplicationItem) => void
-  onStatusChange: (applicationId: string, status: RecruiterApplicationStatus) => void
+  onRunMatch: (application: RecruiterApplicationItem) => void
+  onStatusChange: (applicationId: string, status: RecruiterDecisionStatus) => void
   statusLabels: RecruiterApplicationsTranslations['statusLabels']
   translations: RecruiterApplicationsTranslations['drawer']
 }
-
-const statusOrder: ReadonlyArray<RecruiterApplicationStatus> = [
-  'new',
-  'screening',
-  'interview',
-  'offer',
-  'hired',
-  'rejected',
-]
 
 function ExternalLinkIcon() {
   return (
@@ -48,16 +46,59 @@ function getInitials(name: string) {
   return `${first}${last}`.toUpperCase() || '?'
 }
 
+function getMatchActionLabel(
+  application: RecruiterApplicationItem,
+  isMatching: boolean,
+  labels: RecruiterApplicationsTranslations['match'],
+) {
+  if (isMatching || application.cvParseStatus === 'PARSING') {
+    return labels.processingAction
+  }
+
+  if (application.cvParseStatus === 'FAILED') {
+    return labels.retryAction
+  }
+
+  if (application.matchScore !== null) {
+    return labels.refreshAction
+  }
+
+  return labels.runAction
+}
+
+function renderStringList(title: string, items: ReadonlyArray<string>, emptyLabel: string, className?: string) {
+  return (
+    <div className={className}>
+      <h4>{title}</h4>
+      {items.length > 0 ? (
+        <ul>
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="recruiter-ai-match-empty">{emptyLabel}</p>
+      )}
+    </div>
+  )
+}
+
 export function ApplicationDetailDrawer({
   application,
+  isMatching,
+  isStatusUpdating,
+  matchLabels,
+  meta,
   onClose,
   onEmail,
   onOpenResume,
+  onRunMatch,
   onStatusChange,
   statusLabels,
   translations,
 }: ApplicationDetailDrawerProps) {
   const drawerRef = useRef<HTMLElement | null>(null)
+  const isMatchActionDisabled = isMatching || application.cvParseStatus === 'PARSING'
 
   useEffect(() => {
     const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
@@ -75,10 +116,6 @@ export function ApplicationDetailDrawer({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
 
-  function handleStatusChange(value: string) {
-    onStatusChange(application.id, value as RecruiterApplicationStatus)
-  }
-
   return (
     <div className="recruiter-application-detail-backdrop" onMouseDown={onClose} role="presentation">
       <aside
@@ -95,12 +132,7 @@ export function ApplicationDetailDrawer({
             <h2>{application.candidateName}</h2>
             <p>{application.candidateHeadline}</p>
           </div>
-          <button
-            aria-label={translations.close}
-            className="recruiter-application-detail-drawer__close"
-            onClick={onClose}
-            type="button"
-          >
+          <button aria-label={translations.close} className="recruiter-application-detail-drawer__close" onClick={onClose} type="button">
             x
           </button>
         </header>
@@ -137,18 +169,21 @@ export function ApplicationDetailDrawer({
           <section className="recruiter-application-detail-card">
             <div className="recruiter-application-detail-card__heading">
               <h3>{translations.applicationTitle}</h3>
-              <span className="recruiter-applications-score">{application.score}%</span>
+              <AiMatchBadge application={application} labels={matchLabels} />
             </div>
-            <SelectField
-              className="recruiter-application-status-select"
-              label={translations.statusLabel}
-              onChange={handleStatusChange}
-              options={statusOrder.map((status) => ({
-                label: statusLabels[status],
-                value: status,
-              }))}
-              value={application.status}
-            />
+
+            <div className="recruiter-application-status-actions" aria-label={translations.statusLabel}>
+              <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
+                {statusLabels[application.status]}
+              </span>
+              <button disabled={isStatusUpdating || application.status === 'OFFERED'} onClick={() => onStatusChange(application.id, 'OFFERED')} type="button">
+                {translations.offerAction}
+              </button>
+              <button disabled={isStatusUpdating || application.status === 'REJECTED'} onClick={() => onStatusChange(application.id, 'REJECTED')} type="button">
+                {translations.rejectAction}
+              </button>
+            </div>
+
             <dl className="recruiter-application-detail-list">
               <div>
                 <dt>{translations.appliedJobLabel}</dt>
@@ -164,9 +199,54 @@ export function ApplicationDetailDrawer({
               </div>
               <div>
                 <dt>{translations.scoreLabel}</dt>
-                <dd>{application.score}%</dd>
+                <dd>{application.matchScore === null ? matchLabels.notScored : `${application.matchScore}%`}</dd>
+              </div>
+              <div>
+                <dt>{matchLabels.cvParseStatusLabel}</dt>
+                <dd>{matchLabels.cvParseStatus[application.cvParseStatus]}</dd>
               </div>
             </dl>
+          </section>
+
+          <section className="recruiter-application-detail-card recruiter-ai-match-panel">
+            <div className="recruiter-ai-match-panel__header">
+              <div>
+                <h3>{matchLabels.title}</h3>
+                <p>{matchLabels.description}</p>
+              </div>
+              <button disabled={isMatchActionDisabled} onClick={() => onRunMatch(application)} type="button">
+                {getMatchActionLabel(application, isMatching, matchLabels)}
+              </button>
+            </div>
+
+            <div className="recruiter-ai-match-summary">
+              <AiMatchBadge application={application} labels={matchLabels} />
+              <p>{application.matchSummary ?? matchLabels.emptySummary}</p>
+            </div>
+
+            <dl className="recruiter-ai-match-grid">
+              <div>
+                <dt>{matchLabels.recommendationLabel}</dt>
+                <dd>{application.matchRecommendation ? matchLabels.recommendations[application.matchRecommendation] : meta.notAvailable}</dd>
+              </div>
+              <div>
+                <dt>{matchLabels.decisionLabel}</dt>
+                <dd>{application.matchDecision ? matchLabels.decisions[application.matchDecision] : meta.notAvailable}</dd>
+              </div>
+              <div>
+                <dt>{matchLabels.priorityLabel}</dt>
+                <dd>{application.matchPriority ? matchLabels.priorities[application.matchPriority] : meta.notAvailable}</dd>
+              </div>
+            </dl>
+
+            <div className="recruiter-ai-match-lists">
+              {renderStringList(matchLabels.matchedSkills, application.matchMatchedSkills, matchLabels.emptyList)}
+              {renderStringList(matchLabels.missingSkills, application.matchMissingSkills, matchLabels.emptyList, 'recruiter-ai-match-list--missing')}
+              {renderStringList(matchLabels.nextActions, application.matchNextActions, matchLabels.emptyList)}
+              {application.matchRiskFlags.length > 0
+                ? renderStringList(matchLabels.riskFlags, application.matchRiskFlags, matchLabels.emptyList, 'recruiter-ai-match-list--risk')
+                : null}
+            </div>
           </section>
 
           <section className="recruiter-application-detail-card">
@@ -192,15 +272,21 @@ export function ApplicationDetailDrawer({
                 <dt>{translations.expectedSalaryLabel}</dt>
                 <dd>{application.expectedSalary}</dd>
               </div>
+              <div>
+                <dt>{meta.cvFile}</dt>
+                <dd>{application.cvFileName}</dd>
+              </div>
             </dl>
           </section>
 
           <section className="recruiter-application-detail-card">
             <h3>{translations.skillsTitle}</h3>
             <div className="recruiter-application-skill-list">
-              {application.skills.map((skill) => (
-                <span key={skill}>{skill}</span>
-              ))}
+              {application.skills.length > 0 ? (
+                application.skills.map((skill) => <span key={skill}>{skill}</span>)
+              ) : (
+                <p className="recruiter-ai-match-empty">{matchLabels.emptyList}</p>
+              )}
             </div>
           </section>
 
