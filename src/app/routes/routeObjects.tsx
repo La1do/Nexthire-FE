@@ -14,6 +14,7 @@ import { AdminUsersPage } from '../../pages/AdminUsersPage'
 import { AdminUserDetailPage } from '../../pages/AdminUserDetailPage'
 import { ComingSoonPage } from '../../pages/ComingSoonPage'
 import { CareerGuidePage } from '../../pages/CareerGuidePage'
+import { CareerGuideDetailPage } from '../../pages/CareerGuideDetailPage'
 import { CompanyDetailPage } from '../../pages/CompanyDetailPage'
 import { CvBuilderPage } from '../../pages/CvBuilderPage'
 import { CvTemplatesPage } from '../../pages/CvTemplatesPage'
@@ -128,6 +129,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/career-guide',
       label: comingSoon.pages.careerGuide.title,
       element: <CareerGuidePage />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/career-guide/:slug',
+      label: comingSoon.pages.careerGuide.title,
+      element: <CareerGuideDetailPage />,
       layout: MainLayout,
       access: publicAccess,
     },
