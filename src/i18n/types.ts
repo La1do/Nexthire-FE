@@ -354,6 +354,57 @@ export type HomeTranslations = {
   }
 }
 
+export type CompaniesSort = 'mostJobs' | 'latest' | 'name'
+
+export type CompaniesTranslations = {
+  routeLabel: string
+  hero: {
+    title: string
+    description: string
+    searchLabel: string
+    searchPlaceholder: string
+    locationLabel: string
+    locationAll: string
+    workModeLabel: string
+    workModeAll: string
+    reset: string
+  }
+  stats: {
+    companies: string
+    openRoles: string
+    remoteFriendly: string
+  }
+  sort: Record<CompaniesSort, string>
+  sections: {
+    directoryTitle: string
+    directoryDescription: string
+    latestJobsTitle: string
+    latestJobsDescription: string
+  }
+  card: {
+    verified: string
+    openRoles: string
+    latestHiring: string
+    locations: string
+    workModes: string
+    rolesPreview: string
+    noLocation: string
+    noJobs: string
+  }
+  actions: {
+    viewCompany: string
+    viewJobs: string
+    retry: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    emptyTitle: string
+    emptyDescription: string
+  }
+}
+
 export type SearchTranslations = {
   routeLabel: string
   toolbar: {
@@ -2576,6 +2627,7 @@ export type Translations = {
     adminSettings: AdminSettingsTranslations
     adminUsers: AdminUsersTranslations
     candidateCvs: CandidateCvsTranslations
+    companies: CompaniesTranslations
     comingSoon: ComingSoonTranslations
     candidateSettings: CandidateSettingsTranslations
     companyDetail: CompanyDetailTranslations
