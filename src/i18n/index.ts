@@ -8,6 +8,7 @@ import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
 import { candidateCvs as enCandidateCvs } from './locales/en/pages/candidateCvs'
 import { candidateSettings as enCandidateSettings } from './locales/en/pages/candidateSettings'
 import { comingSoon as enComingSoon } from './locales/en/pages/comingSoon'
+import { companies as enCompanies } from './locales/en/pages/companies'
 import { companyDetail as enCompanyDetail } from './locales/en/pages/companyDetail'
 import { cvTemplates as enCvTemplates } from './locales/en/pages/cvTemplates'
 import { forgotPassword as enForgotPassword } from './locales/en/pages/forgotPassword'
@@ -34,6 +35,7 @@ import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
 import { candidateCvs as jaCandidateCvs } from './locales/ja/pages/candidateCvs'
 import { candidateSettings as jaCandidateSettings } from './locales/ja/pages/candidateSettings'
 import { comingSoon as jaComingSoon } from './locales/ja/pages/comingSoon'
+import { companies as jaCompanies } from './locales/ja/pages/companies'
 import { companyDetail as jaCompanyDetail } from './locales/ja/pages/companyDetail'
 import { cvTemplates as jaCvTemplates } from './locales/ja/pages/cvTemplates'
 import { forgotPassword as jaForgotPassword } from './locales/ja/pages/forgotPassword'
@@ -60,6 +62,7 @@ import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
 import { candidateCvs as viCandidateCvs } from './locales/vi/pages/candidateCvs'
 import { candidateSettings as viCandidateSettings } from './locales/vi/pages/candidateSettings'
 import { comingSoon as viComingSoon } from './locales/vi/pages/comingSoon'
+import { companies as viCompanies } from './locales/vi/pages/companies'
 import { companyDetail as viCompanyDetail } from './locales/vi/pages/companyDetail'
 import { cvTemplates as viCvTemplates } from './locales/vi/pages/cvTemplates'
 import { forgotPassword as viForgotPassword } from './locales/vi/pages/forgotPassword'
@@ -93,6 +96,7 @@ export const translations = {
       adminUsers: enAdminUsers,
       candidateCvs: enCandidateCvs,
       candidateSettings: enCandidateSettings,
+      companies: enCompanies,
       comingSoon: enComingSoon,
       companyDetail: enCompanyDetail,
       cvTemplates: enCvTemplates,
@@ -123,6 +127,7 @@ export const translations = {
       adminUsers: viAdminUsers,
       candidateCvs: viCandidateCvs,
       candidateSettings: viCandidateSettings,
+      companies: viCompanies,
       comingSoon: viComingSoon,
       companyDetail: viCompanyDetail,
       cvTemplates: viCvTemplates,
@@ -153,6 +158,7 @@ export const translations = {
       adminUsers: jaAdminUsers,
       candidateCvs: jaCandidateCvs,
       candidateSettings: jaCandidateSettings,
+      companies: jaCompanies,
       comingSoon: jaComingSoon,
       companyDetail: jaCompanyDetail,
       cvTemplates: jaCvTemplates,
