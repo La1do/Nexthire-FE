@@ -36,9 +36,10 @@ export function CompanyHero({ company, content, followControl }: CompanyHeroProp
 
   return (
     <section className={heroClassName}>
-      <div className="company-detail-hero-cover">
-        {heroMedia}
-        <div className="company-detail-hero-logo-wrap">
+      {heroMedia}
+
+      <div className="company-detail-hero-copy">
+        <div className="company-detail-brand-row">
           <CompanyLogoMark
             alt={company.logo.alt}
             className="company-detail-hero-logo"
@@ -46,21 +47,16 @@ export function CompanyHero({ company, content, followControl }: CompanyHeroProp
             src={company.logo.src}
             tone={company.logo.tone}
           />
-        </div>
-      </div>
-
-      <div className="company-detail-hero-body">
-        <div className="company-detail-hero-copy">
-          <div className="company-detail-hero-heading">
+          <div>
             <div className="company-detail-company-line">
               <span>{company.industry}</span>
               {company.isVerified ? <small>{content.verifiedLabel}</small> : null}
             </div>
             <h1>{company.name}</h1>
           </div>
-
-          <p>{company.description}</p>
         </div>
+
+        <p>{company.description}</p>
 
         <div className="company-detail-hero-actions">
           <a href="#company-open-jobs">
