@@ -135,6 +135,10 @@ body {
   overflow-x: clip;
 }
 
+#root {
+  min-height: 100vh;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -144,6 +148,87 @@ button,
 input,
 select {
   font: inherit;
+}
+
+.root-error-boundary {
+  align-items: center;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30rem),
+    var(--color-background-app);
+  color: var(--color-text-primary);
+  display: grid;
+  min-height: 100vh;
+  padding: clamp(1rem, 4vw, 2rem);
+}
+
+.root-error-boundary__card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 1rem;
+  justify-self: center;
+  max-width: 34rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+.root-error-boundary__eyebrow {
+  color: var(--color-brand-solid);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.root-error-boundary h1,
+.root-error-boundary p {
+  margin: 0;
+}
+
+.root-error-boundary h1 {
+  font-size: clamp(1.6rem, 4vw, 2.15rem);
+  letter-spacing: -0.04em;
+}
+
+.root-error-boundary p {
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.root-error-boundary code {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  color: var(--color-text-danger);
+  font-size: 0.82rem;
+  padding: 0.75rem;
+  white-space: pre-wrap;
+}
+
+.root-error-boundary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.root-error-boundary__actions button {
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+  border: 0;
+  border-radius: 999px;
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  font-weight: 900;
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+}
+
+.root-error-boundary__actions button + button {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  box-shadow: none;
+  color: var(--color-text-primary);
 }
 
 .brand-mark {
