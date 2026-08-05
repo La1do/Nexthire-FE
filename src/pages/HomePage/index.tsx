@@ -8,6 +8,8 @@ import { HeroPanel } from './components/HeroPanel'
 import { IndustryJobs } from './components/IndustryJobs'
 import { JobSections } from './components/JobSections'
 import { NewsletterPanel } from './components/NewsletterPanel'
+import { PhotoPromoBanner } from './components/PhotoPromoBanner'
+import { PromoBanner } from './components/PromoBanner'
 import { useHomeData } from './hooks/useHomeData'
 import { useHomeReveal } from './hooks/useHomeReveal'
 import './home.css'
@@ -32,6 +34,17 @@ export function HomePage() {
     return Array.from(ids)
   }, [data.jobs.data, data.industryGroups.data])
 
+  const banners = useMemo(() => {
+    const byId = new Map(home.promoBanners.map((banner) => [banner.id, banner]))
+    return {
+      talentNetwork: byId.get('talent-network'),
+      cvTemplates: byId.get('cv-templates'),
+      salaryInsights: byId.get('salary-insights'),
+      careerGuides: byId.get('career-guides'),
+      jobAlerts: byId.get('job-alerts'),
+    }
+  }, [home.promoBanners])
+
   useSavedJobsHydrate(homeJobIds)
 
   return (
@@ -48,6 +61,8 @@ export function HomePage() {
         loading={data.companies.loading}
         states={states}
       />
+      <PromoBanner content={banners.talentNetwork} />
+      <PhotoPromoBanner content={banners.cvTemplates} />
       <div className="home-discovery-grid">
         <JobSections
           content={home.jobs}
@@ -71,7 +86,10 @@ export function HomePage() {
         loading={data.industryGroups.loading}
         states={states}
       />
+      <PromoBanner content={banners.salaryInsights} />
       <ArticleGrid content={home.articles} />
+      <PhotoPromoBanner content={banners.careerGuides} />
+      <PhotoPromoBanner content={banners.jobAlerts} />
       <NewsletterPanel content={home.newsletter} />
     </div>
   )

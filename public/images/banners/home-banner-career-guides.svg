@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1654 419" width="1654" height="419" role="img" aria-label="Career guides banner">
+  <defs>
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#0f172a" flood-opacity="0.1"/>
+    </filter>
+    <linearGradient id="left-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1654" height="419" fill="#fffaf0"/>
+  <g opacity="0.4">
+    <circle cx="150" cy="60" r="3" fill="#fbbf24"/>
+    <circle cx="200" cy="40" r="2" fill="#fbbf24"/>
+    <circle cx="100" cy="380" r="3" fill="#f59e0b"/>
+    <circle cx="450" cy="350" r="2" fill="#fbbf24"/>
+    <circle cx="600" cy="30" r="3" fill="#f59e0b"/>
+    <circle cx="700" cy="390" r="2" fill="#fbbf24"/>
+  </g>
+
+  <!-- Left: book/article card -->
+  <g transform="translate(50,40)">
+    <rect width="540" height="340" rx="16" fill="url(#left-grad)" stroke="#fbbf24" stroke-width="1"/>
+    <!-- Decorative book stack -->
+    <g transform="translate(40,80)">
+      <rect x="0" y="40" width="140" height="20" rx="3" fill="#dc2626"/>
+      <rect x="6" y="20" width="160" height="20" rx="3" fill="#3b82f6"/>
+      <rect x="12" y="0" width="170" height="20" rx="3" fill="#10b981"/>
+      <text x="180" y="14" font-size="14" font-weight="700" fill="#065f46">+ 30 bài</text>
+    </g>
+    <text x="40" y="180" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" fill="#92400e">Cẩm nang</text>
+    <text x="40" y="218" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" fill="#dc2626">nghề nghiệp</text>
+    <text x="40" y="262" font-family="Inter, Arial, sans-serif" font-size="14" fill="#78350f">Phỏng vấn · CV · đàm phán lương · thăng tiến</text>
+    <!-- Tag chips -->
+    <g transform="translate(40,282)" font-family="Inter, Arial, sans-serif" font-size="11" font-weight="700">
+      <rect x="0" y="0" width="64" height="24" rx="12" fill="#fff" stroke="#f59e0b" stroke-width="1"/>
+      <text x="32" y="16" text-anchor="middle" fill="#92400e">Interview</text>
+      <rect x="72" y="0" width="40" height="24" rx="12" fill="#fff" stroke="#f59e0b" stroke-width="1"/>
+      <text x="92" y="16" text-anchor="middle" fill="#92400e">CV</text>
+      <rect x="120" y="0" width="64" height="24" rx="12" fill="#fff" stroke="#f59e0b" stroke-width="1"/>
+      <text x="152" y="16" text-anchor="middle" fill="#92400e">Salary</text>
+      <rect x="192" y="0" width="64" height="24" rx="12" fill="#fff" stroke="#f59e0b" stroke-width="1"/>
+      <text x="224" y="16" text-anchor="middle" fill="#92400e">Growth</text>
+    </g>
+  </g>
+
+  <!-- Right: 4 article preview cards in 2x2 -->
+  <g transform="translate(620,40)" font-family="Inter, Arial, sans-serif">
+    <!-- Card 1 -->
+    <g filter="url(#card-shadow)">
+      <rect width="490" height="160" rx="10" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+      <rect width="4" height="160" rx="2" fill="#dc2626"/>
+      <g transform="translate(20,22)">
+        <rect width="56" height="20" rx="10" fill="#fef2f2"/>
+        <text x="28" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="#dc2626">INTERVIEW</text>
+      </g>
+      <text x="20" y="72" font-size="18" font-weight="700" fill="#0f172a">Cách tạo ấn tượng trong</text>
+      <text x="20" y="94" font-size="18" font-weight="700" fill="#0f172a">buổi phỏng vấn tiếp theo</text>
+      <g transform="translate(20,116)" font-size="11" fill="#64748b">
+        <text>Mai Trần · 6 phút đọc</text>
+        <text y="18">Trả lời STAR · đặt câu hỏi ngược · follow-up đúng cách</text>
+      </g>
+      <text x="450" y="142" text-anchor="end" font-size="11" font-weight="700" fill="#dc2626">Đọc tiếp →</text>
+    </g>
+
+    <!-- Card 2 -->
+    <g transform="translate(0,180)" filter="url(#card-shadow)">
+      <rect width="490" height="160" rx="10" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+      <rect width="4" height="160" rx="2" fill="#3b82f6"/>
+      <g transform="translate(20,22)">
+        <rect width="40" height="20" rx="10" fill="#dbeafe"/>
+        <text x="20" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="#1d4ed8">CV</text>
+      </g>
+      <text x="20" y="72" font-size="18" font-weight="700" fill="#0f172a">Xây dựng CV nổi bật</text>
+      <text x="20" y="94" font-size="18" font-weight="700" fill="#0f172a">trong 30 phút</text>
+      <g transform="translate(20,116)" font-size="11" fill="#64748b">
+        <text>Đức Nguyễn · 5 phút đọc</text>
+        <text y="18">Lead với kết quả · ATS-friendly · cắt gọn thông tin</text>
+      </g>
+      <text x="450" y="142" text-anchor="end" font-size="11" font-weight="700" fill="#3b82f6">Đọc tiếp →</text>
+    </g>
+
+    <!-- Card 3 -->
+    <g transform="translate(510,0)" filter="url(#card-shadow)">
+      <rect width="490" height="160" rx="10" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+      <rect width="4" height="160" rx="2" fill="#10b981"/>
+      <g transform="translate(20,22)">
+        <rect width="60" height="20" rx="10" fill="#d1fae5"/>
+        <text x="30" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="#047857">GROWTH</text>
+      </g>
+      <text x="20" y="72" font-size="18" font-weight="700" fill="#0f172a">Chiến lược phát triển</text>
+      <text x="20" y="94" font-size="18" font-weight="700" fill="#0f172a">sự nghiệp bền vững</text>
+      <g transform="translate(20,116)" font-size="11" fill="#64748b">
+        <text>Linh Phạm · 7 phút đọc</text>
+        <text y="18">Khi nào nên chuyển việc · đàm phán bằng số liệu</text>
+      </g>
+      <text x="450" y="142" text-anchor="end" font-size="11" font-weight="700" fill="#10b981">Đọc tiếp →</text>
+    </g>
+
+    <!-- Card 4 -->
+    <g transform="translate(510,180)" filter="url(#card-shadow)">
+      <rect width="490" height="160" rx="10" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+      <rect width="4" height="160" rx="2" fill="#f59e0b"/>
+      <g transform="translate(20,22)">
+        <rect width="68" height="20" rx="10" fill="#fef3c7"/>
+        <text x="34" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="#b45309">REMOTE</text>
+      </g>
+      <text x="20" y="72" font-size="18" font-weight="700" fill="#0f172a">Làm việc từ xa hiệu quả</text>
+      <text x="20" y="94" font-size="18" font-weight="700" fill="#0f172a">ở khu vực ASEAN</text>
+      <g transform="translate(20,116)" font-size="11" fill="#64748b">
+        <text>Hà Vy · 8 phút đọc</text>
+        <text y="18">Async-first · tránh burnout · build routine mạnh</text>
+      </g>
+      <text x="450" y="142" text-anchor="end" font-size="11" font-weight="700" fill="#f59e0b">Đọc tiếp →</text>
+    </g>
+  </g>
+</svg>
