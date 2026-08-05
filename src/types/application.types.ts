@@ -33,6 +33,7 @@ export type CreateApplicationPayload = {
   jobId: string
   candidateCvId: string
   coverLetter?: string | null
+  parse?: boolean
 }
 
 export type ApplicationResponse = {

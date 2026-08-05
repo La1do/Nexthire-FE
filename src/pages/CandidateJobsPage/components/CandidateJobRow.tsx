@@ -8,17 +8,11 @@ type CandidateJobRowProps = {
   content: ProfileTranslations['managedJobs']
   formatDate: (value: string | null | undefined) => string
   isRemovingSavedJob: boolean
-  isWithdrawingApplication: boolean
   job: CandidateManagedJob
   onRemoveSavedJob: (jobId: string) => Promise<void>
-  onWithdrawApplication: (job: CandidateManagedJob) => Promise<void>
 }
 
 const unavailableStatuses = new Set(['UNPUBLISHED', 'CLOSED', 'EXPIRED', 'REJECTED'])
-
-function canWithdrawApplication(job: CandidateManagedJob) {
-  return job.applicationStatus === 'SUBMITTED' || job.applicationStatus === 'OFFERED'
-}
 
 function canApplyToJob(job: CandidateManagedJob) {
   return !job.isApplied && !unavailableStatuses.has(job.jobStatus ?? '')
@@ -56,10 +50,8 @@ export function CandidateJobRow({
   content,
   formatDate,
   isRemovingSavedJob,
-  isWithdrawingApplication,
   job,
   onRemoveSavedJob,
-  onWithdrawApplication,
 }: CandidateJobRowProps) {
   const companyHref = job.companyId ? createCompanyDetailHrefById(job.companyId) : undefined
   const statusBadges = getStatusBadges(job, content)
@@ -67,7 +59,6 @@ export function CandidateJobRow({
   const savedAtLabel = job.savedAt ? formatDate(job.savedAt) : content.meta.notAvailable
   const appliedAtLabel = job.appliedAt ? formatDate(job.appliedAt) : content.meta.notAvailable
   const shouldShowApply = canApplyToJob(job)
-  const shouldShowWithdraw = canWithdrawApplication(job)
 
   return (
     <article className="candidate-job-row">
@@ -154,16 +145,6 @@ export function CandidateJobRow({
             type="button"
           >
             {isRemovingSavedJob ? content.actions.removingSaved : content.actions.removeSaved}
-          </button>
-        ) : null}
-        {shouldShowWithdraw ? (
-          <button
-            className="candidate-job-action-ghost is-danger"
-            disabled={isWithdrawingApplication}
-            onClick={() => void onWithdrawApplication(job)}
-            type="button"
-          >
-            {isWithdrawingApplication ? content.actions.withdrawing : content.actions.withdraw}
           </button>
         ) : null}
       </div>

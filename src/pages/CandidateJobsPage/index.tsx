@@ -12,7 +12,7 @@ import {
   sortCandidateManagedJobs,
   useCandidateManagedJobs,
 } from './hooks/useCandidateManagedJobs'
-import type { CandidateManagedJob, CandidateManagedJobFilter, CandidateManagedJobSort } from './types'
+import type { CandidateManagedJobFilter, CandidateManagedJobSort } from './types'
 import './candidate-jobs.css'
 
 export function CandidateJobsPage() {
@@ -56,13 +56,6 @@ export function CandidateJobsPage() {
     const didRemove = await state.removeSavedJob(jobId, content.states.removeSavedError)
     toast[didRemove ? 'success' : 'error'](
       didRemove ? common.savedJobs.removeSuccess : content.states.removeSavedError,
-    )
-  }
-
-  async function withdrawApplication(job: CandidateManagedJob) {
-    const didWithdraw = await state.withdrawApplication(job, content.states.withdrawError)
-    toast[didWithdraw ? 'success' : 'error'](
-      didWithdraw ? content.states.withdrawSuccess : content.states.withdrawError,
     )
   }
 
@@ -123,11 +116,9 @@ export function CandidateJobsPage() {
                 content={content}
                 formatDate={formatDateLabel}
                 isRemovingSavedJob={state.removingSavedJobId === job.jobId}
-                isWithdrawingApplication={state.withdrawingApplicationId === job.applicationId}
                 job={job}
                 key={job.jobId}
                 onRemoveSavedJob={removeSavedJob}
-                onWithdrawApplication={withdrawApplication}
               />
             ))}
           </div>

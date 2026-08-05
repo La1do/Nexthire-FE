@@ -314,6 +314,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
         jobId: job.id,
         candidateCvId: selectedCvId,
         coverLetter: coverLetter.trim() || null,
+        parse: false,
       })
 
       setSubmittedApplication(application)

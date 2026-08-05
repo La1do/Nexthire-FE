@@ -14,7 +14,10 @@ import type { Envelope } from '../types/job.types'
 
 export const applicationService = {
   async apply(payload: CreateApplicationPayload) {
-    const response = await apiClient.post<Envelope<ApplicationResponse>>('/applications', payload)
+    const response = await apiClient.post<Envelope<ApplicationResponse>>('/applications', {
+      parse: false,
+      ...payload,
+    })
     return response.data.data
   },
   async getMyApplications(params?: CandidateApplicationQuery) {
@@ -27,12 +30,6 @@ export const applicationService = {
   },
   async getMyApplicationCv(id: string) {
     const response = await apiClient.get<Envelope<ApplicationCvDownloadResponse>>(`/applications/me/${id}/cv`)
-    return response.data.data
-  },
-  async withdrawMyApplication(id: string, note?: string) {
-    const response = await apiClient.post<Envelope<ApplicationResponse>>(`/applications/me/${id}/withdraw`, {
-      note,
-    })
     return response.data.data
   },
   async getRecruiterApplications(params?: RecruiterApplicationQuery) {

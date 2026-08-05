@@ -28,13 +28,11 @@ type CandidateManagedJobsState = {
   removingSavedJobId: string | undefined
   stats: CandidateManagedJobsStats
   tabCounts: CandidateManagedJobTabCounts
-  withdrawingApplicationId: string | undefined
 }
 
 type CandidateManagedJobsActions = {
   reload: () => Promise<void>
   removeSavedJob: (jobId: string, errorMessage: string) => Promise<boolean>
-  withdrawApplication: (job: CandidateManagedJob, errorMessage: string) => Promise<boolean>
 }
 
 const PAGE_LIMIT = 100
@@ -290,7 +288,6 @@ export function useCandidateManagedJobs(
   const [error, setError] = useState<string | undefined>(undefined)
   const [actionError, setActionError] = useState<string | undefined>(undefined)
   const [removingSavedJobId, setRemovingSavedJobId] = useState<string | undefined>(undefined)
-  const [withdrawingApplicationId, setWithdrawingApplicationId] = useState<string | undefined>(undefined)
 
   const reload = useCallback(async () => {
     setLoading(true)
@@ -346,28 +343,6 @@ export function useCandidateManagedJobs(
     [addSavedJob, removeSavedJobFromStore, savedJobs],
   )
 
-  const withdrawApplication = useCallback(async (job: CandidateManagedJob, errorMessage: string) => {
-    if (!job.applicationId) return false
-
-    setActionError(undefined)
-    setWithdrawingApplicationId(job.applicationId)
-
-    try {
-      const updatedApplication = await applicationService.withdrawMyApplication(job.applicationId)
-      setApplications((currentApplications) =>
-        currentApplications.map((application) =>
-          application.id === updatedApplication.id ? updatedApplication : application,
-        ),
-      )
-      return true
-    } catch (withdrawError) {
-      setActionError(getApiErrorEnvelope(withdrawError)?.error.message ?? errorMessage)
-      return false
-    } finally {
-      setWithdrawingApplicationId(undefined)
-    }
-  }, [])
-
   return {
     actionError,
     error,
@@ -378,7 +353,5 @@ export function useCandidateManagedJobs(
     removingSavedJobId,
     stats,
     tabCounts,
-    withdrawApplication,
-    withdrawingApplicationId,
   }
 }
