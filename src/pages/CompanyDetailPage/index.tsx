@@ -9,6 +9,7 @@ import { CompanySidebar } from './components/CompanySidebar'
 import { CompanySnapshot } from './components/CompanySnapshot'
 import { useCompanyDetail } from './hooks/useCompanyDetail'
 import { useCompanyFollow } from './hooks/useCompanyFollow'
+import './company-detail.css'
 
 export function CompanyDetailPage() {
   const { id = '' } = useParams()

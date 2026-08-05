@@ -314,17 +314,13 @@ export const profile: ProfileTranslations = {
       viewApplication: 'Xem đơn',
       removeSaved: 'Hủy lưu',
       removingSaved: 'Đang hủy...',
-      withdraw: 'Rút đơn',
-      withdrawing: 'Đang rút...',
     },
     states: {
       loading: 'Đang tải việc làm của bạn...',
       errorTitle: 'Chưa tải được danh sách việc làm',
       errorDescription: 'Kiểm tra kết nối hoặc đăng nhập lại rồi thử lần nữa.',
       retry: 'Tải lại',
-      withdrawSuccess: 'Đã rút đơn ứng tuyển.',
       removeSavedError: 'Chưa thể hủy lưu việc làm này.',
-      withdrawError: 'Chưa thể rút đơn ứng tuyển.',
     },
     empty: {
       allTitle: 'Bạn chưa có việc làm nào trong danh sách',

@@ -1,0 +1,664 @@
+.company-detail-page {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.company-detail-state {
+  display: grid;
+  min-height: 18rem;
+  place-items: center;
+}
+
+.company-detail-back-link {
+  align-items: center;
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 900;
+  gap: 0.45rem;
+  justify-self: start;
+  transition:
+    color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.company-detail-back-link::before {
+  content: "\2190";
+}
+
+.company-detail-back-link:hover {
+  color: var(--color-brand-solid);
+  transform: translateX(-2px);
+}
+
+.company-detail-back-link:focus-visible {
+  outline: 2px solid var(--color-brand-solid);
+  outline-offset: 4px;
+}
+
+.company-detail-motion {
+  animation: job-detail-enter 520ms var(--motion-ease-out) both;
+}
+
+.company-detail-hero,
+.company-detail-panel,
+.company-detail-stat,
+.company-detail-not-found {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 20px;
+}
+
+.company-detail-hero {
+  --company-detail-logo-size: clamp(5rem, 8vw, 7.6rem);
+  --company-detail-logo-offset: clamp(2.5rem, 4vw, 3.8rem);
+
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 249, 252, 0.96)),
+    linear-gradient(120deg, rgba(242, 59, 148, 0.08), rgba(255, 106, 33, 0.08));
+  box-shadow: var(--shadow-card);
+  display: grid;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+}
+
+.company-detail-hero::before {
+  background: linear-gradient(90deg, var(--color-brand-start), var(--color-brand-end), var(--color-home-accent));
+  content: "";
+  height: 4px;
+  inset: 0 0 auto;
+  position: absolute;
+  z-index: 3;
+}
+
+.company-detail-hero-cover {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(242, 59, 148, 0.16), transparent 32%),
+    radial-gradient(circle at 88% 22%, rgba(25, 169, 116, 0.15), transparent 30%),
+    linear-gradient(135deg, #f7f8fc, #eceff7);
+  position: relative;
+}
+
+.company-detail-hero-media {
+  aspect-ratio: 21 / 8;
+  display: block;
+  min-height: clamp(14rem, 24vw, 24rem);
+  overflow: hidden;
+  position: relative;
+}
+
+.company-detail-hero-media::after {
+  background: linear-gradient(180deg, transparent 48%, rgba(17, 24, 39, 0.22));
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.company-detail-hero-media-fallback {
+  background:
+    radial-gradient(circle at 22% 22%, rgba(242, 59, 148, 0.24), transparent 26%),
+    radial-gradient(circle at 82% 20%, rgba(37, 99, 235, 0.22), transparent 30%),
+    linear-gradient(135deg, #fff7fb, #eef6ff 52%, #f0fdf8);
+}
+
+.company-detail-hero-media img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.01);
+  transition: transform 420ms var(--motion-ease-out);
+  width: 100%;
+}
+
+.company-detail-hero-media:hover img {
+  transform: scale(1.04);
+}
+
+.company-detail-hero-logo-wrap {
+  background: var(--color-surface-card);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 24px;
+  box-shadow:
+    0 18px 42px rgba(17, 24, 39, 0.18),
+    0 0 0 1px rgba(217, 217, 227, 0.72);
+  display: inline-flex;
+  left: clamp(1rem, 3vw, 2.25rem);
+  padding: 0.35rem;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(50%);
+  z-index: 4;
+}
+
+.company-detail-hero-logo {
+  border-radius: 20px;
+  height: var(--company-detail-logo-size);
+  width: var(--company-detail-logo-size);
+}
+
+.company-detail-hero-body {
+  align-items: end;
+  display: grid;
+  gap: clamp(1rem, 2.2vw, 2rem);
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding:
+    calc(var(--company-detail-logo-offset) + 1.15rem)
+    clamp(1rem, 3vw, 2.5rem)
+    clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.company-detail-hero-copy {
+  display: grid;
+  gap: 0.95rem;
+  max-width: min(72rem, 100%);
+  min-width: 0;
+}
+
+.company-detail-hero-heading {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.company-detail-company-line {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.company-detail-company-line span {
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.company-detail-company-line small {
+  background: var(--color-home-accent-soft);
+  border-radius: 999px;
+  color: var(--color-home-accent);
+  font-size: 0.74rem;
+  font-weight: 950;
+  padding: 0.24rem 0.58rem;
+}
+
+.company-detail-hero h1 {
+  color: var(--color-text-primary);
+  font-size: clamp(2.35rem, 5vw, 5rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.company-detail-hero p {
+  color: var(--color-text-muted);
+  font-size: clamp(0.98rem, 1.4vw, 1.12rem);
+  line-height: 1.7;
+  max-width: 64rem;
+}
+
+.company-detail-hero-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.company-detail-hero-actions a,
+.company-detail-hero-actions button,
+.company-detail-side-actions a,
+.company-detail-side-actions button,
+.company-detail-not-found a {
+  align-items: center;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 950;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1.05rem;
+  transition:
+    filter 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
+}
+
+.company-detail-hero-actions a,
+.company-detail-side-actions a,
+.company-detail-not-found a {
+  background: var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+}
+
+.company-detail-hero-actions button,
+.company-detail-side-actions button {
+  background: var(--color-brand-solid);
+  border: 1px solid var(--color-brand-solid);
+  box-shadow: var(--shadow-brand);
+  color: var(--color-text-inverse);
+}
+
+.company-detail-follow-button[data-follow-state="followed"] {
+  background: #10b981;
+  border-color: #10b981;
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.24);
+  color: var(--color-text-inverse);
+}
+
+.company-detail-follow-button[data-follow-state="loading"] {
+  cursor: wait;
+  opacity: 0.85;
+}
+
+.company-detail-hero-actions a:hover,
+.company-detail-hero-actions button:hover,
+.company-detail-side-actions a:hover,
+.company-detail-side-actions button:hover,
+.company-detail-not-found a:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+.company-detail-hero-media:focus-visible,
+.company-detail-hero-actions a:focus-visible,
+.company-detail-hero-actions button:focus-visible,
+.company-detail-side-actions a:focus-visible,
+.company-detail-side-actions button:focus-visible {
+  outline: 2px solid var(--color-brand-solid);
+  outline-offset: 4px;
+}
+
+.company-detail-snapshot {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.company-detail-snapshot > :nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.company-detail-snapshot > :nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.company-detail-snapshot > :nth-child(4) {
+  animation-delay: 170ms;
+}
+
+.company-detail-stat {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem;
+}
+
+.company-detail-stat span {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.company-detail-stat strong {
+  color: var(--color-text-primary);
+  font-size: clamp(1.15rem, 3vw, 1.55rem);
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.company-detail-layout {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.company-detail-main,
+.company-detail-sidebar {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.company-detail-panel {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.company-detail-main > :nth-child(2),
+.company-detail-sidebar > :nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.company-detail-main > :nth-child(3),
+.company-detail-sidebar > :nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.company-detail-section-heading {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.company-detail-panel h2,
+.company-detail-not-found h1 {
+  color: var(--color-text-primary);
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.company-detail-panel p,
+.company-detail-not-found p,
+.company-detail-culture-text p {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.company-detail-culture-text p {
+  max-width: 58rem;
+}
+
+.company-detail-about,
+.company-detail-about.company-detail-about-single {
+  grid-template-columns: 1fr;
+}
+
+.company-detail-about > div {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.company-detail-culture-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.company-detail-culture-card {
+  border-radius: 18px;
+  display: grid;
+  gap: 0.75rem;
+  min-height: 11rem;
+  overflow: hidden;
+  padding: 1rem;
+  position: relative;
+}
+
+.company-detail-culture-card::after {
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: inherit;
+  content: "";
+  inset: 0.45rem;
+  pointer-events: none;
+  position: absolute;
+}
+
+.company-detail-culture-card-rose {
+  background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+}
+
+.company-detail-culture-card-mint {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+}
+
+.company-detail-culture-card-amber {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+}
+
+.company-detail-culture-card span {
+  color: var(--color-text-primary);
+  font-size: 1.02rem;
+  font-weight: 950;
+  line-height: 1.25;
+}
+
+.company-detail-culture-card p {
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.company-detail-job-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.company-detail-empty {
+  background: var(--color-surface-subtle);
+  border: 1px dashed var(--color-border-default);
+  border-radius: 16px;
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem;
+}
+
+.company-detail-empty strong {
+  color: var(--color-text-primary);
+  font-weight: 950;
+}
+
+.company-detail-facts {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.company-detail-facts div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.company-detail-facts dt {
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.company-detail-facts dd {
+  color: var(--color-text-primary);
+  font-weight: 950;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.company-detail-side-actions {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.company-detail-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.company-detail-chip-list span {
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 850;
+  padding: 0.36rem 0.7rem;
+}
+
+.company-detail-perk-list {
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.company-detail-perk-list li {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 14px;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 850;
+  line-height: 1.45;
+  padding: 0.78rem 0.85rem;
+}
+
+.company-detail-not-found {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: center;
+  margin-inline: auto;
+  max-width: 36rem;
+  padding: clamp(2rem, 8vw, 4rem) 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.company-detail-not-found > span {
+  background: var(--color-brand-soft);
+  border-radius: 999px;
+  color: var(--color-brand-solid);
+  font-size: 1rem;
+  font-weight: 950;
+  padding: 0.55rem 0.85rem;
+}
+
+@media (min-width: 760px) {
+  .company-detail-snapshot {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .company-detail-about {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .company-detail-culture-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .company-detail-job-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .company-detail-layout {
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+
+  .company-detail-sidebar {
+    position: sticky;
+    top: 6rem;
+  }
+
+  .company-detail-snapshot {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .company-detail-layout {
+    gap: clamp(1.25rem, 2vw, 2rem);
+    grid-template-columns: minmax(0, 1fr) clamp(20rem, 21vw, 24rem);
+  }
+
+  .company-detail-hero-media {
+    min-height: clamp(18rem, 23vw, 27rem);
+  }
+
+  .company-detail-hero-body {
+    padding-inline: clamp(1.5rem, 2.4vw, 2.5rem);
+  }
+
+  .company-detail-panel,
+  .company-detail-stat {
+    padding: clamp(1.1rem, 1.6vw, 1.75rem);
+  }
+}
+
+@media (min-width: 1680px) {
+  .company-detail-job-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .company-detail-hero {
+    --company-detail-logo-size: 4.85rem;
+    --company-detail-logo-offset: 2.425rem;
+  }
+
+  .company-detail-hero-body {
+    align-items: start;
+    grid-template-columns: 1fr;
+  }
+
+  .company-detail-hero-actions {
+    justify-content: stretch;
+  }
+
+  .company-detail-hero-actions a,
+  .company-detail-hero-actions button,
+  .company-detail-side-actions a,
+  .company-detail-side-actions button {
+    width: 100%;
+  }
+
+  .company-detail-hero-media {
+    aspect-ratio: 16 / 9;
+    min-height: 13rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .company-detail-hero {
+    --company-detail-logo-size: 4rem;
+    --company-detail-logo-offset: 2rem;
+  }
+
+  .company-detail-hero-logo-wrap {
+    border-radius: 18px;
+    left: 1rem;
+    padding: 0.25rem;
+  }
+
+  .company-detail-hero-logo {
+    border-radius: 15px;
+  }
+
+  .company-detail-company-line small,
+  .company-detail-company-line span {
+    max-width: 100%;
+  }
+
+  .company-detail-stat,
+  .company-detail-panel {
+    border-radius: 16px;
+  }
+
+  .company-detail-chip-list span {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .company-detail-motion,
+  .company-detail-hero-media img {
+    animation: none;
+    filter: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .company-detail-back-link:hover,
+  .company-detail-hero-actions a:hover,
+  .company-detail-hero-actions button:hover,
+  .company-detail-hero-media:hover img,
+  .company-detail-side-actions a:hover,
+  .company-detail-side-actions button:hover,
+  .company-detail-not-found a:hover {
+    transform: none;
+  }
+}

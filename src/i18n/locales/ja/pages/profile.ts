@@ -314,17 +314,13 @@ export const profile: ProfileTranslations = {
       viewApplication: '応募を見る',
       removeSaved: '保存解除',
       removingSaved: '解除中...',
-      withdraw: '応募を辞退',
-      withdrawing: '辞退中...',
     },
     states: {
       loading: '求人を読み込んでいます...',
       errorTitle: '求人を読み込めません',
       errorDescription: '接続を確認するか、再ログインしてからもう一度お試しください。',
       retry: '再読み込み',
-      withdrawSuccess: '応募を取り下げました。',
       removeSavedError: 'この求人の保存を解除できませんでした。',
-      withdrawError: '応募を辞退できませんでした。',
     },
     empty: {
       allTitle: 'まだ求人はありません',

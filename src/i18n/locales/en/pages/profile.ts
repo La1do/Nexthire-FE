@@ -314,17 +314,13 @@ export const profile: ProfileTranslations = {
       viewApplication: 'View application',
       removeSaved: 'Unsave',
       removingSaved: 'Unsaving...',
-      withdraw: 'Withdraw',
-      withdrawing: 'Withdrawing...',
     },
     states: {
       loading: 'Loading your jobs...',
       errorTitle: 'Jobs could not be loaded',
       errorDescription: 'Check your connection or sign in again, then try once more.',
       retry: 'Reload',
-      withdrawSuccess: 'Application withdrawn.',
       removeSavedError: 'This job could not be removed from saved jobs.',
-      withdrawError: 'Application could not be withdrawn.',
     },
     empty: {
       allTitle: 'No jobs in your list yet',
