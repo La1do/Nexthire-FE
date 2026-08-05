@@ -23,6 +23,8 @@ export const TemplateCard = ({
   const categories = template.categories.filter(
     (category) => category !== 'all',
   );
+  const visibleCategories = categories.slice(0, 1);
+  const hiddenCategoryCount = categories.length - visibleCategories.length;
 
   return (
     <article className="cv-template-card">
@@ -40,19 +42,19 @@ export const TemplateCard = ({
 
       <div className="cv-template-card__body">
         <div className="cv-template-card__title-row">
-          <div>
-            <h2>{template.name}</h2>
-            <p>{template.description}</p>
-          </div>
+          <h2>{template.name}</h2>
           <span>{labels.readyLabel}</span>
         </div>
+
+        <p className="cv-template-card__description">{template.description}</p>
 
         <dl className="cv-template-card__meta">
           <dt>{labels.categoriesLabel}</dt>
           <dd>
-            {categories.map((category) => (
+            {visibleCategories.map((category) => (
               <span key={category}>{categoryLabels[category]}</span>
             ))}
+            {hiddenCategoryCount > 0 ? <span>+{hiddenCategoryCount}</span> : null}
           </dd>
         </dl>
 
