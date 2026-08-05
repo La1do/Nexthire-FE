@@ -52,6 +52,7 @@
 .company-detail-hero {
   --company-detail-logo-size: clamp(5rem, 8vw, 7.6rem);
   --company-detail-logo-offset: clamp(2.5rem, 4vw, 3.8rem);
+  --company-detail-logo-gap: clamp(0.95rem, 1.8vw, 1.35rem);
 
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 249, 252, 0.96)),
@@ -139,19 +140,21 @@
 }
 
 .company-detail-hero-body {
-  align-items: end;
+  align-items: start;
   display: grid;
   gap: clamp(1rem, 2.2vw, 2rem);
   grid-template-columns: minmax(0, 1fr) auto;
   padding:
-    calc(var(--company-detail-logo-offset) + 1.15rem)
+    clamp(1.1rem, 2.1vw, 1.55rem)
     clamp(1rem, 3vw, 2.5rem)
     clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .company-detail-hero-copy {
+  align-content: start;
   display: grid;
   gap: 0.95rem;
+  margin-inline-start: calc(var(--company-detail-logo-size) + var(--company-detail-logo-gap));
   max-width: min(72rem, 100%);
   min-width: 0;
 }
@@ -201,6 +204,7 @@
 
 .company-detail-hero-actions {
   align-items: center;
+  align-self: end;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -588,6 +592,7 @@
   .company-detail-hero {
     --company-detail-logo-size: 4.85rem;
     --company-detail-logo-offset: 2.425rem;
+    --company-detail-logo-gap: 0.8rem;
   }
 
   .company-detail-hero-body {
@@ -596,6 +601,7 @@
   }
 
   .company-detail-hero-actions {
+    align-self: stretch;
     justify-content: stretch;
   }
 
@@ -616,6 +622,14 @@
   .company-detail-hero {
     --company-detail-logo-size: 4rem;
     --company-detail-logo-offset: 2rem;
+  }
+
+  .company-detail-hero-body {
+    padding-block-start: calc(var(--company-detail-logo-offset) + 0.9rem);
+  }
+
+  .company-detail-hero-copy {
+    margin-inline-start: 0;
   }
 
   .company-detail-hero-logo-wrap {
