@@ -835,6 +835,7 @@ export type JobDetailTranslations = {
       profileLoadError: string
       cvFallback: string
       defaultCvBadge: string
+      selectedCvBadge: string
       noCvTitle: string
       noCvDescription: string
       uploadCvAction: string
@@ -1397,6 +1398,7 @@ export type ProfileTranslations = {
       parseSuccess: string
       parseSuccessWithLocalChanges: string
       parseReviewReady: string
+      parseNoChanges: string
       parseReviewApplied: string
       parseReviewKept: string
       parseFailed: string

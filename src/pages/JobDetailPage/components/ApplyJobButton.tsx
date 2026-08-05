@@ -254,13 +254,11 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
       return
     }
 
-    const shouldSetDefault = cvs.length === 0
-
     setUploadState('uploading')
 
     try {
       const cv = await candidateService.uploadCv(file, {
-        isDefault: shouldSetDefault,
+        isDefault: false,
         parse: false,
         title: file.name,
       })
@@ -268,13 +266,13 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
       setCandidateProfile((currentProfile) => {
         if (!currentProfile) return currentProfile
 
-        const nextCv = shouldSetDefault ? { ...cv, isDefault: true } : cv
+        const nextCv = { ...cv, isDefault: false }
         const nextCvs = [nextCv, ...currentProfile.cvs.filter((item) => item.id !== cv.id)]
 
         return {
           ...currentProfile,
           cvs: nextCvs,
-          defaultCv: shouldSetDefault ? nextCv : currentProfile.defaultCv,
+          defaultCv: currentProfile.defaultCv,
         }
       })
       setSelectedCvId(cv.id)
@@ -492,10 +490,9 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
 
                         <div className="job-apply-cv-summary">
                           <strong>{getCvTitle(selectedCv, modal.cvFallback)}</strong>
-                          <span>
-                            {selectedCv?.isDefault ? `${modal.defaultCvBadge} · ` : ''}
-                            {selectedCv ? modal.parseStatuses[selectedCv.parseStatus] : modal.parseStatuses.NOT_PARSED}
-                          </span>
+                          {selectedCv ? (
+                            <span>{selectedCv.isDefault ? modal.defaultCvBadge : modal.selectedCvBadge}</span>
+                          ) : null}
                         </div>
                       </>
                     )}

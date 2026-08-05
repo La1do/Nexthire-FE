@@ -55,8 +55,12 @@ function parseYear(value: string) {
   return Number.isInteger(parsedValue) ? parsedValue : null
 }
 
-export function createProfileFromCandidateAggregate(data: CandidateMeResponse): CandidateProfile {
-  const defaultCv = data.defaultCv ?? data.cvs.find((cv) => cv.isDefault) ?? data.cvs[0]
+export function createProfileFromCandidateAggregate(
+  data: CandidateMeResponse,
+  preferredCvId?: string | null,
+): CandidateProfile {
+  const preferredCv = preferredCvId ? data.cvs.find((cv) => cv.id === preferredCvId) : null
+  const defaultCv = preferredCv ?? data.defaultCv ?? data.cvs.find((cv) => cv.isDefault) ?? null
 
   return {
     avatarDocumentId: data.profile.avatarDocumentId,

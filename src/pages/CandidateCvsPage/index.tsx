@@ -176,7 +176,7 @@ export function CandidateCvsPage() {
   const uploadProfileCvMutation = useMutation({
     mutationFn: (file: File) =>
       candidateService.uploadCv(file, {
-        isDefault: profileCvs.length === 0,
+        isDefault: false,
         parse: false,
         title: file.name,
       }),
@@ -186,17 +186,6 @@ export function CandidateCvsPage() {
     },
     onError: (error) => {
       toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.uploadError)
-    },
-  })
-
-  const parseProfileCvMutation = useMutation({
-    mutationFn: (id: string) => candidateService.parseCv(id),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['candidate-cvs', 'profile'] })
-      toast.success(content.states.parseStarted)
-    },
-    onError: (error) => {
-      toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.parseError)
     },
   })
 
@@ -577,7 +566,6 @@ export function CandidateCvsPage() {
           {profileCvs.length > 0 ? (
             <div className="candidate-cvs-grid">
               {profileCvs.map((cv) => {
-                const isParsing = parseProfileCvMutation.isPending && parseProfileCvMutation.variables === cv.id
                 const isPendingDelete = pendingProfileDeleteId === cv.id
                 const isDeleting = deleteProfileCvMutation.isPending && deleteProfileCvMutation.variables === cv.id
 
@@ -605,14 +593,6 @@ export function CandidateCvsPage() {
                       ) : null}
                     </div>
                     <div className="candidate-cv-card__actions">
-                      <button
-                        disabled={isParsing || cv.parseStatus === 'PARSING'}
-                        onClick={() => parseProfileCvMutation.mutate(cv.id)}
-                        type="button"
-                      >
-                        <Sparkles aria-hidden="true" />
-                        <span>{isParsing || cv.parseStatus === 'PARSING' ? content.actions.parsing : content.actions.parse}</span>
-                      </button>
                       <button className="is-danger" onClick={() => setPendingProfileDeleteId(cv.id)} type="button">
                         <Trash2 aria-hidden="true" />
                         <span>{content.actions.delete}</span>

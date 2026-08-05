@@ -25,7 +25,6 @@ import { getProfileCompletion } from './utils/profileCompletion'
 import {
   isProfileSparse,
   mergeCvParsedProfileBySelection,
-  mergeParsedProfileWithLocalChanges,
   mergeProfileWithLocalChanges,
   shouldReviewParsedProfile,
   type CvParseReviewGroupId,
@@ -113,13 +112,13 @@ export function ProfilePage() {
         cvParseBaselineRef.current,
         profileRef.current,
       )
+      const currentWithParsedCv = mergeCvParsedProfileBySelection(
+        baselineProfile,
+        parsedProfile,
+        [],
+      )
 
       if (shouldReviewParsedProfile(baselineProfile, parsedProfile)) {
-        const currentWithParsedCv = mergeCvParsedProfileBySelection(
-          baselineProfile,
-          parsedProfile,
-          [],
-        )
         profileRef.current = currentWithParsedCv
         setProfile(currentWithParsedCv)
         setHasUnsavedChanges(false)
@@ -142,7 +141,7 @@ export function ProfilePage() {
                 mode: 'bar',
               },
             )
-            const restoredProfile = createProfileFromCandidateAggregate(data)
+            const restoredProfile = createProfileFromCandidateAggregate(data, currentWithParsedCv.defaultCvId)
             profileRef.current = restoredProfile
             setProfile(restoredProfile)
             setHasUnsavedChanges(false)
@@ -159,20 +158,12 @@ export function ProfilePage() {
         return
       }
 
-      const result = mergeParsedProfileWithLocalChanges(
-        parsedProfile,
-        cvParseBaselineRef.current,
-        profileRef.current,
-      )
-      profileRef.current = result.profile
-      setProfile(result.profile)
-      setHasUnsavedChanges(result.hasLocalChanges)
+      profileRef.current = currentWithParsedCv
+      setProfile(currentWithParsedCv)
+      setHasUnsavedChanges(false)
       setCvError(undefined)
-      const message = result.hasLocalChanges
-        ? content.sections.resume.parseSuccessWithLocalChanges
-        : content.sections.resume.parseSuccess
-      setCvMessage(message)
-      toast.success(message)
+      setCvMessage(content.sections.resume.parseNoChanges)
+      toast.info(content.sections.resume.parseNoChanges)
       cvParseBaselineRef.current = null
     },
     [common.loader.applyingCvParseLabel, content.sections.resume, content.states.saveError, refreshUser, toast, trackGlobalLoader],
@@ -199,7 +190,7 @@ export function ProfilePage() {
           return
         }
 
-        const nextProfile = createProfileFromCandidateAggregate(data)
+        const nextProfile = createProfileFromCandidateAggregate(data, profileRef.current.defaultCvId)
 
         if (nextProfile.defaultCvParseStatus === 'PARSED') {
           handleParsedProfileReady(nextProfile)
@@ -329,7 +320,7 @@ export function ProfilePage() {
           mode: 'bar',
         },
       )
-      const nextProfile = createProfileFromCandidateAggregate(data)
+      const nextProfile = createProfileFromCandidateAggregate(data, profileToSave.defaultCvId)
       profileRef.current = nextProfile
       setProfile(nextProfile)
       setHasUnsavedChanges(false)
@@ -413,7 +404,7 @@ export function ProfilePage() {
     try {
       const cv = await trackGlobalLoader(
         candidateService.uploadCv(file, {
-          isDefault: true,
+          isDefault: false,
           parse: false,
           title: file.name,
         }),
@@ -484,7 +475,7 @@ export function ProfilePage() {
         toast.error(content.sections.resume.parseFailed)
       } else if (cv.parseStatus === 'PARSED') {
         const data = await candidateService.getMyProfile()
-        handleParsedProfileReady(createProfileFromCandidateAggregate(data))
+        handleParsedProfileReady(createProfileFromCandidateAggregate(data, profile.defaultCvId))
       } else {
         setCvMessage(content.sections.resume.parseStarted)
         toast.info(content.sections.resume.parseStarted)

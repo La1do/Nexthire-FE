@@ -155,10 +155,6 @@ export function shouldReviewParsedProfile(
   baselineProfile: CandidateProfile,
   parsedProfile: CandidateProfile,
 ) {
-  if (!hasProfileReviewableInfo(baselineProfile)) {
-    return false
-  }
-
   return getCvParseReviewItems(baselineProfile, parsedProfile).some(
     (item) => item.hasParsedData && item.isChanged,
   )
