@@ -7,6 +7,7 @@ import { BrandMark, ConfirmModal, LanguageSwitch } from '../pages/_components'
 import { AdminNotificationPopover } from './components/AdminNotificationPopover'
 import { AdminProfileMenu } from './components/AdminProfileMenu'
 import { AdminTopbarSearch } from './components/AdminTopbarSearch'
+import './admin-layout.css'
 
 function MenuIcon() {
   return (
@@ -160,7 +161,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
           </nav>
 
           <div className="admin-sidebar__user" tabIndex={sidebarOpen ? undefined : -1}>
-            {user?.avatarUrl ? <img alt="" className="admin-sidebar__user-avatar" src={user.avatarUrl} /> : <span aria-hidden="true" className="admin-sidebar__user-avatar">{getInitials(user?.fullName || user?.email || content.currentUser.name)}</span>}
+            {user?.avatarUrl ? <img alt="" className="admin-sidebar__user-avatar admin-sidebar__user-avatar--image" src={user.avatarUrl} /> : <span aria-hidden="true" className="admin-sidebar__user-avatar">{getInitials(user?.fullName || user?.email || content.currentUser.name)}</span>}
             <div>
               <p className="admin-sidebar__user-name">{user?.fullName || content.currentUser.name}</p>
               <p className="admin-sidebar__user-email">{user?.email || content.currentUser.email}</p>

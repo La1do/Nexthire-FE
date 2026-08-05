@@ -666,6 +666,12 @@ export type AdminUsersTranslations = {
     createdAt: string
     updatedAt: string
     lastLoginAt: string
+    contactDescription: string
+    lifecycleDescription: string
+    timeline: string
+    timelineDescription: string
+    phoneNotProvided: string
+    statusReasonNotProvided: string
   }
   currentUser: {
     name: string

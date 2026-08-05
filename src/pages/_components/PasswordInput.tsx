@@ -5,6 +5,7 @@ type PasswordInputProps = Omit<ComponentPropsWithoutRef<'input'>, 'className' | 
   error?: string
   hidePasswordLabel: string
   label: string
+  reserveMessageSpace?: boolean
   showPasswordLabel: string
 }
 
@@ -13,6 +14,7 @@ export function PasswordInput({
   hidePasswordLabel,
   id,
   label,
+  reserveMessageSpace = false,
   showPasswordLabel,
   ...props
 }: PasswordInputProps) {
@@ -58,9 +60,9 @@ export function PasswordInput({
           </svg>
         </button>
       </div>
-      {error ? (
-        <p className="text-sm font-medium text-[var(--color-text-danger)]" id={errorId}>
-          {error}
+      {error || reserveMessageSpace ? (
+        <p aria-hidden={!error} className="min-h-[2lh] text-sm font-medium text-[var(--color-text-danger)]" id={error ? errorId : undefined} role={error ? 'alert' : undefined}>
+          {error ?? ' '}
         </p>
       ) : null}
     </div>

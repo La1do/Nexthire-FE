@@ -1,0 +1,5 @@
+.admin-sidebar__user-avatar--image {
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}

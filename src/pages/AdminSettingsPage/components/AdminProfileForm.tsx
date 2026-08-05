@@ -37,8 +37,8 @@ export function AdminProfileForm({ content, isPending, onSave, profile }: Props)
     <header><h2>{content.title}</h2><p>{content.description}</p></header>
     <form className="admin-settings-form" noValidate onSubmit={submit}>
       <div className="admin-settings-form__grid">
-        <label><span>{content.fullName}</span><input autoComplete="name" placeholder={content.fullNamePlaceholder} {...register('fullName')} />{errors.fullName ? <small>{errors.fullName.message}</small> : null}</label>
-        <label><span>{content.phone}</span><input autoComplete="tel" placeholder={content.phonePlaceholder} type="tel" {...register('phone')} />{errors.phone ? <small>{errors.phone.message}</small> : null}</label>
+        <label><span>{content.fullName}</span><input autoComplete="name" placeholder={content.fullNamePlaceholder} {...register('fullName')} /><small aria-hidden={!errors.fullName} className="admin-settings-form__message" role={errors.fullName ? 'alert' : undefined}>{errors.fullName?.message ?? ' '}</small></label>
+        <label><span>{content.phone}</span><input autoComplete="tel" placeholder={content.phonePlaceholder} type="tel" {...register('phone')} /><small aria-hidden={!errors.phone} className="admin-settings-form__message" role={errors.phone ? 'alert' : undefined}>{errors.phone?.message ?? ' '}</small></label>
         <label><span>{content.email}</span><input readOnly type="email" value={profile.email} /><em>{content.emailHint}</em></label>
         <label><span>{content.role}</span><input readOnly value={profile.role} /></label>
       </div>

@@ -48,9 +48,9 @@ export function AdminChangePasswordForm({ content, isPending, onSave }: Props) {
   return <section className="admin-settings-card">
     <header><h2>{content.title}</h2><p>{content.description}</p></header>
     <form className="admin-settings-password-form" noValidate onSubmit={submit}>
-      <PasswordInput autoComplete="current-password" error={errors.currentPassword?.message} hidePasswordLabel={content.hide} label={content.current} showPasswordLabel={content.show} {...register('currentPassword')} />
-      <PasswordInput autoComplete="new-password" error={errors.newPassword?.message} hidePasswordLabel={content.hide} label={content.next} showPasswordLabel={content.show} {...register('newPassword')} />
-      <PasswordInput autoComplete="new-password" error={errors.confirmPassword?.message} hidePasswordLabel={content.hide} label={content.confirm} showPasswordLabel={content.show} {...register('confirmPassword')} />
+      <PasswordInput autoComplete="current-password" error={errors.currentPassword?.message} hidePasswordLabel={content.hide} label={content.current} reserveMessageSpace showPasswordLabel={content.show} {...register('currentPassword')} />
+      <PasswordInput autoComplete="new-password" error={errors.newPassword?.message} hidePasswordLabel={content.hide} label={content.next} reserveMessageSpace showPasswordLabel={content.show} {...register('newPassword')} />
+      <PasswordInput autoComplete="new-password" error={errors.confirmPassword?.message} hidePasswordLabel={content.hide} label={content.confirm} reserveMessageSpace showPasswordLabel={content.show} {...register('confirmPassword')} />
       <div className="admin-settings-password-rules"><strong>{content.rulesTitle}</strong><ul>{rules.map(([valid, label]) => <li className={valid ? 'is-valid' : ''} key={label}><span aria-hidden="true" />{label}</li>)}</ul></div>
       <Button disabled={!isDirty || isPending} type="submit">{isPending ? content.submitting : content.submit}</Button>
     </form>
