@@ -47,7 +47,10 @@ export type CommonTranslations = {
     supportEmail: string
     columns: ReadonlyArray<{
       title: string
-      links: ReadonlyArray<string>
+      links: ReadonlyArray<{
+        label: string
+        href: string
+      }>
     }>
   }
   job: {
@@ -352,6 +355,18 @@ export type HomeTranslations = {
     mockTitle: string
     mockLines: ReadonlyArray<string>
   }
+  promoBanners: ReadonlyArray<{
+    id: string
+    title: string
+    imageAlt: string
+    href: string
+    viewAll: string
+    image: {
+      src: string
+      width: number
+      height: number
+    }
+  }>
 }
 
 export type CompaniesSort = 'mostJobs' | 'latest' | 'name'
@@ -1290,17 +1305,13 @@ export type ProfileTranslations = {
       viewApplication: string
       removeSaved: string
       removingSaved: string
-      withdraw: string
-      withdrawing: string
     }
     states: {
       loading: string
       errorTitle: string
       errorDescription: string
       retry: string
-      withdrawSuccess: string
       removeSavedError: string
-      withdrawError: string
     }
     empty: {
       allTitle: string
@@ -2634,6 +2645,7 @@ export type Translations = {
     cvTemplates: CvTemplatesTranslations
     forgotPassword: ForgotPasswordTranslations
     home: HomeTranslations
+    infoPages: InfoPagesTranslations
     jobDetail: JobDetailTranslations
     login: LoginTranslations
     profile: ProfileTranslations
@@ -2676,4 +2688,44 @@ export type ComingSoonTranslations = {
       backLabel: string
     }
   >
+}
+
+export type InfoPageKey =
+  | 'latestJobs'
+  | 'itJobs'
+  | 'marketingJobs'
+  | 'postJob'
+  | 'businessHiring'
+  | 'helpCenter'
+  | 'contact'
+  | 'privacyPolicy'
+  | 'terms'
+
+export type InfoPageSection = {
+  title: string
+  description: string
+  bullets?: ReadonlyArray<string>
+}
+
+export type InfoPageContent = {
+  badge: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+  }
+  intro: string
+  sections: ReadonlyArray<InfoPageSection>
+  cta: {
+    title: string
+    description: string
+    primaryLabel: string
+    primaryHref: string
+    secondaryLabel?: string
+    secondaryHref?: string
+  }
+}
+
+export type InfoPagesTranslations = {
+  pages: Record<InfoPageKey, InfoPageContent>
 }

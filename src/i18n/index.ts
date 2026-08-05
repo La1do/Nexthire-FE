@@ -13,6 +13,7 @@ import { companyDetail as enCompanyDetail } from './locales/en/pages/companyDeta
 import { cvTemplates as enCvTemplates } from './locales/en/pages/cvTemplates'
 import { forgotPassword as enForgotPassword } from './locales/en/pages/forgotPassword'
 import { home as enHome } from './locales/en/pages/home'
+import { infoPages as enInfoPages } from './locales/en/pages/infoPages'
 import { jobDetail as enJobDetail } from './locales/en/pages/jobDetail'
 import { login as enLogin } from './locales/en/pages/login'
 import { profile as enProfile } from './locales/en/pages/profile'
@@ -40,6 +41,7 @@ import { companyDetail as jaCompanyDetail } from './locales/ja/pages/companyDeta
 import { cvTemplates as jaCvTemplates } from './locales/ja/pages/cvTemplates'
 import { forgotPassword as jaForgotPassword } from './locales/ja/pages/forgotPassword'
 import { home as jaHome } from './locales/ja/pages/home'
+import { infoPages as jaInfoPages } from './locales/ja/pages/infoPages'
 import { jobDetail as jaJobDetail } from './locales/ja/pages/jobDetail'
 import { login as jaLogin } from './locales/ja/pages/login'
 import { profile as jaProfile } from './locales/ja/pages/profile'
@@ -67,6 +69,7 @@ import { companyDetail as viCompanyDetail } from './locales/vi/pages/companyDeta
 import { cvTemplates as viCvTemplates } from './locales/vi/pages/cvTemplates'
 import { forgotPassword as viForgotPassword } from './locales/vi/pages/forgotPassword'
 import { home as viHome } from './locales/vi/pages/home'
+import { infoPages as viInfoPages } from './locales/vi/pages/infoPages'
 import { jobDetail as viJobDetail } from './locales/vi/pages/jobDetail'
 import { login as viLogin } from './locales/vi/pages/login'
 import { profile as viProfile } from './locales/vi/pages/profile'
@@ -102,6 +105,7 @@ export const translations = {
       cvTemplates: enCvTemplates,
       forgotPassword: enForgotPassword,
       home: enHome,
+      infoPages: enInfoPages,
       jobDetail: enJobDetail,
       login: enLogin,
       profile: enProfile,
@@ -133,6 +137,7 @@ export const translations = {
       cvTemplates: viCvTemplates,
       forgotPassword: viForgotPassword,
       home: viHome,
+      infoPages: viInfoPages,
       jobDetail: viJobDetail,
       login: viLogin,
       profile: viProfile,
@@ -164,6 +169,7 @@ export const translations = {
       cvTemplates: jaCvTemplates,
       forgotPassword: jaForgotPassword,
       home: jaHome,
+      infoPages: jaInfoPages,
       jobDetail: jaJobDetail,
       login: jaLogin,
       profile: jaProfile,

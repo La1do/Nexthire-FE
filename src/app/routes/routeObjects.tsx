@@ -21,6 +21,7 @@ import { CvBuilderPage } from '../../pages/CvBuilderPage'
 import { CvTemplatesPage } from '../../pages/CvTemplatesPage'
 import { ForgotPasswordPage } from '../../pages/ForgotPasswordPage'
 import { HomePage } from '../../pages/HomePage'
+import { InfoPage } from '../../pages/InfoPage'
 import { JobDetailPage } from '../../pages/JobDetailPage'
 import { AdminLoginPage, CandidateLoginPage, RecruiterLoginPage } from '../../pages/LoginPage'
 import { CandidateJobsPage } from '../../pages/CandidateJobsPage'
@@ -137,6 +138,69 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/career-guide/:slug',
       label: comingSoon.pages.careerGuide.title,
       element: <CareerGuideDetailPage />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/jobs/latest',
+      label: pages.infoPages.pages.latestJobs.hero.title,
+      element: <InfoPage pageKey="latestJobs" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/jobs/it',
+      label: pages.infoPages.pages.itJobs.hero.title,
+      element: <InfoPage pageKey="itJobs" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/jobs/marketing',
+      label: pages.infoPages.pages.marketingJobs.hero.title,
+      element: <InfoPage pageKey="marketingJobs" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/employers/post-a-job',
+      label: pages.infoPages.pages.postJob.hero.title,
+      element: <InfoPage pageKey="postJob" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/employers/business-hiring',
+      label: pages.infoPages.pages.businessHiring.hero.title,
+      element: <InfoPage pageKey="businessHiring" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/help',
+      label: pages.infoPages.pages.helpCenter.hero.title,
+      element: <InfoPage pageKey="helpCenter" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/contact',
+      label: pages.infoPages.pages.contact.hero.title,
+      element: <InfoPage pageKey="contact" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/privacy',
+      label: pages.infoPages.pages.privacyPolicy.hero.title,
+      element: <InfoPage pageKey="privacyPolicy" />,
+      layout: MainLayout,
+      access: publicAccess,
+    },
+    {
+      path: '/terms',
+      label: pages.infoPages.pages.terms.hero.title,
+      element: <InfoPage pageKey="terms" />,
       layout: MainLayout,
       access: publicAccess,
     },

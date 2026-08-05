@@ -12,6 +12,7 @@ import type { AuthUser } from '../services/auth.service'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
 import { UserNotificationPopover } from './components/UserNotificationPopover'
+import './main-layout.css'
 
 function getRoleLabel(
   role: AuthApiRole,
@@ -283,9 +284,9 @@ export function MainLayout({ children }: PropsWithChildren) {
                 <h2 className="main-footer-column-title text-sm font-bold">{column.title}</h2>
                 <ul className="main-footer-links mt-4 grid gap-3 text-sm">
                   {column.links.map((link) => (
-                    <li key={link}>
-                      <a className="main-footer-link" href="/">
-                        {link}
+                    <li key={link.href}>
+                      <a className="main-footer-link" href={link.href}>
+                        {link.label}
                       </a>
                     </li>
                   ))}

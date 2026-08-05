@@ -131,10 +131,35 @@ export const common = {
     supportLabel: 'サポート：',
     supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
-      { title: '求人', links: ['最新求人', 'IT求人', 'マーケティング'] },
-      { title: '採用企業', links: ['求人を掲載', '法人向け採用'] },
-      { title: 'サポート', links: ['ヘルプセンター', 'お問い合わせ'] },
-      { title: '法務', links: ['プライバシーポリシー', '利用規約'] },
+      {
+        title: '求人',
+        links: [
+          { label: '最新求人', href: '/jobs/latest' },
+          { label: 'IT求人', href: '/jobs/it' },
+          { label: 'マーケティング', href: '/jobs/marketing' },
+        ],
+      },
+      {
+        title: '採用企業',
+        links: [
+          { label: '求人を掲載', href: '/employers/post-a-job' },
+          { label: '法人向け採用', href: '/employers/business-hiring' },
+        ],
+      },
+      {
+        title: 'サポート',
+        links: [
+          { label: 'ヘルプセンター', href: '/help' },
+          { label: 'お問い合わせ', href: '/contact' },
+        ],
+      },
+      {
+        title: '法務',
+        links: [
+          { label: 'プライバシーポリシー', href: '/privacy' },
+          { label: '利用規約', href: '/terms' },
+        ],
+      },
     ],
   },
 }

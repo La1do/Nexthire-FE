@@ -131,10 +131,35 @@ export const common = {
     supportLabel: 'Hỗ trợ:',
     supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
-      { title: 'Việc làm', links: ['Việc làm mới nhất', 'IT Jobs', 'Marketing'] },
-      { title: 'Nhà tuyển dụng', links: ['Đăng tin tuyển dụng', 'Đồng hành doanh nghiệp'] },
-      { title: 'Hỗ trợ', links: ['Trung tâm trợ giúp', 'Liên hệ'] },
-      { title: 'Pháp lý', links: ['Chính sách bảo mật', 'Điều khoản'] },
+      {
+        title: 'Việc làm',
+        links: [
+          { label: 'Việc làm mới nhất', href: '/jobs/latest' },
+          { label: 'IT Jobs', href: '/jobs/it' },
+          { label: 'Marketing', href: '/jobs/marketing' },
+        ],
+      },
+      {
+        title: 'Nhà tuyển dụng',
+        links: [
+          { label: 'Đăng tin tuyển dụng', href: '/employers/post-a-job' },
+          { label: 'Đồng hành doanh nghiệp', href: '/employers/business-hiring' },
+        ],
+      },
+      {
+        title: 'Hỗ trợ',
+        links: [
+          { label: 'Trung tâm trợ giúp', href: '/help' },
+          { label: 'Liên hệ', href: '/contact' },
+        ],
+      },
+      {
+        title: 'Pháp lý',
+        links: [
+          { label: 'Chính sách bảo mật', href: '/privacy' },
+          { label: 'Điều khoản', href: '/terms' },
+        ],
+      },
     ],
   },
 }

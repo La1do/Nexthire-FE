@@ -131,10 +131,35 @@ export const common = {
     supportLabel: 'Support:',
     supportEmail: 'nexhire.team.support@gmail.com',
     columns: [
-      { title: 'Jobs', links: ['Latest jobs', 'IT jobs', 'Marketing'] },
-      { title: 'Employers', links: ['Post a job', 'Business hiring'] },
-      { title: 'Support', links: ['Help center', 'Contact'] },
-      { title: 'Legal', links: ['Privacy policy', 'Terms'] },
+      {
+        title: 'Jobs',
+        links: [
+          { label: 'Latest jobs', href: '/jobs/latest' },
+          { label: 'IT jobs', href: '/jobs/it' },
+          { label: 'Marketing', href: '/jobs/marketing' },
+        ],
+      },
+      {
+        title: 'Employers',
+        links: [
+          { label: 'Post a job', href: '/employers/post-a-job' },
+          { label: 'Business hiring', href: '/employers/business-hiring' },
+        ],
+      },
+      {
+        title: 'Support',
+        links: [
+          { label: 'Help center', href: '/help' },
+          { label: 'Contact', href: '/contact' },
+        ],
+      },
+      {
+        title: 'Legal',
+        links: [
+          { label: 'Privacy policy', href: '/privacy' },
+          { label: 'Terms', href: '/terms' },
+        ],
+      },
     ],
   },
 }
