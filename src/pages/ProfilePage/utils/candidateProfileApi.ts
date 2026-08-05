@@ -11,6 +11,20 @@ function compact(value: string | null | undefined) {
   return trimmedValue || null
 }
 
+function createUrlPayload(value: string | null | undefined) {
+  const trimmedValue = compact(value)
+
+  if (!trimmedValue) {
+    return null
+  }
+
+  if (/^[a-z][a-z\d+\-.]*:\/\//i.test(trimmedValue)) {
+    return trimmedValue
+  }
+
+  return `https://${trimmedValue}`
+}
+
 function formatMonthYear(month: number | null, year: number | null) {
   if (!year) {
     return ''
@@ -141,10 +155,10 @@ export function createCandidateUpdatePayload(profile: CandidateProfile): Candida
       contactEmail: compact(profile.contactEmail),
       fullName: compact(profile.name),
       headline: compact(profile.headline),
-      linkedinUrl: compact(profile.linkedin),
+      linkedinUrl: createUrlPayload(profile.linkedin),
       location: compact(profile.location),
       phone: compact(profile.phone),
-      portfolioUrl: compact(profile.portfolio),
+      portfolioUrl: createUrlPayload(profile.portfolio),
       summary: compact(profile.summary),
     },
     skills: profile.skills
