@@ -159,7 +159,7 @@ export function CompanyLegalSection({
               id="verification-company-description"
               placeholder={translations.descriptionPlaceholder}
             />
-            <small id="verification-company-description-error" role={fieldState.error ? 'alert' : undefined}>
+            <small aria-hidden={!fieldState.error} className="min-h-[2lh]" id={fieldState.error ? 'verification-company-description-error' : undefined} role={fieldState.error ? 'alert' : undefined}>
               {fieldState.error?.message ?? ' '}
             </small>
           </label>

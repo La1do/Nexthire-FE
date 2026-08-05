@@ -51,7 +51,7 @@ function AccountField({ error, helper, id, label, readOnly = false, ...props }: 
         readOnly={readOnly}
         {...props}
       />
-      <small className={error ? 'is-error' : undefined} id={messageId}>
+      <small aria-hidden={!error && !helper} className={`min-h-[2lh]${error ? ' is-error' : ''}`} id={messageId} role={error ? 'alert' : undefined}>
         {error ?? helper ?? ''}
       </small>
     </label>

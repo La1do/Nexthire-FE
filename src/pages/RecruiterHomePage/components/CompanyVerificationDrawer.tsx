@@ -100,6 +100,7 @@ export function CompanyVerificationDrawer({
                   error={fieldState.error?.message}
                   label={form.nameLabel}
                   placeholder={form.namePlaceholder}
+                  reserveMessageSpace
                 />
               )}
             />
@@ -112,6 +113,7 @@ export function CompanyVerificationDrawer({
                   error={fieldState.error?.message}
                   label={form.taxCodeLabel}
                   placeholder={form.taxCodePlaceholder}
+                  reserveMessageSpace
                 />
               )}
             />
@@ -125,6 +127,7 @@ export function CompanyVerificationDrawer({
                   error={fieldState.error?.message}
                   label={form.websiteLabel}
                   placeholder={form.websitePlaceholder}
+                  reserveMessageSpace
                   type="url"
                 />
               )}
@@ -138,6 +141,7 @@ export function CompanyVerificationDrawer({
                   autoComplete="url"
                   label={form.logoLabel}
                   placeholder={form.logoPlaceholder}
+                  reserveMessageSpace
                   type="url"
                 />
               )}
@@ -154,6 +158,7 @@ export function CompanyVerificationDrawer({
                 error={fieldState.error?.message}
                 label={form.addressLabel}
                 placeholder={form.addressPlaceholder}
+                reserveMessageSpace
               />
             )}
           />
@@ -171,11 +176,9 @@ export function CompanyVerificationDrawer({
                   id="company-description"
                   placeholder={form.descriptionPlaceholder}
                 />
-                {fieldState.error?.message ? (
-                  <small id="company-description-error" role="alert">
-                    {fieldState.error.message}
-                  </small>
-                ) : null}
+                <small aria-hidden={!fieldState.error?.message} className="min-h-[2lh]" id={fieldState.error?.message ? 'company-description-error' : undefined} role={fieldState.error?.message ? 'alert' : undefined}>
+                  {fieldState.error?.message ?? ' '}
+                </small>
               </label>
             )}
           />

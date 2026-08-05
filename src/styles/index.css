@@ -10103,12 +10103,6 @@ select {
   border-color: var(--color-text-danger);
 }
 
-.job-post-field-error {
-  color: var(--color-text-danger);
-  font-size: 0.84rem;
-  font-weight: 850;
-}
-
 .job-post-inline-warning {
   background: #fffbeb;
   border: 1px solid rgba(245, 158, 11, 0.2);
