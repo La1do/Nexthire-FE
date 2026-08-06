@@ -15162,6 +15162,63 @@ select {
   transform: translateY(1px);
 }
 
+@media (max-width: 900px) {
+  .profile-cv-assist-card {
+    align-items: start;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .profile-cv-assist-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    padding-inline-start: calc(3.2rem + clamp(0.85rem, 2vw, 1.1rem));
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .profile-cv-assist-card {
+    gap: 0.9rem;
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    padding-inline-start: 1.2rem;
+  }
+
+  .profile-cv-assist-mark {
+    height: 3rem;
+    width: 3rem;
+  }
+
+  .profile-cv-assist-copy {
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .profile-cv-assist-copy h2 {
+    font-size: 1.15rem;
+    max-width: 18rem;
+  }
+
+  .profile-cv-assist-copy span,
+  .profile-cv-assist-copy small {
+    max-width: 100%;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .profile-cv-assist-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-inline-start: 0;
+  }
+
+  .profile-cv-assist-actions button {
+    justify-self: stretch;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
 .cv-parse-review-dialog {
   background: transparent;
   border: 0;
