@@ -43,6 +43,8 @@ export function AdminLayout({ children }: PropsWithChildren) {
       ? pages.adminAiManagement.pageTitle
     : currentPath.startsWith('/admin/jobs')
       ? pages.adminJobs.pageTitle
+    : currentPath.startsWith('/admin/cv-templates')
+      ? pages.adminCvTemplates.pageTitle
     : currentPath.startsWith('/admin/settings')
       ? pages.adminSettings.pageTitle
     : currentPath.startsWith('/admin/companies/')
@@ -105,7 +107,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
         id="admin-sidebar"
       >
         <div className="admin-sidebar__inner">
-          <Link className="admin-sidebar__brand" to="/">
+          <Link className="admin-sidebar__brand" to="/admin/dashboard">
             <BrandMark compact label={common.brandName} />
           </Link>
 
@@ -141,6 +143,14 @@ export function AdminLayout({ children }: PropsWithChildren) {
               to="/admin/jobs"
             >
               {content.sidebar.jobs}
+            </NavLink>
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+              tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/cv-templates"
+            >
+              {pages.adminCvTemplates.sidebarLabel}
             </NavLink>
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}

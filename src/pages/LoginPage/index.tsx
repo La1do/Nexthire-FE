@@ -45,8 +45,10 @@ function LoginPageForRole({ role }: { role: LoginPageRole }) {
       <LoginForm
         apiErrors={common.apiErrors}
         authFeedback={common.authFeedback}
+        authGuard={common.authGuard}
         backToLoginLabel={common.navigation.login}
         role={apiRoleByPageRole[role]}
+        roleLabels={common.authUser}
         translations={login}
         verificationTranslations={pages.register.verification.verify}
         verificationValidation={{ codeRequired: pages.register.validation.codeRequired }}

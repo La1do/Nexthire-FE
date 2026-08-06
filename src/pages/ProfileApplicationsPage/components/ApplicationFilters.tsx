@@ -6,7 +6,6 @@ const filterOptions: readonly ApplicationFilter[] = [
   'SUBMITTED',
   'OFFERED',
   'REJECTED',
-  'WITHDRAWN',
   'CANCELLED',
 ]
 

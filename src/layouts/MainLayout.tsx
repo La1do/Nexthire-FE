@@ -39,6 +39,24 @@ function getProfileHref(role: AuthApiRole) {
   return '/recruiter'
 }
 
+function getBrandHref(user: AuthUser | null) {
+  if (!user) return '/'
+  if (user.role === 'CANDIDATE') return '/home'
+  if (user.role === 'ADMIN') return '/admin/dashboard'
+  return '/recruiter'
+}
+
+function getUserAvatar(user: AuthUser) {
+  const src = user.role === 'RECRUITER'
+    ? user.logoUrl ?? user.avatarUrl ?? null
+    : user.avatarUrl ?? user.logoUrl ?? null
+
+  return {
+    alt: user.role === 'RECRUITER' && user.companyName ? `${user.companyName} logo` : getAuthUserDisplayName(user),
+    src,
+  }
+}
+
 type MainUserMenuProps = {
   labels: {
     profile: string
@@ -60,6 +78,7 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
   const displayName = getAuthUserDisplayName(user)
   const metaLabel = getUserMetaLabel(user, labels)
   const profileHref = getProfileHref(user.role)
+  const avatar = getUserAvatar(user)
 
   useEffect(() => {
     if (!isOpen) {
@@ -108,11 +127,11 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
         ref={triggerRef}
         type="button"
       >
-        {user.logoUrl ? (
+        {avatar.src ? (
           <img
-            alt={user.companyName ? `${user.companyName} logo` : ''}
+            alt={avatar.alt}
             className="main-user-avatar"
-            src={user.logoUrl}
+            src={avatar.src}
           />
         ) : (
           <span className="main-user-avatar main-user-avatar--initials">
@@ -128,11 +147,11 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 
       <div className="main-user-dropdown" hidden={!isOpen} id={menuId} role="menu">
         <div className="main-user-dropdown-header" role="none">
-          {user.logoUrl ? (
+          {avatar.src ? (
             <img
-              alt={user.companyName ? `${user.companyName} logo` : ''}
+              alt={avatar.alt}
               className="main-user-dropdown-avatar"
-              src={user.logoUrl}
+              src={avatar.src}
             />
           ) : (
             <span className="main-user-dropdown-avatar main-user-avatar--initials">
@@ -176,6 +195,8 @@ export function MainLayout({ children }: PropsWithChildren) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const showCandidateNotifications = user?.role === 'CANDIDATE'
+  const showCandidateNavigation = !user || user.role === 'CANDIDATE'
+  const brandHref = getBrandHref(user)
   const navigationItems = [
     {
       href: '/search',
@@ -210,24 +231,26 @@ export function MainLayout({ children }: PropsWithChildren) {
     <div className="main-shell min-h-screen text-[var(--color-text-primary)]">
       <header className="main-header">
         <div className="main-container main-header-inner flex items-center justify-between gap-5 py-4">
-          <a className="main-brand" href="/">
+          <a className="main-brand" href={brandHref}>
             <BrandMark compact label={common.brandName} />
           </a>
-          <nav className="main-nav">
-            {navigationItems.map((item) => (
-              <NavLink
-                className={({ isActive }) =>
-                  ['main-nav-link', isActive || item.current ? 'is-active' : '']
-                    .filter(Boolean)
-                    .join(' ')
-                }
-                key={item.href}
-                to={item.href}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+          {showCandidateNavigation ? (
+            <nav className="main-nav">
+              {navigationItems.map((item) => (
+                <NavLink
+                  className={({ isActive }) =>
+                    ['main-nav-link', isActive || item.current ? 'is-active' : '']
+                      .filter(Boolean)
+                      .join(' ')
+                  }
+                  key={item.href}
+                  to={item.href}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+          ) : null}
           <div className="main-header-actions">
             <LanguageSwitch className="main-language-switch" compact />
             {isAuthenticated && user ? (
@@ -264,7 +287,7 @@ export function MainLayout({ children }: PropsWithChildren) {
       <footer className="main-footer">
         <div className="main-container grid gap-10 py-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
-            <a className="main-footer-brand" href="/">
+            <a className="main-footer-brand" href={brandHref}>
               <BrandMark compact label={common.brandName} />
             </a>
             <p className="main-footer-description mt-4 max-w-sm text-sm leading-6">{common.footer.description}</p>

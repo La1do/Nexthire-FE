@@ -5,6 +5,7 @@ export type LocaleContextValue = {
   hasStoredLocalePreference: boolean
   locale: Locale
   setLocale: (locale: Locale) => void
+  syncLocale: (locale: Locale) => void
   translations: Translations
 }
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   PanelLeftClose,
   PanelLeftOpen,
@@ -15,6 +16,10 @@ import { PropertiesPanel } from './canvas/components/PropertiesPanel';
 import { LayersPanel } from './canvas/components/LayersPanel';
 import { useCanvasStore } from './canvas/store/useCanvasStore';
 import { useCanvasKeyboard } from './canvas/hooks/useCanvasKeyboard';
+import { CV_TEMPLATES } from './canvas/templates';
+import { cvTemplatePresetService } from '../../services/cvTemplatePreset.service';
+import { useLocale } from '../../i18n';
+import type { CanvasDocument } from './canvas/canvas.types';
 
 type RightTab = 'properties' | 'layers';
 type LeftTab = 'insert' | 'templates' | 'mine';
@@ -100,6 +105,25 @@ const CollapsedRail = ({
 const MIN_W = 220;
 const MAX_W = 460;
 
+function firstLocalizedText(value: Record<'vi' | 'en' | 'ja', string>, locale: string) {
+  return value[locale as 'vi' | 'en' | 'ja'] || value.vi || value.en || value.ja;
+}
+
+function normalizePresetDocument(document: CanvasDocument, name: string): CanvasDocument {
+  return {
+    ...document,
+    id: document.id || `template-${Date.now()}`,
+    name: document.name || name,
+    pageSize: document.pageSize ?? { width: 794, height: 1123 },
+    pages: document.pages.map((page, index) => ({
+      ...page,
+      id: page.id || `template-page-${index + 1}`,
+      background: page.background || '#ffffff',
+      elements: Array.isArray(page.elements) ? page.elements : [],
+    })),
+  };
+}
+
 // Thanh kéo để đổi bề rộng sidebar.
 const ResizeHandle = ({
   side,
@@ -142,12 +166,53 @@ const ResizeHandle = ({
 
 export function CvBuilderPage() {
   useCanvasKeyboard();
+  const { locale } = useLocale();
+  const { templateId } = useParams<{ templateId?: string }>();
+  const loadedTemplateRef = useRef<string | null>(null);
+  const loadDocument = useCanvasStore((s) => s.loadDocument);
+  const applyTemplate = useCanvasStore((s) => s.applyTemplate);
   const [rightTab, setRightTab] = useState<RightTab>('properties');
   const [leftTab, setLeftTab] = useState<LeftTab>('insert');
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const [leftW, setLeftW] = useState(280);
   const [rightW, setRightW] = useState(320);
+
+  useEffect(() => {
+    if (!templateId || loadedTemplateRef.current === templateId) {
+      return;
+    }
+
+    let active = true;
+    loadedTemplateRef.current = templateId;
+    const localTemplate = CV_TEMPLATES.find((template) => template.id === templateId);
+
+    cvTemplatePresetService.get(templateId)
+      .then((preset) => {
+        if (!active) return;
+        if (preset.canvas?.pages?.length) {
+          loadDocument(
+            normalizePresetDocument(
+              preset.canvas,
+              firstLocalizedText(preset.name, locale),
+            ),
+            null,
+          );
+          return;
+        }
+        if (localTemplate) {
+          applyTemplate(localTemplate.build(), localTemplate.name);
+        }
+      })
+      .catch(() => {
+        if (!active || !localTemplate) return;
+        applyTemplate(localTemplate.build(), localTemplate.name);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [applyTemplate, loadDocument, locale, templateId]);
 
   const tabBtn = (active: boolean) =>
     `flex-1 border-b-2 px-3 py-2 text-sm font-medium ${

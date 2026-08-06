@@ -77,6 +77,7 @@ export function RegisterForm({ apiErrors, onRegistered, role, translations }: Re
         setSubmitting(false)
       }
     },
+    validationKey: validation,
     validate: (formValues) => validateRegisterForm(formValues, validation),
   })
 

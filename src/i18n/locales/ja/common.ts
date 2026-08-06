@@ -111,6 +111,16 @@ export const common = {
     passwordResetVerified: '確認コードが承認されました。',
     passwordResetSuccess: '新しいパスワードを保存しました。',
   },
+  authGuard: {
+    authRequiredTitle: '正しい役割でログインしてください',
+    authRequiredMessage: 'このエリアは{{requiredRole}}アカウント向けです。続行するには該当するアカウントでログインしてください。',
+    roleMismatchTitle: '別の役割のセッションをログアウトしました',
+    roleMismatchMessage:
+      '現在は{{currentRole}}アカウントですが、このページは{{requiredRole}}向けです。正しい役割でログインし直してください。',
+    roleSwitchTitle: 'アカウントエリアを切り替えています',
+    roleSwitchMessage:
+      '{{currentRole}}のセッションを離れて{{requiredRole}}エリアを開きます。該当するアカウントでログインしてください。',
+  },
   languageSwitcher: {
     label: '言語を変更',
     options: {

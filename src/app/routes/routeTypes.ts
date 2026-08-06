@@ -5,9 +5,12 @@ import type { BusinessGate } from './businessGates'
 export type RouteAccess =
   | {
       kind: 'public'
+      roles?: AuthApiRole[]
+      loginPath?: string
     }
   | {
       kind: 'guest-only'
+      targetRole?: AuthApiRole
     }
   | {
       kind: 'protected'

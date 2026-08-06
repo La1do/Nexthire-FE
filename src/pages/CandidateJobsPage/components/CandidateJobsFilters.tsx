@@ -39,9 +39,10 @@ export function CandidateJobsFilters({
 
       <fieldset className="candidate-jobs-tabs">
         <legend>{content.filters.tabLabel}</legend>
-        <div>
+        <div className="candidate-jobs-tabs-track" role="tablist">
           {filterOptions.map((option) => {
             const isActive = option === activeFilter
+            const count = tabCounts[option]
 
             return (
               <button
@@ -49,10 +50,17 @@ export function CandidateJobsFilters({
                 className={isActive ? 'is-active' : undefined}
                 key={option}
                 onClick={() => onFilterChange(option)}
+                role="tab"
                 type="button"
               >
-                <span>{content.filters.tabs[option]}</span>
-                <strong>{tabCounts[option]}</strong>
+                <span className="candidate-jobs-tabs-label">{content.filters.tabs[option]}</span>
+                {isActive ? (
+                  <span className="candidate-jobs-tabs-count" aria-hidden="true">
+                    {count}
+                  </span>
+                ) : (
+                  <span className="sr-only">{count}</span>
+                )}
               </button>
             )
           })}

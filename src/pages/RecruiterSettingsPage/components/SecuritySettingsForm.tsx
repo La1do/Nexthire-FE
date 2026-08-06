@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { ComponentPropsWithoutRef } from 'react'
 import { z } from 'zod'
@@ -95,6 +95,7 @@ function getSecurityApiError(
 export function SecuritySettingsForm({ translations }: SecuritySettingsFormProps) {
   const toast = useToast()
   const [submitMessage, setSubmitMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
+  const hasMountedRef = useRef(false)
   const schema = useMemo(
     () => z.object({
       currentPassword: z.string()
@@ -131,6 +132,7 @@ export function SecuritySettingsForm({ translations }: SecuritySettingsFormProps
     handleSubmit,
     register,
     reset,
+    trigger,
   } = useForm<SecurityFormValues>({
     defaultValues: {
       currentPassword: '',
@@ -140,6 +142,15 @@ export function SecuritySettingsForm({ translations }: SecuritySettingsFormProps
     mode: 'onBlur',
     resolver: zodResolver(schema),
   })
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    void trigger()
+  }, [schema, trigger])
 
   const handleChangePassword = handleSubmit(async (values) => {
     setSubmitMessage(null)

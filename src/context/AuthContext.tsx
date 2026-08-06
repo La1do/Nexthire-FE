@@ -56,7 +56,7 @@ function isSessionExpiredError(error: unknown) {
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const { common } = useTranslations()
-  const { hasStoredLocalePreference, setLocale } = useLocale()
+  const { syncLocale } = useLocale()
   const { track: trackGlobalLoader } = useGlobalLoader()
   const hydratedIdentityRef = useRef<string | null>(null)
   const hydrationRequestRef = useRef(0)
@@ -96,8 +96,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const login = useCallback(
     (auth: AuthResponse, persistence: AuthPersistence = 'session') => {
-      if (!hasStoredLocalePreference && isLocale(auth.user.language)) {
-        setLocale(auth.user.language)
+      if (isLocale(auth.user.language)) {
+        syncLocale(auth.user.language)
       }
 
       authTokenStorage.setTokens(auth.tokens, persistence)
@@ -107,7 +107,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setUser(auth.user)
       setProfileRefreshKey((current) => current + 1)
     },
-    [hasStoredLocalePreference, setLocale],
+    [syncLocale],
   )
 
   const logout = useCallback(async () => {
@@ -159,8 +159,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
           return
         }
 
-        if (!hasStoredLocalePreference && isLocale(nextUser.language)) {
-          setLocale(nextUser.language)
+        if (isLocale(nextUser.language)) {
+          syncLocale(nextUser.language)
         }
 
         setUser((currentUser) => {
@@ -196,7 +196,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => {
       isActive = false
     }
-  }, [clearSession, hasStoredLocalePreference, profileRefreshKey, setLocale, user])
+  }, [clearSession, profileRefreshKey, syncLocale, user])
 
   const value = useMemo<AuthContextValue>(
     () => ({

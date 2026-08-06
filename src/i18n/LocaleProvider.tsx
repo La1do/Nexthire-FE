@@ -24,10 +24,18 @@ export function LocaleProvider({ children }: PropsWithChildren) {
   const [locale, setLocaleState] = useState<Locale>(storedLocale ?? defaultLocale)
   const [hasStoredLocalePreference, setHasStoredLocalePreference] = useState(() => storedLocale !== null)
 
-  const setLocale = useCallback((nextLocale: Locale) => {
+  const applyLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale)
     setHasStoredLocalePreference(true)
   }, [])
+
+  const setLocale = useCallback((nextLocale: Locale) => {
+    applyLocale(nextLocale)
+  }, [applyLocale])
+
+  const syncLocale = useCallback((nextLocale: Locale) => {
+    applyLocale(nextLocale)
+  }, [applyLocale])
 
   useEffect(() => {
     document.documentElement.lang = locale
@@ -49,9 +57,10 @@ export function LocaleProvider({ children }: PropsWithChildren) {
       hasStoredLocalePreference,
       locale,
       setLocale,
+      syncLocale,
       translations,
     }),
-    [hasStoredLocalePreference, locale, setLocale, translations],
+    [hasStoredLocalePreference, locale, setLocale, syncLocale, translations],
   )
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>

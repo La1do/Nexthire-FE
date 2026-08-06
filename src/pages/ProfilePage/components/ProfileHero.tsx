@@ -53,24 +53,26 @@ export function ProfileHero({
   return (
     <section className="profile-hero profile-card-motion">
       <div className="profile-avatar-wrap">
-        <span className="profile-avatar">
-          {showAvatarImage ? (
-            <img
-              alt={profile.name || content.avatarAction}
-              onError={() => setAvatarFailed(true)}
-              src={profile.avatarUrl ?? ''}
-            />
-          ) : (
-            getInitials(profile.name)
-          )}
-        </span>
         <button
           aria-label={content.avatarAction}
-          className="profile-avatar-action"
+          className="profile-avatar-button"
           disabled={isUploadingAvatar}
           onClick={() => avatarInputRef.current?.click()}
           type="button"
-        />
+        >
+          <span className="profile-avatar">
+            {showAvatarImage ? (
+              <img
+                alt={profile.name || content.avatarAction}
+                onError={() => setAvatarFailed(true)}
+                src={profile.avatarUrl ?? ''}
+              />
+            ) : (
+              getInitials(profile.name)
+            )}
+          </span>
+          <span aria-hidden="true" className="profile-avatar-action" />
+        </button>
         <input
           accept="image/jpeg,image/png,image/webp"
           className="sr-only"

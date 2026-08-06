@@ -20,6 +20,8 @@ type PendingDecision = {
   status: RecruiterDecisionStatus
 }
 
+type DecisionValidationError = ReturnType<typeof validateApplicationFeedback>
+
 export function ApplicationDecisionForm({
   application,
   isSubmitting,
@@ -27,7 +29,7 @@ export function ApplicationDecisionForm({
   translations,
 }: ApplicationDecisionFormProps) {
   const [feedback, setFeedback] = useState(application.statusNote ?? '')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<DecisionValidationError>(null)
   const [pendingDecision, setPendingDecision] = useState<PendingDecision | null>(null)
   const isDecisionCompleted = ['OFFERED', 'REJECTED', 'WITHDRAWN', 'CANCELLED'].includes(application.status)
   const isOffer = application.status === 'OFFERED'
@@ -43,11 +45,7 @@ export function ApplicationDecisionForm({
     const validationError = validateApplicationFeedback(status, feedback)
 
     if (validationError) {
-      setError(
-        validationError === 'maxLength'
-          ? translations.maxLengthError.replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))
-          : translations.rejectionRequiredError,
-      )
+      setError(validationError)
       return
     }
 

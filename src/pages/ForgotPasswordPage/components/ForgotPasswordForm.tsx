@@ -28,6 +28,7 @@ export function ForgotPasswordForm({
       onSubmit: (formValues) => {
         void onSent(formValues.email.trim())
       },
+      validationKey: validation,
       validate: (formValues) => validateForgotPasswordRequest(formValues, validation),
     })
 

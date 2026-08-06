@@ -54,12 +54,13 @@ export function VerificationCodeForm({
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
   const hasResendAction = Boolean(onResend)
   const [digits, setDigits] = useState(emptyDigits)
-  const [error, setError] = useState('')
+  const [hasCodeError, setCodeError] = useState(false)
   const [secondsRemaining, setSecondsRemaining] = useState(() =>
     normalizeCooldownSeconds(cooldownSeconds ?? (hasResendAction ? defaultCooldownSeconds : 0)),
   )
   const code = digits.join('')
   const canResend = hasResendAction && secondsRemaining <= 0 && !isResending && !isSubmitting
+  const validationError = hasCodeError ? translations.validation.codeRequired : ''
 
   useEffect(() => {
     setSecondsRemaining(normalizeCooldownSeconds(cooldownSeconds ?? (hasResendAction ? defaultCooldownSeconds : 0)))
@@ -79,8 +80,8 @@ export function VerificationCodeForm({
 
   const updateDigits = (nextDigits: string[]) => {
     setDigits(nextDigits)
-    if (error) {
-      setError('')
+    if (hasCodeError) {
+      setCodeError(false)
     }
   }
 
@@ -146,7 +147,7 @@ export function VerificationCodeForm({
     }
 
     if (code.length !== digitCount) {
-      setError(translations.validation.codeRequired)
+      setCodeError(true)
       inputRefs.current[digits.findIndex((digit) => !digit)]?.focus()
       return
     }
@@ -178,8 +179,8 @@ export function VerificationCodeForm({
         ))}
       </div>
 
-      {error || submitError ? (
-        <p className="text-center text-sm font-medium text-[var(--color-text-danger)]">{error || submitError}</p>
+      {validationError || submitError ? (
+        <p className="text-center text-sm font-medium text-[var(--color-text-danger)]">{validationError || submitError}</p>
       ) : null}
 
       {onResend ? (

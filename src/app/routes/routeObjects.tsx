@@ -1,3 +1,4 @@
+import { Navigate } from 'react-router-dom'
 import { AdminLayout } from '../../layouts/AdminLayout'
 import { AdminAiManagementPage } from '../../pages/AdminAiManagementPage'
 import { AuthLayout } from '../../layouts/AuthLayout'
@@ -8,6 +9,7 @@ import { RecruiterLayout } from '../../layouts/RecruiterLayout'
 import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
 import { AdminDashboardPage } from '../../pages/AdminDashboardPage'
+import { AdminCvTemplatesPage } from '../../pages/AdminCvTemplatesPage'
 import { AdminJobsPage } from '../../pages/AdminJobsPage'
 import { AdminSettingsPage } from '../../pages/AdminSettingsPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
@@ -44,7 +46,20 @@ import type { BusinessGate } from './businessGates'
 import type { Translations } from '../../i18n'
 
 const publicAccess: RouteAccess = { kind: 'public' }
+const candidatePublicAccess: RouteAccess = {
+  kind: 'public',
+  roles: ['CANDIDATE'],
+  loginPath: '/login',
+}
+const recruiterPublicAccess: RouteAccess = {
+  kind: 'public',
+  roles: ['RECRUITER'],
+  loginPath: '/recruiter/login',
+}
 const guestOnlyAccess: RouteAccess = { kind: 'guest-only' }
+const candidateGuestAccess: RouteAccess = { kind: 'guest-only', targetRole: 'CANDIDATE' }
+const recruiterGuestAccess: RouteAccess = { kind: 'guest-only', targetRole: 'RECRUITER' }
+const adminGuestAccess: RouteAccess = { kind: 'guest-only', targetRole: 'ADMIN' }
 
 const candidateAccess: RouteAccess = {
   kind: 'protected',
@@ -76,105 +91,105 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       label: common.navigation.home,
       element: <HomePage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/home',
       label: common.navigation.home,
       element: <HomePage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/search',
       label: pages.search.routeLabel,
       element: <SearchPage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/cv-templates',
       label: pages.cvTemplates.routeLabel,
       element: <CvTemplatesPage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/cv-builder',
       label: 'CV Builder',
       element: <CvBuilderPage />,
       layout: BlankLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/cv-builder/:templateId',
       label: 'CV Builder',
       element: <CvBuilderPage />,
       layout: BlankLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/jobs/:id',
       label: pages.jobDetail.routeLabel,
       element: <JobDetailPage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/companies',
       label: pages.companies.routeLabel,
       element: <CompaniesPage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/career-guide',
       label: comingSoon.pages.careerGuide.title,
       element: <CareerGuidePage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/career-guide/:slug',
       label: comingSoon.pages.careerGuide.title,
       element: <CareerGuideDetailPage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/jobs/latest',
       label: pages.infoPages.pages.latestJobs.hero.title,
       element: <InfoPage pageKey="latestJobs" />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/jobs/it',
       label: pages.infoPages.pages.itJobs.hero.title,
       element: <InfoPage pageKey="itJobs" />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/jobs/marketing',
       label: pages.infoPages.pages.marketingJobs.hero.title,
       element: <InfoPage pageKey="marketingJobs" />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/employers/post-a-job',
       label: pages.infoPages.pages.postJob.hero.title,
       element: <InfoPage pageKey="postJob" />,
       layout: MainLayout,
-      access: publicAccess,
+      access: recruiterPublicAccess,
     },
     {
       path: '/employers/business-hiring',
       label: pages.infoPages.pages.businessHiring.hero.title,
       element: <InfoPage pageKey="businessHiring" />,
       layout: MainLayout,
-      access: publicAccess,
+      access: recruiterPublicAccess,
     },
     {
       path: '/help',
@@ -209,7 +224,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       label: pages.companyDetail.routeLabel,
       element: <CompanyDetailPage />,
       layout: MainLayout,
-      access: publicAccess,
+      access: candidatePublicAccess,
     },
     {
       path: '/profile',
@@ -340,35 +355,49 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       label: common.navigation.login,
       element: <CandidateLoginPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: candidateGuestAccess,
     },
     {
       path: '/recruiter/login',
       label: common.navigation.employerCta,
       element: <RecruiterLoginPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: recruiterGuestAccess,
     },
     {
       path: '/admin/login',
       label: pages.adminUsers.routeLabel,
       element: <AdminLoginPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: adminGuestAccess,
+    },
+    {
+      path: '/admin',
+      label: pages.adminDashboard.routeLabel,
+      element: <Navigate replace to="/admin/dashboard" />,
+      layout: BlankLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/ad',
+      label: pages.adminDashboard.routeLabel,
+      element: <Navigate replace to="/admin/dashboard" />,
+      layout: BlankLayout,
+      access: adminAccess,
     },
     {
       path: '/register',
       label: pages.register.candidate.routeLabel,
       element: <CandidateRegisterPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: candidateGuestAccess,
     },
     {
       path: '/recruiter/register',
       label: pages.register.recruiter.routeLabel,
       element: <RecruiterRegisterPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: recruiterGuestAccess,
     },
     {
       path: '/forgot-password',
@@ -395,6 +424,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/admin/jobs',
       label: pages.adminJobs.routeLabel,
       element: <AdminJobsPage />,
+      layout: AdminLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/admin/cv-templates',
+      label: pages.adminCvTemplates.routeLabel,
+      element: <AdminCvTemplatesPage />,
       layout: AdminLayout,
       access: adminAccess,
     },

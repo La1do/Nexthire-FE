@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 import { useToast } from '../../../context'
@@ -21,6 +21,7 @@ function apiError(error: unknown, content: AdminSettingsTranslations['password']
 
 export function AdminChangePasswordForm({ content, isPending, onSave }: Props) {
   const toast = useToast()
+  const hasMountedRef = useRef(false)
   const schema = useMemo(() => z.object({
     currentPassword: z.string().min(1, content.validation.currentRequired).min(8, content.validation.length).max(128, content.validation.length),
     newPassword: z.string().min(1, content.validation.nextRequired).min(8, content.validation.length).max(128, content.validation.length),
@@ -29,7 +30,7 @@ export function AdminChangePasswordForm({ content, isPending, onSave }: Props) {
     if (values.currentPassword === values.newPassword) context.addIssue({ code: 'custom', message: content.validation.reuse, path: ['newPassword'] })
     if (values.newPassword !== values.confirmPassword) context.addIssue({ code: 'custom', message: content.validation.mismatch, path: ['confirmPassword'] })
   }), [content.validation])
-  const { control, formState: { errors, isDirty }, handleSubmit, register, reset } = useForm<Values>({ defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' }, mode: 'onBlur', resolver: zodResolver(schema) })
+  const { control, formState: { errors, isDirty }, handleSubmit, register, reset, trigger } = useForm<Values>({ defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' }, mode: 'onBlur', resolver: zodResolver(schema) })
   const password = useWatch({ control, name: 'newPassword' }) || ''
   const rules = [
     [password.length >= 8 && password.length <= 128, content.lengthRule],
@@ -37,6 +38,16 @@ export function AdminChangePasswordForm({ content, isPending, onSave }: Props) {
     [/\d/.test(password), content.numberRule],
     [/[^A-Za-z0-9]/.test(password), content.symbolRule],
   ] as const
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    void trigger()
+  }, [schema, trigger])
+
   const submit = handleSubmit(async (values) => {
     try {
       await onSave({ currentPassword: values.currentPassword, newPassword: values.newPassword })

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth, useToast } from '../../../context'
-import { isLocale, supportedLocales, useLocale } from '../../../i18n'
-import type { CandidateSettingsTranslations, Locale } from '../../../i18n/types'
+import { getTranslations, isLocale, supportedLocales, useLocale } from '../../../i18n'
+import type { CandidateSettingsTranslations, CommonTranslations, Locale } from '../../../i18n/types'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { candidateService } from '../../../services/candidate.service'
 import { Button, SelectField } from '../../_components'
@@ -10,15 +10,45 @@ type LanguageSettingsFormProps = {
   translations: CandidateSettingsTranslations['language']
 }
 
+type LanguageStatus =
+  | {
+      tone: 'success'
+    }
+  | {
+      tone: 'error'
+      code?: string
+      fallbackMessage: string
+    }
+
+function resolveLanguageStatusMessage(
+  status: LanguageStatus | null,
+  messages: CandidateSettingsTranslations['language'],
+  apiErrors: CommonTranslations['apiErrors'],
+) {
+  if (!status) {
+    return null
+  }
+
+  if (status.tone === 'success') {
+    return messages.saveSuccess
+  }
+
+  if (status.code) {
+    return apiErrors.byCode[status.code] ?? status.fallbackMessage
+  }
+
+  return status.fallbackMessage
+}
+
 export function LanguageSettingsForm({ translations }: LanguageSettingsFormProps) {
   const { refreshUser, user } = useAuth()
-  const { locale, setLocale, translations: allTranslations } = useLocale()
+  const { locale, syncLocale, translations: allTranslations } = useLocale()
   const toast = useToast()
   const accountLocale = isLocale(user?.language) ? user.language : locale
   const [savedLocale, setSavedLocale] = useState<Locale>(accountLocale)
   const [selectedLocale, setSelectedLocale] = useState<Locale>(accountLocale)
   const [isSaving, setSaving] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
+  const [submitMessage, setSubmitMessage] = useState<LanguageStatus | null>(null)
   const languageLabels = allTranslations.common.languageSwitcher
   const options = useMemo(
     () => supportedLocales.map((option) => ({
@@ -44,19 +74,24 @@ export function LanguageSettingsForm({ translations }: LanguageSettingsFormProps
     setSubmitMessage(null)
 
     try {
-      await candidateService.updateMyProfile({
+      const updatedProfile = await candidateService.updateMyProfile({
         profile: {
           language: selectedLocale,
         },
       })
-      setSavedLocale(selectedLocale)
-      setLocale(selectedLocale)
+      const nextLocale = isLocale(updatedProfile.profile.language) ? updatedProfile.profile.language : selectedLocale
+      setSavedLocale(nextLocale)
+      setSelectedLocale(nextLocale)
+      syncLocale(nextLocale)
       refreshUser()
-      setSubmitMessage({ tone: 'success', text: translations.saveSuccess })
-      toast.success(translations.saveSuccess)
+      setSubmitMessage({ tone: 'success' })
+      toast.success(getTranslations(nextLocale).pages.candidateSettings.language.saveSuccess)
     } catch (error) {
-      const message = getApiErrorEnvelope(error)?.error.message ?? translations.saveError
-      setSubmitMessage({ tone: 'error', text: message })
+      const envelope = getApiErrorEnvelope(error)
+      const message = envelope?.error.code
+        ? allTranslations.common.apiErrors.byCode[envelope.error.code] ?? envelope.error.message ?? translations.saveError
+        : envelope?.error.message ?? translations.saveError
+      setSubmitMessage({ tone: 'error', code: envelope?.error.code, fallbackMessage: message })
       toast.error(message)
     } finally {
       setSaving(false)
@@ -96,7 +131,7 @@ export function LanguageSettingsForm({ translations }: LanguageSettingsFormProps
             data-tone={submitMessage.tone}
             role={submitMessage.tone === 'error' ? 'alert' : 'status'}
           >
-            {submitMessage.text}
+            {resolveLanguageStatusMessage(submitMessage, translations, allTranslations.common.apiErrors)}
           </p>
         ) : null}
 

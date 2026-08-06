@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ChangeEventHandler, FormEventHandler } from 'react'
 
 export type FormErrors<TValues> = Partial<Record<keyof TValues, string>>
@@ -8,6 +8,7 @@ type UseFormStateOptions<TValues extends Record<string, unknown>> = {
   initialValues: TValues
   validate: (values: TValues) => FormErrors<TValues>
   onSubmit: (values: TValues) => void
+  validationKey?: unknown
 }
 
 function markAllFieldsTouched<TValues extends Record<string, unknown>>(values: TValues) {
@@ -24,12 +25,31 @@ function hasValidationErrors<TValues>(errors: FormErrors<TValues>) {
 export function useFormState<TValues extends Record<string, unknown>>({
   initialValues,
   onSubmit,
+  validationKey,
   validate,
 }: UseFormStateOptions<TValues>) {
   const [values, setValues] = useState<TValues>(initialValues)
   const [errors, setErrors] = useState<FormErrors<TValues>>({})
   const [touched, setTouched] = useState<FormTouched<TValues>>({})
   const [submitted, setSubmitted] = useState(false)
+  const validateRef = useRef(validate)
+  const valuesRef = useRef(values)
+
+  useEffect(() => {
+    validateRef.current = validate
+  }, [validate])
+
+  useEffect(() => {
+    valuesRef.current = values
+  }, [values])
+
+  useEffect(() => {
+    if (validationKey === undefined) {
+      return
+    }
+
+    setErrors(validateRef.current(valuesRef.current))
+  }, [validationKey])
 
   const setFieldValue = <TField extends keyof TValues>(field: TField, value: TValues[TField]) => {
     setValues((currentValues) => {
