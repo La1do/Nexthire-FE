@@ -28,6 +28,7 @@ export type RecruiterApplicationItem = {
   coverLetter: string
   cvFileName: string
   cvParseStatus: ApplicationCvParseStatus
+  decidedAt: string | null
   expectedSalary: string
   experience: string
   jobId: string
@@ -46,6 +47,7 @@ export type RecruiterApplicationItem = {
   resumeUrl?: string
   skills: ReadonlyArray<string>
   status: RecruiterApplicationStatus
+  statusNote: string | null
   submittedAt: string
   submittedAtOrder: number
   timeline: ReadonlyArray<RecruiterApplicationTimelineItem>

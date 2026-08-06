@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { BadgeCheck, Building2, CalendarDays, Clock3, Mail, Phone, ShieldAlert, UserRound } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useAdminUser } from '../../hooks/useAdminQueries'
