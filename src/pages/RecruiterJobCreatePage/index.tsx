@@ -19,7 +19,11 @@ import type {
   JobPostFormValues,
   JobPostSubmitResult,
 } from './types'
-import { createJobPostPayload, createJobPostUpdatePayload } from './utils/jobPostPayload'
+import {
+  createJobPostPayload,
+  createJobPostUpdatePayload,
+  createPublishedJobUpdatePayload,
+} from './utils/jobPostPayload'
 import { validateJobPostForm } from './utils/jobPostValidation'
 import { formatApiDateToDisplay } from './utils/jobPostInput'
 
@@ -52,10 +56,10 @@ function mapJobToPostValues(job: RecruiterJobResponse): JobPostFormValues {
   return {
     title: job.title,
     categoryId: job.categoryId ?? '',
-    employmentType: job.employmentType,
-    workingType: job.workingType,
-    experienceLevel: job.experienceLevel,
-    location: job.location,
+    employmentType: job.employmentType ?? '',
+    workingType: job.workingType ?? '',
+    experienceLevel: job.experienceLevel ?? '',
+    location: job.location ?? '',
     salaryMin: job.salaryMin == null ? '' : String(job.salaryMin),
     salaryMax: job.salaryMax == null ? '' : String(job.salaryMax),
     salaryCurrency: job.salaryCurrency === 'USD' || job.salaryCurrency === 'JPY' ? job.salaryCurrency : 'VND',
@@ -64,8 +68,8 @@ function mapJobToPostValues(job: RecruiterJobResponse): JobPostFormValues {
     numberOfOpenings: job.numberOfOpenings == null ? '' : String(job.numberOfOpenings),
     skills: job.skills,
     skillInput: '',
-    description: job.description,
-    requirements: job.requirements,
+    description: job.description ?? '',
+    requirements: job.requirements ?? '',
     benefits: job.benefits ?? '',
   }
 }
@@ -130,7 +134,7 @@ export function RecruiterJobCreatePage() {
       try {
         const job = await jobService.getRecruiterJobById(editJobId)
 
-        if (job.status !== 'DRAFT') {
+        if (job.status !== 'DRAFT' && job.status !== 'PUBLISHED') {
           setLoadError(content.states.editDraftOnly)
         } else {
           const nextValues = mapJobToPostValues(job)
@@ -156,6 +160,7 @@ export function RecruiterJobCreatePage() {
     void loadPageData()
   }, [loadPageData])
 
+  const isPublishedEdit = draftJob?.status === 'PUBLISHED'
   const companyStatus: CompanyGateStatus = company?.status ?? 'NO_COMPANY'
   const companyName = company?.name ?? content.preview.labels.company
   const currentPayloadKey = createPayloadKey(values)
@@ -252,7 +257,8 @@ export function RecruiterJobCreatePage() {
 
   const handleSubmit = useCallback(
     async (action: JobPostAction) => {
-      const validationMode = action === 'submit' || !draftJob ? 'submit' : 'draft'
+      const effectiveAction: JobPostAction = isPublishedEdit ? 'draft' : action
+      const validationMode = effectiveAction === 'submit' ? 'submit' : 'draft'
       const nextErrors = validateJobPostForm(values, content.validation, validationMode)
 
       if (Object.keys(nextErrors).length) {
@@ -264,7 +270,7 @@ export function RecruiterJobCreatePage() {
       const payload = createJobPostPayload(values)
       const payloadKey = JSON.stringify(payload)
 
-      setSubmittingAction(action)
+      setSubmittingAction(effectiveAction)
       setSubmitError(undefined)
 
       try {
@@ -274,19 +280,24 @@ export function RecruiterJobCreatePage() {
           job = await jobService.createRecruiterJob(payload)
         } else if (draftPayloadKey !== payloadKey) {
           const savedPayload = createJobPostPayload(mapJobToPostValues(job))
-          const updatePayload = createJobPostUpdatePayload(payload, savedPayload)
-          job = await jobService.updateRecruiterJob(job.id, updatePayload)
+          const updatePayload = isPublishedEdit
+            ? createPublishedJobUpdatePayload(payload, savedPayload)
+            : createJobPostUpdatePayload(payload, savedPayload)
+
+          if (Object.keys(updatePayload).length) {
+            job = await jobService.updateRecruiterJob(job.id, updatePayload)
+          }
         }
 
         setDraftJob(job)
         setDraftPayloadKey(payloadKey)
 
-        if (action === 'submit') {
+        if (effectiveAction === 'submit') {
           job = await jobService.submitRecruiterJob(job.id)
           setDraftJob(job)
         }
 
-        setSubmitResult({ action, job })
+        setSubmitResult({ action: effectiveAction, job })
         return true
       } catch (error) {
         setSubmitError(getApiErrorEnvelope(error)?.error.message ?? content.form.submitError)
@@ -295,7 +306,7 @@ export function RecruiterJobCreatePage() {
         setSubmittingAction(undefined)
       }
     },
-    [content.form.submitError, content.validation, draftJob, draftPayloadKey, values],
+    [content.form.submitError, content.validation, draftJob, draftPayloadKey, isPublishedEdit, values],
   )
 
   const handleRequestReview = useCallback(() => {
@@ -377,6 +388,7 @@ export function RecruiterJobCreatePage() {
             categoryWarning={categoryWarning}
             errors={errors}
             hasUnsavedChanges={hasUnsavedChanges}
+            isPublishedEdit={isPublishedEdit}
             onAddSkill={handleAddSkill}
             onChange={handleFieldChange}
             onRemoveSkill={handleRemoveSkill}

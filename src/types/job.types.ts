@@ -105,17 +105,31 @@ export type JobListQuery = {
   limit?: number
   q?: string
   skills?: string
-  location?: string
-  employmentType?: JobType
-  workingType?: JobWorkingType
-  experienceLevel?: JobExperienceLevel
+  location?: string | null
+  employmentType?: JobType | null
+  workingType?: JobWorkingType | null
+  experienceLevel?: JobExperienceLevel | null
   categoryId?: string
   salaryMin?: number
   salaryMax?: number
   sort?: 'relevance' | 'latest' | 'deadline_asc' | 'salary_desc' | 'salary_asc'
 }
 
-export type RecruiterJobResponse = PublicJobDetail & {
+export type RecruiterJobResponse = Omit<
+  PublicJobDetail,
+  | 'description'
+  | 'requirements'
+  | 'employmentType'
+  | 'workingType'
+  | 'experienceLevel'
+  | 'location'
+> & {
+  description: string | null
+  requirements: string | null
+  employmentType: JobType | null
+  workingType: JobWorkingType | null
+  experienceLevel: JobExperienceLevel | null
+  location: string | null
   status: JobStatus
   version: number
   applicationCount: number
@@ -156,15 +170,15 @@ export type RecruiterJobRevisionResponse = Omit<RecruiterJobResponse, 'id' | 'st
 
 export type CreateRecruiterJobPayload = {
   title: string
-  description: string
-  requirements: string
-  skills: string[]
+  description?: string | null
+  requirements?: string | null
+  skills?: string[]
   benefits?: string | null
   categoryId?: string | null
-  employmentType: JobType
-  workingType: JobWorkingType
-  experienceLevel: JobExperienceLevel
-  location: string
+  employmentType?: JobType | null
+  workingType?: JobWorkingType | null
+  experienceLevel?: JobExperienceLevel | null
+  location?: string | null
   salaryMin?: number | null
   salaryMax?: number | null
   salaryCurrency?: string

@@ -1,8 +1,15 @@
-
+/**
+ * Removes every character that is not an ASCII digit.
+ * Used for salary and opening-count inputs so invalid characters never reach form state.
+ */
 export function sanitizeUnsignedIntegerInput(value: string) {
   return value.replace(/\D/g, '')
 }
 
+/**
+ * Formats a numeric date input progressively as dd/mm/yyyy.
+ * Examples: 3 -> 3, 3108 -> 31/08, 31082026 -> 31/08/2026.
+ */
 export function formatDisplayDateInput(value: string) {
   const digits = sanitizeUnsignedIntegerInput(value).slice(0, 8)
 
@@ -23,6 +30,9 @@ export type ParsedDisplayDate = {
   year: number
 }
 
+/**
+ * Parses dd/mm/yyyy and rejects impossible calendar dates such as 31/02/2026.
+ */
 export function parseDisplayDate(value: string): ParsedDisplayDate | null {
   const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim())
 
@@ -46,6 +56,9 @@ export function parseDisplayDate(value: string): ParsedDisplayDate | null {
   return { day, month, year }
 }
 
+/**
+ * Converts an API date/ISO value to dd/mm/yyyy without shifting the calendar day.
+ */
 export function formatApiDateToDisplay(value: string | null | undefined) {
   if (!value) {
     return ''
@@ -68,6 +81,10 @@ export function formatApiDateToDisplay(value: string | null | undefined) {
   return `${day}/${month}/${date.getFullYear()}`
 }
 
+/**
+ * Converts dd/mm/yyyy to an ISO timestamp at 17:00 local time, matching the
+ * existing recruiter-job deadline behavior.
+ */
 export function createDeadlineIsoFromDisplayDate(value: string) {
   const parsed = parseDisplayDate(value)
 
@@ -90,6 +107,20 @@ export function isFutureDisplayDate(value: string) {
     return false
   }
 
-  const deadline = new Date(parsed.year, parsed.month - 1, parsed.day, 23, 59, 59, 999)
-  return deadline.getTime() > Date.now()
+  const today = new Date()
+  const todayKey = today.getFullYear() * 10_000 + (today.getMonth() + 1) * 100 + today.getDate()
+  const deadlineKey = parsed.year * 10_000 + parsed.month * 100 + parsed.day
+
+  return deadlineKey > todayKey
+}
+
+export function formatNativeDateToDisplay(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  return match ? `${match[3]}/${match[2]}/${match[1]}` : ''
+}
+
+export function formatDisplayDateToNative(value: string) {
+  const parsed = parseDisplayDate(value)
+  if (!parsed) return ''
+  return `${parsed.year}-${String(parsed.month).padStart(2, '0')}-${String(parsed.day).padStart(2, '0')}`
 }

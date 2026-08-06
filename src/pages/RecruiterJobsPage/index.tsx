@@ -395,20 +395,35 @@ export function RecruiterJobDetailPage() {
         <section className="recruiter-job-detail-panel recruiter-job-detail-panel--overview recruiter-panel">
           <h2>{content.detail.overview}</h2>
           <dl className="recruiter-job-detail-facts">
-            <JobDetailValue label={content.detail.location} value={job.location} />
+            <JobDetailValue
+              label={content.detail.location}
+              value={job.location ?? content.metrics.noData}
+            />
             <JobDetailValue label={content.detail.salary} value={salary} />
             <JobDetailValue label={content.detail.openings} value={openings} />
             <JobDetailValue
               label={content.detail.employmentType}
-              value={createContent.form.options.employmentTypes[job.employmentType]}
+              value={
+                job.employmentType
+                  ? createContent.form.options.employmentTypes[job.employmentType]
+                  : content.metrics.noData
+              }
             />
             <JobDetailValue
               label={content.detail.workingType}
-              value={createContent.form.options.workingTypes[job.workingType]}
+              value={
+                job.workingType
+                  ? createContent.form.options.workingTypes[job.workingType]
+                  : content.metrics.noData
+              }
             />
             <JobDetailValue
               label={content.detail.experienceLevel}
-              value={createContent.form.options.experienceLevels[job.experienceLevel]}
+              value={
+                job.experienceLevel
+                  ? createContent.form.options.experienceLevels[job.experienceLevel]
+                  : content.metrics.noData
+              }
             />
             <JobDetailValue label={content.detail.publishedAt} value={publishedAt} />
             <JobDetailValue label={content.detail.version} value={String(job.version)} />

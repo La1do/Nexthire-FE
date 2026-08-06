@@ -144,6 +144,8 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     },
     actions: {
       saveDraft: '下書き保存',
+      saveChanges: '変更を保存',
+      savingChanges: '変更を保存中...',
       savingDraft: '保存中...',
       saved: '保存済み',
       notSavedYet: '未保存',

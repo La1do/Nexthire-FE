@@ -1724,6 +1724,8 @@ export type RecruiterJobCreateTranslations = {
     }
     actions: {
       saveDraft: string
+      saveChanges: string
+      savingChanges: string
       savingDraft: string
       saved: string
       notSavedYet: string

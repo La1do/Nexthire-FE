@@ -144,6 +144,8 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     },
     actions: {
       saveDraft: 'Lưu nháp',
+      saveChanges: 'Lưu thay đổi',
+      savingChanges: 'Đang lưu thay đổi...',
       savingDraft: 'Đang lưu...',
       saved: 'Đã lưu',
       notSavedYet: 'Chưa lưu',

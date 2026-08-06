@@ -55,3 +55,52 @@
     gap: 0.8rem;
   }
 }
+
+.job-post-date-input-shell {
+  display: block;
+  position: relative;
+}
+
+.job-post-date-input-shell .job-post-date-input {
+  padding-right: 3.25rem;
+}
+
+.job-post-date-picker-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  height: 2.5rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+}
+
+.job-post-date-picker-button:hover,
+.job-post-date-picker-button:focus-visible {
+  color: var(--color-brand-solid);
+}
+
+.job-post-native-date-input {
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 1px;
+}
+
+.job-post-form--published-edit .job-post-readonly-field,
+.job-post-form--published-edit input:disabled,
+.job-post-form--published-edit select:disabled,
+.job-post-form--published-edit textarea:disabled {
+  background: var(--color-surface-muted);
+  cursor: not-allowed;
+  opacity: 0.78;
+}
