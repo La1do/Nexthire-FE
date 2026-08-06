@@ -4,6 +4,18 @@ import { useNotifications } from '../../hooks/useNotifications'
 import type { UserNotificationTranslations } from '../../i18n/types'
 import type { NotificationItem } from '../../types/notification.types'
 
+function getNotificationAvatarUrl(item: NotificationItem): string | null {
+  if (item.senderLogoUrl?.trim()) {
+    return item.senderLogoUrl
+  }
+  const data = item.data as Record<string, unknown> | null | undefined
+  const dataLogo = data?.companyLogoUrl
+  if (typeof dataLogo === 'string' && dataLogo.trim()) {
+    return dataLogo
+  }
+  return null
+}
+
 type Props = {
   buttonClassName?: string
   content: UserNotificationTranslations
@@ -79,6 +91,26 @@ function getInitialsLabel(value: string) {
   }
 
   return `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
+}
+
+function NotificationCardAvatar({ item, label }: { item: NotificationItem; label: string }) {
+  const url = getNotificationAvatarUrl(item)
+  const [failed, setFailed] = useState(false)
+  const showImage = Boolean(url) && !failed
+
+  useEffect(() => {
+    setFailed(false)
+  }, [url])
+
+  return (
+    <span aria-hidden="true" className="user-notification-card__avatar">
+      {showImage ? (
+        <img alt="" onError={() => setFailed(true)} src={url ?? ''} />
+      ) : (
+        <span>{getInitialsLabel(label)}</span>
+      )}
+    </span>
+  )
 }
 
 export function UserNotificationPopover({ buttonClassName, content, fallbackHref, variant = 'default' }: Props) {
@@ -167,13 +199,7 @@ export function UserNotificationPopover({ buttonClassName, content, fallbackHref
                   return (
                     <li className={item.readAt ? '' : 'is-unread'} key={item.id}>
                       <button className="user-notification-card" onClick={() => handleNotificationClick(item)} type="button">
-                        <span aria-hidden="true" className="user-notification-card__avatar">
-                          {item.senderLogoUrl ? (
-                            <img alt="" src={item.senderLogoUrl} />
-                          ) : (
-                            <span>{getInitialsLabel(senderLabel)}</span>
-                          )}
-                        </span>
+                        <NotificationCardAvatar item={item} label={senderLabel} />
                         <span className="user-notification-card__content">
                           <span className="user-notification-card__meta">
                             <span>{senderLabel}</span>
