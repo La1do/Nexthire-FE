@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useToast } from '../../../context'
-import { isLocale, supportedLocales, useLocale } from '../../../i18n'
-import type { AdminSettingsTranslations } from '../../../i18n/types'
-import type { Locale } from '../../../i18n/types'
+import { getTranslations, isLocale, supportedLocales, useLocale } from '../../../i18n'
+import type { AdminSettingsTranslations, CommonTranslations, Locale } from '../../../i18n/types'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import type { AuthProfile, UpdateAuthProfilePayload } from '../../../services/auth.service'
 import { Button, SelectField } from '../../_components'
@@ -15,13 +14,43 @@ type Props = {
   profile: AuthProfile
 }
 
+type LanguageStatus =
+  | {
+      tone: 'success'
+    }
+  | {
+      tone: 'error'
+      code?: string
+      fallbackMessage: string
+    }
+
+function resolveLanguageStatusMessage(
+  status: LanguageStatus | null,
+  messages: AdminSettingsTranslations['preferences'],
+  apiErrors: CommonTranslations['apiErrors'],
+) {
+  if (!status) {
+    return null
+  }
+
+  if (status.tone === 'success') {
+    return messages.languageSaveSuccess
+  }
+
+  if (status.code) {
+    return apiErrors.byCode[status.code] ?? status.fallbackMessage
+  }
+
+  return status.fallbackMessage
+}
+
 export function AdminPreferencesCard({ content, isPending, onLogout, onSaveLanguage, profile }: Props) {
-  const { locale, setLocale, translations } = useLocale()
+  const { locale, syncLocale, translations } = useLocale()
   const toast = useToast()
   const accountLocale = isLocale(profile.language) ? profile.language : locale
   const [savedLocale, setSavedLocale] = useState<Locale>(accountLocale)
   const [selectedLocale, setSelectedLocale] = useState<Locale>(accountLocale)
-  const [message, setMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
+  const [message, setMessage] = useState<LanguageStatus | null>(null)
   const languageLabels = translations.common.languageSwitcher
   const options = useMemo(
     () => supportedLocales.map((option) => ({
@@ -50,12 +79,15 @@ export function AdminPreferencesCard({ content, isPending, onLogout, onSaveLangu
       const nextLocale = isLocale(updatedProfile.language) ? updatedProfile.language : selectedLocale
       setSavedLocale(nextLocale)
       setSelectedLocale(nextLocale)
-      setLocale(nextLocale)
-      setMessage({ tone: 'success', text: content.languageSaveSuccess })
-      toast.success(content.languageSaveSuccess)
+      syncLocale(nextLocale)
+      setMessage({ tone: 'success' })
+      toast.success(getTranslations(nextLocale).pages.adminSettings.preferences.languageSaveSuccess)
     } catch (error) {
-      const nextMessage = getApiErrorEnvelope(error)?.error.message ?? content.languageSaveError
-      setMessage({ tone: 'error', text: nextMessage })
+      const envelope = getApiErrorEnvelope(error)
+      const nextMessage = envelope?.error.code
+        ? translations.common.apiErrors.byCode[envelope.error.code] ?? envelope.error.message ?? content.languageSaveError
+        : envelope?.error.message ?? content.languageSaveError
+      setMessage({ tone: 'error', code: envelope?.error.code, fallbackMessage: nextMessage })
       toast.error(nextMessage)
     }
   }
@@ -73,7 +105,7 @@ export function AdminPreferencesCard({ content, isPending, onLogout, onSaveLangu
           options={options}
           value={selectedLocale}
         />
-        {message ? <p className="admin-settings-language-status" data-tone={message.tone}>{message.text}</p> : null}
+        {message ? <p className="admin-settings-language-status" data-tone={message.tone}>{resolveLanguageStatusMessage(message, content, translations.common.apiErrors)}</p> : null}
         <div className="admin-settings-language-actions">
           <Button disabled={!isDirty || isPending} onClick={() => void handleSaveLanguage()} type="button">{isPending ? content.languageSaving : content.languageSave}</Button>
           <Button disabled={!isDirty || isPending} onClick={() => { setSelectedLocale(savedLocale); setMessage(null) }} type="button" variant="secondary">{content.languageReset}</Button>

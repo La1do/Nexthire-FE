@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context'
@@ -76,12 +76,22 @@ export function RecruiterVerificationPage() {
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setSubmitting] = useState(false)
   const [deletingDocumentId, setDeletingDocumentId] = useState<string | null>(null)
+  const hasMountedRef = useRef(false)
   const schema = useMemo(() => createCompanyLegalSchema(content.legal.validation), [content.legal.validation])
-  const { control, handleSubmit, reset } = useForm<CompanyLegalFormValues>({
+  const { control, handleSubmit, reset, trigger } = useForm<CompanyLegalFormValues>({
     defaultValues: EMPTY_COMPANY_FORM,
     mode: 'onBlur',
     resolver: zodResolver(schema),
   })
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    void trigger()
+  }, [schema, trigger])
 
   const loadProfile = useCallback(async () => {
     setLoading(true)

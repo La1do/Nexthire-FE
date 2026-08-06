@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
@@ -112,6 +112,8 @@ export function RecruiterJobCreatePage() {
   const [draftJob, setDraftJob] = useState<RecruiterJobResponse | undefined>(undefined)
   const [draftPayloadKey, setDraftPayloadKey] = useState<string | undefined>(undefined)
   const [isReviewDialogOpen, setReviewDialogOpen] = useState(false)
+  const valuesRef = useRef(values)
+  const errorsRef = useRef(errors)
 
   const loadPageData = useCallback(async () => {
     setLoading(true)
@@ -167,6 +169,22 @@ export function RecruiterJobCreatePage() {
   useEffect(() => {
     void loadPageData()
   }, [loadPageData])
+
+  useEffect(() => {
+    valuesRef.current = values
+  }, [values])
+
+  useEffect(() => {
+    errorsRef.current = errors
+  }, [errors])
+
+  useEffect(() => {
+    if (!Object.keys(errorsRef.current).length) {
+      return
+    }
+
+    setErrors(validateJobPostForm(valuesRef.current, content.validation))
+  }, [content.validation])
 
   const companyStatus: CompanyGateStatus = company?.status ?? 'NO_COMPANY'
   const companyName = company?.name ?? content.preview.labels.company

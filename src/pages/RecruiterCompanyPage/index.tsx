@@ -262,6 +262,8 @@ export function RecruiterCompanyPage() {
   const [isSaving, setSaving] = useState(false)
   const [isReviewOpen, setReviewOpen] = useState(false)
   const reviewCloseButtonRef = useRef<HTMLButtonElement | null>(null)
+  const formRef = useRef(form)
+  const errorsRef = useRef(errors)
 
   const loadCompany = useCallback(async () => {
     setLoading(true)
@@ -296,6 +298,22 @@ export function RecruiterCompanyPage() {
   useEffect(() => {
     void loadCompany()
   }, [loadCompany])
+
+  useEffect(() => {
+    formRef.current = form
+  }, [form])
+
+  useEffect(() => {
+    errorsRef.current = errors
+  }, [errors])
+
+  useEffect(() => {
+    if (!Object.keys(errorsRef.current).length) {
+      return
+    }
+
+    setErrors(validateForm(formRef.current, content.form.validation))
+  }, [content.form.validation])
 
   useEffect(() => {
     if (!logoFile) {

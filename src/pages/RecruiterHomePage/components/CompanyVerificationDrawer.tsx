@@ -24,6 +24,7 @@ export function CompanyVerificationDrawer({
   translations,
 }: CompanyVerificationDrawerProps) {
   const drawerRef = useRef<HTMLDivElement | null>(null)
+  const hasMountedRef = useRef(false)
   const form = translations.form
   const schema = useMemo(
     () => createCompanyVerificationSchema(form.validation),
@@ -34,6 +35,7 @@ export function CompanyVerificationDrawer({
     formState: { errors },
     handleSubmit,
     setValue,
+    trigger,
   } = useForm<CompanyVerificationFormValues>({
     defaultValues: initialValues,
     mode: 'onBlur',
@@ -56,6 +58,15 @@ export function CompanyVerificationDrawer({
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    void trigger()
+  }, [schema, trigger])
 
   const handleDocumentToggle = (id: string) => {
     const nextDocuments = documents.includes(id)

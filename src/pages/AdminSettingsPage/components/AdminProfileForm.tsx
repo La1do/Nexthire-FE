@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useToast } from '../../../context'
@@ -13,15 +13,25 @@ type Props = { content: AdminSettingsTranslations['profile']; isPending: boolean
 
 export function AdminProfileForm({ content, isPending, onSave, profile }: Props) {
   const toast = useToast()
+  const hasMountedRef = useRef(false)
   const schema = useMemo(() => z.object({
     fullName: z.string().trim().min(1, content.validation.fullNameRequired).min(2, content.validation.fullNameMin).max(255, content.validation.fullNameMax),
     phone: z.string().trim().max(30, content.validation.phoneMax).refine((value) => !value || /^[+\d][\d\s().-]{7,29}$/.test(value), content.validation.phoneInvalid),
   }), [content.validation])
-  const { formState: { errors, isDirty }, handleSubmit, register, reset } = useForm<Values>({
+  const { formState: { errors, isDirty }, handleSubmit, register, reset, trigger } = useForm<Values>({
     defaultValues: { fullName: profile.fullName ?? '', phone: profile.phone ?? '' }, mode: 'onBlur', resolver: zodResolver(schema),
   })
 
   useEffect(() => reset({ fullName: profile.fullName ?? '', phone: profile.phone ?? '' }), [profile, reset])
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    void trigger()
+  }, [schema, trigger])
 
   const submit = handleSubmit(async (values) => {
     try {

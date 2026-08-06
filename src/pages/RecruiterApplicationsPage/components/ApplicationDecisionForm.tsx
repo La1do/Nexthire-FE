@@ -20,6 +20,8 @@ type PendingDecision = {
   status: RecruiterDecisionStatus
 }
 
+type DecisionValidationError = ReturnType<typeof validateApplicationFeedback>
+
 export function ApplicationDecisionForm({
   application,
   isSubmitting,
@@ -27,9 +29,14 @@ export function ApplicationDecisionForm({
   translations,
 }: ApplicationDecisionFormProps) {
   const [feedback, setFeedback] = useState(application.statusNote ?? '')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<DecisionValidationError>(null)
   const [pendingDecision, setPendingDecision] = useState<PendingDecision | null>(null)
   const isReadOnly = ['REJECTED', 'WITHDRAWN', 'CANCELLED'].includes(application.status)
+  const errorMessage = error === 'maxLength'
+    ? translations.maxLengthError.replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))
+    : error === 'rejectionRequired'
+    ? translations.rejectionRequiredError
+    : null
 
   useEffect(() => {
     setFeedback(application.statusNote ?? '')
@@ -41,11 +48,7 @@ export function ApplicationDecisionForm({
     const validationError = validateApplicationFeedback(status, feedback)
 
     if (validationError) {
-      setError(
-        validationError === 'maxLength'
-          ? translations.maxLengthError.replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))
-          : translations.rejectionRequiredError,
-      )
+      setError(validationError)
       return
     }
 
@@ -87,8 +90,8 @@ export function ApplicationDecisionForm({
       </label>
 
       <div className="recruiter-application-decision__meta">
-        <span className={error ? 'recruiter-application-decision__error' : undefined} role={error ? 'alert' : undefined}>
-          {error ?? translations.feedbackHint}
+        <span className={errorMessage ? 'recruiter-application-decision__error' : undefined} role={errorMessage ? 'alert' : undefined}>
+          {errorMessage ?? translations.feedbackHint}
         </span>
         <span>{translations.characterCount.replace('{{count}}', String(feedback.length)).replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))}</span>
       </div>

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { ComponentPropsWithoutRef } from 'react'
 import { z } from 'zod'
@@ -80,6 +80,7 @@ export function AccountSettingsForm({
 }: AccountSettingsFormProps) {
   const toast = useToast()
   const [submitMessage, setSubmitMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
+  const hasMountedRef = useRef(false)
   const schema = useMemo(
     () => z.object({
       fullName: z.string()
@@ -105,6 +106,7 @@ export function AccountSettingsForm({
     handleSubmit,
     register,
     reset,
+    trigger,
   } = useForm<AccountFormValues>({
     defaultValues: {
       fullName: profile?.fullName ?? '',
@@ -114,6 +116,15 @@ export function AccountSettingsForm({
     mode: 'onBlur',
     resolver: zodResolver(schema),
   })
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    void trigger()
+  }, [schema, trigger])
 
   useEffect(() => {
     if (!profile) {

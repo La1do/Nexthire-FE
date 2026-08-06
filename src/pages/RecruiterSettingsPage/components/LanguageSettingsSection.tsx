@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useToast } from '../../../context'
-import { isLocale, supportedLocales, useLocale } from '../../../i18n'
-import type { RecruiterSettingsTranslations } from '../../../i18n/types'
-import type { Locale } from '../../../i18n/types'
+import { getTranslations, isLocale, supportedLocales, useLocale } from '../../../i18n'
+import type { CommonTranslations, Locale, RecruiterSettingsTranslations } from '../../../i18n/types'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { authService } from '../../../services/auth.service'
 import type { AuthProfile } from '../../../services/auth.service'
@@ -15,19 +14,49 @@ type LanguageSettingsSectionProps = {
   translations: RecruiterSettingsTranslations['language']
 }
 
+type LanguageStatus =
+  | {
+      tone: 'success'
+    }
+  | {
+      tone: 'error'
+      code?: string
+      fallbackMessage: string
+    }
+
+function resolveLanguageStatusMessage(
+  status: LanguageStatus | null,
+  messages: RecruiterSettingsTranslations['language'],
+  apiErrors: CommonTranslations['apiErrors'],
+) {
+  if (!status) {
+    return null
+  }
+
+  if (status.tone === 'success') {
+    return messages.saveSuccess
+  }
+
+  if (status.code) {
+    return apiErrors.byCode[status.code] ?? status.fallbackMessage
+  }
+
+  return status.fallbackMessage
+}
+
 export function LanguageSettingsSection({
   loading,
   onSaved,
   profile,
   translations,
 }: LanguageSettingsSectionProps) {
-  const { locale, setLocale, translations: allTranslations } = useLocale()
+  const { locale, syncLocale, translations: allTranslations } = useLocale()
   const toast = useToast()
   const accountLocale = isLocale(profile?.language) ? profile.language : locale
   const [savedLocale, setSavedLocale] = useState<Locale>(accountLocale)
   const [selectedLocale, setSelectedLocale] = useState<Locale>(accountLocale)
   const [isSaving, setSaving] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
+  const [submitMessage, setSubmitMessage] = useState<LanguageStatus | null>(null)
   const languageLabels = allTranslations.common.languageSwitcher
   const options = useMemo(
     () => supportedLocales.map((option) => ({
@@ -57,14 +86,19 @@ export function LanguageSettingsSection({
       const updatedProfile = await authService.updateMe({
         language: selectedLocale,
       })
-      setSavedLocale(selectedLocale)
-      setLocale(selectedLocale)
+      const nextLocale = isLocale(updatedProfile.language) ? updatedProfile.language : selectedLocale
+      setSavedLocale(nextLocale)
+      setSelectedLocale(nextLocale)
+      syncLocale(nextLocale)
       onSaved(updatedProfile)
-      setSubmitMessage({ tone: 'success', text: translations.saveSuccess })
-      toast.success(translations.saveSuccess)
+      setSubmitMessage({ tone: 'success' })
+      toast.success(getTranslations(nextLocale).pages.recruiterSettings.language.saveSuccess)
     } catch (error) {
-      const message = getApiErrorEnvelope(error)?.error.message ?? translations.saveError
-      setSubmitMessage({ tone: 'error', text: message })
+      const envelope = getApiErrorEnvelope(error)
+      const message = envelope?.error.code
+        ? allTranslations.common.apiErrors.byCode[envelope.error.code] ?? envelope.error.message ?? translations.saveError
+        : envelope?.error.message ?? translations.saveError
+      setSubmitMessage({ tone: 'error', code: envelope?.error.code, fallbackMessage: message })
       toast.error(message)
     } finally {
       setSaving(false)
@@ -97,7 +131,7 @@ export function LanguageSettingsSection({
             data-tone={submitMessage.tone}
             role={submitMessage.tone === 'error' ? 'alert' : 'status'}
           >
-            {submitMessage.text}
+            {resolveLanguageStatusMessage(submitMessage, translations, allTranslations.common.apiErrors)}
           </p>
         ) : null}
 

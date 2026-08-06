@@ -29,6 +29,7 @@ export function ResetPasswordForm({
       onSubmit: (formValues) => {
         void onSaved(formValues)
       },
+      validationKey: validation,
       validate: (formValues) => validateResetPasswordForm(formValues, validation),
     })
 
