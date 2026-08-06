@@ -7,6 +7,7 @@ export const profile: ProfileTranslations = {
     searchJobs: '求人を探す',
     managedJobs: 'マイ求人',
     applications: '応募一覧',
+    navigationMenu: 'メニュー',
     profile: 'マイプロフィール',
     messages: 'メッセージ',
     currentRole: '候補者',

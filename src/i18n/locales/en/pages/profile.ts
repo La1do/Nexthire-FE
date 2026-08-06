@@ -7,6 +7,7 @@ export const profile: ProfileTranslations = {
     searchJobs: 'Find jobs',
     managedJobs: 'My jobs',
     applications: 'Applications',
+    navigationMenu: 'Menu',
     profile: 'My profile',
     messages: 'Messages',
     currentRole: 'Candidate',

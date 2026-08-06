@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
@@ -17,11 +17,49 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const candidateSettings = pages.candidateSettings
   const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
   const [avatarFailed, setAvatarFailed] = useState(false)
+  const [isNavOpen, setNavOpen] = useState(false)
+  const sidebarRef = useRef<HTMLElement | null>(null)
+  const navId = useId()
   const showAvatarImage = Boolean(user?.avatarUrl) && !avatarFailed
 
   useEffect(() => {
     setAvatarFailed(false)
   }, [user?.avatarUrl])
+
+  useEffect(() => {
+    setNavOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    if (!isNavOpen) {
+      return
+    }
+
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      if (sidebarRef.current?.contains(event.target as Node)) {
+        return
+      }
+
+      setNavOpen(false)
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') {
+        return
+      }
+
+      setNavOpen(false)
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('touchstart', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('touchstart', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isNavOpen])
 
   async function handleLogout() {
     await logout()
@@ -51,16 +89,35 @@ export function CandidateLayout({ children }: PropsWithChildren) {
 
   return (
     <div className="candidate-shell">
-      <aside className="candidate-sidebar">
-        <a className="candidate-brand" href="/">
+      <aside className="candidate-sidebar" ref={sidebarRef}>
+        <Link className="candidate-brand" to="/">
           <BrandMark compact label={common.brandName} />
-        </a>
+        </Link>
 
-        <nav aria-label={profile.routeLabel} className="candidate-nav">
+        <button
+          aria-controls={navId}
+          aria-expanded={isNavOpen}
+          aria-label={profile.sidebar.navigationMenu}
+          className="candidate-nav-toggle"
+          onClick={() => setNavOpen((current) => !current)}
+          type="button"
+        >
+          <span>{profile.sidebar.navigationMenu}</span>
+          <span aria-hidden="true" className="candidate-nav-toggle__icon">
+            <span />
+            <span />
+          </span>
+        </button>
+
+        <nav
+          aria-label={profile.routeLabel}
+          className={`candidate-nav${isNavOpen ? ' is-open' : ''}`}
+          id={navId}
+        >
           {navItems.map((item) => (
-            <a aria-current={pathname === item.href ? 'page' : undefined} href={item.href} key={item.label}>
+            <Link aria-current={pathname === item.href ? 'page' : undefined} key={item.label} to={item.href}>
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 

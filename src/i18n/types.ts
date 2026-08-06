@@ -1104,6 +1104,7 @@ export type ProfileTranslations = {
     searchJobs: string
     managedJobs: string
     applications: string
+    navigationMenu: string
     profile: string
     messages: string
     currentRole: string
