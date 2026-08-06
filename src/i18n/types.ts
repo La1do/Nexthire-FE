@@ -585,6 +585,10 @@ export type AdminCvTemplatesTranslations = {
     categoryLabel: string
     accentLabel: string
     thumbnailUrlLabel: string
+    thumbnailUploadLabel: string
+    thumbnailSelected: string
+    thumbnailFileHint: string
+    thumbnailFileError: string
     sortOrderLabel: string
     canvasJsonLabel: string
     canvasJsonHint: string

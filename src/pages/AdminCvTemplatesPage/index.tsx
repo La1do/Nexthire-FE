@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { type ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Archive,
   CheckCircle2,
@@ -9,6 +9,7 @@ import {
   RefreshCcw,
   Save,
   Search,
+  Upload,
   X,
   Undo2,
 } from 'lucide-react'
@@ -138,6 +139,15 @@ function parseOptionalInteger(value: string) {
   return Number.isInteger(parsed) ? parsed : undefined
 }
 
+function fileToDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '')
+    reader.onerror = () => reject(new Error('FILE_READ_ERROR'))
+    reader.readAsDataURL(file)
+  })
+}
+
 function normalizeCanvas(value: string, fallbackName: string): CanvasDocument | null {
   let parsed: unknown
   try {
@@ -193,10 +203,13 @@ function categoryLabel(content: AdminCvTemplatesTranslations, category: CvTempla
   return content.categories[category]
 }
 
-function buildPayload(draft: TemplateDraft): {
+async function buildPayload(
+  draft: TemplateDraft,
+  thumbnailFile: File | null,
+): Promise<{
   error: string | null
   payload?: CreateAdminCvTemplatePresetPayload | UpdateAdminCvTemplatePresetPayload
-} {
+}> {
   const key = draft.key.trim().toLowerCase()
   const defaultName = draft.defaultName.trim()
   const defaultDescription = draft.defaultDescription.trim()
@@ -218,6 +231,11 @@ function buildPayload(draft: TemplateDraft): {
 
   const localizedNames = toLocaleInput(draft.name)
   const localizedDescriptions = toLocaleInput(draft.description)
+  const thumbnailUrl = thumbnailFile ? await fileToDataUrl(thumbnailFile) : draft.thumbnailUrl.trim()
+
+  if (thumbnailFile && !thumbnailUrl) {
+    return { error: 'thumbnail' }
+  }
 
   const payload: CreateAdminCvTemplatePresetPayload = {
     key,
@@ -228,7 +246,7 @@ function buildPayload(draft: TemplateDraft): {
     ...(localizedNames ? { name: localizedNames } : {}),
     ...(localizedDescriptions ? { description: localizedDescriptions } : {}),
     ...(draft.accent.trim() ? { accent: draft.accent.trim() } : {}),
-    ...(draft.thumbnailUrl.trim() ? { thumbnailUrl: draft.thumbnailUrl.trim() } : {}),
+    ...(thumbnailUrl ? { thumbnailUrl } : {}),
     ...(sortOrder === undefined ? {} : { sortOrder }),
   }
 
@@ -249,14 +267,28 @@ export function AdminCvTemplatesPage() {
   const [isEditorOpen, setEditorOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<TemplateDraft>(() => createBlankDraft())
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const [jsonNote, setJsonNote] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null)
+  const thumbnailInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 350)
     return () => window.clearTimeout(timer)
   }, [query])
+
+  useEffect(() => {
+    if (!thumbnailFile) {
+      setThumbnailPreviewUrl(null)
+      return
+    }
+
+    const objectUrl = URL.createObjectURL(thumbnailFile)
+    setThumbnailPreviewUrl(objectUrl)
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [thumbnailFile])
 
   useEffect(() => {
     setPage(1)
@@ -308,6 +340,7 @@ export function AdminCvTemplatesPage() {
   const openCreate = () => {
     setEditingId(null)
     setDraft(createBlankDraft())
+    setThumbnailFile(null)
     setFormError(null)
     setJsonNote(null)
     setEditorOpen(true)
@@ -316,6 +349,7 @@ export function AdminCvTemplatesPage() {
   const openEdit = (preset: AdminCvTemplatePreset) => {
     setEditingId(preset.id)
     setDraft(createDraftFromPreset(preset, locale))
+    setThumbnailFile(null)
     setFormError(null)
     setJsonNote(null)
     setEditorOpen(true)
@@ -324,12 +358,33 @@ export function AdminCvTemplatesPage() {
   const closeEditor = () => {
     setEditorOpen(false)
     setEditingId(null)
+    setThumbnailFile(null)
     setFormError(null)
     setJsonNote(null)
   }
 
-  const handleSave = () => {
-    const result = buildPayload(draft)
+  const handleThumbnailFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
+    if (!file) {
+      return
+    }
+
+    setThumbnailFile(file)
+    setFormError(null)
+    setJsonNote(null)
+  }
+
+  const handleSave = async () => {
+    let result: Awaited<ReturnType<typeof buildPayload>>
+    try {
+      result = await buildPayload(draft, thumbnailFile)
+    } catch {
+      setFormError(content.form.thumbnailFileError)
+      return
+    }
+
     if (result.error || !result.payload) {
       if (result.error === 'required') {
         setFormError(content.form.requiredFields)
@@ -337,6 +392,8 @@ export function AdminCvTemplatesPage() {
         setFormError(content.form.categoriesRequired)
       } else if (result.error === 'canvas') {
         setFormError(content.form.invalidJson)
+      } else if (result.error === 'thumbnail') {
+        setFormError(content.form.thumbnailFileError)
       }
       return
     }
@@ -347,6 +404,7 @@ export function AdminCvTemplatesPage() {
           toast.success(content.form.updateSuccess)
           closeEditor()
           setDraft(createBlankDraft())
+          setThumbnailFile(null)
         },
         onError: (error) => {
           toast.error(`${content.form.saveError} (${getApiErrorCode(error) ?? 'COMMON.UNKNOWN_ERROR'})`)
@@ -360,6 +418,7 @@ export function AdminCvTemplatesPage() {
         toast.success(content.form.createSuccess)
         closeEditor()
         setDraft(createBlankDraft())
+        setThumbnailFile(null)
       },
       onError: (error) => {
         toast.error(`${content.form.saveError} (${getApiErrorCode(error) ?? 'COMMON.UNKNOWN_ERROR'})`)
@@ -629,7 +688,7 @@ export function AdminCvTemplatesPage() {
             className="admin-cv-template-modal__panel"
             onSubmit={(event) => {
               event.preventDefault()
-              handleSave()
+              void handleSave()
             }}
           >
             <header className="admin-cv-template-modal__header">
@@ -680,20 +739,71 @@ export function AdminCvTemplatesPage() {
                   </label>
                   <label>
                     <span>{content.form.accentLabel}</span>
-                    <input
-                      onChange={(event) => setDraft((current) => ({ ...current, accent: event.target.value }))}
-                      type="color"
-                      value={draft.accent}
-                    />
+                    <div className="admin-cv-template-color-field">
+                      <input
+                        className="admin-cv-template-color-input"
+                        onChange={(event) => setDraft((current) => ({ ...current, accent: event.target.value }))}
+                        type="color"
+                        value={draft.accent}
+                      />
+                      <div
+                        className="admin-cv-template-color-preview"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="admin-cv-template-color-preview__swatch"
+                          style={{ backgroundColor: draft.accent }}
+                        />
+                        <strong>{draft.accent.toUpperCase()}</strong>
+                      </div>
+                    </div>
                   </label>
-                  <label>
-                    <span>{content.form.thumbnailUrlLabel}</span>
-                    <input
-                      onChange={(event) => setDraft((current) => ({ ...current, thumbnailUrl: event.target.value }))}
-                      placeholder="https://..."
-                      value={draft.thumbnailUrl}
-                    />
-                  </label>
+                  <div className="admin-cv-template-thumbnail-field">
+                    <div className="admin-cv-template-thumbnail-field__head">
+                      <h3>{content.form.thumbnailUrlLabel}</h3>
+                      <p>{content.form.thumbnailFileHint}</p>
+                    </div>
+                    <div className="admin-cv-template-thumbnail-field__controls">
+                      <input
+                        accept="image/*"
+                        className="admin-cv-template-thumbnail-field__input"
+                        hidden
+                        onChange={handleThumbnailFileChange}
+                        ref={thumbnailInputRef}
+                        type="file"
+                      />
+                      <Button
+                        onClick={() => thumbnailInputRef.current?.click()}
+                        variant="secondary"
+                      >
+                        <Upload size={16} />
+                        <span>{content.form.thumbnailUploadLabel}</span>
+                      </Button>
+                      <input
+                        onChange={(event) => {
+                          setThumbnailFile(null)
+                          setDraft((current) => ({ ...current, thumbnailUrl: event.target.value }))
+                        }}
+                        placeholder="https://..."
+                        value={draft.thumbnailUrl}
+                      />
+                    </div>
+                    <div className="admin-cv-template-thumbnail-preview">
+                      {thumbnailPreviewUrl || draft.thumbnailUrl.trim() ? (
+                        <img
+                          alt=""
+                          src={thumbnailPreviewUrl ?? draft.thumbnailUrl.trim()}
+                        />
+                      ) : (
+                        <span>{content.form.thumbnailUrlLabel}</span>
+                      )}
+                    </div>
+                    {thumbnailFile ? (
+                      <small className="admin-cv-template-thumbnail-selected">
+                        {content.form.thumbnailSelected.replace('{{name}}', thumbnailFile.name)}
+                      </small>
+                    ) : null}
+                  </div>
                 </div>
 
                 <section className="admin-cv-template-modal__section">
