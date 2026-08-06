@@ -94,11 +94,9 @@ function SelectInput({ error, label, onChange, options, value }: SelectInputProp
           </option>
         ))}
       </select>
-      {error ? (
-        <small className="job-post-field-error" id={errorId}>
-          {error}
-        </small>
-      ) : null}
+      <small aria-hidden={!error} className="job-post-field-error" id={error ? errorId : undefined} role={error ? 'alert' : undefined}>
+        {error ?? ' '}
+      </small>
     </label>
   )
 }
@@ -124,11 +122,9 @@ function TextareaInput({
         placeholder={placeholder}
         value={value}
       />
-      {error ? (
-        <small className="job-post-field-error" id={errorId}>
-          {error}
-        </small>
-      ) : null}
+      <small aria-hidden={!error} className="job-post-field-error" id={error ? errorId : undefined} role={error ? 'alert' : undefined}>
+        {error ?? ' '}
+      </small>
     </label>
   )
 }
@@ -224,6 +220,8 @@ export function JobPostForm({
             label={fields.title.label}
             onChange={(event) => onChange('title', event.target.value)}
             placeholder={fields.title.placeholder}
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
             value={values.title}
           />
           <SelectInput
@@ -258,6 +256,8 @@ export function JobPostForm({
             label={fields.location.label}
             onChange={(event) => onChange('location', event.target.value)}
             placeholder={fields.location.placeholder}
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
             value={values.location}
           />
         </div>
@@ -289,6 +289,8 @@ export function JobPostForm({
             label={fields.salaryMin.label}
             onChange={handleNumberChange('salaryMin')}
             placeholder={fields.salaryMin.placeholder}
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
             value={values.salaryMin}
           />
           <Input
@@ -298,6 +300,8 @@ export function JobPostForm({
             label={fields.salaryMax.label}
             onChange={handleNumberChange('salaryMax')}
             placeholder={fields.salaryMax.placeholder}
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
             value={values.salaryMax}
           />
           <SelectInput
@@ -314,6 +318,8 @@ export function JobPostForm({
             label={fields.deadline.label}
             onChange={(event) => onChange('deadline', event.target.value)}
             type="date"
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
             value={values.deadline}
           />
           <Input
@@ -322,6 +328,8 @@ export function JobPostForm({
             label={fields.numberOfOpenings.label}
             onChange={handleNumberChange('numberOfOpenings')}
             placeholder={fields.numberOfOpenings.placeholder}
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
             value={values.numberOfOpenings}
           />
         </div>
@@ -359,7 +367,7 @@ export function JobPostForm({
           ) : (
             <p className="job-post-skill-empty">{fields.skills.empty}</p>
           )}
-          {errors.skills ? <small className="job-post-field-error">{errors.skills}</small> : null}
+          <small aria-hidden={!errors.skills} className="job-post-field-error" role={errors.skills ? 'alert' : undefined}>{errors.skills ?? ' '}</small>
         </div>
       </section>
 

@@ -18,6 +18,7 @@ import type {
 } from './types'
 import { createRecruiterApplicationFromApi } from './utils/recruiterApplicationApi'
 import { computeRecruiterApplicationStats } from './utils/recruiterApplicationsData'
+import './recruiter-applications.css'
 import {
   filterRecruiterApplications,
   getRecruiterApplicationJobs,
@@ -339,17 +340,20 @@ export function RecruiterApplicationsPage() {
     }
   }
 
-  async function handleStatusChange(applicationId: string, status: RecruiterDecisionStatus) {
+  async function handleStatusChange(applicationId: string, status: RecruiterDecisionStatus, feedback: string) {
     setStatusUpdatingIds((currentIds) => new Set(currentIds).add(applicationId))
 
     try {
       const updatedApplication = await applicationService.updateRecruiterApplicationStatus(applicationId, {
+        note: feedback || null,
         status,
       })
       upsertMappedApplication(mapApplication(updatedApplication))
       toast.success(content.states.statusSuccess)
+      return true
     } catch (error) {
       toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.statusError)
+      return false
     } finally {
       setStatusUpdatingIds((currentIds) => {
         const nextIds = new Set(currentIds)
@@ -477,7 +481,7 @@ export function RecruiterApplicationsPage() {
           onEmail={(application) => void handleApplicationAction('mailto', application)}
           onOpenResume={(application) => void handleApplicationAction('resume', application)}
           onRunMatch={(application) => void handleRunMatch(application)}
-          onStatusChange={(applicationId, status) => void handleStatusChange(applicationId, status)}
+          onStatusChange={handleStatusChange}
           statusLabels={content.statusLabels}
           translations={content.drawer}
         />

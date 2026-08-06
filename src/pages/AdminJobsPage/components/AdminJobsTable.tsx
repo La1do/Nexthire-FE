@@ -23,7 +23,7 @@ export function AdminJobsTable({ content, items, onAction, onView }: Props) {
         <thead><tr><th>{content.columns.job}</th><th>{content.columns.company}</th><th>{content.columns.status}</th><th>{content.columns.risk}</th><th>{content.columns.applications}</th><th>{content.columns.updated}</th><th className="admin-jobs-table__actions-heading">{content.columns.actions}</th></tr></thead>
         <tbody>{items.map((item) => (
           <tr key={item.id}>
-            <td><div className="admin-job-title-cell"><strong>{item.title}</strong><span>{item.location}</span><div>{item.skills.slice(0, 3).map((skill) => <i key={skill}>{skill}</i>)}</div></div></td>
+            <td><button aria-label={`${content.actions.view}: ${item.title}`} className="admin-job-title-cell" onClick={() => onView(item)} type="button"><strong>{item.title}</strong><span>{item.location}</span><span className="admin-job-title-cell__skills">{item.skills.slice(0, 3).map((skill) => <i key={skill}>{skill}</i>)}</span></button></td>
             <td><span className="admin-job-company">{item.companyName ?? content.detail.noData}</span></td>
             <td><AdminJobStatusBadge labels={content.statuses} status={item.status} /></td>
             <td><span className={`admin-job-risk admin-job-risk--${(item.moderation.riskLevel ?? 'NONE').toLowerCase()}`}>{content.risks[item.moderation.riskLevel ?? 'NONE']}</span></td>

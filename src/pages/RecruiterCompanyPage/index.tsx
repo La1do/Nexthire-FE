@@ -232,7 +232,7 @@ function ProfileField({
       ) : (
         <input {...controlProps} inputMode={inputMode} max={max} min={min} type={type} />
       )}
-      <small className={error ? 'is-error' : undefined} id={helperId}>
+      <small aria-hidden={!error && !helper} className={`min-h-[2lh]${error ? ' is-error' : ''}`} id={helperId} role={error ? 'alert' : undefined}>
         {error ?? helper}
       </small>
     </label>

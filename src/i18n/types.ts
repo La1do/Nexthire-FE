@@ -666,6 +666,12 @@ export type AdminUsersTranslations = {
     createdAt: string
     updatedAt: string
     lastLoginAt: string
+    contactDescription: string
+    lifecycleDescription: string
+    timeline: string
+    timelineDescription: string
+    phoneNotProvided: string
+    statusReasonNotProvided: string
   }
   currentUser: {
     name: string
@@ -2058,6 +2064,38 @@ export type RecruiterApplicationsTranslations = {
     submittedLabel: string
     updatedLabel: string
     scoreLabel: string
+    decision: {
+      title: string
+      description: string
+      readOnlyDescription: string
+      feedbackLabel: string
+      feedbackPlaceholder: string
+      feedbackHint: string
+      characterCount: string
+      offerAction: string
+      rejectAction: string
+      submitting: string
+      confirmModal: {
+        closeLabel: string
+        offerEyebrow: string
+        rejectEyebrow: string
+        offerTitle: string
+        rejectTitle: string
+        offerToRejectTitle: string
+        offerDescription: string
+        rejectDescription: string
+        offerToRejectDescription: string
+        feedbackLabel: string
+        noFeedback: string
+        cancelAction: string
+        offerAction: string
+        rejectAction: string
+        submitting: string
+      }
+      rejectionRequiredError: string
+      maxLengthError: string
+      decidedAtLabel: string
+    }
   }
   pagination: {
     prev: string

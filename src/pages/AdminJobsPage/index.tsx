@@ -18,6 +18,7 @@ import { AdminJobFilters } from './components/AdminJobFilters'
 import { AdminJobsMobileList } from './components/AdminJobsMobileList'
 import { AdminJobsTable } from './components/AdminJobsTable'
 import type { AdminJobAction, AdminJobRow, AdminJobsTab, PendingAdminJobAction } from './types'
+import './admin-jobs-page.css'
 
 const PAGE_SIZE = 20
 

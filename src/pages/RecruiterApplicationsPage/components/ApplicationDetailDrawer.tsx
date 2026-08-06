@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
-import type { RecruiterApplicationItem, RecruiterApplicationStatus } from '../types'
+import type { RecruiterApplicationItem } from '../types'
+import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecisionValidation'
 import { AiMatchBadge } from './AiMatchBadge'
-
-type RecruiterDecisionStatus = Extract<RecruiterApplicationStatus, 'OFFERED' | 'REJECTED'>
+import { ApplicationDecisionForm } from './ApplicationDecisionForm'
 
 type ApplicationDetailDrawerProps = {
   application: RecruiterApplicationItem
@@ -15,7 +15,7 @@ type ApplicationDetailDrawerProps = {
   onEmail: (application: RecruiterApplicationItem) => void
   onOpenResume: (application: RecruiterApplicationItem) => void
   onRunMatch: (application: RecruiterApplicationItem) => void
-  onStatusChange: (applicationId: string, status: RecruiterDecisionStatus) => void
+  onStatusChange: (applicationId: string, status: RecruiterDecisionStatus, feedback: string) => Promise<boolean>
   statusLabels: RecruiterApplicationsTranslations['statusLabels']
   translations: RecruiterApplicationsTranslations['drawer']
 }
@@ -176,12 +176,6 @@ export function ApplicationDetailDrawer({
               <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
                 {statusLabels[application.status]}
               </span>
-              <button disabled={isStatusUpdating || application.status === 'OFFERED'} onClick={() => onStatusChange(application.id, 'OFFERED')} type="button">
-                {translations.offerAction}
-              </button>
-              <button disabled={isStatusUpdating || application.status === 'REJECTED'} onClick={() => onStatusChange(application.id, 'REJECTED')} type="button">
-                {translations.rejectAction}
-              </button>
             </div>
 
             <dl className="recruiter-application-detail-list">
@@ -206,6 +200,15 @@ export function ApplicationDetailDrawer({
                 <dd>{matchLabels.cvParseStatus[application.cvParseStatus]}</dd>
               </div>
             </dl>
+          </section>
+
+          <section className="recruiter-application-detail-card">
+            <ApplicationDecisionForm
+              application={application}
+              isSubmitting={isStatusUpdating}
+              onSubmit={(status, feedback) => onStatusChange(application.id, status, feedback)}
+              translations={translations.decision}
+            />
           </section>
 
           <section className="recruiter-application-detail-card recruiter-ai-match-panel">

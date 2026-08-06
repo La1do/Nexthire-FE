@@ -10,6 +10,7 @@ import type { PublicCategory, RecruiterJobResponse } from '../../types/job.types
 import { Button } from '../_components'
 import { JobPostCompanyGate } from './components/JobPostCompanyGate'
 import { JobPostForm } from './components/JobPostForm'
+import './recruiter-job-create-page.css'
 import { JobPostPreview } from './components/JobPostPreview'
 import { JobPostReviewDialog } from './components/JobPostReviewDialog'
 import type {

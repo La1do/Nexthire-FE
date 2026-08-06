@@ -8,6 +8,7 @@ import { AdminChangePasswordForm } from './components/AdminChangePasswordForm'
 import { AdminPreferencesCard } from './components/AdminPreferencesCard'
 import { AdminProfileForm } from './components/AdminProfileForm'
 import { useAdminSettings } from './hooks/useAdminSettings'
+import './admin-settings-page.css'
 
 export function AdminSettingsPage() {
   const { pages } = useTranslations()

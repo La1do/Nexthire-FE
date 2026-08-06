@@ -69,7 +69,7 @@ export const adminUsers: AdminUsersTranslations = {
   },
   actions: { title: '操作の確認', description: '{{name}} に操作を適用します。', reasonLabel: '理由', reasonPlaceholder: '理由を入力してください', reasonRequired: '理由は必須です。', suspend: '一時停止', ban: '禁止', archive: 'アーカイブ', restore: '復元', confirm: '確認', cancel: 'キャンセル' },
   feedback: { loading: 'ユーザーを読み込み中', errorTitle: 'ユーザーを読み込めません', errorDescription: '管理ユーザーデータを取得できませんでした。', retry: '再試行', actionSuccess: 'ユーザー状態を更新しました。', actionError: 'ユーザー状態を更新できませんでした。', cannotManageSelf: '管理者は自分のアカウント状態を変更できません。' },
-  detail: { routeLabel: 'ユーザー詳細', back: 'ユーザー一覧に戻る', title: 'ユーザー情報', contact: '連絡先', lifecycle: 'アカウント履歴', company: '会社', noCompany: '会社なし', emailVerified: 'メール確認済み', emailUnverified: 'メール未確認', statusReason: '状態理由', changedAt: '変更日時', createdAt: '作成日時', updatedAt: '更新日時', lastLoginAt: '最終ログイン' },
+  detail: { routeLabel: 'ユーザー詳細', back: 'ユーザー一覧に戻る', title: 'ユーザー情報', contact: '連絡先', lifecycle: 'アカウント履歴', company: '会社', noCompany: '会社なし', emailVerified: 'メール確認済み', emailUnverified: 'メール未確認', statusReason: '状態理由', changedAt: '変更日時', createdAt: '作成日時', updatedAt: '更新日時', lastLoginAt: '最終ログイン', contactDescription: '連絡先と組織の情報', lifecycleDescription: '権限と認証の状態', timeline: 'タイムライン', timelineDescription: 'アカウント更新履歴', phoneNotProvided: '電話番号は未登録です', statusReasonNotProvided: '状態理由はありません' },
   currentUser: {
     name: 'Man Ha',
     email: 'manha@nexhire.vn',

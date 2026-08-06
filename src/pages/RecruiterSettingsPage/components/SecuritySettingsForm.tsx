@@ -65,7 +65,7 @@ function PasswordField({ error, hideLabel, id, label, showLabel, ...props }: Pas
           </svg>
         </button>
       </div>
-      <small className={error ? 'is-error' : undefined} id={messageId}>{error ?? ''}</small>
+      <small aria-hidden={!error} className={`min-h-[2lh]${error ? ' is-error' : ''}`} id={messageId} role={error ? 'alert' : undefined}>{error ?? ' '}</small>
     </div>
   )
 }

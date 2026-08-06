@@ -1,0 +1,11 @@
+.job-post-form-section .job-post-field-error {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  min-height: 1.25rem;
+}
+
+.job-post-form-section .job-post-form-grid {
+  align-items: start;
+}
