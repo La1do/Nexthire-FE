@@ -17,6 +17,13 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const candidateSettings = pages.candidateSettings
   const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
   const [avatarFailed, setAvatarFailed] = useState(false)
+  const [isCompactHeader, setCompactHeader] = useState(() => {
+    if (typeof window === 'undefined') {
+      return false
+    }
+
+    return window.matchMedia('(max-width: 860px)').matches
+  })
   const [isNavOpen, setNavOpen] = useState(false)
   const sidebarRef = useRef<HTMLElement | null>(null)
   const navId = useId()
@@ -25,6 +32,19 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   useEffect(() => {
     setAvatarFailed(false)
   }, [user?.avatarUrl])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(max-width: 860px)')
+    const syncCompactHeader = () => setCompactHeader(mediaQuery.matches)
+
+    syncCompactHeader()
+    mediaQuery.addEventListener('change', syncCompactHeader)
+    return () => mediaQuery.removeEventListener('change', syncCompactHeader)
+  }, [])
 
   useEffect(() => {
     setNavOpen(false)
@@ -94,20 +114,44 @@ export function CandidateLayout({ children }: PropsWithChildren) {
           <BrandMark compact label={common.brandName} />
         </Link>
 
-        <button
-          aria-controls={navId}
-          aria-expanded={isNavOpen}
-          aria-label={profile.sidebar.navigationMenu}
-          className="candidate-nav-toggle"
-          onClick={() => setNavOpen((current) => !current)}
-          type="button"
-        >
-          <span>{profile.sidebar.navigationMenu}</span>
-          <span aria-hidden="true" className="candidate-nav-toggle__icon">
-            <span />
-            <span />
-          </span>
-        </button>
+        <div className="candidate-mobile-header-actions">
+          {isCompactHeader ? (
+            <div className="candidate-mobile-notification" onClick={() => setNavOpen(false)}>
+              <UserNotificationPopover
+                buttonClassName="candidate-mobile-notification-button"
+                content={profile.topbar.notifications}
+                fallbackHref="/profile"
+                variant="card"
+              />
+            </div>
+          ) : null}
+
+          <button
+            aria-controls={navId}
+            aria-expanded={isNavOpen}
+            aria-label={profile.sidebar.navigationMenu}
+            className="candidate-nav-toggle"
+            onClick={() => setNavOpen((current) => !current)}
+            type="button"
+          >
+            <span className="candidate-nav-toggle__label">{profile.sidebar.navigationMenu}</span>
+            <span aria-hidden="true" className="candidate-nav-toggle__icon">
+              <span />
+              <span />
+            </span>
+            <span className="candidate-nav-toggle__avatar">
+              {showAvatarImage ? (
+                <img
+                  alt={userDisplayName}
+                  onError={() => setAvatarFailed(true)}
+                  src={user?.avatarUrl ?? ''}
+                />
+              ) : (
+                getInitials(userDisplayName)
+              )}
+            </span>
+          </button>
+        </div>
 
         <nav
           aria-label={profile.routeLabel}
@@ -145,11 +189,13 @@ export function CandidateLayout({ children }: PropsWithChildren) {
           <h1>{pageTitle}</h1>
           <div className="candidate-topbar-actions">
             <LanguageSwitch compact />
-            <UserNotificationPopover
-              content={profile.topbar.notifications}
-              fallbackHref="/profile"
-              variant="card"
-            />
+            {!isCompactHeader ? (
+              <UserNotificationPopover
+                content={profile.topbar.notifications}
+                fallbackHref="/profile"
+                variant="card"
+              />
+            ) : null}
             <button onClick={() => void handleLogout()} type="button">
               {profile.topbar.logout}
             </button>

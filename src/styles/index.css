@@ -3573,6 +3573,10 @@ select {
   font-size: 1.05rem;
 }
 
+.candidate-mobile-header-actions {
+  display: none;
+}
+
 .candidate-nav-toggle {
   align-items: center;
   background:
@@ -3600,6 +3604,31 @@ select {
   display: grid;
   gap: 0.24rem;
   width: 0.95rem;
+}
+
+.candidate-nav-toggle__avatar {
+  align-items: center;
+  background: linear-gradient(135deg, #ffd56f, var(--color-brand-end));
+  border-radius: 999px;
+  color: var(--color-text-inverse);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 950;
+  height: 2rem;
+  justify-content: center;
+  overflow: hidden;
+  width: 2rem;
+}
+
+.candidate-nav-toggle__avatar img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.candidate-nav-toggle__label {
+  line-height: 1;
 }
 
 .candidate-nav-toggle__icon span {
@@ -5564,7 +5593,7 @@ select {
     border-right: 0;
     box-shadow: 0 14px 34px rgba(17, 24, 39, 0.06);
     gap: 0.75rem;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: auto;
     height: auto;
     padding: 0.75rem 1rem;
@@ -5580,6 +5609,47 @@ select {
 
   .candidate-nav-toggle {
     display: inline-flex;
+    padding: 0.34rem 0.8rem 0.34rem 0.34rem;
+  }
+
+  .candidate-mobile-header-actions {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.55rem;
+    justify-self: end;
+    min-width: 0;
+  }
+
+  .candidate-mobile-notification {
+    display: inline-flex;
+  }
+
+  .candidate-mobile-header-actions .user-notification-button {
+    align-items: center;
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    display: inline-flex;
+    height: 2.75rem;
+    justify-content: center;
+    padding: 0;
+    width: 2.75rem;
+  }
+
+  .candidate-mobile-header-actions .user-notification-button:hover {
+    background: var(--color-brand-soft);
+    border-color: var(--color-border-brand-soft);
+    color: var(--color-brand-end);
+  }
+
+  .candidate-mobile-header-actions .user-notification-button:focus-visible {
+    background: var(--color-brand-soft);
+    border-color: var(--color-border-brand-soft);
+    box-shadow: 0 0 0 3px rgba(242, 85, 85, 0.16);
+    color: var(--color-brand-end);
+    outline: 2px solid var(--color-brand-solid);
+    outline-offset: 2px;
   }
 
   .candidate-nav {
@@ -5627,6 +5697,7 @@ select {
 
   .candidate-sidebar-user {
     border-top: 0;
+    display: none;
     justify-self: end;
     padding-top: 0;
   }
