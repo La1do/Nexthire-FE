@@ -1,11 +1,106 @@
 .job-post-form-section .job-post-field-error {
+  color: var(--color-text-danger) !important;
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  line-height: 1.25rem;
-  min-height: 1.25rem;
+  line-height: 1.2rem;
+  margin-top: 0.15rem;
+  min-height: 1.2rem;
 }
 
 .job-post-form-section .job-post-form-grid {
   align-items: start;
+}
+
+.job-post-details-fields {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.job-post-details-fields .job-post-form-grid {
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+}
+
+.job-post-details-fields .job-post-field,
+.job-post-details-fields .job-post-skills-field {
+  gap: 0.35rem;
+}
+
+.job-post-details-fields .job-post-skills-field {
+  margin-top: 0;
+}
+
+.job-post-date-input {
+  background: var(--color-surface-card);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  height: 3rem;
+  padding: 0 0.95rem;
+  width: 100%;
+}
+
+.job-post-date-input::placeholder {
+  color: var(--color-control-placeholder);
+}
+
+.job-post-form-section input[aria-invalid='true'],
+.job-post-form-section select[aria-invalid='true'],
+.job-post-form-section textarea[aria-invalid='true'] {
+  border-color: var(--color-text-danger);
+}
+
+@media (max-width: 767px) {
+  .job-post-details-fields {
+    gap: 0.8rem;
+  }
+}
+
+.job-post-date-input-shell {
+  display: block;
+  position: relative;
+}
+
+.job-post-date-input-shell .job-post-date-input {
+  padding-right: 3.25rem;
+}
+
+.job-post-date-picker-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  height: 2.5rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+}
+
+.job-post-date-picker-button:hover,
+.job-post-date-picker-button:focus-visible {
+  color: var(--color-brand-solid);
+}
+
+.job-post-native-date-input {
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 1px;
+}
+
+.job-post-form--published-edit .job-post-readonly-field,
+.job-post-form--published-edit input:disabled,
+.job-post-form--published-edit select:disabled,
+.job-post-form--published-edit textarea:disabled {
+  background: var(--color-surface-muted);
+  cursor: not-allowed;
+  opacity: 0.78;
 }

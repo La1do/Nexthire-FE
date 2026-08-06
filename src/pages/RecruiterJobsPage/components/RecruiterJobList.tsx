@@ -73,10 +73,16 @@ function renderJobMeta(
   createTranslations: RecruiterJobCreateTranslations,
 ) {
   return [
-    createTranslations.form.options.employmentTypes[job.employmentType],
-    createTranslations.form.options.workingTypes[job.workingType],
-    createTranslations.form.options.experienceLevels[job.experienceLevel],
-  ].filter(Boolean).join(' · ')
+    job.employmentType
+      ? createTranslations.form.options.employmentTypes[job.employmentType]
+      : null,
+    job.workingType
+      ? createTranslations.form.options.workingTypes[job.workingType]
+      : null,
+    job.experienceLevel
+      ? createTranslations.form.options.experienceLevels[job.experienceLevel]
+      : null,
+  ].filter((label): label is string => Boolean(label)).join(' · ')
 }
 
 function hasPriorityStatus(job: RecruiterJobResponse) {

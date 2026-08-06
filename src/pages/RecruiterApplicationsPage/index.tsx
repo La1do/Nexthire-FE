@@ -350,6 +350,7 @@ export function RecruiterApplicationsPage() {
       })
       upsertMappedApplication(mapApplication(updatedApplication))
       toast.success(content.states.statusSuccess)
+      setSelectedApplicationId(null)
       return true
     } catch (error) {
       toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.statusError)

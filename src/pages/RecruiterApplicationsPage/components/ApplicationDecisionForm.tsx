@@ -31,12 +31,9 @@ export function ApplicationDecisionForm({
   const [feedback, setFeedback] = useState(application.statusNote ?? '')
   const [error, setError] = useState<DecisionValidationError>(null)
   const [pendingDecision, setPendingDecision] = useState<PendingDecision | null>(null)
-  const isReadOnly = ['REJECTED', 'WITHDRAWN', 'CANCELLED'].includes(application.status)
-  const errorMessage = error === 'maxLength'
-    ? translations.maxLengthError.replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))
-    : error === 'rejectionRequired'
-    ? translations.rejectionRequiredError
-    : null
+  const isDecisionCompleted = ['OFFERED', 'REJECTED', 'WITHDRAWN', 'CANCELLED'].includes(application.status)
+  const isOffer = application.status === 'OFFERED'
+  const isRejected = application.status === 'REJECTED'
 
   useEffect(() => {
     setFeedback(application.statusNote ?? '')
@@ -70,33 +67,57 @@ export function ApplicationDecisionForm({
       <div className="recruiter-application-decision__heading">
         <div>
           <h3 id="recruiter-application-decision-title">{translations.title}</h3>
-          <p>{isReadOnly ? translations.readOnlyDescription : translations.description}</p>
+          <p>{isDecisionCompleted ? translations.readOnlyDescription : translations.description}</p>
         </div>
       </div>
 
-      <label className="recruiter-application-decision__field">
-        <span>{translations.feedbackLabel}</span>
-        <textarea
-          disabled={isSubmitting || isReadOnly}
-          maxLength={APPLICATION_FEEDBACK_MAX_LENGTH}
-          onChange={(event) => {
-            setFeedback(event.target.value)
-            if (error) setError(null)
-          }}
-          placeholder={translations.feedbackPlaceholder}
-          rows={5}
-          value={feedback}
-        />
-      </label>
+      {isOffer || isRejected ? (
+        <div
+          className={`recruiter-application-decision__result recruiter-application-decision__result--${isOffer ? 'offered' : 'rejected'}`}
+          role="status"
+        >
+          <span aria-hidden="true" className="recruiter-application-decision__result-icon">
+            {isOffer ? '✓' : '×'}
+          </span>
+          <div>
+            <strong>{isOffer ? translations.offeredResultTitle : translations.rejectedResultTitle}</strong>
+            <p>{isOffer ? translations.offeredResultDescription : translations.rejectedResultDescription}</p>
+          </div>
+        </div>
+      ) : null}
 
-      <div className="recruiter-application-decision__meta">
-        <span className={errorMessage ? 'recruiter-application-decision__error' : undefined} role={errorMessage ? 'alert' : undefined}>
-          {errorMessage ?? translations.feedbackHint}
-        </span>
-        <span>{translations.characterCount.replace('{{count}}', String(feedback.length)).replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))}</span>
-      </div>
+      {isDecisionCompleted ? (
+        <div className="recruiter-application-decision__feedback-readonly">
+          <span>{translations.feedbackLabel}</span>
+          <p>{feedback || translations.noFeedback}</p>
+        </div>
+      ) : (
+        <>
+          <label className="recruiter-application-decision__field">
+            <span>{translations.feedbackLabel}</span>
+            <textarea
+              disabled={isSubmitting}
+              maxLength={APPLICATION_FEEDBACK_MAX_LENGTH}
+              onChange={(event) => {
+                setFeedback(event.target.value)
+                if (error) setError(null)
+              }}
+              placeholder={translations.feedbackPlaceholder}
+              rows={5}
+              value={feedback}
+            />
+          </label>
 
-      {!isReadOnly ? (
+          <div className="recruiter-application-decision__meta">
+            <span className={error ? 'recruiter-application-decision__error' : undefined} role={error ? 'alert' : undefined}>
+              {error ?? translations.feedbackHint}
+            </span>
+            <span>{translations.characterCount.replace('{{count}}', String(feedback.length)).replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))}</span>
+          </div>
+        </>
+      )}
+
+      {!isDecisionCompleted ? (
         <div className="recruiter-application-decision__actions">
           <button
             className="recruiter-application-decision__offer"

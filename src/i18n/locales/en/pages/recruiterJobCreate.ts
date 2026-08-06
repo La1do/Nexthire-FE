@@ -144,6 +144,8 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
     },
     actions: {
       saveDraft: 'Save draft',
+      saveChanges: 'Save changes',
+      savingChanges: 'Saving changes...',
       savingDraft: 'Saving...',
       saved: 'Saved',
       notSavedYet: 'Not saved yet',
