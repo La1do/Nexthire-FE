@@ -111,6 +111,16 @@ export const common = {
     passwordResetVerified: 'Verification code accepted.',
     passwordResetSuccess: 'Your new password has been saved.',
   },
+  authGuard: {
+    authRequiredTitle: 'Sign in with the right role',
+    authRequiredMessage: 'This area is for {{requiredRole}} accounts. Sign in with the matching account to continue.',
+    roleMismatchTitle: 'Signed out of the wrong role',
+    roleMismatchMessage:
+      'You were using a {{currentRole}} account, but this page is for {{requiredRole}}. Please sign in with the right role.',
+    roleSwitchTitle: 'Switching account area',
+    roleSwitchMessage:
+      'You are leaving the {{currentRole}} session to open the {{requiredRole}} area. Sign in with the matching account.',
+  },
   languageSwitcher: {
     label: 'Change language',
     options: {

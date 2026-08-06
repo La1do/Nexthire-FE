@@ -34,6 +34,14 @@ export type CommonTranslations = {
     passwordResetVerified: string
     passwordResetSuccess: string
   }
+  authGuard: {
+    authRequiredTitle: string
+    authRequiredMessage: string
+    roleMismatchTitle: string
+    roleMismatchMessage: string
+    roleSwitchTitle: string
+    roleSwitchMessage: string
+  }
   languageSwitcher: {
     label: string
     options: Record<Locale, string>

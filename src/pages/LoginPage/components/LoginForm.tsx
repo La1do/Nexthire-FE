@@ -17,8 +17,10 @@ import { validateLoginForm } from '../utils/loginValidation'
 type LoginFormProps = {
   apiErrors: CommonTranslations['apiErrors']
   authFeedback: CommonTranslations['authFeedback']
+  authGuard: CommonTranslations['authGuard']
   backToLoginLabel: string
   role: AuthApiRole
+  roleLabels: CommonTranslations['authUser']
   translations: LoginTranslations
   verificationTranslations: RegisterTranslations['verification']['verify']
   verificationValidation: Pick<RegisterTranslations['validation'], 'codeRequired'>
@@ -52,6 +54,64 @@ function getSafeRedirect(value: string | null) {
   return value
 }
 
+function getAuthApiRole(value: string | null): AuthApiRole | null {
+  if (value === 'ADMIN' || value === 'CANDIDATE' || value === 'RECRUITER') {
+    return value
+  }
+
+  return null
+}
+
+function getRoleLabel(
+  role: AuthApiRole,
+  labels: Pick<CommonTranslations['authUser'], 'adminRole' | 'candidateRole' | 'recruiterRole'>,
+) {
+  if (role === 'ADMIN') return labels.adminRole
+  if (role === 'RECRUITER') return labels.recruiterRole
+
+  return labels.candidateRole
+}
+
+function renderRoleTemplate(
+  template: string,
+  values: { currentRole?: string; requiredRole: string },
+) {
+  return template
+    .replaceAll('{{currentRole}}', values.currentRole ?? values.requiredRole)
+    .replaceAll('{{requiredRole}}', values.requiredRole)
+}
+
+function getRouteGuardNotice({
+  authGuard,
+  currentRole,
+  reason,
+  requiredRole,
+}: {
+  authGuard: CommonTranslations['authGuard']
+  currentRole?: string
+  reason: string | null
+  requiredRole: string
+}) {
+  if (reason === 'role-mismatch') {
+    return {
+      title: authGuard.roleMismatchTitle,
+      message: renderRoleTemplate(authGuard.roleMismatchMessage, { currentRole, requiredRole }),
+    }
+  }
+
+  if (reason === 'role-switch') {
+    return {
+      title: authGuard.roleSwitchTitle,
+      message: renderRoleTemplate(authGuard.roleSwitchMessage, { currentRole, requiredRole }),
+    }
+  }
+
+  return {
+    title: authGuard.authRequiredTitle,
+    message: renderRoleTemplate(authGuard.authRequiredMessage, { requiredRole }),
+  }
+}
+
 function renderTemplateWithEmail(template: string, email: string) {
   const [prefix, suffix = ''] = template.split('{{email}}')
 
@@ -67,8 +127,10 @@ function renderTemplateWithEmail(template: string, email: string) {
 export function LoginForm({
   apiErrors,
   authFeedback,
+  authGuard,
   backToLoginLabel,
   role,
+  roleLabels,
   translations,
   verificationTranslations,
   verificationValidation,
@@ -92,6 +154,17 @@ export function LoginForm({
   const isBusy = isSubmitting || isGoogleSubmitting
   const canUseGoogleLogin = role !== 'ADMIN'
   const loginRedirect = getSafeRedirect(searchParams.get('redirect')) ?? getDefaultLoginRedirect(role)
+  const requiredRole = getAuthApiRole(searchParams.get('requiredRole')) ?? role
+  const currentRole = getAuthApiRole(searchParams.get('currentRole'))
+  const routeGuardReason = searchParams.get('reason')
+  const routeGuardNotice = routeGuardReason
+    ? getRouteGuardNotice({
+      authGuard,
+      currentRole: currentRole ? getRoleLabel(currentRole, roleLabels) : undefined,
+      reason: routeGuardReason,
+      requiredRole: getRoleLabel(requiredRole, roleLabels),
+    })
+    : null
   const buildPendingVerification = (formValues: LoginFormValues, email = formValues.email.trim()) => ({
     email,
     password: formValues.password,
@@ -323,6 +396,18 @@ export function LoginForm({
 
   return (
     <form className="auth-form-grid grid" noValidate onSubmit={handleSubmit}>
+      {routeGuardNotice ? (
+        <div
+          className="rounded-xl border border-[rgba(242,85,85,0.22)] bg-[rgba(242,85,85,0.08)] px-4 py-3 text-sm leading-6 text-[var(--color-text-secondary)]"
+          role="status"
+        >
+          <strong className="block font-extrabold text-[var(--color-text-primary)]">
+            {routeGuardNotice.title}
+          </strong>
+          <span>{routeGuardNotice.message}</span>
+        </div>
+      ) : null}
+
       <Input
         autoComplete="email"
         disabled={isBusy}

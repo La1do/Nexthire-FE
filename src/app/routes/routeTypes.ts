@@ -8,6 +8,7 @@ export type RouteAccess =
     }
   | {
       kind: 'guest-only'
+      targetRole?: AuthApiRole
     }
   | {
       kind: 'protected'

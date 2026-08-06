@@ -45,6 +45,9 @@ import type { Translations } from '../../i18n'
 
 const publicAccess: RouteAccess = { kind: 'public' }
 const guestOnlyAccess: RouteAccess = { kind: 'guest-only' }
+const candidateGuestAccess: RouteAccess = { kind: 'guest-only', targetRole: 'CANDIDATE' }
+const recruiterGuestAccess: RouteAccess = { kind: 'guest-only', targetRole: 'RECRUITER' }
+const adminGuestAccess: RouteAccess = { kind: 'guest-only', targetRole: 'ADMIN' }
 
 const candidateAccess: RouteAccess = {
   kind: 'protected',
@@ -340,35 +343,35 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       label: common.navigation.login,
       element: <CandidateLoginPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: candidateGuestAccess,
     },
     {
       path: '/recruiter/login',
       label: common.navigation.employerCta,
       element: <RecruiterLoginPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: recruiterGuestAccess,
     },
     {
       path: '/admin/login',
       label: pages.adminUsers.routeLabel,
       element: <AdminLoginPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: adminGuestAccess,
     },
     {
       path: '/register',
       label: pages.register.candidate.routeLabel,
       element: <CandidateRegisterPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: candidateGuestAccess,
     },
     {
       path: '/recruiter/register',
       label: pages.register.recruiter.routeLabel,
       element: <RecruiterRegisterPage />,
       layout: AuthLayout,
-      access: guestOnlyAccess,
+      access: recruiterGuestAccess,
     },
     {
       path: '/forgot-password',

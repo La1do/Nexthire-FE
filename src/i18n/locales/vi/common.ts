@@ -111,6 +111,16 @@ export const common = {
     passwordResetVerified: 'Mã xác thực hợp lệ.',
     passwordResetSuccess: 'Đã cập nhật mật khẩu mới.',
   },
+  authGuard: {
+    authRequiredTitle: 'Cần đăng nhập đúng vai trò',
+    authRequiredMessage: 'Khu vực này dành cho {{requiredRole}}. Hãy đăng nhập bằng tài khoản phù hợp để tiếp tục.',
+    roleMismatchTitle: 'Đã đăng xuất phiên không phù hợp',
+    roleMismatchMessage:
+      'Bạn đang dùng tài khoản {{currentRole}}, nhưng trang này dành cho {{requiredRole}}. Vui lòng đăng nhập lại bằng đúng vai trò.',
+    roleSwitchTitle: 'Đang chuyển khu vực tài khoản',
+    roleSwitchMessage:
+      'Bạn đang rời phiên {{currentRole}} để vào khu vực {{requiredRole}}. Hãy đăng nhập bằng tài khoản phù hợp.',
+  },
   languageSwitcher: {
     label: 'Đổi ngôn ngữ',
     options: {
