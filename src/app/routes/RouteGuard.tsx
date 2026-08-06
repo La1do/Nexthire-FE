@@ -147,6 +147,20 @@ export function RouteGuard({ access, children }: RouteGuardProps) {
   const hasAccessToken = Boolean(authTokenStorage.getAccessToken())
 
   if (routeAccess.kind === 'public') {
+    if (hasAccessToken && user && routeAccess.roles && !routeAccess.roles.includes(user.role)) {
+      const firstAllowedRole = routeAccess.roles[0]
+
+      return (
+        <RoleBoundaryRedirect
+          currentRole={user.role}
+          loginPath={routeAccess.loginPath ?? getLoginPathForRole(firstAllowedRole)}
+          reason="role-mismatch"
+          redirect={getCurrentRedirect(location)}
+          requiredRole={firstAllowedRole}
+        />
+      )
+    }
+
     return <>{children}</>
   }
 

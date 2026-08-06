@@ -105,7 +105,7 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
         id="recruiter-sidebar"
       >
         <div className="recruiter-sidebar__inner">
-          <a className="recruiter-sidebar__brand" href="/home">
+          <a className="recruiter-sidebar__brand" href="/recruiter">
             <BrandMark compact label={common.brandName} />
           </a>
 

@@ -110,7 +110,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   return (
     <div className="candidate-shell">
       <aside className="candidate-sidebar" ref={sidebarRef}>
-        <Link className="candidate-brand" to="/">
+        <Link className="candidate-brand" to="/home">
           <BrandMark compact label={common.brandName} />
         </Link>
 

@@ -39,6 +39,13 @@ function getProfileHref(role: AuthApiRole) {
   return '/recruiter'
 }
 
+function getBrandHref(user: AuthUser | null) {
+  if (!user) return '/'
+  if (user.role === 'CANDIDATE') return '/home'
+  if (user.role === 'ADMIN') return '/admin/dashboard'
+  return '/recruiter'
+}
+
 function getUserAvatar(user: AuthUser) {
   const src = user.role === 'RECRUITER'
     ? user.logoUrl ?? user.avatarUrl ?? null
@@ -188,6 +195,8 @@ export function MainLayout({ children }: PropsWithChildren) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const showCandidateNotifications = user?.role === 'CANDIDATE'
+  const showCandidateNavigation = !user || user.role === 'CANDIDATE'
+  const brandHref = getBrandHref(user)
   const navigationItems = [
     {
       href: '/search',
@@ -222,24 +231,26 @@ export function MainLayout({ children }: PropsWithChildren) {
     <div className="main-shell min-h-screen text-[var(--color-text-primary)]">
       <header className="main-header">
         <div className="main-container main-header-inner flex items-center justify-between gap-5 py-4">
-          <a className="main-brand" href="/">
+          <a className="main-brand" href={brandHref}>
             <BrandMark compact label={common.brandName} />
           </a>
-          <nav className="main-nav">
-            {navigationItems.map((item) => (
-              <NavLink
-                className={({ isActive }) =>
-                  ['main-nav-link', isActive || item.current ? 'is-active' : '']
-                    .filter(Boolean)
-                    .join(' ')
-                }
-                key={item.href}
-                to={item.href}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+          {showCandidateNavigation ? (
+            <nav className="main-nav">
+              {navigationItems.map((item) => (
+                <NavLink
+                  className={({ isActive }) =>
+                    ['main-nav-link', isActive || item.current ? 'is-active' : '']
+                      .filter(Boolean)
+                      .join(' ')
+                  }
+                  key={item.href}
+                  to={item.href}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+          ) : null}
           <div className="main-header-actions">
             <LanguageSwitch className="main-language-switch" compact />
             {isAuthenticated && user ? (
@@ -276,7 +287,7 @@ export function MainLayout({ children }: PropsWithChildren) {
       <footer className="main-footer">
         <div className="main-container grid gap-10 py-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
-            <a className="main-footer-brand" href="/">
+            <a className="main-footer-brand" href={brandHref}>
               <BrandMark compact label={common.brandName} />
             </a>
             <p className="main-footer-description mt-4 max-w-sm text-sm leading-6">{common.footer.description}</p>

@@ -105,7 +105,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
         id="admin-sidebar"
       >
         <div className="admin-sidebar__inner">
-          <Link className="admin-sidebar__brand" to="/">
+          <Link className="admin-sidebar__brand" to="/admin/dashboard">
             <BrandMark compact label={common.brandName} />
           </Link>
 
