@@ -92,7 +92,8 @@
 }
 
 .admin-cv-template-color-field {
-  display: grid;
+  align-items: center;
+  display: flex;
   gap: .45rem;
 }
 
@@ -102,9 +103,10 @@
   border: 1px solid var(--color-border-default);
   border-radius: 10px;
   cursor: pointer;
+  flex: 0 0 3rem;
   height: 3rem;
   padding: .25rem;
-  width: 100%;
+  width: 3rem;
 }
 
 .admin-cv-template-color-input::-webkit-color-swatch-wrapper {
@@ -128,9 +130,9 @@
   border-radius: 10px;
   display: inline-flex;
   gap: .55rem;
-  min-height: 3rem;
+  min-height: 2.5rem;
   padding: .5rem .75rem;
-  width: fit-content;
+  width: auto;
 }
 
 .admin-cv-template-color-preview__swatch {
@@ -686,7 +688,4 @@
     width: 100%;
   }
 
-  .admin-cv-template-color-preview {
-    width: 100%;
-  }
 }
