@@ -270,18 +270,19 @@
 
 .cv-template-card__media {
   aspect-ratio: 1 / 1.12;
-  background: var(--color-home-paper-2);
+  background: var(--color-home-paper);
   border-block-end: var(--rule-home-hair) solid var(--color-home-rule);
   display: block;
   max-block-size: 19.25rem;
-  overflow: clip;
+  overflow: hidden;
 }
 
 .cv-template-card__media img {
   display: block;
   height: 100%;
-  object-fit: contain;
-  transform: scale(1);
+  object-fit: cover;
+  object-position: top center;
+  transform: scale(1.03);
   transition: transform var(--dur-long) var(--ease-out);
   width: 100%;
 }

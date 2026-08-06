@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   PanelLeftClose,
@@ -168,7 +168,6 @@ export function CvBuilderPage() {
   useCanvasKeyboard();
   const { locale } = useLocale();
   const { templateId } = useParams<{ templateId?: string }>();
-  const loadedTemplateRef = useRef<string | null>(null);
   const loadDocument = useCanvasStore((s) => s.loadDocument);
   const applyTemplate = useCanvasStore((s) => s.applyTemplate);
   const [rightTab, setRightTab] = useState<RightTab>('properties');
@@ -179,12 +178,11 @@ export function CvBuilderPage() {
   const [rightW, setRightW] = useState(320);
 
   useEffect(() => {
-    if (!templateId || loadedTemplateRef.current === templateId) {
+    if (!templateId) {
       return;
     }
 
     let active = true;
-    loadedTemplateRef.current = templateId;
     const localTemplate = CV_TEMPLATES.find((template) => template.id === templateId);
 
     cvTemplatePresetService.get(templateId)
