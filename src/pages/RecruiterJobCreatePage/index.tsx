@@ -21,6 +21,7 @@ import type {
 } from './types'
 import { createJobPostPayload, createJobPostUpdatePayload } from './utils/jobPostPayload'
 import { validateJobPostForm } from './utils/jobPostValidation'
+import { formatApiDateToDisplay } from './utils/jobPostInput'
 
 type CompanyGateStatus = CompanyStatus | 'NO_COMPANY'
 
@@ -46,19 +47,6 @@ function createInitialJobPostValues(): JobPostFormValues {
   }
 }
 
-function formatDateInputValue(value: string | null) {
-  if (!value) {
-    return ''
-  }
-
-  const date = new Date(value)
-
-  if (Number.isNaN(date.getTime())) {
-    return ''
-  }
-
-  return date.toISOString().slice(0, 10)
-}
 
 function mapJobToPostValues(job: RecruiterJobResponse): JobPostFormValues {
   return {
@@ -72,7 +60,7 @@ function mapJobToPostValues(job: RecruiterJobResponse): JobPostFormValues {
     salaryMax: job.salaryMax == null ? '' : String(job.salaryMax),
     salaryCurrency: job.salaryCurrency === 'USD' || job.salaryCurrency === 'JPY' ? job.salaryCurrency : 'VND',
     isSalaryVisible: job.isSalaryVisible,
-    deadline: formatDateInputValue(job.deadline),
+    deadline: formatApiDateToDisplay(job.deadline),
     numberOfOpenings: job.numberOfOpenings == null ? '' : String(job.numberOfOpenings),
     skills: job.skills,
     skillInput: '',

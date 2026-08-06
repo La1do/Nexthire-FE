@@ -8,6 +8,8 @@ import type {
   PublicCategory,
 } from '../../../types/job.types'
 import { Button, Input } from '../../_components'
+import { JobPostDateInput } from './JobPostDateInput'
+import { sanitizeUnsignedIntegerInput } from '../utils/jobPostInput'
 import type {
   JobPostAction,
   JobPostFieldErrors,
@@ -194,7 +196,7 @@ export function JobPostForm({
 
   function handleNumberChange(field: 'salaryMin' | 'salaryMax' | 'numberOfOpenings') {
     return (event: ChangeEvent<HTMLInputElement>) => {
-      onChange(field, event.target.value)
+      onChange(field, sanitizeUnsignedIntegerInput(event.target.value))
     }
   }
 
@@ -272,102 +274,112 @@ export function JobPostForm({
           </div>
         </div>
 
-        <label className="job-post-toggle">
-          <input
-            checked={values.isSalaryVisible}
-            onChange={(event) => onChange('isSalaryVisible', event.target.checked)}
-            type="checkbox"
-          />
-          <span>{fields.isSalaryVisible.label}</span>
-        </label>
-
-        <div className="job-post-form-grid job-post-form-grid--salary">
-          <Input
-            disabled={!values.isSalaryVisible}
-            error={errors.salaryMin}
-            inputMode="numeric"
-            label={fields.salaryMin.label}
-            onChange={handleNumberChange('salaryMin')}
-            placeholder={fields.salaryMin.placeholder}
-            messageClassName="job-post-field-error"
-            reserveMessageSpace
-            value={values.salaryMin}
-          />
-          <Input
-            disabled={!values.isSalaryVisible}
-            error={errors.salaryMax}
-            inputMode="numeric"
-            label={fields.salaryMax.label}
-            onChange={handleNumberChange('salaryMax')}
-            placeholder={fields.salaryMax.placeholder}
-            messageClassName="job-post-field-error"
-            reserveMessageSpace
-            value={values.salaryMax}
-          />
-          <SelectInput
-            label={fields.salaryCurrency.label}
-            onChange={(value) => onChange('salaryCurrency', value as JobPostFormValues['salaryCurrency'])}
-            options={currencyOptions}
-            value={values.salaryCurrency}
-          />
-        </div>
-
-        <div className="job-post-form-grid">
-          <Input
-            error={errors.deadline}
-            label={fields.deadline.label}
-            onChange={(event) => onChange('deadline', event.target.value)}
-            type="date"
-            messageClassName="job-post-field-error"
-            reserveMessageSpace
-            value={values.deadline}
-          />
-          <Input
-            error={errors.numberOfOpenings}
-            inputMode="numeric"
-            label={fields.numberOfOpenings.label}
-            onChange={handleNumberChange('numberOfOpenings')}
-            placeholder={fields.numberOfOpenings.placeholder}
-            messageClassName="job-post-field-error"
-            reserveMessageSpace
-            value={values.numberOfOpenings}
-          />
-        </div>
-
-        <div className="job-post-skills-field">
-          <label htmlFor="job-post-skill-input">{fields.skills.label}</label>
-          <div className="job-post-skill-entry">
+        <div className="job-post-details-fields">
+          <label className="job-post-toggle">
             <input
-              className="form-control"
-              id="job-post-skill-input"
-              onChange={(event) => onChange('skillInput', event.target.value)}
-              onKeyDown={handleSkillKeyDown}
-              placeholder={fields.skills.placeholder}
-              value={values.skillInput}
+              checked={values.isSalaryVisible}
+              onChange={(event) => onChange('isSalaryVisible', event.target.checked)}
+              type="checkbox"
             />
-            <Button disabled={!values.skillInput.trim()} onClick={onAddSkill} variant="secondary">
-              {fields.skills.add}
-            </Button>
+            <span>{fields.isSalaryVisible.label}</span>
+          </label>
+
+          <div className="job-post-form-grid job-post-form-grid--salary">
+            <Input
+              disabled={!values.isSalaryVisible}
+              error={errors.salaryMin}
+              inputMode="numeric"
+              label={fields.salaryMin.label}
+              messageClassName="job-post-field-error"
+              onChange={handleNumberChange('salaryMin')}
+              pattern="[0-9]*"
+              placeholder={fields.salaryMin.placeholder}
+              reserveMessageSpace
+              value={values.salaryMin}
+            />
+            <Input
+              disabled={!values.isSalaryVisible}
+              error={errors.salaryMax}
+              inputMode="numeric"
+              label={fields.salaryMax.label}
+              messageClassName="job-post-field-error"
+              onChange={handleNumberChange('salaryMax')}
+              pattern="[0-9]*"
+              placeholder={fields.salaryMax.placeholder}
+              reserveMessageSpace
+              value={values.salaryMax}
+            />
+            <SelectInput
+              label={fields.salaryCurrency.label}
+              onChange={(value) =>
+                onChange('salaryCurrency', value as JobPostFormValues['salaryCurrency'])
+              }
+              options={currencyOptions}
+              value={values.salaryCurrency}
+            />
           </div>
-          {values.skills.length ? (
-            <ul className="job-post-skill-list">
-              {values.skills.map((skill) => (
-                <li key={skill}>
-                  <span>{skill}</span>
-                  <button
-                    aria-label={`${fields.skills.removeLabel} ${skill}`}
-                    onClick={() => onRemoveSkill(skill)}
-                    type="button"
-                  >
-                    x
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="job-post-skill-empty">{fields.skills.empty}</p>
-          )}
-          <small aria-hidden={!errors.skills} className="job-post-field-error" role={errors.skills ? 'alert' : undefined}>{errors.skills ?? ' '}</small>
+
+          <div className="job-post-form-grid job-post-form-grid--recruitment">
+            <JobPostDateInput
+              error={errors.deadline}
+              label={fields.deadline.label}
+              onChange={(value) => onChange('deadline', value)}
+              value={values.deadline}
+            />
+            <Input
+              error={errors.numberOfOpenings}
+              inputMode="numeric"
+              label={fields.numberOfOpenings.label}
+              messageClassName="job-post-field-error"
+              onChange={handleNumberChange('numberOfOpenings')}
+              pattern="[0-9]*"
+              placeholder={fields.numberOfOpenings.placeholder}
+              reserveMessageSpace
+              value={values.numberOfOpenings}
+            />
+          </div>
+
+          <div className="job-post-skills-field">
+            <label htmlFor="job-post-skill-input">{fields.skills.label}</label>
+            <div className="job-post-skill-entry">
+              <input
+                className="form-control"
+                id="job-post-skill-input"
+                onChange={(event) => onChange('skillInput', event.target.value)}
+                onKeyDown={handleSkillKeyDown}
+                placeholder={fields.skills.placeholder}
+                value={values.skillInput}
+              />
+              <Button disabled={!values.skillInput.trim()} onClick={onAddSkill} variant="secondary">
+                {fields.skills.add}
+              </Button>
+            </div>
+            {values.skills.length ? (
+              <ul className="job-post-skill-list">
+                {values.skills.map((skill) => (
+                  <li key={skill}>
+                    <span>{skill}</span>
+                    <button
+                      aria-label={`${fields.skills.removeLabel} ${skill}`}
+                      onClick={() => onRemoveSkill(skill)}
+                      type="button"
+                    >
+                      x
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="job-post-skill-empty">{fields.skills.empty}</p>
+            )}
+            <small
+              aria-hidden={!errors.skills}
+              className="job-post-field-error"
+              role={errors.skills ? 'alert' : undefined}
+            >
+              {errors.skills ?? ' '}
+            </small>
+          </div>
         </div>
       </section>
 
