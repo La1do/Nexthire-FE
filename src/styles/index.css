@@ -3742,6 +3742,18 @@ select {
 }
 
 .profile-avatar-wrap {
+  display: inline-flex;
+  position: relative;
+}
+
+.profile-avatar-button {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  padding: 0;
   position: relative;
 }
 
@@ -3758,6 +3770,9 @@ select {
   height: clamp(4.5rem, 12vw, 5.4rem);
   justify-content: center;
   overflow: hidden;
+  transition:
+    filter 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
   width: clamp(4.5rem, 12vw, 5.4rem);
 }
 
@@ -3768,14 +3783,19 @@ select {
 }
 
 .profile-avatar-action {
+  align-items: center;
   background: var(--color-text-primary);
   border: 2px solid var(--color-surface-card);
   border-radius: 999px;
   bottom: 0.1rem;
-  cursor: pointer;
+  display: inline-flex;
   height: 1.7rem;
+  justify-content: center;
   position: absolute;
   right: -0.1rem;
+  transition:
+    background-color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
   width: 1.7rem;
 }
 
@@ -3786,6 +3806,33 @@ select {
   height: 0.7rem;
   inset: 0.48rem 0.4rem auto;
   position: absolute;
+}
+
+.profile-avatar-button:focus-visible {
+  outline: 3px solid rgba(242, 85, 85, 0.28);
+  outline-offset: 4px;
+}
+
+.profile-avatar-button:disabled {
+  cursor: wait;
+}
+
+.profile-avatar-button:disabled .profile-avatar {
+  filter: grayscale(0.25);
+  opacity: 0.72;
+}
+
+@media (hover: hover) {
+  .profile-avatar-button:hover:not(:disabled) .profile-avatar {
+    filter: brightness(0.92);
+    transform: translateY(-1px);
+  }
+
+  .profile-avatar-button:hover:not(:disabled) .profile-avatar-action,
+  .profile-avatar-button:focus-visible .profile-avatar-action {
+    background: var(--color-brand-solid);
+    transform: scale(1.04);
+  }
 }
 
 .profile-hero-main {
@@ -3886,7 +3933,7 @@ select {
 }
 
 .profile-sticky-actions button:disabled,
-.profile-avatar-action:disabled,
+.profile-avatar-button:disabled,
 .profile-resume-file button:disabled {
   cursor: not-allowed;
   opacity: 0.6;

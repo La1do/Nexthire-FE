@@ -39,6 +39,17 @@ function getProfileHref(role: AuthApiRole) {
   return '/recruiter'
 }
 
+function getUserAvatar(user: AuthUser) {
+  const src = user.role === 'RECRUITER'
+    ? user.logoUrl ?? user.avatarUrl ?? null
+    : user.avatarUrl ?? user.logoUrl ?? null
+
+  return {
+    alt: user.role === 'RECRUITER' && user.companyName ? `${user.companyName} logo` : getAuthUserDisplayName(user),
+    src,
+  }
+}
+
 type MainUserMenuProps = {
   labels: {
     profile: string
@@ -60,6 +71,7 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
   const displayName = getAuthUserDisplayName(user)
   const metaLabel = getUserMetaLabel(user, labels)
   const profileHref = getProfileHref(user.role)
+  const avatar = getUserAvatar(user)
 
   useEffect(() => {
     if (!isOpen) {
@@ -108,11 +120,11 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
         ref={triggerRef}
         type="button"
       >
-        {user.logoUrl ? (
+        {avatar.src ? (
           <img
-            alt={user.companyName ? `${user.companyName} logo` : ''}
+            alt={avatar.alt}
             className="main-user-avatar"
-            src={user.logoUrl}
+            src={avatar.src}
           />
         ) : (
           <span className="main-user-avatar main-user-avatar--initials">
@@ -128,11 +140,11 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 
       <div className="main-user-dropdown" hidden={!isOpen} id={menuId} role="menu">
         <div className="main-user-dropdown-header" role="none">
-          {user.logoUrl ? (
+          {avatar.src ? (
             <img
-              alt={user.companyName ? `${user.companyName} logo` : ''}
+              alt={avatar.alt}
               className="main-user-dropdown-avatar"
-              src={user.logoUrl}
+              src={avatar.src}
             />
           ) : (
             <span className="main-user-dropdown-avatar main-user-avatar--initials">
