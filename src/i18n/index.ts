@@ -1,6 +1,7 @@
 import { common as enCommon } from './locales/en/common'
 import { adminAiManagement as enAdminAiManagement } from './locales/en/pages/adminAiManagement'
 import { adminDashboard as enAdminDashboard } from './locales/en/pages/adminDashboard'
+import { adminCvTemplates as enAdminCvTemplates } from './locales/en/pages/adminCvTemplates'
 import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
 import { adminJobs as enAdminJobs } from './locales/en/pages/adminJobs'
 import { adminSettings as enAdminSettings } from './locales/en/pages/adminSettings'
@@ -29,6 +30,7 @@ import { search as enSearch } from './locales/en/pages/search'
 import { common as jaCommon } from './locales/ja/common'
 import { adminAiManagement as jaAdminAiManagement } from './locales/ja/pages/adminAiManagement'
 import { adminDashboard as jaAdminDashboard } from './locales/ja/pages/adminDashboard'
+import { adminCvTemplates as jaAdminCvTemplates } from './locales/ja/pages/adminCvTemplates'
 import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
 import { adminJobs as jaAdminJobs } from './locales/ja/pages/adminJobs'
 import { adminSettings as jaAdminSettings } from './locales/ja/pages/adminSettings'
@@ -57,6 +59,7 @@ import { search as jaSearch } from './locales/ja/pages/search'
 import { common as viCommon } from './locales/vi/common'
 import { adminAiManagement as viAdminAiManagement } from './locales/vi/pages/adminAiManagement'
 import { adminDashboard as viAdminDashboard } from './locales/vi/pages/adminDashboard'
+import { adminCvTemplates as viAdminCvTemplates } from './locales/vi/pages/adminCvTemplates'
 import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
 import { adminJobs as viAdminJobs } from './locales/vi/pages/adminJobs'
 import { adminSettings as viAdminSettings } from './locales/vi/pages/adminSettings'
@@ -93,6 +96,7 @@ export const translations = {
     pages: {
       adminAiManagement: enAdminAiManagement,
       adminDashboard: enAdminDashboard,
+      adminCvTemplates: enAdminCvTemplates,
       adminCompanies: enAdminCompanies,
       adminJobs: enAdminJobs,
       adminSettings: enAdminSettings,
@@ -125,6 +129,7 @@ export const translations = {
     pages: {
       adminAiManagement: viAdminAiManagement,
       adminDashboard: viAdminDashboard,
+      adminCvTemplates: viAdminCvTemplates,
       adminCompanies: viAdminCompanies,
       adminJobs: viAdminJobs,
       adminSettings: viAdminSettings,
@@ -157,6 +162,7 @@ export const translations = {
     pages: {
       adminAiManagement: jaAdminAiManagement,
       adminDashboard: jaAdminDashboard,
+      adminCvTemplates: jaAdminCvTemplates,
       adminCompanies: jaAdminCompanies,
       adminJobs: jaAdminJobs,
       adminSettings: jaAdminSettings,

@@ -9,6 +9,7 @@ import { RecruiterLayout } from '../../layouts/RecruiterLayout'
 import { AdminCompaniesPage } from '../../pages/AdminCompaniesPage'
 import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
 import { AdminDashboardPage } from '../../pages/AdminDashboardPage'
+import { AdminCvTemplatesPage } from '../../pages/AdminCvTemplatesPage'
 import { AdminJobsPage } from '../../pages/AdminJobsPage'
 import { AdminSettingsPage } from '../../pages/AdminSettingsPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
@@ -423,6 +424,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/admin/jobs',
       label: pages.adminJobs.routeLabel,
       element: <AdminJobsPage />,
+      layout: AdminLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/admin/cv-templates',
+      label: pages.adminCvTemplates.routeLabel,
+      element: <AdminCvTemplatesPage />,
       layout: AdminLayout,
       access: adminAccess,
     },

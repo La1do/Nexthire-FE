@@ -2,20 +2,25 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import {
   adminCompaniesService,
   adminDashboardService,
+  adminCvTemplatePresetsService,
   adminJobsService,
   adminUsersService,
 } from '../services/admin'
 import type {
   AdminCompanyListQuery,
+  AdminCvTemplatePresetQuery,
+  AdminCvTemplatePresetSortOrderPayload,
   AdminDashboardGrowthQuery,
   AdminJobListQuery,
   AdminJobReviewQueueQuery,
   AdminReasonPayload,
   AdminRevisionReviewQueueQuery,
   AdminUserListQuery,
+  CreateAdminCvTemplatePresetPayload,
   CompanyVerificationActionPayload,
   JobReasonPayload,
   ReviewDecisionPayload,
+  UpdateAdminCvTemplatePresetPayload,
   UpdateCompanyTrustLevelPayload,
 } from '../services/admin'
 import { adminQueryKeys } from './adminQueryKeys'
@@ -117,6 +122,76 @@ export function useAdminCompanyTrustHistory(companyId: string | undefined) {
     queryKey: adminQueryKeys.companyTrustHistory(companyId ?? 'missing'),
     queryFn: () => adminCompaniesService.getTrustHistory(companyId as string),
     enabled: Boolean(companyId),
+  })
+}
+
+export function useAdminCvTemplatePresets(query: AdminCvTemplatePresetQuery) {
+  return useQuery({
+    queryKey: adminQueryKeys.cvTemplatePresetList(query),
+    queryFn: () => adminCvTemplatePresetsService.list(query),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useAdminCvTemplatePreset(presetId: string | undefined) {
+  return useQuery({
+    queryKey: adminQueryKeys.cvTemplatePresetDetail(presetId ?? 'missing'),
+    queryFn: () => adminCvTemplatePresetsService.get(presetId as string),
+    enabled: Boolean(presetId),
+  })
+}
+
+function useInvalidateAdminCvTemplatePresets(presetId?: string) {
+  const queryClient = useQueryClient()
+  return async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.cvTemplatePresetLists() }),
+      ...(presetId
+        ? [
+            queryClient.invalidateQueries({
+              queryKey: adminQueryKeys.cvTemplatePresetDetail(presetId),
+            }),
+          ]
+        : []),
+    ])
+  }
+}
+
+export function useCreateAdminCvTemplatePreset() {
+  const invalidate = useInvalidateAdminCvTemplatePresets()
+  return useMutation({
+    mutationFn: (payload: CreateAdminCvTemplatePresetPayload) =>
+      adminCvTemplatePresetsService.create(payload),
+    onSuccess: invalidate,
+  })
+}
+
+export function useUpdateAdminCvTemplatePreset(presetId: string) {
+  const invalidate = useInvalidateAdminCvTemplatePresets(presetId)
+  return useMutation({
+    mutationFn: (payload: UpdateAdminCvTemplatePresetPayload) =>
+      adminCvTemplatePresetsService.update(presetId, payload),
+    onSuccess: invalidate,
+  })
+}
+
+export function useAdminCvTemplatePresetAction(
+  presetId: string,
+  action: 'publish' | 'archive' | 'restore',
+) {
+  const invalidate = useInvalidateAdminCvTemplatePresets(presetId)
+  return useMutation({
+    mutationFn: () => adminCvTemplatePresetsService[action](presetId),
+    onSuccess: invalidate,
+  })
+}
+
+export function useUpdateAdminCvTemplatePresetSortOrder() {
+  const invalidate = useInvalidateAdminCvTemplatePresets()
+  return useMutation({
+    mutationFn: (payload: AdminCvTemplatePresetSortOrderPayload) =>
+      adminCvTemplatePresetsService.updateSortOrder(payload),
+    onSuccess: invalidate,
   })
 }
 

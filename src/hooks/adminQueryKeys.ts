@@ -6,6 +6,7 @@ import type {
   AdminJobReviewQueueQuery,
   AdminRevisionReviewQueueQuery,
   AdminUserListQuery,
+  AdminCvTemplatePresetQuery,
 } from '../services/admin'
 
 export const adminQueryKeys = {
@@ -41,6 +42,13 @@ export const adminQueryKeys = {
     [...adminQueryKeys.companies(), companyId, 'documents'] as const,
   companyTrustHistory: (companyId: string) =>
     [...adminQueryKeys.companies(), companyId, 'trust-history'] as const,
+  cvTemplatePresets: () => [...adminQueryKeys.all, 'cv-template-presets'] as const,
+  cvTemplatePresetLists: () => [...adminQueryKeys.cvTemplatePresets(), 'list'] as const,
+  cvTemplatePresetList: (query: AdminCvTemplatePresetQuery) =>
+    [...adminQueryKeys.cvTemplatePresetLists(), query] as const,
+  cvTemplatePresetDetails: () => [...adminQueryKeys.cvTemplatePresets(), 'detail'] as const,
+  cvTemplatePresetDetail: (presetId: string) =>
+    [...adminQueryKeys.cvTemplatePresetDetails(), presetId] as const,
   jobs: () => [...adminQueryKeys.all, 'jobs'] as const,
   jobLists: () => [...adminQueryKeys.jobs(), 'list'] as const,
   jobList: (query: AdminJobListQuery) => [...adminQueryKeys.jobLists(), query] as const,

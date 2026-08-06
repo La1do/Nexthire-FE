@@ -533,6 +533,113 @@ export type CvTemplatesTranslations = {
   }
 }
 
+export type AdminCvTemplatesTranslations = {
+  routeLabel: string
+  pageTitle: string
+  sidebarLabel: string
+  pageSubtitle: string
+  stats: {
+    total: string
+    published: string
+    draft: string
+    archived: string
+  }
+  filters: {
+    searchLabel: string
+    searchPlaceholder: string
+    statusLabel: string
+    statusAll: string
+    categoryLabel: string
+    categoryAll: string
+    clear: string
+    refresh: string
+    create: string
+  }
+  table: {
+    countLabel: string
+    emptyTitle: string
+    emptyDescription: string
+    columns: {
+      template: string
+      key: string
+      categories: string
+      status: string
+      version: string
+      sortOrder: string
+      updatedAt: string
+      actions: string
+    }
+  }
+  form: {
+    createTitle: string
+    editTitle: string
+    keyLabel: string
+    keyPlaceholder: string
+    keyHint: string
+    defaultNameLabel: string
+    defaultDescriptionLabel: string
+    nameGroup: string
+    descriptionGroup: string
+    localeLabels: Record<Locale, string>
+    optionalLocaleHint: string
+    categoryLabel: string
+    accentLabel: string
+    thumbnailUrlLabel: string
+    sortOrderLabel: string
+    canvasJsonLabel: string
+    canvasJsonHint: string
+    formatJson: string
+    validateJson: string
+    save: string
+    saving: string
+    cancel: string
+    loading: string
+    requiredFields: string
+    categoriesRequired: string
+    canvasRequired: string
+    invalidJson: string
+    validJson: string
+    formattedJson: string
+    createSuccess: string
+    updateSuccess: string
+    saveError: string
+    actionError: string
+  }
+  actions: {
+    edit: string
+    publish: string
+    archive: string
+    restore: string
+    cancel: string
+    confirmTitle: string
+    confirmDescription: string
+    actionSuccess: string
+  }
+  feedback: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+  }
+  statuses: {
+    draft: string
+    published: string
+    archived: string
+  }
+  categories: {
+    all: string
+    it: string
+    marketing: string
+    sales: string
+    hr: string
+  }
+  pagination: {
+    prev: string
+    next: string
+    pageOf: string
+  }
+}
+
 export type AdminUsersTranslations = {
   routeLabel: string
   pageTitle: string
@@ -2682,6 +2789,7 @@ export type Translations = {
   pages: {
     adminAiManagement: AdminAiManagementTranslations
     adminDashboard: AdminDashboardTranslations
+    adminCvTemplates: AdminCvTemplatesTranslations
     adminCompanies: AdminCompaniesTranslations
     adminJobs: AdminJobsTranslations
     adminSettings: AdminSettingsTranslations
