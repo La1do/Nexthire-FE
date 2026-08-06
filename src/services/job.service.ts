@@ -13,6 +13,7 @@ import type {
   RecruiterJobListQuery,
   RecruiterJobResponse,
   RecruiterJobStatusCounts,
+  UpdateRecruiterJobPayload,
 } from '../types/job.types'
 
 export const jobService = {
@@ -57,7 +58,7 @@ export const jobService = {
     const response = await apiClient.post<Envelope<RecruiterJobResponse>>('/recruiter/jobs', payload)
     return response.data.data
   },
-  async updateRecruiterJob(id: string, payload: CreateRecruiterJobPayload) {
+  async updateRecruiterJob(id: string, payload: UpdateRecruiterJobPayload) {
     const response = await apiClient.patch<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}`, payload)
     return response.data.data
   },

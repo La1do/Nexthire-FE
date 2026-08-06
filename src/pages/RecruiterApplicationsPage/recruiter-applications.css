@@ -1061,3 +1061,59 @@
     animation: none;
   }
 }
+
+.recruiter-application-decision__result {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.recruiter-application-decision__result--offered {
+  background: rgba(25, 169, 116, 0.1);
+  border-color: rgba(25, 169, 116, 0.28);
+}
+
+.recruiter-application-decision__result--rejected {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.24);
+}
+
+.recruiter-application-decision__result-icon {
+  display: grid;
+  flex: 0 0 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 1.35rem;
+  font-weight: 900;
+  background: var(--color-surface-card);
+}
+
+.recruiter-application-decision__result strong {
+  color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.recruiter-application-decision__result p,
+.recruiter-application-decision__feedback-readonly p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.recruiter-application-decision__feedback-readonly {
+  display: grid;
+  gap: 0.5rem;
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  background: var(--color-surface-muted);
+}
+
+.recruiter-application-decision__feedback-readonly > span {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}

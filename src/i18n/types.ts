@@ -2067,6 +2067,11 @@ export type RecruiterApplicationsTranslations = {
       title: string
       description: string
       readOnlyDescription: string
+      offeredResultTitle: string
+      offeredResultDescription: string
+      rejectedResultTitle: string
+      rejectedResultDescription: string
+      noFeedback: string
       feedbackLabel: string
       feedbackPlaceholder: string
       feedbackHint: string

@@ -44,6 +44,7 @@ export function getJobPostChecklist(values: JobPostFormValues): JobPostChecklist
 export function validateJobPostForm(
   values: JobPostFormValues,
   validation: RecruiterJobCreateTranslations['validation'],
+  mode: 'draft' | 'submit' = 'submit',
 ) {
   const errors: JobPostFieldErrors = {}
   const salaryMin = parseOptionalNumber(values.salaryMin)
@@ -54,32 +55,46 @@ export function validateJobPostForm(
     errors.title = validation.titleRequired
   }
 
-  if (!values.employmentType) {
-    errors.employmentType = validation.employmentTypeRequired
+  if (mode === 'submit') {
+    if (!values.employmentType) {
+      errors.employmentType = validation.employmentTypeRequired
+    }
   }
 
-  if (!values.workingType) {
-    errors.workingType = validation.workingTypeRequired
+  if (mode === 'submit') {
+    if (!values.workingType) {
+      errors.workingType = validation.workingTypeRequired
+    }
   }
 
-  if (!values.experienceLevel) {
-    errors.experienceLevel = validation.experienceLevelRequired
+  if (mode === 'submit') {
+    if (!values.experienceLevel) {
+      errors.experienceLevel = validation.experienceLevelRequired
+    }
   }
 
-  if (!values.location.trim()) {
-    errors.location = validation.locationRequired
+  if (mode === 'submit') {
+    if (!values.location.trim()) {
+      errors.location = validation.locationRequired
+    }
   }
 
-  if (!values.skills.length) {
-    errors.skills = validation.skillsRequired
+  if (mode === 'submit') {
+    if (!values.skills.length) {
+      errors.skills = validation.skillsRequired
+    }
   }
 
-  if (!values.description.trim()) {
-    errors.description = validation.descriptionRequired
+  if (mode === 'submit') {
+    if (!values.description.trim()) {
+      errors.description = validation.descriptionRequired
+    }
   }
 
-  if (!values.requirements.trim()) {
-    errors.requirements = validation.requirementsRequired
+  if (mode === 'submit') {
+    if (!values.requirements.trim()) {
+      errors.requirements = validation.requirementsRequired
+    }
   }
 
   if (values.isSalaryVisible && salaryMin !== null && (Number.isNaN(salaryMin) || salaryMin < 0)) {

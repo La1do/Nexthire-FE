@@ -172,3 +172,5 @@ export type CreateRecruiterJobPayload = {
   deadline?: string | null
   numberOfOpenings?: number | null
 }
+
+export type UpdateRecruiterJobPayload = Partial<CreateRecruiterJobPayload>

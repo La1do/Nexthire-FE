@@ -19,7 +19,7 @@ import type {
   JobPostFormValues,
   JobPostSubmitResult,
 } from './types'
-import { createJobPostPayload } from './utils/jobPostPayload'
+import { createJobPostPayload, createJobPostUpdatePayload } from './utils/jobPostPayload'
 import { validateJobPostForm } from './utils/jobPostValidation'
 
 type CompanyGateStatus = CompanyStatus | 'NO_COMPANY'
@@ -264,7 +264,8 @@ export function RecruiterJobCreatePage() {
 
   const handleSubmit = useCallback(
     async (action: JobPostAction) => {
-      const nextErrors = validateJobPostForm(values, content.validation)
+      const validationMode = action === 'submit' || !draftJob ? 'submit' : 'draft'
+      const nextErrors = validateJobPostForm(values, content.validation, validationMode)
 
       if (Object.keys(nextErrors).length) {
         setErrors(nextErrors)
@@ -284,7 +285,9 @@ export function RecruiterJobCreatePage() {
         if (!job) {
           job = await jobService.createRecruiterJob(payload)
         } else if (draftPayloadKey !== payloadKey) {
-          job = await jobService.updateRecruiterJob(job.id, payload)
+          const savedPayload = createJobPostPayload(mapJobToPostValues(job))
+          const updatePayload = createJobPostUpdatePayload(payload, savedPayload)
+          job = await jobService.updateRecruiterJob(job.id, updatePayload)
         }
 
         setDraftJob(job)

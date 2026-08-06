@@ -1,5 +1,6 @@
 import type {
   CreateRecruiterJobPayload,
+  UpdateRecruiterJobPayload,
   JobExperienceLevel,
   JobType,
   JobWorkingType,
@@ -56,4 +57,25 @@ export function createJobPostPayload(values: JobPostFormValues): CreateRecruiter
     deadline: createDeadlineIso(values.deadline),
     numberOfOpenings,
   }
+}
+
+export function createJobPostUpdatePayload(
+  current: CreateRecruiterJobPayload,
+  saved: CreateRecruiterJobPayload,
+): UpdateRecruiterJobPayload {
+  const update: UpdateRecruiterJobPayload = {}
+
+  for (const key of Object.keys(current) as Array<keyof CreateRecruiterJobPayload>) {
+    const currentValue = current[key]
+    const savedValue = saved[key]
+    const changed = Array.isArray(currentValue) || Array.isArray(savedValue)
+      ? JSON.stringify(currentValue ?? []) !== JSON.stringify(savedValue ?? [])
+      : currentValue !== savedValue
+
+    if (changed) {
+      Object.assign(update, { [key]: currentValue })
+    }
+  }
+
+  return update
 }
