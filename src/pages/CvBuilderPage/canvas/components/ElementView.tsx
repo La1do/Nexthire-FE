@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { useCanvasStore } from '../store/useCanvasStore';
 import { getIcon } from '../icons';
@@ -42,6 +42,30 @@ const TextContent = ({
       sel?.addRange(range);
     }
   }, [editing]);
+
+  useLayoutEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    const nextHeight = Math.ceil(ref.current.scrollHeight) + 2;
+    if (Number.isFinite(nextHeight) && nextHeight > element.height) {
+      updateElement(element.id, { height: nextHeight });
+    }
+  }, [
+    element.id,
+    element.text,
+    element.fontFamily,
+    element.fontSize,
+    element.fontWeight,
+    element.italic,
+    element.underline,
+    element.lineHeight,
+    element.letterSpacing,
+    element.width,
+    element.height,
+    updateElement,
+  ]);
 
   const style: CSSProperties = {
     width: '100%',
