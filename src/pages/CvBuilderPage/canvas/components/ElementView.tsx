@@ -69,7 +69,8 @@ const TextContent = ({
 
   const style: CSSProperties = {
     width: '100%',
-    height: '100%',
+    height: 'auto',
+    minHeight: '100%',
     fontFamily: element.fontFamily,
     fontSize: element.fontSize,
     fontWeight: element.fontWeight,
