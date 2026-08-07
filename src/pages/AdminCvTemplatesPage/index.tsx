@@ -34,6 +34,7 @@ import type {
 } from '../../types/cvTemplatePreset.types'
 import { genId, type CanvasDocument } from '../CvBuilderPage/canvas/canvas.types'
 import { AiCanvasImportPanel } from './ai-import/AiCanvasImportPanel'
+import { renderCanvasThumbnail } from './ai-import/renderCanvasThumbnail'
 import './admin-cv-templates-page.css'
 
 const PAGE_SIZE = 20
@@ -477,8 +478,9 @@ export function AdminCvTemplatesPage() {
     setJsonNote({ tone: 'success', text: content.form.validJson })
   }
 
-  const writeAiCanvas = (canvas: CanvasDocument) => {
-    const nextThumbnailUrl = getCanvasThumbnailUrl(canvas)
+  const writeAiCanvas = async (canvas: CanvasDocument) => {
+    const renderedThumbnailUrl = await renderCanvasThumbnail(canvas)
+    const nextThumbnailUrl = renderedThumbnailUrl ?? getCanvasThumbnailUrl(canvas)
     setThumbnailFile(null)
     if (thumbnailInputRef.current) {
       thumbnailInputRef.current.value = ''
@@ -486,14 +488,14 @@ export function AdminCvTemplatesPage() {
     setDraft((current) => ({
       ...current,
       canvasText: JSON.stringify(canvas, null, 2),
-      ...(nextThumbnailUrl ? { thumbnailUrl: '' } : {}),
+      ...(nextThumbnailUrl ? { thumbnailUrl: nextThumbnailUrl } : {}),
     }))
     setFormError(null)
     setJsonNote({ tone: 'success', text: content.aiImport.applied })
   }
 
-  const handleApplyAiCanvas = (canvas: CanvasDocument) => {
-    writeAiCanvas(canvas)
+  const handleApplyAiCanvas = async (canvas: CanvasDocument) => {
+    await writeAiCanvas(canvas)
   }
 
   const handleActionConfirm = () => {
