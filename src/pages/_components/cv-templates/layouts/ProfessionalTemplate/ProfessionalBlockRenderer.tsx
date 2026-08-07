@@ -280,21 +280,27 @@ const getSectionLabel = (
 const getWrapperStyle = (
   context: CvTemplateContext,
 ): CSSProperties => {
-  const fontSize =
+  const baseFontSize =
     context.settings.fontSize ===
     'small'
-      ? '13px'
+      ? 13
       : context.settings
             .fontSize ===
           'large'
-        ? '17px'
-        : '15px';
+        ? 17
+        : 15;
+  const fontScale =
+    Number.isFinite(
+      context.settings.fontScale,
+    )
+      ? context.settings.fontScale
+      : 1;
 
   return {
     fontFamily:
       context.settings
         .fontFamily,
-    fontSize,
+    fontSize: `${baseFontSize * fontScale}px`,
     lineHeight:
       context.settings
         .lineHeight,
