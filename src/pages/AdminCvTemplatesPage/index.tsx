@@ -185,6 +185,25 @@ function normalizeCanvas(value: string, fallbackName: string): CanvasDocument | 
   }
 }
 
+function isThumbnailImageSrc(value: string) {
+  return value.startsWith('data:image/') || value.startsWith('http://') || value.startsWith('https://')
+}
+
+function getCanvasThumbnailUrl(canvas: CanvasDocument | null): string | null {
+  for (const page of canvas?.pages ?? []) {
+    const image = page.elements.find((element) => element.type === 'image' && isThumbnailImageSrc(element.src))
+    if (image?.type === 'image') {
+      return image.src
+    }
+  }
+
+  return null
+}
+
+function getCanvasThumbnailUrlFromText(canvasText: string, fallbackName: string): string | null {
+  return getCanvasThumbnailUrl(normalizeCanvas(canvasText, fallbackName))
+}
+
 function formatDate(value: string) {
   try {
     return new Intl.DateTimeFormat(undefined, {
@@ -315,6 +334,12 @@ export function AdminCvTemplatesPage() {
   const total = listQuery.data?.meta.total ?? 0
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const hasActiveFilters = Boolean(query.trim() || status !== 'all' || category !== 'all')
+  const canvasThumbnailUrl = useMemo(
+    () => getCanvasThumbnailUrlFromText(draft.canvasText, draft.defaultName.trim() || draft.key || 'Untitled template'),
+    [draft.canvasText, draft.defaultName, draft.key],
+  )
+  const manualThumbnailUrl = draft.thumbnailUrl.trim()
+  const displayedThumbnailUrl = thumbnailPreviewUrl ?? (manualThumbnailUrl || canvasThumbnailUrl)
   const stats = useMemo(
     () =>
       rows.reduce(
@@ -453,7 +478,16 @@ export function AdminCvTemplatesPage() {
   }
 
   const writeAiCanvas = (canvas: CanvasDocument) => {
-    setDraft((current) => ({ ...current, canvasText: JSON.stringify(canvas, null, 2) }))
+    const nextThumbnailUrl = getCanvasThumbnailUrl(canvas)
+    setThumbnailFile(null)
+    if (thumbnailInputRef.current) {
+      thumbnailInputRef.current.value = ''
+    }
+    setDraft((current) => ({
+      ...current,
+      canvasText: JSON.stringify(canvas, null, 2),
+      ...(nextThumbnailUrl ? { thumbnailUrl: '' } : {}),
+    }))
     setFormError(null)
     setJsonNote({ tone: 'success', text: content.aiImport.applied })
   }
@@ -800,10 +834,10 @@ export function AdminCvTemplatesPage() {
                       />
                     </div>
                     <div className="admin-cv-template-thumbnail-preview">
-                      {thumbnailPreviewUrl || draft.thumbnailUrl.trim() ? (
+                      {displayedThumbnailUrl ? (
                         <img
                           alt=""
-                          src={thumbnailPreviewUrl ?? draft.thumbnailUrl.trim()}
+                          src={displayedThumbnailUrl}
                         />
                       ) : (
                         <span>{content.form.thumbnailUrlLabel}</span>
