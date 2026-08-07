@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCanvasStore } from "../store/useCanvasStore";
 import { ColorField } from "./ColorField";
 import type {
@@ -49,17 +49,73 @@ const NumberInput = ({
   min?: number;
   max?: number;
   step?: number;
-}) => (
-  <input
-    type="number"
-    className={inputCls}
-    value={value}
-    min={min}
-    max={max}
-    step={step}
-    onChange={(e) => onChange(Number(e.target.value))}
-  />
-);
+}) => {
+  const [draft, setDraft] = useState(String(value));
+
+  useEffect(() => {
+    setDraft(String(value));
+  }, [value]);
+
+  const clamp = (next: number) => {
+    let normalized = next;
+    if (typeof min === "number") {
+      normalized = Math.max(min, normalized);
+    }
+    if (typeof max === "number") {
+      normalized = Math.min(max, normalized);
+    }
+    return normalized;
+  };
+
+  const commit = (raw: string) => {
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed)) {
+      setDraft(String(value));
+      return;
+    }
+    const next = clamp(parsed);
+    setDraft(String(next));
+    onChange(next);
+  };
+
+  return (
+    <input
+      type="number"
+      className={inputCls}
+      value={draft}
+      min={min}
+      max={max}
+      step={step}
+      inputMode="decimal"
+      onChange={(e) => {
+        const raw = e.target.value;
+        setDraft(raw);
+
+        if (
+          raw === "" ||
+          raw === "-" ||
+          raw === "." ||
+          raw === "-." ||
+          raw.endsWith(".")
+        ) {
+          return;
+        }
+
+        const parsed = Number(raw);
+        if (Number.isFinite(parsed)) {
+          onChange(clamp(parsed));
+        }
+      }}
+      onBlur={(e) => {
+        if (e.target.value.trim() === "") {
+          setDraft(String(value));
+          return;
+        }
+        commit(e.target.value);
+      }}
+    />
+  );
+};
 
 const ColorInput = ({
   value,
