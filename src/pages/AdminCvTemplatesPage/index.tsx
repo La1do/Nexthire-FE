@@ -273,8 +273,6 @@ export function AdminCvTemplatesPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [jsonNote, setJsonNote] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null)
-  // Canvas do AI dựng, đang chờ xác nhận vì ô Canvas JSON đã có nội dung.
-  const [pendingAiCanvas, setPendingAiCanvas] = useState<CanvasDocument | null>(null)
   const thumbnailInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -460,15 +458,7 @@ export function AdminCvTemplatesPage() {
     setJsonNote({ tone: 'success', text: content.aiImport.applied })
   }
 
-  /**
-   * Không ghi đè âm thầm: admin có thể đã gõ tay hoặc đang sửa preset có sẵn.
-   * Chỉ hỏi khi ô Canvas JSON thực sự có nội dung.
-   */
   const handleApplyAiCanvas = (canvas: CanvasDocument) => {
-    if (draft.canvasText.trim()) {
-      setPendingAiCanvas(canvas)
-      return
-    }
     writeAiCanvas(canvas)
   }
 
@@ -966,20 +956,6 @@ export function AdminCvTemplatesPage() {
         title={content.actions.confirmTitle}
       />
 
-      <ConfirmModal
-        cancelLabel={content.actions.cancel}
-        confirmLabel={content.aiImport.apply}
-        description={content.aiImport.overwriteDescription}
-        isOpen={Boolean(pendingAiCanvas)}
-        onCancel={() => setPendingAiCanvas(null)}
-        onConfirm={() => {
-          if (pendingAiCanvas) {
-            writeAiCanvas(pendingAiCanvas)
-          }
-          setPendingAiCanvas(null)
-        }}
-        title={content.aiImport.overwriteTitle}
-      />
     </div>
   )
 }

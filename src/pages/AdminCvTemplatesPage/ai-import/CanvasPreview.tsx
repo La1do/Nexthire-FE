@@ -1,14 +1,14 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import { getIcon } from '../../CvBuilderPage/canvas/icons'
+import { getIcon } from "../../CvBuilderPage/canvas/icons";
 import {
   CANVAS_PAGE_HEIGHT,
   CANVAS_PAGE_WIDTH,
   type CanvasDocument,
   type CanvasElement,
-} from '../../CvBuilderPage/canvas/canvas.types'
+} from "../../CvBuilderPage/canvas/canvas.types";
 
-const SCALE = 0.34 // 794 × 0.34 ≈ 270px, vừa cột phải của modal
+const SCALE = 0.34; // 794 × 0.34 ≈ 270px, vừa cột phải của modal
 
 /**
  * Renderer read-only tối giản cho preview.
@@ -22,39 +22,52 @@ const SCALE = 0.34 // 794 × 0.34 ≈ 270px, vừa cột phải của modal
  */
 function PreviewElement({ element }: { element: CanvasElement }) {
   const box: React.CSSProperties = {
-    position: 'absolute',
+    position: "absolute",
     left: element.x,
     top: element.y,
     width: element.width,
     height: element.height,
     opacity: element.opacity,
-  }
+  };
 
-  if (element.type === 'shape') {
+  if (element.type === "shape") {
     return (
       <div
         style={{
           ...box,
           background: element.fill,
           border:
-            element.strokeWidth > 0 ? `${element.strokeWidth}px solid ${element.stroke}` : undefined,
-          borderRadius: element.shape === 'ellipse' ? '50%' : element.borderRadius,
+            element.strokeWidth > 0
+              ? `${element.strokeWidth}px solid ${element.stroke}`
+              : undefined,
+          borderRadius:
+            element.shape === "ellipse" ? "50%" : element.borderRadius,
         }}
       />
-    )
+    );
   }
 
-  if (element.type === 'icon') {
-    const Icon = getIcon(element.name)
+  if (element.type === "icon") {
+    const Icon = getIcon(element.name);
     return (
       <div style={{ ...box, color: element.color }}>
         <Icon size={Math.min(element.width, element.height)} />
       </div>
-    )
+    );
   }
 
-  if (element.type === 'image') {
-    return <div style={{ ...box, background: '#e5e7eb' }} />
+  if (element.type === "image") {
+    return (
+      <img
+        alt=""
+        src={element.src}
+        style={{
+          ...box,
+          borderRadius: element.borderRadius,
+          objectFit: element.objectFit,
+        }}
+      />
+    );
   }
 
   return (
@@ -65,48 +78,51 @@ function PreviewElement({ element }: { element: CanvasElement }) {
         fontFamily: element.fontFamily,
         fontSize: element.fontSize,
         fontWeight: element.fontWeight,
-        fontStyle: element.italic ? 'italic' : undefined,
-        textDecoration: element.underline ? 'underline' : undefined,
+        fontStyle: element.italic ? "italic" : undefined,
+        textDecoration: element.underline ? "underline" : undefined,
         textAlign: element.align,
         lineHeight: element.lineHeight,
         letterSpacing: element.letterSpacing,
-        whiteSpace: 'pre-wrap',
-        overflow: 'hidden',
+        whiteSpace: "pre-wrap",
+        overflow: "hidden",
       }}
     >
       {element.text}
     </div>
-  )
+  );
 }
 
 export function CanvasPreview({
   canvas,
   pageLabel,
 }: {
-  canvas: CanvasDocument
-  pageLabel: (current: number, total: number) => string
+  canvas: CanvasDocument;
+  pageLabel: (current: number, total: number) => string;
 }) {
-  const [pageIndex, setPageIndex] = useState(0)
-  const page = canvas.pages[Math.min(pageIndex, canvas.pages.length - 1)]
+  const [pageIndex, setPageIndex] = useState(0);
+  const page = canvas.pages[Math.min(pageIndex, canvas.pages.length - 1)];
 
   if (!page) {
-    return null
+    return null;
   }
 
   return (
     <div className="admin-cv-template-ai__preview">
       <div
         className="admin-cv-template-ai__preview-frame"
-        style={{ width: CANVAS_PAGE_WIDTH * SCALE, height: CANVAS_PAGE_HEIGHT * SCALE }}
+        style={{
+          width: CANVAS_PAGE_WIDTH * SCALE,
+          height: CANVAS_PAGE_HEIGHT * SCALE,
+        }}
       >
         <div
           style={{
             width: CANVAS_PAGE_WIDTH,
             height: CANVAS_PAGE_HEIGHT,
-            position: 'relative',
+            position: "relative",
             background: page.background,
             transform: `scale(${SCALE})`,
-            transformOrigin: 'top left',
+            transformOrigin: "top left",
           }}
         >
           {page.elements.map((element) => (
@@ -135,5 +151,5 @@ export function CanvasPreview({
         </div>
       ) : null}
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-import { useRef } from 'react';
-import { useCanvasStore } from '../store/useCanvasStore';
-import { ColorField } from './ColorField';
+import { useRef } from "react";
+import { useCanvasStore } from "../store/useCanvasStore";
+import { ColorField } from "./ColorField";
 import type {
   CanvasElement,
   IconElement,
@@ -8,15 +8,15 @@ import type {
   ShapeElement,
   TextAlign,
   TextElement,
-} from '../canvas.types';
+} from "../canvas.types";
 
 const FONT_FAMILIES = [
-  'Roboto, sans-serif',
-  'Arial, sans-serif',
-  'Georgia, serif',
+  "Roboto, sans-serif",
+  "Arial, sans-serif",
+  "Georgia, serif",
   '"Times New Roman", serif',
   '"Courier New", monospace',
-  'Montserrat, sans-serif',
+  "Montserrat, sans-serif",
 ];
 
 const Field = ({
@@ -35,7 +35,7 @@ const Field = ({
 );
 
 const inputCls =
-  'w-full rounded-md border border-[#e5e7eb] bg-white px-2 py-1.5 text-sm text-[#111827] focus:border-[#f23b94] focus:outline-none';
+  "w-full rounded-md border border-[#e5e7eb] bg-white px-2 py-1.5 text-sm text-[#111827] focus:border-[#f23b94] focus:outline-none";
 
 const NumberInput = ({
   value,
@@ -76,8 +76,8 @@ const TextProps = ({ el }: { el: TextElement }) => {
   const toggleBtn = (active: boolean) =>
     `flex-1 rounded-md border px-2 py-1.5 text-sm ${
       active
-        ? 'border-[#f23b94] bg-[#fef3f8] text-[#f23b94]'
-        : 'border-[#e5e7eb] bg-white text-[#111827]'
+        ? "border-[#f23b94] bg-[#fef3f8] text-[#f23b94]"
+        : "border-[#e5e7eb] bg-white text-[#111827]"
     }`;
 
   return (
@@ -90,7 +90,7 @@ const TextProps = ({ el }: { el: TextElement }) => {
         >
           {FONT_FAMILIES.map((f) => (
             <option key={f} value={f}>
-              {f.split(',')[0].replace(/"/g, '')}
+              {f.split(",")[0].replace(/"/g, "")}
             </option>
           ))}
         </select>
@@ -145,14 +145,14 @@ const TextProps = ({ el }: { el: TextElement }) => {
 
       <Field label="Canh lề">
         <div className="flex gap-2">
-          {(['left', 'center', 'right'] as TextAlign[]).map((a) => (
+          {(["left", "center", "right"] as TextAlign[]).map((a) => (
             <button
               key={a}
               type="button"
               className={toggleBtn(el.align === a)}
               onClick={() => set({ align: a })}
             >
-              {a === 'left' ? '⬅' : a === 'center' ? '↔' : '➡'}
+              {a === "left" ? "⬅" : a === "center" ? "↔" : "➡"}
             </button>
           ))}
         </div>
@@ -193,7 +193,7 @@ const ImageProps = ({ el }: { el: ImageElement }) => {
     const reader = new FileReader();
     reader.onload = () => set({ src: reader.result as string });
     reader.readAsDataURL(file);
-    e.target.value = '';
+    e.target.value = "";
   };
 
   return (
@@ -203,11 +203,12 @@ const ImageProps = ({ el }: { el: ImageElement }) => {
           className={inputCls}
           value={el.objectFit}
           onChange={(e) =>
-            set({ objectFit: e.target.value as 'cover' | 'contain' })
+            set({ objectFit: e.target.value as "cover" | "contain" | "fill" })
           }
         >
           <option value="cover">Lấp đầy (cover)</option>
           <option value="contain">Vừa khung (contain)</option>
+          <option value="fill">Kéo giãn (fill)</option>
         </select>
       </Field>
       <Field label="Bo góc (px)">
@@ -242,7 +243,7 @@ const ShapeProps = ({ el }: { el: ShapeElement }) => {
 
   return (
     <>
-      {el.shape !== 'line' && (
+      {el.shape !== "line" && (
         <Field label="Màu nền">
           <ColorInput value={el.fill} onChange={(v) => set({ fill: v })} />
         </Field>
@@ -258,7 +259,7 @@ const ShapeProps = ({ el }: { el: ShapeElement }) => {
           onChange={(v) => set({ strokeWidth: v })}
         />
       </Field>
-      {el.shape === 'rect' && (
+      {el.shape === "rect" && (
         <Field label="Bo góc (px)">
           <NumberInput
             value={el.borderRadius}
@@ -329,15 +330,15 @@ export const PropertiesPanel = () => {
   if (selected.length === 0) {
     return (
       <div className="p-4 text-sm text-[#6b7280]">
-        Chọn một phần tử để chỉnh sửa thuộc tính, hoặc chèn phần tử mới từ
-        bảng bên trái.
+        Chọn một phần tử để chỉnh sửa thuộc tính, hoặc chèn phần tử mới từ bảng
+        bên trái.
       </div>
     );
   }
 
   const single = selected.length === 1 ? selected[0] : null;
   const zBtn =
-    'rounded-md border border-[#e5e7eb] bg-white px-2 py-1.5 text-xs hover:border-[#f23b94]';
+    "rounded-md border border-[#e5e7eb] bg-white px-2 py-1.5 text-xs hover:border-[#f23b94]";
 
   return (
     <div className="p-4">
@@ -345,10 +346,10 @@ export const PropertiesPanel = () => {
         {single ? typeLabel(single) : `${selected.length} phần tử`}
       </h2>
 
-      {single?.type === 'text' && <TextProps el={single} />}
-      {single?.type === 'image' && <ImageProps el={single} />}
-      {single?.type === 'shape' && <ShapeProps el={single} />}
-      {single?.type === 'icon' && <IconProps el={single} />}
+      {single?.type === "text" && <TextProps el={single} />}
+      {single?.type === "image" && <ImageProps el={single} />}
+      {single?.type === "shape" && <ShapeProps el={single} />}
+      {single?.type === "icon" && <IconProps el={single} />}
       {single && <CommonProps el={single} />}
 
       <p className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-[#6b7280]">
@@ -401,7 +402,7 @@ export const PropertiesPanel = () => {
           className={zBtn}
           onClick={() => toggleLock(selectedIds)}
         >
-          {single?.locked ? '🔓 Mở khóa' : '🔒 Khóa'}
+          {single?.locked ? "🔓 Mở khóa" : "🔒 Khóa"}
         </button>
         {selected.length >= 2 && (
           <button
@@ -434,10 +435,10 @@ export const PropertiesPanel = () => {
 };
 
 const typeLabel = (el: CanvasElement) =>
-  el.type === 'text'
-    ? 'Văn bản'
-    : el.type === 'image'
-      ? 'Hình ảnh'
-      : el.type === 'shape'
-        ? 'Hình khối'
-        : 'Biểu tượng';
+  el.type === "text"
+    ? "Văn bản"
+    : el.type === "image"
+      ? "Hình ảnh"
+      : el.type === "shape"
+        ? "Hình khối"
+        : "Biểu tượng";

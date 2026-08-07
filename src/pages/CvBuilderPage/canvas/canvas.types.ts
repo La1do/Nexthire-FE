@@ -4,16 +4,16 @@
 import {
   CV_PAGE_WIDTH,
   CV_PAGE_HEIGHT,
-} from '../../../types/cvPagination.types';
+} from "../../../types/cvPagination.types";
 
 export const CANVAS_PAGE_WIDTH = CV_PAGE_WIDTH; // 794px (A4 @ 96dpi)
 export const CANVAS_PAGE_HEIGHT = CV_PAGE_HEIGHT; // 1123px
 
-export type ElementType = 'text' | 'image' | 'shape' | 'icon';
+export type ElementType = "text" | "image" | "shape" | "icon";
 
-export type ShapeKind = 'rect' | 'ellipse' | 'line';
+export type ShapeKind = "rect" | "ellipse" | "line";
 
-export type TextAlign = 'left' | 'center' | 'right';
+export type TextAlign = "left" | "center" | "right";
 
 export interface ElementBase {
   id: string;
@@ -37,29 +37,29 @@ export interface ElementBase {
 // nexhire-BE/apps/cv-parsing-service/src/template-design/schemas/canvas-design.schema.ts
 export type CvBindingField =
   // Trường đơn — index luôn null.
-  | 'profile.fullName'
-  | 'profile.headline'
-  | 'profile.contactEmail'
-  | 'profile.phone'
-  | 'profile.location'
-  | 'profile.summary'
-  | 'profile.linkedinUrl'
-  | 'profile.portfolioUrl'
+  | "profile.fullName"
+  | "profile.headline"
+  | "profile.contactEmail"
+  | "profile.phone"
+  | "profile.location"
+  | "profile.summary"
+  | "profile.linkedinUrl"
+  | "profile.portfolioUrl"
   // Trường trong danh sách — index >= 0.
-  | 'experiences.companyName'
-  | 'experiences.position'
-  | 'experiences.period'
-  | 'experiences.description'
-  | 'educations.schoolName'
-  | 'educations.degree'
-  | 'educations.fieldOfStudy'
-  | 'educations.period'
-  | 'educations.description'
-  | 'skills.name'
-  | 'certifications.name'
-  | 'certifications.issuer'
-  | 'projects.name'
-  | 'projects.description';
+  | "experiences.companyName"
+  | "experiences.position"
+  | "experiences.period"
+  | "experiences.description"
+  | "educations.schoolName"
+  | "educations.degree"
+  | "educations.fieldOfStudy"
+  | "educations.period"
+  | "educations.description"
+  | "skills.name"
+  | "certifications.name"
+  | "certifications.issuer"
+  | "projects.name"
+  | "projects.description";
 
 export interface CvBinding {
   field: CvBindingField;
@@ -67,7 +67,7 @@ export interface CvBinding {
 }
 
 export interface TextElement extends ElementBase {
-  type: 'text';
+  type: "text";
   text: string;
   // Optional: mọi canvas đã lưu trước đây vẫn hợp lệ, không cần migration.
   binding?: CvBinding | null;
@@ -83,14 +83,14 @@ export interface TextElement extends ElementBase {
 }
 
 export interface ImageElement extends ElementBase {
-  type: 'image';
+  type: "image";
   src: string; // dataURL (upload) — không cần backend
-  objectFit: 'cover' | 'contain';
+  objectFit: "cover" | "contain" | "fill";
   borderRadius: number;
 }
 
 export interface ShapeElement extends ElementBase {
-  type: 'shape';
+  type: "shape";
   shape: ShapeKind;
   fill: string;
   stroke: string;
@@ -99,7 +99,7 @@ export interface ShapeElement extends ElementBase {
 }
 
 export interface IconElement extends ElementBase {
-  type: 'icon';
+  type: "icon";
   name: string; // tên icon lucide (kebab hoặc pascal)
   color: string;
 }
@@ -126,21 +126,21 @@ export interface CanvasDocument {
 // ---- Factory helpers ---------------------------------------------------
 
 let idCounter = 0;
-export const genId = (prefix = 'el'): string => {
+export const genId = (prefix = "el"): string => {
   idCounter += 1;
   return `${prefix}-${Date.now().toString(36)}-${idCounter}`;
 };
 
 export const createPage = (): CanvasPage => ({
-  id: genId('page'),
+  id: genId("page"),
   elements: [],
-  background: '#ffffff',
+  background: "#ffffff",
 });
 
 export const createEmptyDocument = (
-  name = 'CV chưa đặt tên',
+  name = "CV chưa đặt tên",
 ): CanvasDocument => ({
-  id: genId('doc'),
+  id: genId("doc"),
   name,
   pageSize: {
     width: CANVAS_PAGE_WIDTH,
@@ -149,9 +149,7 @@ export const createEmptyDocument = (
   pages: [createPage()],
 });
 
-const baseDefaults = (
-  zIndex: number,
-): Omit<ElementBase, 'id' | 'type'> => ({
+const baseDefaults = (zIndex: number): Omit<ElementBase, "id" | "type"> => ({
   x: 80,
   y: 80,
   width: 200,
@@ -163,35 +161,45 @@ const baseDefaults = (
   hidden: false,
 });
 
-export type TextPreset = 'heading' | 'subheading' | 'body';
+export type TextPreset = "heading" | "subheading" | "body";
 
 export const createTextElement = (
   zIndex: number,
-  preset: TextPreset = 'body',
+  preset: TextPreset = "body",
 ): TextElement => {
   const presetMap: Record<
     TextPreset,
     { text: string; fontSize: number; fontWeight: number; height: number }
   > = {
-    heading: { text: 'Tiêu đề', fontSize: 32, fontWeight: 700, height: 48 },
-    subheading: { text: 'Tiêu đề phụ', fontSize: 20, fontWeight: 600, height: 32 },
-    body: { text: 'Nội dung văn bản', fontSize: 14, fontWeight: 400, height: 24 },
+    heading: { text: "Tiêu đề", fontSize: 32, fontWeight: 700, height: 48 },
+    subheading: {
+      text: "Tiêu đề phụ",
+      fontSize: 20,
+      fontWeight: 600,
+      height: 32,
+    },
+    body: {
+      text: "Nội dung văn bản",
+      fontSize: 14,
+      fontWeight: 400,
+      height: 24,
+    },
   };
   const p = presetMap[preset];
   return {
     ...baseDefaults(zIndex),
-    id: genId('text'),
-    type: 'text',
+    id: genId("text"),
+    type: "text",
     width: 280,
     height: p.height,
     text: p.text,
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: "Roboto, sans-serif",
     fontSize: p.fontSize,
     fontWeight: p.fontWeight,
     italic: false,
     underline: false,
-    color: '#111827',
-    align: 'left',
+    color: "#111827",
+    align: "left",
     lineHeight: 1.4,
     letterSpacing: 0,
   };
@@ -204,12 +212,12 @@ export const createImageElement = (
   height = 200,
 ): ImageElement => ({
   ...baseDefaults(zIndex),
-  id: genId('img'),
-  type: 'image',
+  id: genId("img"),
+  type: "image",
   width,
   height,
   src,
-  objectFit: 'cover',
+  objectFit: "cover",
   borderRadius: 0,
 });
 
@@ -218,15 +226,15 @@ export const createShapeElement = (
   shape: ShapeKind,
 ): ShapeElement => ({
   ...baseDefaults(zIndex),
-  id: genId('shape'),
-  type: 'shape',
-  width: shape === 'line' ? 200 : 160,
-  height: shape === 'line' ? 4 : 160,
+  id: genId("shape"),
+  type: "shape",
+  width: shape === "line" ? 200 : 160,
+  height: shape === "line" ? 4 : 160,
   shape,
-  fill: shape === 'line' ? 'transparent' : '#f25555',
-  stroke: shape === 'line' ? '#111827' : 'transparent',
-  strokeWidth: shape === 'line' ? 3 : 0,
-  borderRadius: shape === 'rect' ? 8 : 0,
+  fill: shape === "line" ? "transparent" : "#f25555",
+  stroke: shape === "line" ? "#111827" : "transparent",
+  strokeWidth: shape === "line" ? 3 : 0,
+  borderRadius: shape === "rect" ? 8 : 0,
 });
 
 export const createIconElement = (
@@ -234,10 +242,10 @@ export const createIconElement = (
   name: string,
 ): IconElement => ({
   ...baseDefaults(zIndex),
-  id: genId('icon'),
-  type: 'icon',
+  id: genId("icon"),
+  type: "icon",
   width: 48,
   height: 48,
-  color: '#111827',
+  color: "#111827",
   name,
 });
