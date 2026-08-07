@@ -1,5 +1,5 @@
 import { AlertTriangle, Loader2, RotateCcw, Sparkles, Upload, Wand2 } from 'lucide-react'
-import { useRef, type ChangeEvent } from 'react'
+import { useRef, useState, type ChangeEvent } from 'react'
 
 import { Button } from '../../_components'
 import type { AdminCvTemplatesTranslations } from '../../../i18n/types'
@@ -83,9 +83,10 @@ export function AiCanvasImportPanel({
   onApply,
 }: {
   content: AdminCvTemplatesTranslations['aiImport']
-  onApply: (canvas: CanvasDocument) => void
+  onApply: (canvas: CanvasDocument) => Promise<void> | void
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const [isApplying, setApplying] = useState(false)
   const { job, isRunning, uploadError, start, reset } = useCanvasDesignJob()
 
   const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +109,14 @@ export function AiCanvasImportPanel({
   }
 
   const error = errorText()
+  const handleApply = async (canvas: CanvasDocument) => {
+    setApplying(true)
+    try {
+      await onApply(canvas)
+    } finally {
+      setApplying(false)
+    }
+  }
 
   return (
     <section className="admin-cv-template-modal__section admin-cv-template-ai">
@@ -159,8 +168,8 @@ export function AiCanvasImportPanel({
       {!isRunning && job ? (
         <div className="admin-cv-template-ai__actions">
           {job.status === 'SUCCEEDED' && job.canvas ? (
-            <Button onClick={() => onApply(job.canvas as CanvasDocument)} variant="primary">
-              <Wand2 size={16} />
+            <Button disabled={isApplying} onClick={() => void handleApply(job.canvas as CanvasDocument)} variant="primary">
+              {isApplying ? <Loader2 className="animate-spin" size={16} /> : <Wand2 size={16} />}
               <span>{content.apply}</span>
             </Button>
           ) : null}
