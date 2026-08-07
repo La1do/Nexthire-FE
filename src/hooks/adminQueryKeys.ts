@@ -49,6 +49,9 @@ export const adminQueryKeys = {
   cvTemplatePresetDetails: () => [...adminQueryKeys.cvTemplatePresets(), 'detail'] as const,
   cvTemplatePresetDetail: (presetId: string) =>
     [...adminQueryKeys.cvTemplatePresetDetails(), presetId] as const,
+  cvTemplateDesigns: () => [...adminQueryKeys.all, 'cv-template-designs'] as const,
+  cvTemplateDesign: (jobId: string) =>
+    [...adminQueryKeys.cvTemplateDesigns(), jobId] as const,
   jobs: () => [...adminQueryKeys.all, 'jobs'] as const,
   jobLists: () => [...adminQueryKeys.jobs(), 'list'] as const,
   jobList: (query: AdminJobListQuery) => [...adminQueryKeys.jobLists(), query] as const,

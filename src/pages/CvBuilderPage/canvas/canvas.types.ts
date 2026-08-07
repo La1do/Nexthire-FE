@@ -30,9 +30,47 @@ export interface ElementBase {
   groupId?: string;
 }
 
+// Nối một ô text với field dữ liệu trong ParsedResume.
+// Tách `field` và `index` thay vì dùng chuỗi kiểu 'experiences[0].companyName'
+// để enum trong JSON Schema của AI chỉ có 22 giá trị thay vì hàng trăm.
+// GIỮ ĐỒNG BỘ với CV_BINDING_FIELDS ở
+// nexhire-BE/apps/cv-parsing-service/src/template-design/schemas/canvas-design.schema.ts
+export type CvBindingField =
+  // Trường đơn — index luôn null.
+  | 'profile.fullName'
+  | 'profile.headline'
+  | 'profile.contactEmail'
+  | 'profile.phone'
+  | 'profile.location'
+  | 'profile.summary'
+  | 'profile.linkedinUrl'
+  | 'profile.portfolioUrl'
+  // Trường trong danh sách — index >= 0.
+  | 'experiences.companyName'
+  | 'experiences.position'
+  | 'experiences.period'
+  | 'experiences.description'
+  | 'educations.schoolName'
+  | 'educations.degree'
+  | 'educations.fieldOfStudy'
+  | 'educations.period'
+  | 'educations.description'
+  | 'skills.name'
+  | 'certifications.name'
+  | 'certifications.issuer'
+  | 'projects.name'
+  | 'projects.description';
+
+export interface CvBinding {
+  field: CvBindingField;
+  index: number | null; // null cho nhóm profile.
+}
+
 export interface TextElement extends ElementBase {
   type: 'text';
   text: string;
+  // Optional: mọi canvas đã lưu trước đây vẫn hợp lệ, không cần migration.
+  binding?: CvBinding | null;
   fontFamily: string;
   fontSize: number;
   fontWeight: number;
