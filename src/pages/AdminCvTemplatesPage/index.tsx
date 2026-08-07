@@ -331,7 +331,19 @@ export function AdminCvTemplatesPage() {
     pendingAction?.action ?? 'publish',
   )
 
-  const rows = useMemo(() => listQuery.data?.data ?? [], [listQuery.data])
+  const rows = useMemo(() => {
+    const items = listQuery.data?.data ?? []
+    const statusRank: Record<CvTemplatePresetStatus, number> = {
+      DRAFT: 0,
+      PUBLISHED: 1,
+      ARCHIVED: 2,
+    }
+    return [...items].sort((a, b) => {
+      const rankDiff = statusRank[a.status] - statusRank[b.status]
+      if (rankDiff !== 0) return rankDiff
+      return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+    })
+  }, [listQuery.data])
   const total = listQuery.data?.meta.total ?? 0
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const hasActiveFilters = Boolean(query.trim() || status !== 'all' || category !== 'all')
