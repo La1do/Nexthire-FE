@@ -76,6 +76,39 @@ export const adminCvTemplates: AdminCvTemplatesTranslations = {
     saveError: 'テンプレートを保存できません。',
     actionError: '操作を完了できません。',
   },
+  aiImport: {
+    title: 'AIでキャンバスを生成',
+    description:
+      'サンプルCVのPDFをアップロードすると、AIがレイアウトを再現し、プレースホルダー入りのCanvas JSONを作成します。',
+    uploadLabel: 'サンプルCVをアップロード（PDF、最大10MB）',
+    analyzing: 'PDFを解析してレイアウトを再構成しています...',
+    elementsKept: '{{returned}}個中{{kept}}個の要素を保持',
+    dropped: '使用できない要素を{{count}}個除外しました',
+    clamped: '{{count}}個の要素をページ内に収めました',
+    bindings: '{{resolved}}個の項目を紐付け、{{cleared}}個はデータと一致しませんでした',
+    piiScrubbed: '実データ{{count}}箇所をプレースホルダーに置き換えました',
+    parsedTitle: 'AIが読み取った内容',
+    parsedSummary: '職歴{{experiences}}件 · 学歴{{educations}}件 · スキル{{skills}}件',
+    pageOf: 'ページ {{current}}/{{total}}',
+    apply: 'このキャンバスを使う',
+    retry: '別のファイルを試す',
+    overwriteTitle: 'Canvas JSONを上書きしますか？',
+    overwriteDescription:
+      'Canvas JSON欄に内容があります。AIのキャンバスを使うとすべて上書きされます。続行しますか？',
+    applied: 'AIのキャンバスをCanvas JSON欄に反映しました。',
+    failed: 'このファイルからキャンバスを生成できませんでした。',
+    uploadFailed: 'アップロードに失敗しました。形式とサイズをご確認ください。',
+    errors: {
+      'TEMPLATE_DESIGN.OUTPUT_TRUNCATED':
+        'CVが長すぎるかレイアウトが複雑すぎるため出力が途中で切れました。ページ数の少ないCVをお試しください。',
+      'TEMPLATE_DESIGN.CANVAS_INVALID':
+        '使用できる要素が返されませんでした。レイアウトがより明確なCVをお試しください。',
+      'AI.SERVICE_UNAVAILABLE':
+        'AIサービスが一時的に利用できません。しばらくしてから再試行してください。',
+      'DOCUMENT.UNSUPPORTED_FILE_TYPE': 'PDFファイルのみ対応しています。',
+      'DOCUMENT.FILE_TOO_LARGE': 'ファイルが10MBを超えています。',
+    },
+  },
   actions: {
     edit: '編集',
     publish: '公開',

@@ -33,6 +33,7 @@ import type {
   UpdateAdminCvTemplatePresetPayload,
 } from '../../types/cvTemplatePreset.types'
 import { genId, type CanvasDocument } from '../CvBuilderPage/canvas/canvas.types'
+import { AiCanvasImportPanel } from './ai-import/AiCanvasImportPanel'
 import './admin-cv-templates-page.css'
 
 const PAGE_SIZE = 20
@@ -272,6 +273,8 @@ export function AdminCvTemplatesPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [jsonNote, setJsonNote] = useState<{ tone: 'success' | 'error'; text: string } | null>(null)
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null)
+  // Canvas do AI dựng, đang chờ xác nhận vì ô Canvas JSON đã có nội dung.
+  const [pendingAiCanvas, setPendingAiCanvas] = useState<CanvasDocument | null>(null)
   const thumbnailInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -449,6 +452,24 @@ export function AdminCvTemplatesPage() {
     }
 
     setJsonNote({ tone: 'success', text: content.form.validJson })
+  }
+
+  const writeAiCanvas = (canvas: CanvasDocument) => {
+    setDraft((current) => ({ ...current, canvasText: JSON.stringify(canvas, null, 2) }))
+    setFormError(null)
+    setJsonNote({ tone: 'success', text: content.aiImport.applied })
+  }
+
+  /**
+   * Không ghi đè âm thầm: admin có thể đã gõ tay hoặc đang sửa preset có sẵn.
+   * Chỉ hỏi khi ô Canvas JSON thực sự có nội dung.
+   */
+  const handleApplyAiCanvas = (canvas: CanvasDocument) => {
+    if (draft.canvasText.trim()) {
+      setPendingAiCanvas(canvas)
+      return
+    }
+    writeAiCanvas(canvas)
   }
 
   const handleActionConfirm = () => {
@@ -882,6 +903,11 @@ export function AdminCvTemplatesPage() {
                   </div>
                 </section>
 
+                <AiCanvasImportPanel
+                  content={content.aiImport}
+                  onApply={handleApplyAiCanvas}
+                />
+
                 <section className="admin-cv-template-modal__section">
                   <div className="admin-cv-template-modal__section-head">
                     <h3>{content.form.canvasJsonLabel}</h3>
@@ -938,6 +964,21 @@ export function AdminCvTemplatesPage() {
         onCancel={() => setPendingAction(null)}
         onConfirm={handleActionConfirm}
         title={content.actions.confirmTitle}
+      />
+
+      <ConfirmModal
+        cancelLabel={content.actions.cancel}
+        confirmLabel={content.aiImport.apply}
+        description={content.aiImport.overwriteDescription}
+        isOpen={Boolean(pendingAiCanvas)}
+        onCancel={() => setPendingAiCanvas(null)}
+        onConfirm={() => {
+          if (pendingAiCanvas) {
+            writeAiCanvas(pendingAiCanvas)
+          }
+          setPendingAiCanvas(null)
+        }}
+        title={content.aiImport.overwriteTitle}
       />
     </div>
   )

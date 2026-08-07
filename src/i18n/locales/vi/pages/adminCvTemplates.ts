@@ -76,6 +76,38 @@ export const adminCvTemplates: AdminCvTemplatesTranslations = {
     saveError: 'Không lưu được mẫu CV.',
     actionError: 'Không thực hiện được thao tác.',
   },
+  aiImport: {
+    title: 'Tạo canvas bằng AI',
+    description:
+      'Tải lên một CV mẫu dạng PDF, AI sẽ dựng lại bố cục thành Canvas JSON với nội dung là placeholder.',
+    uploadLabel: 'Tải lên CV mẫu (PDF, tối đa 10MB)',
+    analyzing: 'Đang phân tích PDF và dựng bố cục...',
+    elementsKept: 'Giữ {{kept}}/{{returned}} element',
+    dropped: 'Đã loại {{count}} element không dùng được',
+    clamped: 'Đã kẹp lại {{count}} element cho vừa trang',
+    bindings: 'Nối được {{resolved}} binding, {{cleared}} không khớp dữ liệu',
+    piiScrubbed: 'Đã thay {{count}} chỗ chứa dữ liệu thật bằng placeholder',
+    parsedTitle: 'Dữ liệu AI đọc được',
+    parsedSummary: '{{experiences}} kinh nghiệm · {{educations}} học vấn · {{skills}} kỹ năng',
+    pageOf: 'Trang {{current}}/{{total}}',
+    apply: 'Dùng canvas này',
+    retry: 'Thử tệp khác',
+    overwriteTitle: 'Ghi đè Canvas JSON?',
+    overwriteDescription:
+      'Ô Canvas JSON đang có nội dung. Dùng canvas do AI dựng sẽ ghi đè toàn bộ. Tiếp tục?',
+    applied: 'Đã đưa canvas của AI vào ô Canvas JSON.',
+    failed: 'AI không dựng được canvas từ tệp này.',
+    uploadFailed: 'Không tải được tệp lên. Kiểm tra lại định dạng và dung lượng.',
+    errors: {
+      'TEMPLATE_DESIGN.OUTPUT_TRUNCATED':
+        'Kết quả bị cắt giữa chừng vì CV quá dài hoặc bố cục quá phức tạp. Thử CV ít trang hơn.',
+      'TEMPLATE_DESIGN.CANVAS_INVALID':
+        'AI không trả về element nào dùng được. Thử một CV có bố cục rõ ràng hơn.',
+      'AI.SERVICE_UNAVAILABLE': 'Dịch vụ AI tạm thời không khả dụng. Thử lại sau ít phút.',
+      'DOCUMENT.UNSUPPORTED_FILE_TYPE': 'Chỉ hỗ trợ tệp PDF.',
+      'DOCUMENT.FILE_TOO_LARGE': 'Tệp vượt quá 10MB.',
+    },
+  },
   actions: {
     edit: 'Sửa',
     publish: 'Xuất bản',

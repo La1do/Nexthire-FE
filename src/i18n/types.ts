@@ -609,6 +609,28 @@ export type AdminCvTemplatesTranslations = {
     saveError: string
     actionError: string
   }
+  aiImport: {
+    title: string
+    description: string
+    uploadLabel: string
+    analyzing: string
+    elementsKept: string
+    dropped: string
+    clamped: string
+    bindings: string
+    piiScrubbed: string
+    parsedTitle: string
+    parsedSummary: string
+    pageOf: string
+    apply: string
+    retry: string
+    overwriteTitle: string
+    overwriteDescription: string
+    applied: string
+    failed: string
+    uploadFailed: string
+    errors: Record<string, string>
+  }
   actions: {
     edit: string
     publish: string

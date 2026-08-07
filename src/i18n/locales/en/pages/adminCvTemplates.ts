@@ -76,6 +76,38 @@ export const adminCvTemplates: AdminCvTemplatesTranslations = {
     saveError: 'Unable to save template.',
     actionError: 'Unable to complete action.',
   },
+  aiImport: {
+    title: 'Build canvas with AI',
+    description:
+      'Upload a sample CV as PDF and the AI rebuilds its layout as Canvas JSON with placeholder content.',
+    uploadLabel: 'Upload sample CV (PDF, max 10MB)',
+    analyzing: 'Reading the PDF and rebuilding the layout...',
+    elementsKept: 'Kept {{kept}} of {{returned}} elements',
+    dropped: 'Dropped {{count}} unusable elements',
+    clamped: 'Clamped {{count}} elements to fit the page',
+    bindings: 'Bound {{resolved}} fields, {{cleared}} did not match the data',
+    piiScrubbed: 'Replaced {{count}} real values with placeholders',
+    parsedTitle: 'What the AI read',
+    parsedSummary: '{{experiences}} roles · {{educations}} schools · {{skills}} skills',
+    pageOf: 'Page {{current}}/{{total}}',
+    apply: 'Use this canvas',
+    retry: 'Try another file',
+    overwriteTitle: 'Overwrite Canvas JSON?',
+    overwriteDescription:
+      'The Canvas JSON field is not empty. Using the AI canvas replaces all of it. Continue?',
+    applied: 'AI canvas copied into the Canvas JSON field.',
+    failed: 'The AI could not build a canvas from this file.',
+    uploadFailed: 'Upload failed. Check the file type and size.',
+    errors: {
+      'TEMPLATE_DESIGN.OUTPUT_TRUNCATED':
+        'The output was cut off because the CV is too long or the layout too complex. Try a shorter CV.',
+      'TEMPLATE_DESIGN.CANVAS_INVALID':
+        'The AI returned no usable elements. Try a CV with a clearer layout.',
+      'AI.SERVICE_UNAVAILABLE': 'The AI service is temporarily unavailable. Try again shortly.',
+      'DOCUMENT.UNSUPPORTED_FILE_TYPE': 'Only PDF files are supported.',
+      'DOCUMENT.FILE_TOO_LARGE': 'The file exceeds 10MB.',
+    },
+  },
   actions: {
     edit: 'Edit',
     publish: 'Publish',
