@@ -3,6 +3,7 @@ import { adminAiManagement as enAdminAiManagement } from './locales/en/pages/adm
 import { adminDashboard as enAdminDashboard } from './locales/en/pages/adminDashboard'
 import { adminCvTemplates as enAdminCvTemplates } from './locales/en/pages/adminCvTemplates'
 import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
+import { adminJobModerationPolicies as enAdminJobModerationPolicies } from './locales/en/pages/adminJobModerationPolicies'
 import { adminJobs as enAdminJobs } from './locales/en/pages/adminJobs'
 import { adminSettings as enAdminSettings } from './locales/en/pages/adminSettings'
 import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
@@ -32,6 +33,7 @@ import { adminAiManagement as jaAdminAiManagement } from './locales/ja/pages/adm
 import { adminDashboard as jaAdminDashboard } from './locales/ja/pages/adminDashboard'
 import { adminCvTemplates as jaAdminCvTemplates } from './locales/ja/pages/adminCvTemplates'
 import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
+import { adminJobModerationPolicies as jaAdminJobModerationPolicies } from './locales/ja/pages/adminJobModerationPolicies'
 import { adminJobs as jaAdminJobs } from './locales/ja/pages/adminJobs'
 import { adminSettings as jaAdminSettings } from './locales/ja/pages/adminSettings'
 import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
@@ -61,6 +63,7 @@ import { adminAiManagement as viAdminAiManagement } from './locales/vi/pages/adm
 import { adminDashboard as viAdminDashboard } from './locales/vi/pages/adminDashboard'
 import { adminCvTemplates as viAdminCvTemplates } from './locales/vi/pages/adminCvTemplates'
 import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
+import { adminJobModerationPolicies as viAdminJobModerationPolicies } from './locales/vi/pages/adminJobModerationPolicies'
 import { adminJobs as viAdminJobs } from './locales/vi/pages/adminJobs'
 import { adminSettings as viAdminSettings } from './locales/vi/pages/adminSettings'
 import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
@@ -98,6 +101,7 @@ export const translations = {
       adminDashboard: enAdminDashboard,
       adminCvTemplates: enAdminCvTemplates,
       adminCompanies: enAdminCompanies,
+      adminJobModerationPolicies: enAdminJobModerationPolicies,
       adminJobs: enAdminJobs,
       adminSettings: enAdminSettings,
       adminUsers: enAdminUsers,
@@ -131,6 +135,7 @@ export const translations = {
       adminDashboard: viAdminDashboard,
       adminCvTemplates: viAdminCvTemplates,
       adminCompanies: viAdminCompanies,
+      adminJobModerationPolicies: viAdminJobModerationPolicies,
       adminJobs: viAdminJobs,
       adminSettings: viAdminSettings,
       adminUsers: viAdminUsers,
@@ -164,6 +169,7 @@ export const translations = {
       adminDashboard: jaAdminDashboard,
       adminCvTemplates: jaAdminCvTemplates,
       adminCompanies: jaAdminCompanies,
+      adminJobModerationPolicies: jaAdminJobModerationPolicies,
       adminJobs: jaAdminJobs,
       adminSettings: jaAdminSettings,
       adminUsers: jaAdminUsers,

@@ -53,6 +53,15 @@ export const adminQueryKeys = {
   cvTemplateDesign: (jobId: string) =>
     [...adminQueryKeys.cvTemplateDesigns(), jobId] as const,
   jobs: () => [...adminQueryKeys.all, 'jobs'] as const,
+  jobModerationPolicies: () => [...adminQueryKeys.all, 'job-moderation-policies'] as const,
+  jobModerationPolicyLists: () => [...adminQueryKeys.jobModerationPolicies(), 'list'] as const,
+  jobModerationPolicyList: (query: unknown) =>
+    [...adminQueryKeys.jobModerationPolicyLists(), query] as const,
+  jobModerationPolicyDetails: () => [...adminQueryKeys.jobModerationPolicies(), 'detail'] as const,
+  jobModerationPolicyDetail: (policyId: string) =>
+    [...adminQueryKeys.jobModerationPolicyDetails(), policyId] as const,
+  jobModerationDefaultRules: () =>
+    [...adminQueryKeys.jobModerationPolicies(), 'default-rules'] as const,
   jobLists: () => [...adminQueryKeys.jobs(), 'list'] as const,
   jobList: (query: AdminJobListQuery) => [...adminQueryKeys.jobLists(), query] as const,
   jobReviewQueues: () => [...adminQueryKeys.jobs(), 'review-queue'] as const,

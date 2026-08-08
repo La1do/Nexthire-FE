@@ -43,6 +43,8 @@ export function AdminLayout({ children }: PropsWithChildren) {
       ? pages.adminAiManagement.pageTitle
     : currentPath.startsWith('/admin/jobs')
       ? pages.adminJobs.pageTitle
+    : currentPath.startsWith('/admin/job-moderation-policies')
+      ? pages.adminJobModerationPolicies.pageTitle
     : currentPath.startsWith('/admin/cv-templates')
       ? pages.adminCvTemplates.pageTitle
     : currentPath.startsWith('/admin/settings')
@@ -143,6 +145,14 @@ export function AdminLayout({ children }: PropsWithChildren) {
               to="/admin/jobs"
             >
               {content.sidebar.jobs}
+            </NavLink>
+            <NavLink
+              className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
+              onClick={() => setSidebarOpen(false)}
+              tabIndex={sidebarOpen ? undefined : -1}
+              to="/admin/job-moderation-policies"
+            >
+              {pages.adminJobModerationPolicies.sidebarLabel}
             </NavLink>
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}

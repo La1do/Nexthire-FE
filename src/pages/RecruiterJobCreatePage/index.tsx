@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
@@ -104,8 +104,6 @@ export function RecruiterJobCreatePage() {
   const [draftJob, setDraftJob] = useState<RecruiterJobResponse | undefined>(undefined)
   const [draftPayloadKey, setDraftPayloadKey] = useState<string | undefined>(undefined)
   const [isReviewDialogOpen, setReviewDialogOpen] = useState(false)
-  const valuesRef = useRef(values)
-  const errorsRef = useRef(errors)
 
   const loadPageData = useCallback(async () => {
     setLoading(true)
