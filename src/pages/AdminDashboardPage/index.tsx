@@ -15,6 +15,7 @@ import { DashboardGrowthChart } from './components/DashboardGrowthChart'
 import { DashboardReviewQueues } from './components/DashboardReviewQueues'
 import { getAdminGrowthDateRange } from './utils/adminDashboardDateRange'
 import { toAdminUserGrowthChartData } from './utils/adminUserGrowthSeries'
+import './admin-dashboard-page.css'
 
 function MetricIcon({ type }: { type: 'users' | 'companies' | 'jobs' | 'revisions' }) {
   if (type === 'companies') {

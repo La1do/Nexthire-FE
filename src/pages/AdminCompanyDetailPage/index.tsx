@@ -11,6 +11,7 @@ import { CompanyOverviewCard } from './components/CompanyOverviewCard'
 import { CompanyQuickStats } from './components/CompanyQuickStats'
 import { CompanyReviewPanel } from './components/CompanyReviewPanel'
 import { CompanyTrustHistoryCard } from './components/CompanyTrustHistoryCard'
+import './admin-company-detail-page.css'
 
 type Action = 'reject' | 'suspend' | 'restore' | 'trust' | null
 

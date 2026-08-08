@@ -10,6 +10,7 @@ import { AdminAiOverview } from './components/AdminAiOverview'
 import { AdminAiPageHeader } from './components/AdminAiPageHeader'
 import { AdminAiRuntimeConfig } from './components/AdminAiRuntimeConfig'
 import { AdminAiUsageLogs } from './components/AdminAiUsageLogs'
+import './admin-ai-management-page.css'
 
 const PAGE_SIZE = 20
 

@@ -14,6 +14,7 @@ import { ReasonModal } from '../_components/admin/ReasonModal'
 import { CompanyReviewFilters } from './components/CompanyReviewFilters'
 import { CompanyReviewMobileList } from './components/CompanyReviewMobileList'
 import { CompanyReviewTable } from './components/CompanyReviewTable'
+import './admin-companies-page.css'
 
 const PAGE_SIZE = 20
 const companyStatuses: CompanyStatus[] = ['PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED']
