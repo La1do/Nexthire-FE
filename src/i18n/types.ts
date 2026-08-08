@@ -2817,6 +2817,191 @@ export type AdminAiManagementTranslations = {
   pagination: { prev: string; next: string; pageOf: string }
 }
 
+export type AdminJobModerationPoliciesTranslations = {
+  routeLabel: string
+  pageTitle: string
+  sidebarLabel: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+  }
+  actions: {
+    addAlias: string
+    addKeyword: string
+    archive: string
+    archiving: string
+    cancel: string
+    close: string
+    createDraft: string
+    deleteSelected: string
+    loadDefault: string
+    loadingDefault: string
+    publish: string
+    publishing: string
+    refresh: string
+    retry: string
+    restoreAsActive: string
+    restoring: string
+    saveChanges: string
+    saveDraft: string
+    saving: string
+    testRules: string
+    testing: string
+    viewDetail: string
+  }
+  statuses: {
+    ACTIVE: string
+    ARCHIVED: string
+    DRAFT: string
+    UNPUBLISHED: string
+  }
+  misc: {
+    never: string
+    newDraftStatus: string
+    notCreated: string
+    none: string
+  }
+  ruleFields: {
+    allCapsTitleScore: string
+    criticalThreshold: string
+    descriptionScore: string
+    excessiveSymbolsScore: string
+    experience: string
+    externalFormDomains: string
+    externalFormScore: string
+    internshipSalaryMax: string
+    internshipSalaryScore: string
+    lowTrustScore: string
+    maxExternalLinks: string
+    maxTitleSymbols: string
+    maximumSalary: string
+    mediumThreshold: string
+    missingLocationScore: string
+    highThreshold: string
+    minDescriptionLength: string
+    minRequirementsLength: string
+    paymentSignals: string
+    remoteUpfrontPaymentScore: string
+    repeatedWordScore: string
+    repeatedWordThreshold: string
+    requirementsScore: string
+    score: string
+    shortenedDomains: string
+    shortenedUrlScore: string
+    tooManyLinksScore: string
+  }
+  testResult: {
+    matched: string
+    reasons: string
+  }
+  confirmations: {
+    archiveDescription: string
+    archiveTitle: string
+    deleteKeywordDescription: string
+    deleteKeywordTitle: string
+    loadDefaultDescription: string
+    loadDefaultTitle: string
+    publishDescription: string
+    publishTitle: string
+    restoreDescription: string
+    restoreTitle: string
+  }
+  summary: {
+    activePolicy: string
+    chooseRow: string
+    currentFilter: string
+    loading: string
+    newDraft: string
+    noActive: string
+    none: string
+    notLoaded: string
+    selected: string
+    searching: string
+    unsavedPolicy: string
+    version: string
+    visiblePolicies: string
+  }
+  table: {
+    action: string
+    empty: string
+    keywords: string
+    name: string
+    rules: string
+    status: string
+    updated: string
+    version: string
+  }
+  drawer: {
+    activeRulesLocked: string
+    createDescription: string
+    createTitle: string
+    detailDescription: string
+    detailFallbackTitle: string
+    loading: string
+    readOnly: string
+  }
+  sections: {
+    contentRules: string
+    keywordDescription: string
+    keywordRules: string
+    linkSpamTrust: string
+    salaryRules: string
+    summaryCreateDescription: string
+    summaryCreateTitle: string
+    summaryDetailDescription: string
+    summaryDetailTitle: string
+    testActiveDescription: string
+    testDraftDescription: string
+    testPanel: string
+    thresholds: string
+    thresholdsDescription: string
+  }
+  fields: {
+    allStatuses: string
+    companyTrust: string
+    created: string
+    createdBy: string
+    description: string
+    employmentType: string
+    experience: string
+    keywordAlias: string
+    location: string
+    policyName: string
+    reason: string
+    requirements: string
+    ruleGroup: string
+    searchPolicy: string
+    searchPolicyPlaceholder: string
+    salaryMax: string
+    salaryMin: string
+    score: string
+    skills: string
+    status: string
+    title: string
+    updated: string
+    updatedBy: string
+    version: string
+    workingType: string
+  }
+  feedback: {
+    archiveError: string
+    archived: string
+    createError: string
+    created: string
+    defaultLoaded: string
+    loadError: string
+    nameRequired: string
+    publishError: string
+    published: string
+    saveError: string
+    saved: string
+    selectKeyword: string
+    testError: string
+  }
+}
+
 export type Translations = {
   common: CommonTranslations
   pages: {
@@ -2824,6 +3009,7 @@ export type Translations = {
     adminDashboard: AdminDashboardTranslations
     adminCvTemplates: AdminCvTemplatesTranslations
     adminCompanies: AdminCompaniesTranslations
+    adminJobModerationPolicies: AdminJobModerationPoliciesTranslations
     adminJobs: AdminJobsTranslations
     adminSettings: AdminSettingsTranslations
     adminUsers: AdminUsersTranslations

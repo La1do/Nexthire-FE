@@ -11,6 +11,7 @@ import { AdminCompanyDetailPage } from '../../pages/AdminCompanyDetailPage'
 import { AdminDashboardPage } from '../../pages/AdminDashboardPage'
 import { AdminCvTemplatesPage } from '../../pages/AdminCvTemplatesPage'
 import { AdminJobsPage } from '../../pages/AdminJobsPage'
+import { AdminJobModerationPoliciesPage } from '../../pages/AdminJobModerationPoliciesPage'
 import { AdminSettingsPage } from '../../pages/AdminSettingsPage'
 import { AdminUsersPage } from '../../pages/AdminUsersPage'
 import { AdminUserDetailPage } from '../../pages/AdminUserDetailPage'
@@ -424,6 +425,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/admin/jobs',
       label: pages.adminJobs.routeLabel,
       element: <AdminJobsPage />,
+      layout: AdminLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/admin/job-moderation-policies',
+      label: pages.adminJobModerationPolicies.routeLabel,
+      element: <AdminJobModerationPoliciesPage />,
       layout: AdminLayout,
       access: adminAccess,
     },
