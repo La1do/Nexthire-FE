@@ -118,7 +118,6 @@ export const profile: ProfileTranslations = {
       INTERVIEW: 'Phỏng vấn',
       OFFERED: 'Có đề nghị',
       REJECTED: 'Từ chối',
-      WITHDRAWN: 'Đã rút',
       CANCELLED: 'Đã hủy',
     },
     meta: {
@@ -292,7 +291,6 @@ export const profile: ProfileTranslations = {
       SUBMITTED: 'Đã nộp',
       OFFERED: 'Có đề nghị',
       REJECTED: 'Từ chối',
-      WITHDRAWN: 'Đã rút',
       CANCELLED: 'Đã hủy',
       PUBLISHED: 'Đang mở',
       UNPUBLISHED: 'Tạm dừng',

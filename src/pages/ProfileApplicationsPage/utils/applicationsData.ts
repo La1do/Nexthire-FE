@@ -2,7 +2,7 @@ import type { ProfileTranslations } from '../../../i18n/types'
 import type { ApplicationFilter, ApplicationStatsValue, CandidateApplication, CandidateApplicationStatus } from '../types'
 
 const activeStatuses = new Set<CandidateApplicationStatus>(['SUBMITTED', 'OFFERED'])
-const closedStatuses = new Set<CandidateApplicationStatus>(['REJECTED', 'WITHDRAWN', 'CANCELLED'])
+const closedStatuses = new Set<CandidateApplicationStatus>(['REJECTED', 'CANCELLED'])
 
 export function createCandidateApplications(
   source: ProfileTranslations['applications']['items'],

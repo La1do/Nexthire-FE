@@ -128,7 +128,6 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     SUBMITTED: 'Submitted',
     OFFERED: 'Offered',
     REJECTED: 'Rejected',
-    WITHDRAWN: 'Withdrawn',
     CANCELLED: 'Cancelled',
   },
   drawer: {

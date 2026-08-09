@@ -4,7 +4,9 @@ import { useToast } from '../../context'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { applicationService } from '../../services/application.service'
+import { jobService } from '../../services/job.service'
 import type { ApplicationResponse } from '../../types/application.types'
+import type { ApiMeta } from '../../types/job.types'
 import { Button } from '../_components'
 import { AdminPagination } from '../_components/admin/AdminPagination'
 import { AdminStatCard } from '../_components/admin/AdminStatCard'
@@ -15,22 +17,76 @@ import { ApplicationTable } from './components/ApplicationTable'
 import type {
   RecruiterApplicationCriteria,
   RecruiterApplicationItem,
+  RecruiterApplicationJobOption,
+  RecruiterApplicationStats,
   RecruiterApplicationStatus,
 } from './types'
 import { createRecruiterApplicationFromApi } from './utils/recruiterApplicationApi'
-import { computeRecruiterApplicationStats } from './utils/recruiterApplicationsData'
 import './recruiter-applications.css'
 import {
-  filterRecruiterApplications,
-  getRecruiterApplicationJobs,
   isActiveRecruiterApplicationFilters,
 } from './utils/recruiterApplicationsFilters'
 
 const PAGE_SIZE = 6
 const MATCH_POLL_INTERVAL_MS = 4_000
 const MATCH_POLL_TIMEOUT_MS = 90_000
+const emptyApplicationMeta: ApiMeta = { limit: PAGE_SIZE, page: 1, total: 0, totalPages: 1 }
+const emptyApplicationStats: RecruiterApplicationStats = {
+  interview: 0,
+  new: 0,
+  responseRate: '0%',
+  total: 0,
+}
 
 type RecruiterDecisionStatus = Extract<RecruiterApplicationStatus, 'OFFERED' | 'REJECTED'>
+
+function readApplicationCriteria(searchParams: URLSearchParams): RecruiterApplicationCriteria {
+  const sort = searchParams.get('sort')
+  const status = searchParams.get('status')
+
+  return {
+    jobId: searchParams.get('jobId')?.trim() || 'all',
+    query: searchParams.get('search') ?? '',
+    sort: sort === 'score-desc' || sort === 'score-asc' ? sort : 'newest',
+    status: status === 'SUBMITTED' ||
+      status === 'OFFERED' ||
+      status === 'REJECTED' ||
+      status === 'CANCELLED'
+      ? status
+      : 'all',
+  }
+}
+
+function getApplicationQueryParams(criteria: RecruiterApplicationCriteria) {
+  if (criteria.sort === 'score-desc') {
+    return { sortBy: 'matchScore' as const, sortOrder: 'desc' as const }
+  }
+
+  if (criteria.sort === 'score-asc') {
+    return { sortBy: 'matchScore' as const, sortOrder: 'asc' as const }
+  }
+
+  return { sortBy: 'submittedAt' as const, sortOrder: 'desc' as const }
+}
+
+function getApplicationCountQueryParams(criteria: RecruiterApplicationCriteria) {
+  return {
+    jobId: criteria.jobId === 'all' ? undefined : criteria.jobId,
+    search: criteria.query.trim() || undefined,
+  }
+}
+
+async function loadRecruiterJobOptions(): Promise<RecruiterApplicationJobOption[]> {
+  const firstPage = await jobService.getRecruiterJobs({ limit: 100, page: 1 })
+  const jobs = [...firstPage.data]
+
+  for (let page = 2; page <= firstPage.meta.totalPages; page += 1) {
+    const response = await jobService.getRecruiterJobs({ limit: 100, page })
+    jobs.push(...response.data)
+  }
+
+  return jobs.map((job) => ({ id: job.id, title: job.title }))
+}
 
 function ApplicationsIcon() {
   return (
@@ -88,14 +144,11 @@ export function RecruiterApplicationsPage() {
   const toast = useToast()
   const content = pages.recruiterApplications
   const [searchParams, setSearchParams] = useSearchParams()
-  const jobIdFromSearch = searchParams.get('jobId')?.trim() || 'all'
   const [applications, setApplications] = useState<ReadonlyArray<RecruiterApplicationItem>>([])
-  const [criteria, setCriteria] = useState<RecruiterApplicationCriteria>({
-    jobId: jobIdFromSearch,
-    query: '',
-    sort: 'newest',
-    status: 'all',
-  })
+  const [applicationMeta, setApplicationMeta] = useState<ApiMeta>(emptyApplicationMeta)
+  const [applicationStats, setApplicationStats] = useState<RecruiterApplicationStats>(emptyApplicationStats)
+  const [jobOptions, setJobOptions] = useState<ReadonlyArray<RecruiterApplicationJobOption>>([])
+  const [criteria, setCriteria] = useState<RecruiterApplicationCriteria>(() => readApplicationCriteria(searchParams))
   const [isLoading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | undefined>(undefined)
   const [matchingApplicationIds, setMatchingApplicationIds] = useState<ReadonlySet<string>>(new Set())
@@ -169,13 +222,17 @@ export function RecruiterApplicationsPage() {
 
       try {
         const response = await applicationService.getRecruiterApplications({
+          ...getApplicationQueryParams(criteria),
           jobId: criteria.jobId === 'all' ? undefined : criteria.jobId,
-          limit: 50,
-          page: 1,
+          limit: PAGE_SIZE,
+          page,
+          search: criteria.query.trim() || undefined,
+          status: criteria.status === 'all' ? undefined : criteria.status,
         })
         const nextApplications = response.data.map(mapApplication)
 
         setApplications(nextApplications)
+        setApplicationMeta(response.meta)
         setMatchingApplicationIds((currentIds) => {
           const nextIds = new Set<string>()
 
@@ -204,8 +261,31 @@ export function RecruiterApplicationsPage() {
         }
       }
     },
-    [content.states.errorDescription, criteria.jobId, mapApplication, toast],
+    [content.states.errorDescription, criteria, mapApplication, page, toast],
   )
+
+  const loadApplicationStats = useCallback(async () => {
+    try {
+      const countParams = getApplicationCountQueryParams(criteria)
+      const [total, submitted, offered, rejected] = await Promise.all([
+        applicationService.getRecruiterApplications({ ...countParams, limit: 1, page: 1 }),
+        applicationService.getRecruiterApplications({ ...countParams, limit: 1, page: 1, status: 'SUBMITTED' }),
+        applicationService.getRecruiterApplications({ ...countParams, limit: 1, page: 1, status: 'OFFERED' }),
+        applicationService.getRecruiterApplications({ ...countParams, limit: 1, page: 1, status: 'REJECTED' }),
+      ])
+      const responded = offered.meta.total + rejected.meta.total
+      const responseRate = total.meta.total > 0 ? Math.round((responded / total.meta.total) * 100) : 0
+
+      setApplicationStats({
+        interview: responded,
+        new: submitted.meta.total,
+        responseRate: `${responseRate}%`,
+        total: total.meta.total,
+      })
+    } catch {
+      setApplicationStats(emptyApplicationStats)
+    }
+  }, [criteria])
 
   const refreshApplicationDetail = useCallback(
     async (applicationId: string, { silent = false }: { silent?: boolean } = {}) => {
@@ -223,12 +303,9 @@ export function RecruiterApplicationsPage() {
     [content.states.detailError, mapApplication, toast, upsertMappedApplication],
   )
 
-  const stats = useMemo(() => computeRecruiterApplicationStats(applications), [applications])
   const jobs = useMemo(() => {
-    const applicationJobs = getRecruiterApplicationJobs(applications)
-
-    if (criteria.jobId === 'all' || applicationJobs.some((job) => job.id === criteria.jobId)) {
-      return applicationJobs
+    if (criteria.jobId === 'all' || jobOptions.some((job) => job.id === criteria.jobId)) {
+      return jobOptions
     }
 
     return [
@@ -236,14 +313,10 @@ export function RecruiterApplicationsPage() {
         id: criteria.jobId,
         title: content.filters.selectedJobFallback.replace('{{jobId}}', criteria.jobId),
       },
-      ...applicationJobs,
+      ...jobOptions,
     ]
-  }, [applications, content.filters.selectedJobFallback, criteria.jobId])
-  const filtered = useMemo(
-    () => filterRecruiterApplications(applications, criteria),
-    [applications, criteria],
-  )
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  }, [content.filters.selectedJobFallback, criteria.jobId, jobOptions])
+  const totalPages = Math.max(1, applicationMeta.totalPages)
   const selectedApplication = useMemo(
     () => applications.find((application) => application.id === selectedApplicationId) ?? null,
     [applications, selectedApplicationId],
@@ -258,9 +331,40 @@ export function RecruiterApplicationsPage() {
   }, [loadApplications])
 
   useEffect(() => {
-    const nextJobId = searchParams.get('jobId')?.trim() || 'all'
+    void loadApplicationStats()
+  }, [loadApplicationStats])
 
-    setCriteria((current) => (current.jobId === nextJobId ? current : { ...current, jobId: nextJobId }))
+  useEffect(() => {
+    let ignore = false
+
+    loadRecruiterJobOptions()
+      .then((options) => {
+        if (!ignore) {
+          setJobOptions(options)
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          setJobOptions([])
+        }
+      })
+
+    return () => {
+      ignore = true
+    }
+  }, [])
+
+  useEffect(() => {
+    const nextCriteria = readApplicationCriteria(searchParams)
+
+    setCriteria((current) => (
+      current.jobId === nextCriteria.jobId &&
+        current.query === nextCriteria.query &&
+        current.sort === nextCriteria.sort &&
+        current.status === nextCriteria.status
+        ? current
+        : nextCriteria
+    ))
   }, [searchParams])
 
   useEffect(() => {
@@ -270,24 +374,25 @@ export function RecruiterApplicationsPage() {
   }, [refreshApplicationDetail, selectedApplicationId])
 
   useEffect(() => {
+    const applicationId = searchParams.get('applicationId')?.trim() ?? null
+
+    if (applicationId && selectedApplicationId !== applicationId) {
+      setSelectedApplicationId(applicationId)
+      return
+    }
+
+    if (!applicationId && selectedApplicationId) {
+      setSelectedApplicationId(null)
+    }
+  }, [searchParams, selectedApplicationId])
+
+  useEffect(() => {
     setPage(1)
   }, [criteria.jobId, criteria.query, criteria.sort, criteria.status])
 
   useEffect(() => {
     setPage((currentPage) => Math.min(currentPage, totalPages))
   }, [totalPages])
-
-  useEffect(() => {
-    if (selectedApplicationId && !applications.some((application) => application.id === selectedApplicationId)) {
-      setSelectedApplicationId(null)
-    }
-  }, [applications, selectedApplicationId])
-
-  useEffect(() => {
-    if (selectedApplicationId && !filtered.some((application) => application.id === selectedApplicationId)) {
-      setSelectedApplicationId(null)
-    }
-  }, [filtered, selectedApplicationId])
 
   useEffect(() => {
     if (!hasPollingApplications || isPollingPaused) {
@@ -325,28 +430,71 @@ export function RecruiterApplicationsPage() {
     toast,
   ])
 
-  const pagedApplications = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const pagedApplications = applications
   const hasActiveFilters = isActiveRecruiterApplicationFilters(criteria)
+
+  function updateApplicationSearch(nextCriteria: RecruiterApplicationCriteria, applicationId?: string | null) {
+    const criteriaChanged = criteria.jobId !== nextCriteria.jobId ||
+      criteria.query !== nextCriteria.query ||
+      criteria.sort !== nextCriteria.sort ||
+      criteria.status !== nextCriteria.status
+
+    if (criteriaChanged) {
+      setPage(1)
+    }
+
+    setCriteria(nextCriteria)
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+
+      if (nextCriteria.jobId === 'all') {
+        nextParams.delete('jobId')
+      } else {
+        nextParams.set('jobId', nextCriteria.jobId)
+      }
+
+      if (nextCriteria.query.trim()) {
+        nextParams.set('search', nextCriteria.query.trim())
+      } else {
+        nextParams.delete('search')
+      }
+
+      if (nextCriteria.sort === 'newest') {
+        nextParams.delete('sort')
+      } else {
+        nextParams.set('sort', nextCriteria.sort)
+      }
+
+      if (nextCriteria.status === 'all') {
+        nextParams.delete('status')
+      } else {
+        nextParams.set('status', nextCriteria.status)
+      }
+
+      if (applicationId === null) {
+        nextParams.delete('applicationId')
+      } else if (applicationId) {
+        nextParams.set('applicationId', applicationId)
+      }
+
+      return nextParams
+    }, { replace: true })
+  }
+
+  function openApplicationDetail(applicationId: string) {
+    setSelectedApplicationId(applicationId)
+    updateApplicationSearch(criteria, applicationId)
+  }
+
+  function closeApplicationDetail() {
+    setSelectedApplicationId(null)
+    updateApplicationSearch(criteria, null)
+  }
 
   function openExternalUrl(url: string) {
     if (typeof window !== 'undefined') {
       window.open(url, '_blank', 'noopener,noreferrer')
     }
-  }
-
-  function updateJobFilter(jobId: string) {
-    setCriteria((current) => ({ ...current, jobId }))
-    setSearchParams((currentParams) => {
-      const nextParams = new URLSearchParams(currentParams)
-
-      if (jobId === 'all') {
-        nextParams.delete('jobId')
-      } else {
-        nextParams.set('jobId', jobId)
-      }
-
-      return nextParams
-    }, { replace: true })
   }
 
   async function handleApplicationAction(prefix: 'mailto' | 'resume', application: RecruiterApplicationItem) {
@@ -392,7 +540,7 @@ export function RecruiterApplicationsPage() {
       })
       upsertMappedApplication(mapApplication(updatedApplication))
       toast.success(content.states.statusSuccess)
-      setSelectedApplicationId(null)
+      closeApplicationDetail()
       return true
     } catch (error) {
       toast.error(getApiErrorEnvelope(error)?.error.message ?? content.states.statusError)
@@ -406,7 +554,7 @@ export function RecruiterApplicationsPage() {
     }
   }
 
-  if (isLoading) {
+  if (isLoading && applications.length === 0) {
     return (
       <div className="recruiter-applications-page">
         <section className="recruiter-applications-empty">
@@ -439,10 +587,10 @@ export function RecruiterApplicationsPage() {
       </section>
 
       <section className="recruiter-applications-stats" aria-label={content.stats.title}>
-        <AdminStatCard delta={content.stats.totalDelta} icon={<ApplicationsIcon />} label={content.stats.totalLabel} tone="blue" value={stats.total} />
-        <AdminStatCard delta={content.stats.newDelta} icon={<NewIcon />} label={content.stats.newLabel} tone="coral" value={stats.new} />
-        <AdminStatCard delta={content.stats.interviewDelta} icon={<InterviewIcon />} label={content.stats.interviewLabel} tone="amber" value={stats.interview} />
-        <AdminStatCard delta={content.stats.responseRateDelta} icon={<RateIcon />} label={content.stats.responseRateLabel} tone="violet" value={stats.responseRate} />
+        <AdminStatCard delta={content.stats.totalDelta} icon={<ApplicationsIcon />} label={content.stats.totalLabel} tone="blue" value={applicationStats.total} />
+        <AdminStatCard delta={content.stats.newDelta} icon={<NewIcon />} label={content.stats.newLabel} tone="coral" value={applicationStats.new} />
+        <AdminStatCard delta={content.stats.interviewDelta} icon={<InterviewIcon />} label={content.stats.interviewLabel} tone="amber" value={applicationStats.interview} />
+        <AdminStatCard delta={content.stats.responseRateDelta} icon={<RateIcon />} label={content.stats.responseRateLabel} tone="violet" value={applicationStats.responseRate} />
       </section>
 
       <ApplicationFilters
@@ -451,22 +599,17 @@ export function RecruiterApplicationsPage() {
         jobId={criteria.jobId}
         jobs={jobs}
         onClear={() => {
-          setCriteria({
+          updateApplicationSearch({
             jobId: 'all',
             query: '',
             sort: 'newest',
             status: 'all',
           })
-          setSearchParams((currentParams) => {
-            const nextParams = new URLSearchParams(currentParams)
-            nextParams.delete('jobId')
-            return nextParams
-          }, { replace: true })
         }}
-        onJobChange={updateJobFilter}
-        onQueryChange={(value) => setCriteria((current) => ({ ...current, query: value }))}
-        onSortChange={(value) => setCriteria((current) => ({ ...current, sort: value }))}
-        onStatusChange={(value) => setCriteria((current) => ({ ...current, status: value }))}
+        onJobChange={(value) => updateApplicationSearch({ ...criteria, jobId: value }, null)}
+        onQueryChange={(value) => updateApplicationSearch({ ...criteria, query: value }, null)}
+        onSortChange={(value) => updateApplicationSearch({ ...criteria, sort: value }, null)}
+        onStatusChange={(value) => updateApplicationSearch({ ...criteria, status: value }, null)}
         query={criteria.query}
         sort={criteria.sort}
         status={criteria.status}
@@ -477,11 +620,11 @@ export function RecruiterApplicationsPage() {
       <section className="recruiter-applications-results">
         <header className="recruiter-applications-results__header">
           <p className="recruiter-applications-results__count">
-            {content.results.countLabel.replace('{{count}}', String(filtered.length))}
+            {content.results.countLabel.replace('{{count}}', String(applicationMeta.total))}
           </p>
         </header>
 
-        {filtered.length === 0 ? (
+        {applications.length === 0 ? (
           <div className="recruiter-applications-empty">
             <p className="recruiter-applications-empty__title">{content.results.emptyTitle}</p>
             <p className="recruiter-applications-empty__description">{content.results.emptyDescription}</p>
@@ -495,7 +638,7 @@ export function RecruiterApplicationsPage() {
               handlers={{
                 onEmail: (application) => void handleApplicationAction('mailto', application),
                 onOpenResume: (application) => void handleApplicationAction('resume', application),
-                onView: (application) => setSelectedApplicationId(application.id),
+                onView: (application) => openApplicationDetail(application.id),
               }}
               matchLabels={content.match}
               statusLabels={content.statusLabels}
@@ -507,7 +650,7 @@ export function RecruiterApplicationsPage() {
               handlers={{
                 onEmail: (application) => void handleApplicationAction('mailto', application),
                 onOpenResume: (application) => void handleApplicationAction('resume', application),
-                onView: (application) => setSelectedApplicationId(application.id),
+                onView: (application) => openApplicationDetail(application.id),
               }}
               matchLabels={content.match}
               statusLabels={content.statusLabels}
@@ -525,7 +668,7 @@ export function RecruiterApplicationsPage() {
           isStatusUpdating={statusUpdatingIds.has(selectedApplication.id)}
           matchLabels={content.match}
           meta={content.meta}
-          onClose={() => setSelectedApplicationId(null)}
+          onClose={closeApplicationDetail}
           onEmail={(application) => void handleApplicationAction('mailto', application)}
           onOpenResume={(application) => void handleApplicationAction('resume', application)}
           onRunMatch={(application) => void handleRunMatch(application)}

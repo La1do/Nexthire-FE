@@ -118,7 +118,6 @@ export const profile: ProfileTranslations = {
       INTERVIEW: 'Interview',
       OFFERED: 'Offered',
       REJECTED: 'Rejected',
-      WITHDRAWN: 'Withdrawn',
       CANCELLED: 'Cancelled',
     },
     meta: {
@@ -292,7 +291,6 @@ export const profile: ProfileTranslations = {
       SUBMITTED: 'Submitted',
       OFFERED: 'Offered',
       REJECTED: 'Rejected',
-      WITHDRAWN: 'Withdrawn',
       CANCELLED: 'Cancelled',
       PUBLISHED: 'Active',
       UNPUBLISHED: 'Paused',

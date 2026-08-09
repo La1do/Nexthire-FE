@@ -127,6 +127,14 @@ export const recruiterHome: RecruiterHomeTranslations = {
   stats: {
     title: 'Recruiting metrics',
     cards: {
+      candidateProfiles: {
+        label: 'Candidate profiles',
+        delta: 'People in talent database',
+      },
+      totalApplications: {
+        label: 'Total applications',
+        delta: 'Across company jobs',
+      },
       activeJobs: {
         label: 'Active jobs',
         delta: 'Visible publicly',
@@ -136,7 +144,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
         delta: 'Needs tracking',
       },
       newApplications: {
-        label: 'New candidates',
+        label: 'New applications',
         delta: 'Waiting for response',
       },
       responseRate: {
@@ -148,6 +156,28 @@ export const recruiterHome: RecruiterHomeTranslations = {
   quickActions: {
     title: 'Quick actions',
     lockedHint: 'Company verification is required for this action.',
+    items: [
+      {
+        id: 'postJob',
+        description: 'Create a new job post and send it for review.',
+        disabledWhenUnverified: true,
+        href: '/recruiter/jobs/new',
+        label: 'Post a job',
+      },
+      {
+        id: 'reviewCandidates',
+        description: 'Review new applications by match score.',
+        disabledWhenUnverified: true,
+        href: '/recruiter/applications',
+        label: 'View applications',
+      },
+      {
+        id: 'companyProfile',
+        description: 'Update company profile, logo, and verification files.',
+        href: '/recruiter/company',
+        label: 'Company profile',
+      },
+    ],
   },
   pipeline: {
     title: 'Job pipeline',
@@ -160,7 +190,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     },
   },
   applications: {
-    title: 'New candidates',
+    title: 'New applications',
     description: 'Profiles that should be reviewed and answered soon.',
     viewAll: 'View all',
     empty: 'No new candidates yet.',
@@ -168,7 +198,6 @@ export const recruiterHome: RecruiterHomeTranslations = {
       SUBMITTED: 'New application',
       OFFERED: 'Moved forward',
       REJECTED: 'Rejected',
-      WITHDRAWN: 'Withdrawn',
       CANCELLED: 'Cancelled',
     },
   },

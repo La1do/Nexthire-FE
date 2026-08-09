@@ -15,6 +15,7 @@ import type {
 export type JobStatusCounts = Partial<Record<JobStatus, number>>
 
 export type RecruiterApplicationCounts = {
+  candidateProfiles: number
   offered: number
   rejected: number
   submitted: number
@@ -101,7 +102,6 @@ function mapStats(
   content: RecruiterHomeTranslations,
   locale: string,
 ): ReadonlyArray<RecruiterStat> {
-  const pendingJobs = getPendingJobCount(counts)
   const decidedApplications = applicationCounts.offered + applicationCounts.rejected
   const responseRate = applicationCounts.total > 0
     ? Math.round((decidedApplications / applicationCounts.total) * 100)
@@ -109,22 +109,33 @@ function mapStats(
 
   return [
     {
-      id: 'activeJobs',
-      delta: content.stats.cards.activeJobs.delta,
-      label: content.stats.cards.activeJobs.label,
+      id: 'candidateProfiles',
+      delta: content.stats.cards.candidateProfiles.delta,
+      href: '/recruiter/candidates',
+      label: content.stats.cards.candidateProfiles.label,
       tone: 'blue',
-      value: formatNumber(getCount(counts, 'PUBLISHED'), locale),
+      value: formatNumber(applicationCounts.candidateProfiles, locale),
     },
     {
-      id: 'pendingJobs',
-      delta: content.stats.cards.pendingJobs.delta,
-      label: content.stats.cards.pendingJobs.label,
+      id: 'totalApplications',
+      delta: content.stats.cards.totalApplications.delta,
+      href: '/recruiter/applications',
+      label: content.stats.cards.totalApplications.label,
+      tone: 'green',
+      value: formatNumber(applicationCounts.total, locale),
+    },
+    {
+      id: 'activeJobs',
+      delta: content.stats.cards.activeJobs.delta,
+      href: '/recruiter/jobs',
+      label: content.stats.cards.activeJobs.label,
       tone: 'amber',
-      value: formatNumber(pendingJobs, locale),
+      value: formatNumber(getCount(counts, 'PUBLISHED'), locale),
     },
     {
       id: 'newApplications',
       delta: content.stats.cards.newApplications.delta,
+      href: '/recruiter/applications?status=SUBMITTED',
       label: content.stats.cards.newApplications.label,
       tone: 'green',
       value: formatNumber(applicationCounts.submitted, locale),

@@ -34,17 +34,10 @@ export type RecruiterStatTone = 'amber' | 'blue' | 'coral' | 'green'
 export type RecruiterStat = {
   id: string
   delta: string
+  href?: string
   label: string
   tone: RecruiterStatTone
   value: string
-}
-
-export type RecruiterQuickAction = {
-  id: string
-  description: string
-  disabledWhenUnverified?: boolean
-  href: string
-  label: string
 }
 
 export type RecruiterPipelineItem = {

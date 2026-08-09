@@ -1,0 +1,66 @@
+import type { RecruiterCandidatesTranslations } from '../../../types'
+
+export const recruiterCandidates: RecruiterCandidatesTranslations = {
+  routeLabel: 'Candidates',
+  pageTitle: 'Candidates',
+  pageSubtitle: 'Company talent database and application history.',
+  hero: {
+    eyebrow: 'Talent database',
+    title: 'Company candidates',
+    description: 'Browse candidate profiles that have applied to your company and review their application history.',
+  },
+  stats: {
+    candidates: 'Candidates',
+    applications: 'Applications on page',
+    strongMatches: 'Strong matches on page',
+  },
+  matchLevels: {
+    LOW: 'Low',
+    MEDIUM: 'Medium',
+    HIGH: 'High',
+    EXCELLENT: 'Excellent',
+  },
+  filters: {
+    searchLabel: 'Search candidates',
+    searchPlaceholder: 'Search name, email, headline, skill, or job...',
+    statusLabel: 'Status',
+    allStatuses: 'All statuses',
+    sortLabel: 'Sort',
+    sortOptions: {
+      lastAppliedAt: 'Latest application',
+      bestMatchScore: 'Best match',
+      applicationCount: 'Most applications',
+      candidateName: 'Candidate name',
+    },
+    clear: 'Clear',
+  },
+  results: {
+    countLabel: '{{count}} candidates',
+    emptyTitle: 'No candidates found',
+    emptyDescription: 'Adjust filters to find people who have applied to your company.',
+    applicationCount: '{{count}} applications',
+    latestJob: 'Latest job',
+    bestMatch: 'Best match',
+    lastApplied: 'Last applied',
+    viewProfile: 'View profile',
+    openApplication: 'Open application',
+  },
+  detail: {
+    title: 'Candidate profile',
+    close: 'Close profile',
+    contact: 'Contact',
+    skills: 'Skills',
+    applications: 'Application history',
+    latestApplication: 'Latest application',
+    bestMatchedApplication: 'Best matched application',
+    noSkills: 'No skills were enriched yet.',
+    noData: 'Not available',
+  },
+  states: {
+    loading: 'Loading candidates...',
+    errorTitle: 'Candidates could not be loaded',
+    errorDescription: 'Check your connection or sign in again to view company candidates.',
+    detailError: 'Candidate profile could not be loaded.',
+    retry: 'Retry',
+  },
+}

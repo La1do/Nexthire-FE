@@ -5,6 +5,9 @@ import type {
   CandidateApplicationListResponse,
   CandidateApplicationQuery,
   CreateApplicationPayload,
+  RecruiterCandidateDetailResponse,
+  RecruiterCandidateListResponse,
+  RecruiterCandidateQuery,
   RecruiterApplicationMatchResponse,
   RecruiterApplicationListResponse,
   RecruiterApplicationQuery,
@@ -35,6 +38,14 @@ export const applicationService = {
   async getRecruiterApplications(params?: RecruiterApplicationQuery) {
     const response = await apiClient.get<RecruiterApplicationListResponse>('/recruiter/applications', { params })
     return response.data
+  },
+  async getRecruiterCandidates(params?: RecruiterCandidateQuery) {
+    const response = await apiClient.get<RecruiterCandidateListResponse>('/recruiter/candidates', { params })
+    return response.data
+  },
+  async getRecruiterCandidate(id: string) {
+    const response = await apiClient.get<Envelope<RecruiterCandidateDetailResponse>>(`/recruiter/candidates/${id}`)
+    return response.data.data
   },
   async getRecruiterApplication(id: string) {
     const response = await apiClient.get<Envelope<ApplicationResponse>>(`/recruiter/applications/${id}`)

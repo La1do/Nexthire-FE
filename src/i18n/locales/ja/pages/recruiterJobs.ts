@@ -84,7 +84,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
   detail: {
     overview: '概要',
     content: '求人内容',
-    moderation: 'モデレーション',
+    moderation: 'レビュー状況',
     jobId: '求人ID',
     version: 'バージョン',
     salary: '給与',
@@ -113,6 +113,11 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     ruleLabels: { LOW_DESCRIPTION_LENGTH: '求人説明が短すぎます', MISSING_OR_WEAK_REQUIREMENTS: '求人要件が不足しているか不明確です', CLIENT_SITE_SCOPE: 'クライアントの勤務地範囲', MULTI_LEVEL_PATTERN: 'マルチ商法の疑いがある表現', MISSING_COMPENSATION: '給与または待遇情報が不足しています' },
     noModeration: 'モデレーションデータはまだありません。',
     publicLinkUnavailable: '公開リンクは求人が公開された後に利用できます。',
+    applicationsDescription: 'この求人の候補者をマッチスコア順に表示します。',
+    noApplications: 'この求人への応募はまだありません。',
+    reviewMessage: 'レビュー内容',
+    reviewStatus: 'ステータス',
+    reviewedAt: 'レビュー日時',
   },
   metrics: {
     applicationsSuffix: '候補者',

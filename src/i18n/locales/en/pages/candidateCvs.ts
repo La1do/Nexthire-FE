@@ -72,7 +72,6 @@ export const candidateCvs: CandidateCvsTranslations = {
     INTERVIEW: 'Interview',
     OFFERED: 'Offered',
     REJECTED: 'Rejected',
-    WITHDRAWN: 'Withdrawn',
     CANCELLED: 'Cancelled',
   },
   states: {

@@ -7,12 +7,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { Link } from 'react-router-dom'
 import type { RecruiterHomeTranslations } from '../../../i18n/types'
 import type {
   RecruiterApplication,
   RecruiterPerformancePoint,
   RecruiterPipelineItem,
-  RecruiterQuickAction,
   RecruiterStat,
   RecruiterTask,
 } from '../types'
@@ -29,32 +29,44 @@ export function RecruiterStatGrid({ stats, title }: RecruiterStatGridProps) {
         <h2>{title}</h2>
       </div>
       <div className="recruiter-stat-grid">
-        {stats.map((stat) => (
-          <article className={`recruiter-stat-card recruiter-stat-card--${stat.tone}`} key={stat.id}>
-            <span>{stat.label}</span>
-            <strong>{stat.value}</strong>
-            <small>{stat.delta}</small>
-          </article>
-        ))}
+        {stats.map((stat) => {
+          const className = `recruiter-stat-card recruiter-stat-card--${stat.tone}${stat.href ? ' recruiter-stat-card--link' : ''}`
+          const content = (
+            <>
+              <span>{stat.label}</span>
+              <strong>{stat.value}</strong>
+              <small>{stat.delta}</small>
+            </>
+          )
+
+          return stat.href ? (
+            <Link className={className} to={stat.href} key={stat.id}>
+              {content}
+            </Link>
+          ) : (
+            <article className={className} key={stat.id}>
+              {content}
+            </article>
+          )
+        })}
       </div>
     </section>
   )
 }
 
 type RecruiterQuickActionsProps = {
-  actions: ReadonlyArray<RecruiterQuickAction>
   isVerified: boolean
   translations: RecruiterHomeTranslations['quickActions']
 }
 
-export function RecruiterQuickActions({ actions, isVerified, translations }: RecruiterQuickActionsProps) {
+export function RecruiterQuickActions({ isVerified, translations }: RecruiterQuickActionsProps) {
   return (
     <section className="recruiter-panel">
       <div className="recruiter-panel__header">
         <h2>{translations.title}</h2>
       </div>
       <div className="recruiter-action-grid">
-        {actions.map((action) => {
+        {translations.items.map((action) => {
           const isLocked = action.disabledWhenUnverified && !isVerified
 
           return (

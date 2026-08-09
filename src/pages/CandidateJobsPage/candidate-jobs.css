@@ -388,7 +388,6 @@
   color: var(--color-text-danger);
 }
 
-.candidate-job-badge--withdrawn,
 .candidate-job-badge--cancelled,
 .candidate-job-badge--unpublished {
   background: var(--color-surface-muted);

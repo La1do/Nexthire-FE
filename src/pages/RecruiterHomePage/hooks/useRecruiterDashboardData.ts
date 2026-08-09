@@ -57,9 +57,11 @@ async function getApplicationCounts(total: number): Promise<RecruiterApplication
       return [status, response.meta.total] as const
     }),
   )
+  const candidates = await applicationService.getRecruiterCandidates({ limit: 1, page: 1 })
   const counts = Object.fromEntries(entries) as Partial<Record<ApplicationStatus, number>>
 
   return {
+    candidateProfiles: candidates.meta.total,
     offered: counts.OFFERED ?? 0,
     rejected: counts.REJECTED ?? 0,
     submitted: counts.SUBMITTED ?? 0,
@@ -75,7 +77,7 @@ async function getRecruiterDashboardData(
 
   if (!company) {
     return mapRecruiterDashboardData({
-      applicationCounts: { offered: 0, rejected: 0, submitted: 0, total: 0 },
+      applicationCounts: { candidateProfiles: 0, offered: 0, rejected: 0, submitted: 0, total: 0 },
       chartApplications: [],
       company,
       content,
