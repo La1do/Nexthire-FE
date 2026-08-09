@@ -7,6 +7,7 @@ import { BrandMark, ConfirmModal, LanguageSwitch } from '../pages/_components'
 import { AdminNotificationPopover } from './components/AdminNotificationPopover'
 import { AdminProfileMenu } from './components/AdminProfileMenu'
 import { AdminTopbarSearch } from './components/AdminTopbarSearch'
+import '../pages/_components/admin/admin-shared.css'
 import './admin-layout.css'
 
 function MenuIcon() {

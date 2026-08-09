@@ -17,6 +17,7 @@ import { AdminUserStatusOverview } from './components/AdminUserStatusOverview'
 import { AdminUserTable } from './components/AdminUserTable'
 import type { AdminUser, AdminUserAction } from './types'
 import { toAdminUserView } from './utils/adminUserView'
+import './admin-users-page.css'
 
 const PAGE_SIZE = 20
 

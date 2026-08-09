@@ -2740,8 +2740,55 @@ export type AdminJobsTranslations = {
   risks: Record<string, string>
   sorts: { latest: string; oldest: string; risk: string; applications: string }
   detail: {
-    title: string; description: string; requirements: string; benefits: string; skills: string
-    moderation: string; reasons: string; rules: string; reasonLabels: Record<string, string>; ruleLabels: Record<string, string>; changeSummary: string; noData: string; close: string
+    title: string
+    jobContent: string
+    description: string
+    requirements: string
+    benefits: string
+    skills: string
+    overview: string
+    employmentType: string
+    workingType: string
+    experienceLevel: string
+    location: string
+    salary: string
+    openings: string
+    applications: string
+    deadline: string
+    version: string
+    systemInfo: string
+    jobId: string
+    companyId: string
+    categoryId: string
+    lifecycle: string
+    createdAt: string
+    updatedAt: string
+    reviewedAt: string
+    publishedAt: string
+    unpublishedAt: string
+    closedAt: string
+    reviewReason: string
+    unpublishReason: string
+    moderation: string
+    moderationDecision: string
+    reasons: string
+    rules: string
+    reasonLabels: Record<string, string>
+    ruleLabels: Record<string, string>
+    employmentTypes: Record<string, string>
+    workingTypes: Record<string, string>
+    experienceLevels: Record<string, string>
+    decisions: Record<string, string>
+    changeSummary: string
+    revisionInfo: string
+    revisionId: string
+    originalJobId: string
+    salaryHidden: string
+    salaryNegotiable: string
+    notSet: string
+    notAssessed: string
+    noData: string
+    close: string
   }
   actions: {
     view: string; approve: string; reject: string; unpublish: string; republish: string; close: string

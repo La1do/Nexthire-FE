@@ -20,3 +20,420 @@
 @media (max-width: 1250px) { .admin-jobs-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }.admin-jobs-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .admin-jobs-table-wrap { display: none; }.admin-jobs-mobile-list { display: grid; }.admin-job-actions { flex-wrap: wrap; justify-content: stretch; min-width: 0; }.admin-job-actions .admin-company-action { flex: 1 1 9rem; } }
 @media (max-width: 640px) { .admin-jobs-page { padding: .85rem; }.admin-jobs-filters, .admin-jobs-stats { grid-template-columns: 1fr; }.admin-jobs-tabs { width: 100%; }.admin-jobs-tabs button { flex: 1 0 auto; }.admin-job-card header { flex-direction: column; }.admin-job-card__meta { flex-direction: column; gap: .25rem; }.admin-job-actions { display: grid; grid-template-columns: 1fr; }.admin-job-drawer__hero { grid-template-columns: auto minmax(0, 1fr) auto; padding: 1rem; }.admin-job-drawer__hero-icon { height: 2.4rem; width: 2.4rem; }.admin-job-drawer__hero h2 { font-size: 1.1rem; }.admin-job-drawer__body { padding: 1rem 1rem 1.5rem; }.admin-job-moderation__details { grid-template-columns: 1fr; }.admin-job-moderation__details > div + div { border-left: 0; border-top: 1px solid var(--color-border-subtle); } }
+
+@media (min-width: 901px) {
+
+  .admin-jobs-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-col--job {
+    width: 24%;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-col--company {
+    width: 13%;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-col--status {
+    width: 11%;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-col--risk {
+    width: 8%;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-col--applications {
+    width: 7%;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-col--updated {
+    width: 10%;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-col--actions {
+    width: 27%;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-company {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-job-actions {
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: .3rem;
+  }
+}
+@media (min-width: 901px) {
+
+  .admin-jobs-table__actions-heading {
+    min-width: 0;
+  }
+}
+@media (min-width: 901px) and (max-width: 1439px) {
+
+  .admin-job-col--actions {
+    width: 22%;
+  }
+}
+@media (min-width: 901px) and (max-width: 1439px) {
+
+  .admin-job-col--job {
+    width: 27%;
+  }
+}
+@media (min-width: 901px) and (max-width: 1439px) {
+
+  .admin-job-col--company {
+    width: 15%;
+  }
+}
+
+/* Expanded moderation drawer */
+.admin-job-drawer { display: flex; flex-direction: column; overflow: hidden; width: min(760px, 94vw); }
+.admin-job-drawer__hero { flex: 0 0 auto; }
+.admin-job-drawer__company-avatar { align-items: center; align-self: start; background: var(--color-surface-card); border: 1px solid var(--color-border-brand-soft); border-radius: 14px; color: var(--color-brand-solid); display: flex; height: 3.25rem; justify-content: center; overflow: hidden; width: 3.25rem; }
+.admin-job-drawer__company-avatar img { height: 100%; object-fit: cover; width: 100%; }
+.admin-job-drawer__company-avatar svg { height: 1.35rem; width: 1.35rem; }
+.admin-job-drawer__neutral-badge { align-items: center; background: var(--color-surface-card); border: 1px solid var(--color-border-default); border-radius: 999px; color: var(--color-text-secondary); display: inline-flex; font-size: .72rem; font-weight: 650; min-height: 26px; padding: .22rem .55rem; white-space: nowrap; }
+.admin-job-drawer__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.admin-job-drawer__overview-grid, .admin-job-drawer__system-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-job-drawer__info-item { align-items: flex-start; display: grid; gap: .65rem; grid-template-columns: auto minmax(0, 1fr); min-width: 0; padding: .9rem 1rem; }
+.admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(even), .admin-job-drawer__system-grid .admin-job-drawer__info-item:nth-child(even) { border-left: 1px solid var(--color-border-subtle); }
+.admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(n + 3), .admin-job-drawer__system-grid .admin-job-drawer__info-item:nth-child(n + 3) { border-top: 1px solid var(--color-border-subtle); }
+.admin-job-drawer__info-icon { align-items: center; background: var(--color-brand-soft); border-radius: 8px; color: var(--color-brand-solid); display: inline-flex; height: 2rem; justify-content: center; width: 2rem; }
+.admin-job-drawer__info-icon:empty { background: var(--color-surface-muted); }
+.admin-job-drawer__info-icon svg { height: .95rem; width: .95rem; }
+.admin-job-drawer__info-item > div { display: grid; gap: .22rem; min-width: 0; }
+.admin-job-drawer__info-item > div > span { color: var(--color-text-muted); font-size: .7rem; }
+.admin-job-drawer__info-item strong { color: var(--color-text-primary); font-size: .8rem; line-height: 1.45; overflow-wrap: anywhere; }
+.admin-job-drawer__info-item strong.is-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: .72rem; font-weight: 600; }
+.admin-job-drawer__timeline { display: grid; list-style: none; margin: 0; padding: 1rem; }
+.admin-job-drawer__timeline li { display: grid; gap: .75rem; grid-template-columns: 12px minmax(0, 1fr); min-height: 3.25rem; position: relative; }
+.admin-job-drawer__timeline li > span { background: var(--color-surface-card); border: 2px solid var(--color-border-default); border-radius: 999px; height: 12px; margin-top: .25rem; position: relative; width: 12px; z-index: 1; }
+.admin-job-drawer__timeline li.is-complete > span { background: var(--color-home-accent); border-color: var(--color-home-accent); box-shadow: 0 0 0 3px var(--color-home-accent-soft); }
+.admin-job-drawer__timeline li > i { background: var(--color-border-subtle); height: calc(100% - .25rem); left: 5px; position: absolute; top: .85rem; width: 2px; }
+.admin-job-drawer__timeline li > div { min-width: 0; padding-bottom: .8rem; }
+.admin-job-drawer__timeline strong { color: var(--color-text-secondary); display: block; font-size: .78rem; }
+.admin-job-drawer__timeline p { color: var(--color-text-muted); font-size: .75rem; margin: .2rem 0 0; }
+.admin-job-drawer__revision dl { display: grid; gap: .3rem; margin: .55rem 0 .8rem; }
+.admin-job-drawer__revision dl div { display: grid; gap: .45rem; grid-template-columns: 7rem minmax(0, 1fr); }
+.admin-job-drawer__revision dt { color: var(--color-text-muted); font-size: .7rem; }
+.admin-job-drawer__revision dd { color: var(--color-text-secondary); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: .7rem; margin: 0; overflow-wrap: anywhere; }
+.admin-job-drawer__revision h4 { color: var(--color-text-secondary); font-size: .74rem; margin: 0 0 .25rem; }
+.admin-job-moderation__decision { align-items: center; background: var(--color-surface-card); border-bottom: 1px solid var(--color-border-subtle); display: flex; gap: .75rem; justify-content: space-between; padding: .8rem 1rem; }
+.admin-job-moderation__decision span { color: var(--color-text-muted); font-size: .75rem; }
+.admin-job-moderation__decision strong { color: var(--color-text-primary); font-size: .8rem; text-align: right; }
+.admin-job-moderation__meter.is-empty i { display: none; }
+
+@media (max-width: 760px) {
+  .admin-job-drawer { height: 100dvh; width: 100vw; }
+  .admin-job-drawer__hero { padding: 1rem; }
+  .admin-job-drawer__overview-grid, .admin-job-drawer__system-grid { grid-template-columns: 1fr; }
+  .admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(even), .admin-job-drawer__system-grid .admin-job-drawer__info-item:nth-child(even) { border-left: 0; }
+  .admin-job-drawer__overview-grid .admin-job-drawer__info-item + .admin-job-drawer__info-item, .admin-job-drawer__system-grid .admin-job-drawer__info-item + .admin-job-drawer__info-item { border-top: 1px solid var(--color-border-subtle); }
+}
+
+@media (max-width: 520px) {
+  .admin-job-drawer__hero { gap: .75rem; grid-template-columns: auto minmax(0, 1fr) auto; }
+  .admin-job-drawer__company-avatar { height: 2.6rem; width: 2.6rem; }
+  .admin-job-drawer__meta { display: grid; gap: .35rem; }
+  .admin-job-drawer__body { padding: .85rem .85rem 1.25rem; }
+  .admin-job-moderation__score { grid-template-columns: 1fr; }
+  .admin-job-moderation__decision { align-items: flex-start; flex-direction: column; }
+  .admin-job-moderation__decision strong { text-align: left; }
+}
+
+/* Job moderation drawer: recruiter-facing job post review */
+.admin-job-drawer-backdrop {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.admin-job-drawer {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  width: min(720px, 94vw);
+}
+
+.admin-job-drawer__hero {
+  position: relative;
+  top: auto;
+  z-index: 2;
+}
+
+.admin-job-drawer__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  touch-action: pan-y;
+}
+
+.admin-job-drawer__group,
+.admin-job-moderation,
+.admin-job-drawer__revision {
+  flex: none;
+  min-width: 0;
+}
+
+.admin-job-drawer__overview-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(even) {
+  border-left: 1px solid var(--color-border-subtle);
+}
+
+.admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(n + 3) {
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.admin-job-drawer__info-item strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.admin-job-drawer__job-content .admin-job-drawer__content-section p,
+.admin-job-drawer__revision p {
+  max-height: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: initial;
+}
+
+.admin-job-drawer__skills,
+.admin-job-drawer__rules {
+  min-width: 0;
+}
+
+.admin-job-drawer__skills span,
+.admin-job-drawer__rules span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.admin-job-drawer__timeline {
+  padding-bottom: .45rem;
+}
+
+.admin-job-drawer__timeline li:last-child {
+  min-height: auto;
+}
+
+.admin-job-drawer__revision > div {
+  min-width: 0;
+}
+
+@media (min-width: 1280px) {
+  .admin-job-drawer {
+    width: min(720px, 46vw);
+  }
+}
+
+@media (min-width: 641px) and (max-width: 760px) {
+  .admin-job-drawer__overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(even) {
+    border-left: 1px solid var(--color-border-subtle);
+  }
+
+  .admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(n + 3) {
+    border-top: 1px solid var(--color-border-subtle);
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-job-drawer {
+    border-radius: 0;
+    height: 100dvh;
+    max-height: 100dvh;
+    width: 100vw;
+  }
+
+  .admin-job-drawer__hero {
+    gap: .75rem;
+    padding: .9rem;
+  }
+
+  .admin-job-drawer__hero h2 {
+    font-size: 1.05rem;
+  }
+
+  .admin-job-drawer__meta {
+    gap: .35rem .7rem;
+  }
+
+  .admin-job-drawer__overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-job-drawer__overview-grid .admin-job-drawer__info-item:nth-child(even) {
+    border-left: 0;
+  }
+
+  .admin-job-drawer__overview-grid .admin-job-drawer__info-item + .admin-job-drawer__info-item {
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .admin-job-drawer__body {
+    gap: .8rem;
+    padding: .85rem .85rem 1.5rem;
+  }
+
+  .admin-job-drawer__group > header,
+  .admin-job-moderation > header {
+    padding: .8rem .9rem;
+  }
+
+  .admin-job-drawer__content-section,
+  .admin-job-drawer__info-item,
+  .admin-job-moderation__details > div {
+    padding-inline: .9rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .admin-job-drawer__company-avatar {
+    display: none;
+  }
+
+  .admin-job-drawer__hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .admin-job-drawer__meta {
+    display: grid;
+  }
+}
+
+/* Admin job drawer viewport/scroll fix.
+ * Keep the drawer in two rows: a content-sized header and one constrained
+ * scroll region. Using flex-column for the body prevents CSS Grid auto rows
+ * from stretching the review cards to fill the viewport at different zooms.
+ */
+.admin-job-drawer-backdrop {
+  align-items: stretch;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.admin-job-drawer {
+  align-self: stretch;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.admin-job-drawer__hero {
+  align-self: start;
+  min-height: 0;
+  position: relative;
+  top: auto;
+}
+
+.admin-job-drawer__body {
+  align-content: initial;
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  max-height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: auto;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-job-drawer__body > * {
+  flex: 0 0 auto;
+  height: auto;
+  max-height: none;
+  min-height: 0;
+  min-width: 0;
+}
+
+.admin-job-drawer__group,
+.admin-job-moderation,
+.admin-job-drawer__revision {
+  align-self: stretch;
+  height: auto;
+  max-height: none;
+  min-height: 0;
+}
+
+.admin-job-drawer__group > :not(header),
+.admin-job-moderation > :not(header) {
+  max-height: none;
+}
+
+.admin-job-drawer__job-content,
+.admin-job-drawer__content-section,
+.admin-job-drawer__timeline,
+.admin-job-moderation__details {
+  height: auto;
+  max-height: none;
+}
+
+.admin-job-drawer__content-section p,
+.admin-job-drawer__revision p,
+.admin-job-moderation p,
+.admin-job-moderation li {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 760px) {
+  .admin-job-drawer {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+}
