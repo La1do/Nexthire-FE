@@ -29,6 +29,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     queryPlaceholder: 'Search candidate, email, job, or skill...',
     jobLabel: 'Job post',
     jobAll: 'All job posts',
+    selectedJobFallback: 'Selected job ({{jobId}})',
     sortLabel: 'Sort',
     sortOptions: {
       newest: 'Newest first',

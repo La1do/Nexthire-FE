@@ -24,6 +24,10 @@ function getModerationRuleLabel(rule: string, labels: Record<string, string>) {
   return labels[rule] ?? rule.replaceAll('_', ' ')
 }
 
+function createApplicationsHref(jobId: string) {
+  return `/recruiter/applications?jobId=${encodeURIComponent(jobId)}`
+}
+
 type JobActionResult =
   | {
       job: RecruiterJobResponse
@@ -368,6 +372,9 @@ export function RecruiterJobDetailPage() {
           </dl>
         </div>
         <div className="recruiter-job-detail-header__actions">
+          <Link className="job-post-link-button job-post-link-button--primary" to={createApplicationsHref(job.id)}>
+            {content.actions.viewApplications}
+          </Link>
           {job.status === 'PUBLISHED' ? (
             <Link className="job-post-link-button" to={`/jobs/${job.id}`}>
               {content.actions.viewPublic}

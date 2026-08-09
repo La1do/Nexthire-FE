@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react'
+import type { KeyboardEvent, MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 import type { RecruiterJobCreateTranslations, RecruiterJobsTranslations } from '../../../i18n/types'
 import type { ApiMeta, RecruiterJobResponse } from '../../../types/job.types'
@@ -55,17 +55,43 @@ function getDeadlineState(deadline: string | null): DeadlineState | null {
   return null
 }
 
+function createApplicationsHref(jobId: string) {
+  return `/recruiter/applications?jobId=${encodeURIComponent(jobId)}`
+}
+
 function handleOpenKeyDown(
   event: KeyboardEvent<HTMLElement>,
   jobId: string,
   onOpenJob: (jobId: string) => void,
 ) {
+  if (isInteractiveEventTarget(event)) {
+    return
+  }
+
   if (event.key !== 'Enter' && event.key !== ' ') {
     return
   }
 
   event.preventDefault()
   onOpenJob(jobId)
+}
+
+function handleOpenClick(
+  event: MouseEvent<HTMLElement>,
+  jobId: string,
+  onOpenJob: (jobId: string) => void,
+) {
+  if (isInteractiveEventTarget(event)) {
+    return
+  }
+
+  onOpenJob(jobId)
+}
+
+function isInteractiveEventTarget(event: KeyboardEvent<HTMLElement> | MouseEvent<HTMLElement>) {
+  const target = event.target
+
+  return target instanceof Element && Boolean(target.closest('a, button, input, select, textarea, [role="button"], [role="link"]'))
 }
 
 function renderJobMeta(
@@ -122,7 +148,7 @@ export function RecruiterJobList({
               className={cardClassName}
               data-deadline-state={deadlineState?.className ?? 'normal'}
               key={job.id}
-              onClick={() => onOpenJob(job.id)}
+              onClick={(event) => handleOpenClick(event, job.id, onOpenJob)}
               onKeyDown={(event) => handleOpenKeyDown(event, job.id, onOpenJob)}
               tabIndex={0}
             >
@@ -134,6 +160,7 @@ export function RecruiterJobList({
                 <div className="recruiter-job-title-cell">
                   <Link
                     onClick={(event) => event.stopPropagation()}
+                    onKeyDown={(event) => event.stopPropagation()}
                     to={`/recruiter/jobs/${job.id}`}
                   >
                     {job.title}
@@ -146,20 +173,28 @@ export function RecruiterJobList({
               <dl className="recruiter-job-row-card__metrics">
                 <div>
                   <dt>{translations.table.applications}</dt>
-                  <dd className="recruiter-job-row-card__applications">
-                    {(() => {
-                      const { number, suffix } = splitJobCount(
-                        job.applicationCount,
-                        locale,
-                        translations.metrics.applicationsSuffix,
-                      )
-                      return (
-                        <>
-                          <strong>{number}</strong>
-                          <span className="recruiter-job-row-card__applications-suffix">{suffix}</span>
-                        </>
-                      )
-                    })()}
+                  <dd>
+                    <Link
+                      aria-label={`${translations.actions.viewApplications}: ${job.title}`}
+                      className="recruiter-job-row-card__applications"
+                      onClick={(event) => event.stopPropagation()}
+                      onKeyDown={(event) => event.stopPropagation()}
+                      to={createApplicationsHref(job.id)}
+                    >
+                      {(() => {
+                        const { number, suffix } = splitJobCount(
+                          job.applicationCount,
+                          locale,
+                          translations.metrics.applicationsSuffix,
+                        )
+                        return (
+                          <>
+                            <strong>{number}</strong>
+                            <span className="recruiter-job-row-card__applications-suffix">{suffix}</span>
+                          </>
+                        )
+                      })()}
+                    </Link>
                   </dd>
                 </div>
                 <div>

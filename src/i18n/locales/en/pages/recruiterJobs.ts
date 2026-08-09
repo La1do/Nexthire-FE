@@ -73,6 +73,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     closing: 'Closing...',
     none: 'No actions',
     actionError: 'The action could not be completed. Please try again.',
+    viewApplications: 'View applications',
     confirmSubmit: 'Submit this job for admin review?',
     confirmDelete: 'Delete this job? This cannot be undone from the interface.',
     confirmRepublish: 'Republish this job to public pages?',

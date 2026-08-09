@@ -2025,6 +2025,7 @@ export type RecruiterJobsTranslations = {
     closing: string
     none: string
     actionError: string
+    viewApplications: string
     confirmSubmit: string
     confirmDelete: string
     confirmRepublish: string
@@ -2106,6 +2107,7 @@ export type RecruiterApplicationsTranslations = {
     queryPlaceholder: string
     jobLabel: string
     jobAll: string
+    selectedJobFallback: string
     sortLabel: string
     sortOptions: {
       newest: string

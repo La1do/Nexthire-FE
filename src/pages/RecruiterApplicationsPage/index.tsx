@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useToast } from '../../context'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
@@ -86,9 +87,11 @@ export function RecruiterApplicationsPage() {
   const { pages } = useTranslations()
   const toast = useToast()
   const content = pages.recruiterApplications
+  const [searchParams, setSearchParams] = useSearchParams()
+  const jobIdFromSearch = searchParams.get('jobId')?.trim() || 'all'
   const [applications, setApplications] = useState<ReadonlyArray<RecruiterApplicationItem>>([])
   const [criteria, setCriteria] = useState<RecruiterApplicationCriteria>({
-    jobId: 'all',
+    jobId: jobIdFromSearch,
     query: '',
     sort: 'newest',
     status: 'all',
@@ -165,7 +168,11 @@ export function RecruiterApplicationsPage() {
       }
 
       try {
-        const response = await applicationService.getRecruiterApplications({ limit: 50, page: 1 })
+        const response = await applicationService.getRecruiterApplications({
+          jobId: criteria.jobId === 'all' ? undefined : criteria.jobId,
+          limit: 50,
+          page: 1,
+        })
         const nextApplications = response.data.map(mapApplication)
 
         setApplications(nextApplications)
@@ -197,7 +204,7 @@ export function RecruiterApplicationsPage() {
         }
       }
     },
-    [content.states.errorDescription, mapApplication, toast],
+    [content.states.errorDescription, criteria.jobId, mapApplication, toast],
   )
 
   const refreshApplicationDetail = useCallback(
@@ -217,7 +224,21 @@ export function RecruiterApplicationsPage() {
   )
 
   const stats = useMemo(() => computeRecruiterApplicationStats(applications), [applications])
-  const jobs = useMemo(() => getRecruiterApplicationJobs(applications), [applications])
+  const jobs = useMemo(() => {
+    const applicationJobs = getRecruiterApplicationJobs(applications)
+
+    if (criteria.jobId === 'all' || applicationJobs.some((job) => job.id === criteria.jobId)) {
+      return applicationJobs
+    }
+
+    return [
+      {
+        id: criteria.jobId,
+        title: content.filters.selectedJobFallback.replace('{{jobId}}', criteria.jobId),
+      },
+      ...applicationJobs,
+    ]
+  }, [applications, content.filters.selectedJobFallback, criteria.jobId])
   const filtered = useMemo(
     () => filterRecruiterApplications(applications, criteria),
     [applications, criteria],
@@ -235,6 +256,12 @@ export function RecruiterApplicationsPage() {
   useEffect(() => {
     void loadApplications()
   }, [loadApplications])
+
+  useEffect(() => {
+    const nextJobId = searchParams.get('jobId')?.trim() || 'all'
+
+    setCriteria((current) => (current.jobId === nextJobId ? current : { ...current, jobId: nextJobId }))
+  }, [searchParams])
 
   useEffect(() => {
     if (selectedApplicationId) {
@@ -305,6 +332,21 @@ export function RecruiterApplicationsPage() {
     if (typeof window !== 'undefined') {
       window.open(url, '_blank', 'noopener,noreferrer')
     }
+  }
+
+  function updateJobFilter(jobId: string) {
+    setCriteria((current) => ({ ...current, jobId }))
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+
+      if (jobId === 'all') {
+        nextParams.delete('jobId')
+      } else {
+        nextParams.set('jobId', jobId)
+      }
+
+      return nextParams
+    }, { replace: true })
   }
 
   async function handleApplicationAction(prefix: 'mailto' | 'resume', application: RecruiterApplicationItem) {
@@ -415,8 +457,13 @@ export function RecruiterApplicationsPage() {
             sort: 'newest',
             status: 'all',
           })
+          setSearchParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams)
+            nextParams.delete('jobId')
+            return nextParams
+          }, { replace: true })
         }}
-        onJobChange={(value) => setCriteria((current) => ({ ...current, jobId: value }))}
+        onJobChange={updateJobFilter}
         onQueryChange={(value) => setCriteria((current) => ({ ...current, query: value }))}
         onSortChange={(value) => setCriteria((current) => ({ ...current, sort: value }))}
         onStatusChange={(value) => setCriteria((current) => ({ ...current, status: value }))}
