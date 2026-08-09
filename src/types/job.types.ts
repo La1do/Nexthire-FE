@@ -136,6 +136,12 @@ export type RecruiterJobResponse = Omit<
   closedAt: string | null
   reviewedAt: string | null
   reviewReason: string | null
+  review?: {
+    message: string | null
+    reason: string | null
+    reviewedAt: string | null
+    status: string
+  } | null
   unpublishedAt: string | null
   unpublishReason: string | null
   moderation: {

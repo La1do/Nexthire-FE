@@ -33,6 +33,7 @@ import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
 import { CandidateSettingsPage } from '../../pages/CandidateSettingsPage'
 import { RecruiterApplicationsPage } from '../../pages/RecruiterApplicationsPage'
+import { RecruiterCandidatesPage } from '../../pages/RecruiterCandidatesPage'
 import { RecruiterCompanyPage } from '../../pages/RecruiterCompanyPage'
 import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
 import { RecruiterJobCreatePage } from '../../pages/RecruiterJobCreatePage'
@@ -318,10 +319,11 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
     },
     {
       path: '/recruiter/candidates',
-      label: comingSoon.pages.recruiterCandidates.title,
-      element: <ComingSoonPage pageKey="recruiterCandidates" />,
+      label: pages.recruiterCandidates.routeLabel,
+      element: <RecruiterCandidatesPage />,
       layout: RecruiterLayout,
       access: recruiterAccess,
+      businessGate: recruiterCompanyApproved,
     },
     {
       path: '/recruiter/company',

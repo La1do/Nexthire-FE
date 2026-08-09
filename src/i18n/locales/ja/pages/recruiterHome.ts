@@ -127,6 +127,14 @@ export const recruiterHome: RecruiterHomeTranslations = {
   stats: {
     title: '採用指標',
     cards: {
+      candidateProfiles: {
+        label: '応募済み候補者',
+        delta: '候補者データベース内',
+      },
+      totalApplications: {
+        label: '総応募数',
+        delta: '会社の求人全体',
+      },
       activeJobs: {
         label: '公開中の求人',
         delta: '公開表示中',
@@ -136,7 +144,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
         delta: '確認が必要',
       },
       newApplications: {
-        label: '新しい候補者',
+        label: '新着応募',
         delta: '返信待ち',
       },
       responseRate: {
@@ -148,6 +156,28 @@ export const recruiterHome: RecruiterHomeTranslations = {
   quickActions: {
     title: 'クイック操作',
     lockedHint: 'この操作には企業認証が必要です。',
+    items: [
+      {
+        id: 'postJob',
+        description: '新しい求人を作成して審査に送信します。',
+        disabledWhenUnverified: true,
+        href: '/recruiter/jobs/new',
+        label: '求人を投稿',
+      },
+      {
+        id: 'reviewCandidates',
+        description: 'マッチスコアで新着応募を確認します。',
+        disabledWhenUnverified: true,
+        href: '/recruiter/applications',
+        label: '応募を見る',
+      },
+      {
+        id: 'companyProfile',
+        description: '会社情報、ロゴ、認証書類を更新します。',
+        href: '/recruiter/company',
+        label: '会社プロフィール',
+      },
+    ],
   },
   pipeline: {
     title: '求人パイプライン',
@@ -160,7 +190,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     },
   },
   applications: {
-    title: '新着候補者',
+    title: '新着応募',
     description: '早めに確認と返信が必要なプロフィールです。',
     viewAll: 'すべて見る',
     empty: '新しい候補者はまだいません。',
@@ -168,7 +198,6 @@ export const recruiterHome: RecruiterHomeTranslations = {
       SUBMITTED: '新規応募',
       OFFERED: '次へ進行',
       REJECTED: '不採用',
-      WITHDRAWN: '辞退',
       CANCELLED: 'キャンセル',
     },
   },

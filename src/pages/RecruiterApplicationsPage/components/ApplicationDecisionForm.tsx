@@ -31,7 +31,7 @@ export function ApplicationDecisionForm({
   const [feedback, setFeedback] = useState(application.statusNote ?? '')
   const [error, setError] = useState<DecisionValidationError>(null)
   const [pendingDecision, setPendingDecision] = useState<PendingDecision | null>(null)
-  const isDecisionCompleted = ['OFFERED', 'REJECTED', 'WITHDRAWN', 'CANCELLED'].includes(application.status)
+  const isDecisionCompleted = ['OFFERED', 'REJECTED', 'CANCELLED'].includes(application.status)
   const isOffer = application.status === 'OFFERED'
   const isRejected = application.status === 'REJECTED'
 

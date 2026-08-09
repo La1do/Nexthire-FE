@@ -28,7 +28,6 @@ const statusOrder: ReadonlyArray<RecruiterApplicationStatus> = [
   'SUBMITTED',
   'OFFERED',
   'REJECTED',
-  'WITHDRAWN',
   'CANCELLED',
 ]
 

@@ -1125,7 +1125,6 @@ export type ProfileApplicationStatus =
   | 'INTERVIEW'
   | 'OFFERED'
   | 'REJECTED'
-  | 'WITHDRAWN'
   | 'CANCELLED'
 
 export type ApplicationProgressDisplayStep = 'CV_SUBMITTED' | 'CV_RECEIVED' | 'CV_VIEWED' | 'RESPONDED'
@@ -1137,7 +1136,6 @@ export type CandidateManagedJobsStatus =
   | 'SUBMITTED'
   | 'OFFERED'
   | 'REJECTED'
-  | 'WITHDRAWN'
   | 'CANCELLED'
   | 'PUBLISHED'
   | 'UNPUBLISHED'
@@ -1678,6 +1676,14 @@ export type RecruiterHomeTranslations = {
   stats: {
     title: string
     cards: {
+      candidateProfiles: {
+        label: string
+        delta: string
+      }
+      totalApplications: {
+        label: string
+        delta: string
+      }
       activeJobs: {
         label: string
         delta: string
@@ -1699,6 +1705,13 @@ export type RecruiterHomeTranslations = {
   quickActions: {
     title: string
     lockedHint: string
+    items: ReadonlyArray<{
+      id: string
+      description: string
+      disabledWhenUnverified?: boolean
+      href: string
+      label: string
+    }>
   }
   pipeline: {
     title: string
@@ -1715,7 +1728,7 @@ export type RecruiterHomeTranslations = {
     description: string
     viewAll: string
     empty: string
-    statusLabels: Record<'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'WITHDRAWN' | 'CANCELLED', string>
+    statusLabels: Record<'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'CANCELLED', string>
   }
   performance: {
     title: string
@@ -2065,6 +2078,11 @@ export type RecruiterJobsTranslations = {
     ruleLabels: Record<string, string>
     noModeration: string
     publicLinkUnavailable: string
+    applicationsDescription: string
+    noApplications: string
+    reviewMessage: string
+    reviewStatus: string
+    reviewedAt: string
   }
   metrics: {
     applicationsSuffix: string
@@ -2182,7 +2200,6 @@ export type RecruiterApplicationsTranslations = {
     SUBMITTED: string
     OFFERED: string
     REJECTED: string
-    WITHDRAWN: string
     CANCELLED: string
   }
   drawer: {
@@ -2251,6 +2268,66 @@ export type RecruiterApplicationsTranslations = {
     prev: string
     next: string
     pageOf: string
+  }
+}
+
+export type RecruiterCandidatesTranslations = {
+  routeLabel: string
+  pageTitle: string
+  pageSubtitle: string
+  hero: {
+    eyebrow: string
+    title: string
+    description: string
+  }
+  stats: {
+    candidates: string
+    applications: string
+    strongMatches: string
+  }
+  matchLevels: Record<'LOW' | 'MEDIUM' | 'HIGH' | 'EXCELLENT', string>
+  filters: {
+    searchLabel: string
+    searchPlaceholder: string
+    statusLabel: string
+    allStatuses: string
+    sortLabel: string
+    sortOptions: {
+      lastAppliedAt: string
+      bestMatchScore: string
+      applicationCount: string
+      candidateName: string
+    }
+    clear: string
+  }
+  results: {
+    countLabel: string
+    emptyTitle: string
+    emptyDescription: string
+    applicationCount: string
+    latestJob: string
+    bestMatch: string
+    lastApplied: string
+    viewProfile: string
+    openApplication: string
+  }
+  detail: {
+    title: string
+    close: string
+    contact: string
+    skills: string
+    applications: string
+    latestApplication: string
+    bestMatchedApplication: string
+    noSkills: string
+    noData: string
+  }
+  states: {
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    detailError: string
+    retry: string
   }
 }
 
@@ -3075,6 +3152,7 @@ export type Translations = {
     login: LoginTranslations
     profile: ProfileTranslations
     recruiterApplications: RecruiterApplicationsTranslations
+    recruiterCandidates: RecruiterCandidatesTranslations
     recruiterJobCreate: RecruiterJobCreateTranslations
     recruiterJobs: RecruiterJobsTranslations
     recruiterHome: RecruiterHomeTranslations

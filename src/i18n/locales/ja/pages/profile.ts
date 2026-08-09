@@ -118,7 +118,6 @@ export const profile: ProfileTranslations = {
       INTERVIEW: '面接',
       OFFERED: 'オファー',
       REJECTED: '不採用',
-      WITHDRAWN: '辞退済み',
       CANCELLED: 'キャンセル済み',
     },
     meta: {
@@ -292,7 +291,6 @@ export const profile: ProfileTranslations = {
       SUBMITTED: '応募済み',
       OFFERED: 'オファー',
       REJECTED: '不採用',
-      WITHDRAWN: '辞退済み',
       CANCELLED: 'キャンセル済み',
       PUBLISHED: '募集中',
       UNPUBLISHED: '一時停止',

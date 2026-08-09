@@ -30,7 +30,7 @@ const CV_MIME_TYPES = new Set([
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ])
-const INACTIVE_APPLICATION_STATUSES = new Set<ApplicationStatus>(['WITHDRAWN', 'CANCELLED'])
+const INACTIVE_APPLICATION_STATUSES = new Set<ApplicationStatus>(['CANCELLED'])
 
 function getPreferredCv(profile: CandidateMeResponse | null) {
   if (!profile) return null

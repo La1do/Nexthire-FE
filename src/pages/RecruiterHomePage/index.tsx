@@ -11,7 +11,7 @@ import {
   RecruiterTasks,
 } from './components/RecruiterDashboardPanels'
 import { useRecruiterDashboardData } from './hooks/useRecruiterDashboardData'
-import { recruiterQuickActions } from './utils/recruiterHomeData'
+import './recruiter-home-page.css'
 
 export function RecruiterHomePage() {
   const { pages } = useTranslations()
@@ -74,7 +74,6 @@ export function RecruiterHomePage() {
       <div className="recruiter-home-grid">
         <div className="recruiter-home-grid__main">
           <RecruiterQuickActions
-            actions={recruiterQuickActions}
             isVerified={isVerified}
             translations={content.quickActions}
           />

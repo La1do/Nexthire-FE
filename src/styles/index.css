@@ -4888,11 +4888,6 @@ select {
   color: var(--color-text-danger);
 }
 
-.profile-application-status--withdrawn {
-  background: var(--color-surface-muted);
-  color: var(--color-text-muted);
-}
-
 .profile-application-status--cancelled {
   background: var(--color-surface-muted);
   color: var(--color-text-muted);

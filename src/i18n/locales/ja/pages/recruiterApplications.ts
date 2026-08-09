@@ -128,7 +128,6 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     SUBMITTED: '応募済み',
     OFFERED: 'オファー',
     REJECTED: '不採用',
-    WITHDRAWN: '辞退済み',
     CANCELLED: 'キャンセル済み',
   },
   drawer: {

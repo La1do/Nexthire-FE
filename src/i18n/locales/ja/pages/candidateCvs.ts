@@ -72,7 +72,6 @@ export const candidateCvs: CandidateCvsTranslations = {
     INTERVIEW: '面接',
     OFFERED: 'オファー',
     REJECTED: '不採用',
-    WITHDRAWN: '辞退済み',
     CANCELLED: 'キャンセル',
   },
   states: {

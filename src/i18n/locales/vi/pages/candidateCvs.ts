@@ -72,7 +72,6 @@ export const candidateCvs: CandidateCvsTranslations = {
     INTERVIEW: 'Phỏng vấn',
     OFFERED: 'Có đề nghị',
     REJECTED: 'Từ chối',
-    WITHDRAWN: 'Đã rút',
     CANCELLED: 'Đã hủy',
   },
   states: {

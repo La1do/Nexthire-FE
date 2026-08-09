@@ -3,7 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useLocale, useTranslations } from '../../i18n'
 import type { RecruiterJobsTranslations } from '../../i18n/types'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
+import { applicationService } from '../../services/application.service'
 import { jobService } from '../../services/job.service'
+import type { ApplicationResponse } from '../../types/application.types'
 import type { RecruiterJobResponse } from '../../types/job.types'
 import { Button } from '../_components'
 import { RecruiterJobActions } from './components/RecruiterJobActions'
@@ -19,13 +21,16 @@ import {
   formatRecruiterJobDate,
   formatRecruiterJobSalary,
 } from './utils/recruiterJobsData'
+import './recruiter-jobs-page.css'
 
-function getModerationRuleLabel(rule: string, labels: Record<string, string>) {
-  return labels[rule] ?? rule.replaceAll('_', ' ')
-}
+function createApplicationsHref(jobId: string, applicationId?: string) {
+  const params = new URLSearchParams({ jobId })
 
-function createApplicationsHref(jobId: string) {
-  return `/recruiter/applications?jobId=${encodeURIComponent(jobId)}`
+  if (applicationId) {
+    params.set('applicationId', applicationId)
+  }
+
+  return `/recruiter/applications?${params.toString()}`
 }
 
 type JobActionResult =
@@ -259,6 +264,8 @@ export function RecruiterJobDetailPage() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [actionError, setActionError] = useState<string | undefined>(undefined)
   const [actionState, setActionState] = useState<RecruiterJobActionState>(null)
+  const [jobApplications, setJobApplications] = useState<ApplicationResponse[]>([])
+  const [isApplicationsLoading, setApplicationsLoading] = useState(false)
 
   const loadJob = useCallback(async () => {
     if (!id) {
@@ -283,6 +290,33 @@ export function RecruiterJobDetailPage() {
   useEffect(() => {
     void loadJob()
   }, [loadJob])
+
+  useEffect(() => {
+    if (!id) {
+      return
+    }
+
+    async function loadJobApplications() {
+      setApplicationsLoading(true)
+
+      try {
+        const response = await applicationService.getRecruiterApplications({
+          jobId: id,
+          limit: 6,
+          page: 1,
+          sortBy: 'matchScore',
+          sortOrder: 'desc',
+        })
+        setJobApplications(response.data)
+      } catch {
+        setJobApplications([])
+      } finally {
+        setApplicationsLoading(false)
+      }
+    }
+
+    void loadJobApplications()
+  }, [id])
 
   const handleAction = useCallback(
     async (targetJob: RecruiterJobResponse, action: RecruiterJobAction) => {
@@ -342,12 +376,9 @@ export function RecruiterJobDetailPage() {
   const openings = job.numberOfOpenings == null
     ? content.metrics.noData
     : formatJobCount(job.numberOfOpenings, locale, content.metrics.openingsSuffix)
-  const hasModeration =
-    job.moderation.riskScore !== null ||
-    job.moderation.riskLevel !== null ||
-    job.moderation.decision !== null ||
-    job.moderation.reasons.length > 0 ||
-    job.moderation.matchedRules.length > 0
+  const reviewStatus = job.review?.status ?? job.status
+  const reviewMessage = job.review?.message ?? job.review?.reason ?? job.reviewReason ?? content.detail.noReason
+  const reviewTime = job.review?.reviewedAt ?? job.reviewedAt
 
   return (
     <div className="recruiter-job-detail-page">
@@ -462,59 +493,56 @@ export function RecruiterJobDetailPage() {
         </section>
       </div>
 
-      <details
-        className="recruiter-job-detail-panel recruiter-job-detail-panel--moderation recruiter-panel"
-        open={hasModeration}
-      >
-        <summary className="recruiter-job-detail-panel__summary">{content.detail.moderation}</summary>
-        {hasModeration ? (
-          <dl className="recruiter-job-detail-facts">
-            <JobDetailValue
-              label={content.detail.riskScore}
-              value={job.moderation.riskScore == null ? content.metrics.noData : String(job.moderation.riskScore)}
-            />
-            <JobDetailValue
-              label={content.detail.riskLevel}
-              value={job.moderation.riskLevel ?? content.metrics.noData}
-            />
-            <JobDetailValue
-              label={content.detail.moderationDecision}
-              value={job.moderation.decision ?? content.metrics.noData}
-            />
-          </dl>
+      <section className="recruiter-job-detail-panel recruiter-job-detail-panel--applications recruiter-panel">
+        <header className="recruiter-job-detail-applications__header">
+          <div>
+            <h2>{content.detail.applications}</h2>
+            <p>{content.detail.applicationsDescription}</p>
+          </div>
+          <Link to={createApplicationsHref(job.id)}>
+            <span>{job.applicationCount}</span>
+            {content.actions.viewApplications}
+          </Link>
+        </header>
+        {isApplicationsLoading ? (
+          <p className="recruiter-job-detail-muted">{content.states.loading}</p>
+        ) : jobApplications.length ? (
+          <div className="recruiter-job-detail-applications">
+            {jobApplications.map((application) => (
+              <Link key={application.id} to={createApplicationsHref(job.id, application.id)}>
+                <span className="recruiter-job-detail-applications__candidate">
+                  <strong>{application.candidateFullName}</strong>
+                  <small>{application.candidateEmail}</small>
+                </span>
+                <span className="recruiter-job-detail-applications__score">
+                  {application.matchScore == null ? content.metrics.noData : application.matchScore}
+                </span>
+                <span className="recruiter-job-detail-applications__level">
+                  {application.matchLevel ? pages.recruiterApplications.match.levels[application.matchLevel] : content.metrics.noData}
+                </span>
+              </Link>
+            ))}
+          </div>
         ) : (
-          <p className="recruiter-job-detail-muted">{content.detail.noModeration}</p>
+          <p className="recruiter-job-detail-muted">{content.detail.noApplications}</p>
         )}
+      </section>
 
+      <section className="recruiter-job-detail-panel recruiter-job-detail-panel--review recruiter-panel">
+        <h2>{content.detail.moderation}</h2>
+        <dl className="recruiter-job-detail-facts">
+          <JobDetailValue label={content.detail.reviewStatus} value={reviewStatus} />
+          <JobDetailValue
+            label={content.detail.reviewedAt}
+            value={reviewTime ? formatRecruiterJobDate(reviewTime, locale, content.metrics.noData) : content.metrics.noData}
+          />
+          <JobDetailValue label={content.detail.unpublishReason} value={job.unpublishReason || content.detail.noReason} />
+        </dl>
         <div className="recruiter-job-detail-notes">
-          <h3>{content.detail.adminReason}</h3>
-          <p>{job.reviewReason || content.detail.noReason}</p>
-          <h3>{content.detail.unpublishReason}</h3>
-          <p>{job.unpublishReason || content.detail.noReason}</p>
+          <h3>{content.detail.reviewMessage}</h3>
+          <p>{reviewMessage}</p>
         </div>
-
-        {job.moderation.reasons.length ? (
-          <div className="recruiter-job-detail-notes">
-            <h3>{content.detail.moderationReasons}</h3>
-            <ul>
-              {job.moderation.reasons.map((reason) => (
-                <li key={reason}>{reason}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
-        {job.moderation.matchedRules.length ? (
-          <div className="recruiter-job-detail-notes">
-            <h3>{content.detail.matchedRules}</h3>
-            <ul>
-              {job.moderation.matchedRules.map((rule) => (
-                <li key={rule}>{getModerationRuleLabel(rule, content.detail.ruleLabels)}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-      </details>
+      </section>
     </div>
   )
 }

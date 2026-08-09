@@ -1,6 +1,6 @@
 import type { ApiMeta } from './job.types'
 
-export type ApplicationStatus = 'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'WITHDRAWN' | 'CANCELLED'
+export type ApplicationStatus = 'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'CANCELLED'
 export type ApplicationMatchLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'EXCELLENT'
 export type ApplicationCvParseStatus = 'NOT_PARSED' | 'PARSING' | 'PARSED' | 'FAILED'
 export type ApplicationProgressStep = 'CV_SUBMITTED' | 'CV_RECEIVED' | 'CV_VIEWED' | 'RESPONDED' | 'CANCELLED'
@@ -76,7 +76,6 @@ export type ApplicationResponse = {
   firstCvViewedAt?: string | null
   progress?: ApplicationProgress | null
   submittedAt: string
-  withdrawnAt: string | null
   decidedAt: string | null
   cancelledAt: string | null
   createdAt: string
@@ -89,6 +88,72 @@ export type RecruiterApplicationQuery = {
   jobId?: string
   status?: ApplicationStatus
   search?: string
+  matchLevel?: ApplicationMatchLevel
+  minMatchScore?: number
+  sortBy?: 'submittedAt' | 'updatedAt' | 'matchScore'
+  sortOrder?: 'asc' | 'desc'
+}
+
+export type RecruiterCandidateSkillResponse = {
+  name: string
+  level: string | null
+  yearsOfExperience: number | null
+}
+
+export type RecruiterCandidateApplicationHistoryResponse = {
+  id: string
+  jobId: string
+  jobTitle: string
+  status: ApplicationStatus
+  matchScore: number | null
+  matchLevel: ApplicationMatchLevel | null
+  submittedAt: string
+}
+
+export type RecruiterCandidateResponse = {
+  candidateId: string
+  candidateUserId?: string | null
+  fullName: string
+  email: string
+  phone?: string | null
+  avatarDocumentId?: string | null
+  avatarUrl?: string | null
+  headline?: string | null
+  location?: string | null
+  skills: RecruiterCandidateSkillResponse[]
+  latestApplicationId: string
+  latestJobId: string
+  latestJobTitle: string
+  latestStatus: ApplicationStatus
+  applicationCount: number
+  lastAppliedAt: string
+  bestMatchScore: number | null
+  bestMatchLevel: ApplicationMatchLevel | null
+  bestMatchedApplicationId: string | null
+  bestMatchedJobId: string | null
+  bestMatchedJobTitle: string | null
+}
+
+export type RecruiterCandidateDetailResponse = RecruiterCandidateResponse & {
+  applications: RecruiterCandidateApplicationHistoryResponse[]
+}
+
+export type RecruiterCandidateQuery = {
+  page?: number
+  limit?: number
+  jobId?: string
+  status?: ApplicationStatus
+  search?: string
+  matchLevel?: ApplicationMatchLevel
+  minMatchScore?: number
+  sortBy?: 'lastAppliedAt' | 'bestMatchScore' | 'applicationCount' | 'candidateName'
+  sortOrder?: 'asc' | 'desc'
+}
+
+export type RecruiterCandidateListResponse = {
+  success: true
+  data: RecruiterCandidateResponse[]
+  meta: ApiMeta
 }
 
 export type RecruiterApplicationListResponse = {

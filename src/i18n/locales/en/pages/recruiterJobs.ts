@@ -84,7 +84,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
   detail: {
     overview: 'Overview',
     content: 'Job content',
-    moderation: 'Moderation',
+    moderation: 'Review status',
     jobId: 'Job id',
     version: 'Version',
     salary: 'Salary',
@@ -113,6 +113,11 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     ruleLabels: { LOW_DESCRIPTION_LENGTH: 'Job description is too short', MISSING_OR_WEAK_REQUIREMENTS: 'Job requirements are missing or too vague', CLIENT_SITE_SCOPE: 'Client-site scope', MULTI_LEVEL_PATTERN: 'Potential multi-level marketing pattern', MISSING_COMPENSATION: 'Compensation information is missing' },
     noModeration: 'No moderation data yet.',
     publicLinkUnavailable: 'Public link is available only after the job is published.',
+    applicationsDescription: 'Ranked candidates for this job, sorted by match score.',
+    noApplications: 'No applications have been submitted for this job yet.',
+    reviewMessage: 'Review message',
+    reviewStatus: 'Status',
+    reviewedAt: 'Reviewed at',
   },
   metrics: {
     applicationsSuffix: 'candidates',

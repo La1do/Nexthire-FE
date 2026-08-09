@@ -38,7 +38,7 @@ type CandidateManagedJobsActions = {
 const PAGE_LIMIT = 100
 const NEAR_DEADLINE_MS = 7 * 24 * 60 * 60 * 1000
 const ACTIVE_APPLICATION_STATUSES = new Set<ApplicationStatus>(['SUBMITTED', 'OFFERED'])
-const CLOSED_APPLICATION_STATUSES = new Set<ApplicationStatus>(['REJECTED', 'WITHDRAWN', 'CANCELLED'])
+const CLOSED_APPLICATION_STATUSES = new Set<ApplicationStatus>(['REJECTED', 'CANCELLED'])
 const UNAVAILABLE_JOB_STATUSES = new Set<SavedJobStatus>(['UNPUBLISHED', 'CLOSED', 'EXPIRED', 'REJECTED'])
 
 function timestamp(value: string | null | undefined) {

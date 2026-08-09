@@ -59,6 +59,12 @@ function createApplicationsHref(jobId: string) {
   return `/recruiter/applications?jobId=${encodeURIComponent(jobId)}`
 }
 
+function isInteractiveEventTarget(event: KeyboardEvent<HTMLElement> | MouseEvent<HTMLElement>) {
+  const target = event.target
+
+  return target instanceof Element && Boolean(target.closest('a, button, input, select, textarea, [role="button"], [role="link"]'))
+}
+
 function handleOpenKeyDown(
   event: KeyboardEvent<HTMLElement>,
   jobId: string,
@@ -86,12 +92,6 @@ function handleOpenClick(
   }
 
   onOpenJob(jobId)
-}
-
-function isInteractiveEventTarget(event: KeyboardEvent<HTMLElement> | MouseEvent<HTMLElement>) {
-  const target = event.target
-
-  return target instanceof Element && Boolean(target.closest('a, button, input, select, textarea, [role="button"], [role="link"]'))
 }
 
 function renderJobMeta(

@@ -127,6 +127,14 @@ export const recruiterHome: RecruiterHomeTranslations = {
   stats: {
     title: 'Chỉ số tuyển dụng',
     cards: {
+      candidateProfiles: {
+        label: 'Ứng viên đã ứng tuyển',
+        delta: 'Người trong kho ứng viên',
+      },
+      totalApplications: {
+        label: 'Tổng hồ sơ',
+        delta: 'Trên toàn bộ tin tuyển dụng',
+      },
       activeJobs: {
         label: 'Tin đang tuyển',
         delta: 'Đang hiển thị công khai',
@@ -136,7 +144,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
         delta: 'Cần theo dõi',
       },
       newApplications: {
-        label: 'Ứng viên mới',
+        label: 'Hồ sơ mới',
         delta: 'Đang chờ phản hồi',
       },
       responseRate: {
@@ -148,6 +156,28 @@ export const recruiterHome: RecruiterHomeTranslations = {
   quickActions: {
     title: 'Thao tác nhanh',
     lockedHint: 'Cần xác thực công ty để sử dụng thao tác này.',
+    items: [
+      {
+        id: 'postJob',
+        description: 'Tạo tin tuyển dụng mới và gửi duyệt nhanh.',
+        disabledWhenUnverified: true,
+        href: '/recruiter/jobs/new',
+        label: 'Đăng tin mới',
+      },
+      {
+        id: 'reviewCandidates',
+        description: 'Lọc ứng viên mới theo điểm phù hợp.',
+        disabledWhenUnverified: true,
+        href: '/recruiter/applications',
+        label: 'Xem ứng viên',
+      },
+      {
+        id: 'companyProfile',
+        description: 'Cập nhật hồ sơ, logo và tài liệu xác minh.',
+        href: '/recruiter/company',
+        label: 'Hồ sơ công ty',
+      },
+    ],
   },
   pipeline: {
     title: 'Pipeline tin tuyển dụng',
@@ -160,7 +190,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     },
   },
   applications: {
-    title: 'Ứng viên mới',
+    title: 'Hồ sơ mới',
     description: 'Các hồ sơ cần được xem và phản hồi sớm.',
     viewAll: 'Xem tất cả',
     empty: 'Chưa có ứng viên mới.',
@@ -168,7 +198,6 @@ export const recruiterHome: RecruiterHomeTranslations = {
       SUBMITTED: 'Mới ứng tuyển',
       OFFERED: 'Đã mời bước tiếp',
       REJECTED: 'Đã từ chối',
-      WITHDRAWN: 'Ứng viên đã rút',
       CANCELLED: 'Đã hủy',
     },
   },
