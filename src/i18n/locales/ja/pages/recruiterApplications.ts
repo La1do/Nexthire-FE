@@ -29,6 +29,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     queryPlaceholder: '候補者、メール、求人、スキルを検索...',
     jobLabel: '求人',
     jobAll: 'すべての求人',
+    selectedJobFallback: '選択中の求人 ({{jobId}})',
     sortLabel: '並び替え',
     sortOptions: {
       newest: '新しい順',

@@ -29,6 +29,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     queryPlaceholder: 'Tìm ứng viên, email, tin tuyển dụng hoặc kỹ năng...',
     jobLabel: 'Tin tuyển dụng',
     jobAll: 'Tất cả tin tuyển dụng',
+    selectedJobFallback: 'Tin đang chọn ({{jobId}})',
     sortLabel: 'Sắp xếp',
     sortOptions: {
       newest: 'Mới nhất',

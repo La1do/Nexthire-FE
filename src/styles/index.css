@@ -9376,8 +9376,20 @@ select {
 
 .recruiter-job-row-card__applications {
   align-items: baseline;
+  border-radius: 8px;
+  color: inherit;
   display: inline-flex;
   gap: 0.3rem;
+  padding: 0.15rem 0.25rem;
+  text-decoration: none;
+  transition:
+    background-color 180ms var(--motion-ease-standard),
+    color 180ms var(--motion-ease-standard);
+}
+
+.recruiter-job-row-card__applications:hover {
+  background: var(--color-brand-soft);
+  color: var(--color-brand-end);
 }
 
 .recruiter-job-row-card__applications strong {

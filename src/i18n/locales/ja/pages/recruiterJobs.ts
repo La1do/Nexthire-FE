@@ -73,6 +73,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     closing: '終了中...',
     none: '操作なし',
     actionError: '操作を完了できませんでした。もう一度お試しください。',
+    viewApplications: '応募を見る',
     confirmSubmit: 'この求人を管理者レビューへ送信しますか？',
     confirmDelete: 'この求人を削除しますか？画面上では元に戻せません。',
     confirmRepublish: 'この求人を公開ページへ再公開しますか？',

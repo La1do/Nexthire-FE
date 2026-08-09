@@ -73,6 +73,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     closing: 'Đang đóng...',
     none: 'Không có thao tác',
     actionError: 'Chưa thực hiện được thao tác. Vui lòng thử lại.',
+    viewApplications: 'Xem đơn ứng tuyển',
     confirmSubmit: 'Gửi tin này cho admin duyệt?',
     confirmDelete: 'Xóa tin này? Thao tác này không thể hoàn tác trên giao diện.',
     confirmRepublish: 'Đăng lại tin này lên trang public?',
