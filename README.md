@@ -28,4 +28,9 @@ src/
   types/               Shared TypeScript types
 ```
 
+## API Client
+
+The shared Axios client lives at `src/lib/api/axios.customize.ts`.
+Import it from `src/lib/api` when creating service modules.
+
 Remote repository: https://github.com/La1do/Nexthire-FE.git

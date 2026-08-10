@@ -1,0 +1,474 @@
+import { useId } from 'react'
+import type { ChangeEvent, KeyboardEvent } from 'react'
+import type { RecruiterJobCreateTranslations } from '../../../i18n/types'
+import type {
+  JobExperienceLevel,
+  JobType,
+  JobWorkingType,
+  PublicCategory,
+} from '../../../types/job.types'
+import { Button, Input } from '../../_components'
+import { JobPostDateInput } from './JobPostDateInput'
+import { sanitizeUnsignedIntegerInput } from '../utils/jobPostInput'
+import type {
+  JobPostAction,
+  JobPostFieldErrors,
+  JobPostFormValues,
+} from '../types'
+
+type JobPostFormProps = {
+  categories: ReadonlyArray<PublicCategory>
+  categoryWarning?: string
+  errors: JobPostFieldErrors
+  hasUnsavedChanges: boolean
+  isPublishedEdit?: boolean
+  onAddSkill: () => void
+  onChange: <TField extends keyof JobPostFormValues>(
+    field: TField,
+    value: JobPostFormValues[TField],
+  ) => void
+  onRemoveSkill: (skill: string) => void
+  onRequestReview: () => void
+  onReset: () => void
+  onSubmit: (action: JobPostAction) => void
+  submitError?: string
+  submittingAction?: JobPostAction
+  translations: RecruiterJobCreateTranslations
+  values: JobPostFormValues
+}
+
+type SelectOption = {
+  label: string
+  value: string
+}
+
+type SelectInputProps = {
+  disabled?: boolean
+  error?: string
+  label: string
+  onChange: (value: string) => void
+  options: ReadonlyArray<SelectOption>
+  value: string
+}
+
+type TextareaInputProps = {
+  disabled?: boolean
+  error?: string
+  label: string
+  onChange: (value: string) => void
+  placeholder: string
+  value: string
+}
+
+const employmentTypeValues: ReadonlyArray<JobType> = [
+  'FULL_TIME',
+  'PART_TIME',
+  'CONTRACT',
+  'INTERNSHIP',
+  'FREELANCE',
+]
+const workingTypeValues: ReadonlyArray<JobWorkingType> = ['ONSITE', 'REMOTE', 'HYBRID']
+const experienceLevelValues: ReadonlyArray<JobExperienceLevel> = [
+  'INTERN',
+  'FRESHER',
+  'JUNIOR',
+  'MIDDLE',
+  'SENIOR',
+  'LEAD',
+]
+const currencyValues = ['VND', 'USD', 'JPY'] as const
+
+function SelectInput({ disabled, error, label, onChange, options, value }: SelectInputProps) {
+  const generatedId = useId()
+  const errorId = `${generatedId}-error`
+
+  return (
+    <label className="job-post-field" htmlFor={generatedId}>
+      <span>{label}</span>
+      <select
+        aria-describedby={error ? errorId : undefined}
+        aria-invalid={Boolean(error)}
+        className="form-control job-post-select"
+        disabled={disabled}
+        id={generatedId}
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <small aria-hidden={!error} className="job-post-field-error" id={error ? errorId : undefined} role={error ? 'alert' : undefined}>
+        {error ?? ' '}
+      </small>
+    </label>
+  )
+}
+
+function TextareaInput({
+  disabled,
+  error,
+  label,
+  onChange,
+  placeholder,
+  value,
+}: TextareaInputProps) {
+  const generatedId = useId()
+  const errorId = `${generatedId}-error`
+
+  return (
+    <label className="job-post-textarea" htmlFor={generatedId}>
+      <span>{label}</span>
+      <textarea
+        aria-describedby={error ? errorId : undefined}
+        aria-invalid={Boolean(error)}
+        disabled={disabled}
+        id={generatedId}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        value={value}
+      />
+      <small aria-hidden={!error} className="job-post-field-error" id={error ? errorId : undefined} role={error ? 'alert' : undefined}>
+        {error ?? ' '}
+      </small>
+    </label>
+  )
+}
+
+export function JobPostForm({
+  categories,
+  categoryWarning,
+  errors,
+  hasUnsavedChanges,
+  isPublishedEdit = false,
+  onAddSkill,
+  onChange,
+  onRemoveSkill,
+  onRequestReview,
+  onReset,
+  onSubmit,
+  submitError,
+  submittingAction,
+  translations,
+  values,
+}: JobPostFormProps) {
+  const { fields, options } = translations.form
+  const isSubmitting = Boolean(submittingAction)
+  const isSavingDraft = submittingAction === 'draft'
+  const isSaveDraftDisabled = isSubmitting || !hasUnsavedChanges
+  const categoryOptions = [
+    { label: options.noCategory, value: '' },
+    ...categories.map((category) => ({
+      label: category.name,
+      value: category.id,
+    })),
+  ]
+  const employmentTypeOptions = employmentTypeValues.map((value) => ({
+    label: options.employmentTypes[value],
+    value,
+  }))
+  const workingTypeOptions = workingTypeValues.map((value) => ({
+    label: options.workingTypes[value],
+    value,
+  }))
+  const experienceLevelOptions = experienceLevelValues.map((value) => ({
+    label: options.experienceLevels[value],
+    value,
+  }))
+  const currencyOptions = currencyValues.map((value) => ({
+    label: options.currencies[value],
+    value,
+  }))
+  const employmentTypeSelectOptions = [
+    { label: fields.employmentType.label, value: '' },
+    ...employmentTypeOptions,
+  ]
+  const workingTypeSelectOptions = [
+    { label: fields.workingType.label, value: '' },
+    ...workingTypeOptions,
+  ]
+  const experienceLevelSelectOptions = [
+    { label: fields.experienceLevel.label, value: '' },
+    ...experienceLevelOptions,
+  ]
+
+  function handleSkillKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault()
+      onAddSkill()
+    }
+  }
+
+  function handleNumberChange(field: 'salaryMin' | 'salaryMax' | 'numberOfOpenings') {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      onChange(field, sanitizeUnsignedIntegerInput(event.target.value))
+    }
+  }
+
+  return (
+    <form
+      className={`job-post-form${isPublishedEdit ? ' job-post-form--published-edit' : ''}`}
+      onSubmit={(event) => {
+        event.preventDefault()
+        onSubmit('draft')
+      }}
+    >
+      <section className="job-post-form-section recruiter-panel">
+        <div className="recruiter-panel__header">
+          <div>
+            <h2>{translations.form.sections.basics.title}</h2>
+            <p>{translations.form.sections.basics.description}</p>
+          </div>
+        </div>
+
+        <div className="job-post-form-grid">
+          <Input
+            disabled={isPublishedEdit}
+            error={errors.title}
+            label={fields.title.label}
+            onChange={(event) => onChange('title', event.target.value)}
+            placeholder={fields.title.placeholder}
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
+            value={values.title}
+          />
+          <SelectInput
+            disabled={isPublishedEdit}
+            label={fields.category.label}
+            onChange={(value) => onChange('categoryId', value)}
+            options={categoryOptions}
+            value={values.categoryId}
+          />
+          <SelectInput
+            disabled={isPublishedEdit}
+            error={errors.employmentType}
+            label={fields.employmentType.label}
+            onChange={(value) => onChange('employmentType', value as JobPostFormValues['employmentType'])}
+            options={employmentTypeSelectOptions}
+            value={values.employmentType}
+          />
+          <SelectInput
+            disabled={isPublishedEdit}
+            error={errors.workingType}
+            label={fields.workingType.label}
+            onChange={(value) => onChange('workingType', value as JobPostFormValues['workingType'])}
+            options={workingTypeSelectOptions}
+            value={values.workingType}
+          />
+          <SelectInput
+            disabled={isPublishedEdit}
+            error={errors.experienceLevel}
+            label={fields.experienceLevel.label}
+            onChange={(value) => onChange('experienceLevel', value as JobPostFormValues['experienceLevel'])}
+            options={experienceLevelSelectOptions}
+            value={values.experienceLevel}
+          />
+          <Input
+            disabled={isPublishedEdit}
+            error={errors.location}
+            label={fields.location.label}
+            onChange={(event) => onChange('location', event.target.value)}
+            placeholder={fields.location.placeholder}
+            messageClassName="job-post-field-error"
+            reserveMessageSpace
+            value={values.location}
+          />
+        </div>
+        {categoryWarning ? <p className="job-post-inline-warning">{categoryWarning}</p> : null}
+      </section>
+
+      <section className="job-post-form-section recruiter-panel">
+        <div className="recruiter-panel__header">
+          <div>
+            <h2>{translations.form.sections.details.title}</h2>
+            <p>{translations.form.sections.details.description}</p>
+          </div>
+        </div>
+
+        <div className="job-post-details-fields">
+          <label className="job-post-toggle">
+            <input
+              checked={values.isSalaryVisible}
+              onChange={(event) => onChange('isSalaryVisible', event.target.checked)}
+              type="checkbox"
+            />
+            <span>{fields.isSalaryVisible.label}</span>
+          </label>
+
+          <div className="job-post-form-grid job-post-form-grid--salary">
+            <Input
+              disabled={isPublishedEdit || !values.isSalaryVisible}
+              error={errors.salaryMin}
+              inputMode="numeric"
+              label={fields.salaryMin.label}
+              messageClassName="job-post-field-error"
+              onChange={handleNumberChange('salaryMin')}
+              pattern="[0-9]*"
+              placeholder={fields.salaryMin.placeholder}
+              reserveMessageSpace
+              value={values.salaryMin}
+            />
+            <Input
+              disabled={isPublishedEdit || !values.isSalaryVisible}
+              error={errors.salaryMax}
+              inputMode="numeric"
+              label={fields.salaryMax.label}
+              messageClassName="job-post-field-error"
+              onChange={handleNumberChange('salaryMax')}
+              pattern="[0-9]*"
+              placeholder={fields.salaryMax.placeholder}
+              reserveMessageSpace
+              value={values.salaryMax}
+            />
+            <SelectInput
+              disabled={isPublishedEdit}
+              label={fields.salaryCurrency.label}
+              onChange={(value) =>
+                onChange('salaryCurrency', value as JobPostFormValues['salaryCurrency'])
+              }
+              options={currencyOptions}
+              value={values.salaryCurrency}
+            />
+          </div>
+
+          <div className="job-post-form-grid job-post-form-grid--recruitment">
+            <JobPostDateInput
+              error={errors.deadline}
+              label={fields.deadline.label}
+              onChange={(value) => onChange('deadline', value)}
+              value={values.deadline}
+            />
+            <Input
+              error={errors.numberOfOpenings}
+              inputMode="numeric"
+              label={fields.numberOfOpenings.label}
+              messageClassName="job-post-field-error"
+              onChange={handleNumberChange('numberOfOpenings')}
+              pattern="[0-9]*"
+              placeholder={fields.numberOfOpenings.placeholder}
+              reserveMessageSpace
+              value={values.numberOfOpenings}
+            />
+          </div>
+
+          <div className="job-post-skills-field">
+            <label htmlFor="job-post-skill-input">{fields.skills.label}</label>
+            <div className="job-post-skill-entry">
+              <input
+                className="form-control"
+                disabled={isPublishedEdit}
+                id="job-post-skill-input"
+                onChange={(event) => onChange('skillInput', event.target.value)}
+                onKeyDown={handleSkillKeyDown}
+                placeholder={fields.skills.placeholder}
+                value={values.skillInput}
+              />
+              <Button disabled={isPublishedEdit || !values.skillInput.trim()} onClick={onAddSkill} variant="secondary">
+                {fields.skills.add}
+              </Button>
+            </div>
+            {values.skills.length ? (
+              <ul className="job-post-skill-list">
+                {values.skills.map((skill) => (
+                  <li key={skill}>
+                    <span>{skill}</span>
+                    <button
+                      aria-label={`${fields.skills.removeLabel} ${skill}`}
+                      disabled={isPublishedEdit}
+                      onClick={() => onRemoveSkill(skill)}
+                      type="button"
+                    >
+                      x
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="job-post-skill-empty">{fields.skills.empty}</p>
+            )}
+            <small
+              aria-hidden={!errors.skills}
+              className="job-post-field-error"
+              role={errors.skills ? 'alert' : undefined}
+            >
+              {errors.skills ?? ' '}
+            </small>
+          </div>
+        </div>
+      </section>
+
+      <section className="job-post-form-section recruiter-panel">
+        <div className="recruiter-panel__header">
+          <div>
+            <h2>{translations.form.sections.content.title}</h2>
+            <p>{translations.form.sections.content.description}</p>
+          </div>
+        </div>
+
+        <TextareaInput
+          disabled={isPublishedEdit}
+          error={errors.description}
+          label={fields.description.label}
+          onChange={(value) => onChange('description', value)}
+          placeholder={fields.description.placeholder}
+          value={values.description}
+        />
+        <TextareaInput
+          disabled={isPublishedEdit}
+          error={errors.requirements}
+          label={fields.requirements.label}
+          onChange={(value) => onChange('requirements', value)}
+          placeholder={fields.requirements.placeholder}
+          value={values.requirements}
+        />
+        <TextareaInput
+          disabled={isPublishedEdit}
+          label={fields.benefits.label}
+          onChange={(value) => onChange('benefits', value)}
+          placeholder={fields.benefits.placeholder}
+          value={values.benefits}
+        />
+      </section>
+
+      <div className="job-post-form-actions recruiter-panel">
+        {submitError ? <p>{submitError}</p> : null}
+        <div>
+          <Button
+            className={`job-post-save-draft-button${hasUnsavedChanges ? ' is-dirty' : ''}${isSavingDraft ? ' is-saving' : ''}`}
+            disabled={isSaveDraftDisabled}
+            onClick={() => onSubmit('draft')}
+            type="button"
+            variant="secondary"
+          >
+            {isSavingDraft ? (
+              <>
+                <span aria-hidden="true" className="job-post-action-spinner" />
+                {isPublishedEdit
+                  ? translations.form.actions.savingChanges
+                  : translations.form.actions.savingDraft}
+              </>
+            ) : hasUnsavedChanges ? (
+              isPublishedEdit
+                ? translations.form.actions.saveChanges
+                : translations.form.actions.saveDraft
+            ) : (
+              translations.form.actions.noDraftChanges
+            )}
+          </Button>
+          {!isPublishedEdit ? (
+            <Button disabled={isSubmitting} onClick={onRequestReview} type="button">
+              {submittingAction === 'submit'
+                ? translations.form.actions.submittingReview
+                : translations.form.actions.submitReview}
+            </Button>
+          ) : null}
+          <Button disabled={isSubmitting} onClick={onReset} type="button" variant="ghost">
+            {translations.form.actions.reset}
+          </Button>
+        </div>
+      </div>
+    </form>
+  )
+}

@@ -1,0 +1,54 @@
+@import "../../../tokens.css";
+
+.career-guide-detail-page {
+  gap: var(--space-xl);
+}
+
+.career-guide-detail-header {
+  display: grid;
+  gap: var(--space-sm);
+  max-width: 70ch;
+}
+
+.career-guide-detail-header h1 {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.career-guide-detail-figure {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-home-sm);
+  overflow: clip;
+}
+
+.career-guide-detail-figure img {
+  filter: saturate(0.94) contrast(1.02);
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.career-guide-detail-body {
+  max-width: 70ch;
+}
+
+.career-guide-detail-not-found {
+  border-block-start: var(--rule-home-hair) solid var(--color-home-rule-strong);
+  display: grid;
+  gap: var(--space-sm);
+  padding-block-start: var(--space-xl);
+}
+
+.career-guide-detail-not-found > span:first-child {
+  color: var(--color-home-muted);
+  font-family: var(--font-home-display);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+}
+
+@media (min-width: 40rem) {
+  .career-guide-detail-header h1 {
+    font-size: var(--text-3xl);
+  }
+}

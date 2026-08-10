@@ -1,0 +1,217 @@
+import { common as enCommon } from './locales/en/common'
+import { adminAiManagement as enAdminAiManagement } from './locales/en/pages/adminAiManagement'
+import { adminDashboard as enAdminDashboard } from './locales/en/pages/adminDashboard'
+import { adminCvTemplates as enAdminCvTemplates } from './locales/en/pages/adminCvTemplates'
+import { adminCompanies as enAdminCompanies } from './locales/en/pages/adminCompanies'
+import { adminJobModerationPolicies as enAdminJobModerationPolicies } from './locales/en/pages/adminJobModerationPolicies'
+import { adminJobs as enAdminJobs } from './locales/en/pages/adminJobs'
+import { adminSettings as enAdminSettings } from './locales/en/pages/adminSettings'
+import { adminUsers as enAdminUsers } from './locales/en/pages/adminUsers'
+import { candidateCvs as enCandidateCvs } from './locales/en/pages/candidateCvs'
+import { candidateSettings as enCandidateSettings } from './locales/en/pages/candidateSettings'
+import { comingSoon as enComingSoon } from './locales/en/pages/comingSoon'
+import { companies as enCompanies } from './locales/en/pages/companies'
+import { companyDetail as enCompanyDetail } from './locales/en/pages/companyDetail'
+import { cvTemplates as enCvTemplates } from './locales/en/pages/cvTemplates'
+import { forgotPassword as enForgotPassword } from './locales/en/pages/forgotPassword'
+import { home as enHome } from './locales/en/pages/home'
+import { infoPages as enInfoPages } from './locales/en/pages/infoPages'
+import { jobDetail as enJobDetail } from './locales/en/pages/jobDetail'
+import { login as enLogin } from './locales/en/pages/login'
+import { profile as enProfile } from './locales/en/pages/profile'
+import { recruiterApplications as enRecruiterApplications } from './locales/en/pages/recruiterApplications'
+import { recruiterCandidates as enRecruiterCandidates } from './locales/en/pages/recruiterCandidates'
+import { recruiterCompany as enRecruiterCompany } from './locales/en/pages/recruiterCompany'
+import { recruiterHome as enRecruiterHome } from './locales/en/pages/recruiterHome'
+import { recruiterJobCreate as enRecruiterJobCreate } from './locales/en/pages/recruiterJobCreate'
+import { recruiterJobs as enRecruiterJobs } from './locales/en/pages/recruiterJobs'
+import { recruiterSettings as enRecruiterSettings } from './locales/en/pages/recruiterSettings'
+import { recruiterVerification as enRecruiterVerification } from './locales/en/pages/recruiterVerification'
+import { register as enRegister } from './locales/en/pages/register'
+import { search as enSearch } from './locales/en/pages/search'
+import { common as jaCommon } from './locales/ja/common'
+import { adminAiManagement as jaAdminAiManagement } from './locales/ja/pages/adminAiManagement'
+import { adminDashboard as jaAdminDashboard } from './locales/ja/pages/adminDashboard'
+import { adminCvTemplates as jaAdminCvTemplates } from './locales/ja/pages/adminCvTemplates'
+import { adminCompanies as jaAdminCompanies } from './locales/ja/pages/adminCompanies'
+import { adminJobModerationPolicies as jaAdminJobModerationPolicies } from './locales/ja/pages/adminJobModerationPolicies'
+import { adminJobs as jaAdminJobs } from './locales/ja/pages/adminJobs'
+import { adminSettings as jaAdminSettings } from './locales/ja/pages/adminSettings'
+import { adminUsers as jaAdminUsers } from './locales/ja/pages/adminUsers'
+import { candidateCvs as jaCandidateCvs } from './locales/ja/pages/candidateCvs'
+import { candidateSettings as jaCandidateSettings } from './locales/ja/pages/candidateSettings'
+import { comingSoon as jaComingSoon } from './locales/ja/pages/comingSoon'
+import { companies as jaCompanies } from './locales/ja/pages/companies'
+import { companyDetail as jaCompanyDetail } from './locales/ja/pages/companyDetail'
+import { cvTemplates as jaCvTemplates } from './locales/ja/pages/cvTemplates'
+import { forgotPassword as jaForgotPassword } from './locales/ja/pages/forgotPassword'
+import { home as jaHome } from './locales/ja/pages/home'
+import { infoPages as jaInfoPages } from './locales/ja/pages/infoPages'
+import { jobDetail as jaJobDetail } from './locales/ja/pages/jobDetail'
+import { login as jaLogin } from './locales/ja/pages/login'
+import { profile as jaProfile } from './locales/ja/pages/profile'
+import { recruiterApplications as jaRecruiterApplications } from './locales/ja/pages/recruiterApplications'
+import { recruiterCandidates as jaRecruiterCandidates } from './locales/ja/pages/recruiterCandidates'
+import { recruiterCompany as jaRecruiterCompany } from './locales/ja/pages/recruiterCompany'
+import { recruiterHome as jaRecruiterHome } from './locales/ja/pages/recruiterHome'
+import { recruiterJobCreate as jaRecruiterJobCreate } from './locales/ja/pages/recruiterJobCreate'
+import { recruiterJobs as jaRecruiterJobs } from './locales/ja/pages/recruiterJobs'
+import { recruiterSettings as jaRecruiterSettings } from './locales/ja/pages/recruiterSettings'
+import { recruiterVerification as jaRecruiterVerification } from './locales/ja/pages/recruiterVerification'
+import { register as jaRegister } from './locales/ja/pages/register'
+import { search as jaSearch } from './locales/ja/pages/search'
+import { common as viCommon } from './locales/vi/common'
+import { adminAiManagement as viAdminAiManagement } from './locales/vi/pages/adminAiManagement'
+import { adminDashboard as viAdminDashboard } from './locales/vi/pages/adminDashboard'
+import { adminCvTemplates as viAdminCvTemplates } from './locales/vi/pages/adminCvTemplates'
+import { adminCompanies as viAdminCompanies } from './locales/vi/pages/adminCompanies'
+import { adminJobModerationPolicies as viAdminJobModerationPolicies } from './locales/vi/pages/adminJobModerationPolicies'
+import { adminJobs as viAdminJobs } from './locales/vi/pages/adminJobs'
+import { adminSettings as viAdminSettings } from './locales/vi/pages/adminSettings'
+import { adminUsers as viAdminUsers } from './locales/vi/pages/adminUsers'
+import { candidateCvs as viCandidateCvs } from './locales/vi/pages/candidateCvs'
+import { candidateSettings as viCandidateSettings } from './locales/vi/pages/candidateSettings'
+import { comingSoon as viComingSoon } from './locales/vi/pages/comingSoon'
+import { companies as viCompanies } from './locales/vi/pages/companies'
+import { companyDetail as viCompanyDetail } from './locales/vi/pages/companyDetail'
+import { cvTemplates as viCvTemplates } from './locales/vi/pages/cvTemplates'
+import { forgotPassword as viForgotPassword } from './locales/vi/pages/forgotPassword'
+import { home as viHome } from './locales/vi/pages/home'
+import { infoPages as viInfoPages } from './locales/vi/pages/infoPages'
+import { jobDetail as viJobDetail } from './locales/vi/pages/jobDetail'
+import { login as viLogin } from './locales/vi/pages/login'
+import { profile as viProfile } from './locales/vi/pages/profile'
+import { recruiterApplications as viRecruiterApplications } from './locales/vi/pages/recruiterApplications'
+import { recruiterCandidates as viRecruiterCandidates } from './locales/vi/pages/recruiterCandidates'
+import { recruiterCompany as viRecruiterCompany } from './locales/vi/pages/recruiterCompany'
+import { recruiterHome as viRecruiterHome } from './locales/vi/pages/recruiterHome'
+import { recruiterJobCreate as viRecruiterJobCreate } from './locales/vi/pages/recruiterJobCreate'
+import { recruiterJobs as viRecruiterJobs } from './locales/vi/pages/recruiterJobs'
+import { recruiterSettings as viRecruiterSettings } from './locales/vi/pages/recruiterSettings'
+import { recruiterVerification as viRecruiterVerification } from './locales/vi/pages/recruiterVerification'
+import { register as viRegister } from './locales/vi/pages/register'
+import { search as viSearch } from './locales/vi/pages/search'
+import type { Locale, Translations } from './types'
+
+export const defaultLocale: Locale = 'vi'
+export const supportedLocales: readonly Locale[] = ['vi', 'en', 'ja']
+
+export const translations = {
+  en: {
+    common: enCommon,
+    pages: {
+      adminAiManagement: enAdminAiManagement,
+      adminDashboard: enAdminDashboard,
+      adminCvTemplates: enAdminCvTemplates,
+      adminCompanies: enAdminCompanies,
+      adminJobModerationPolicies: enAdminJobModerationPolicies,
+      adminJobs: enAdminJobs,
+      adminSettings: enAdminSettings,
+      adminUsers: enAdminUsers,
+      candidateCvs: enCandidateCvs,
+      candidateSettings: enCandidateSettings,
+      companies: enCompanies,
+      comingSoon: enComingSoon,
+      companyDetail: enCompanyDetail,
+      cvTemplates: enCvTemplates,
+      forgotPassword: enForgotPassword,
+      home: enHome,
+      infoPages: enInfoPages,
+      jobDetail: enJobDetail,
+      login: enLogin,
+      profile: enProfile,
+      recruiterApplications: enRecruiterApplications,
+      recruiterCandidates: enRecruiterCandidates,
+      recruiterCompany: enRecruiterCompany,
+      recruiterHome: enRecruiterHome,
+      recruiterJobCreate: enRecruiterJobCreate,
+      recruiterJobs: enRecruiterJobs,
+      recruiterSettings: enRecruiterSettings,
+      recruiterVerification: enRecruiterVerification,
+      register: enRegister,
+      search: enSearch,
+    },
+  },
+  vi: {
+    common: viCommon,
+    pages: {
+      adminAiManagement: viAdminAiManagement,
+      adminDashboard: viAdminDashboard,
+      adminCvTemplates: viAdminCvTemplates,
+      adminCompanies: viAdminCompanies,
+      adminJobModerationPolicies: viAdminJobModerationPolicies,
+      adminJobs: viAdminJobs,
+      adminSettings: viAdminSettings,
+      adminUsers: viAdminUsers,
+      candidateCvs: viCandidateCvs,
+      candidateSettings: viCandidateSettings,
+      companies: viCompanies,
+      comingSoon: viComingSoon,
+      companyDetail: viCompanyDetail,
+      cvTemplates: viCvTemplates,
+      forgotPassword: viForgotPassword,
+      home: viHome,
+      infoPages: viInfoPages,
+      jobDetail: viJobDetail,
+      login: viLogin,
+      profile: viProfile,
+      recruiterApplications: viRecruiterApplications,
+      recruiterCandidates: viRecruiterCandidates,
+      recruiterCompany: viRecruiterCompany,
+      recruiterHome: viRecruiterHome,
+      recruiterJobCreate: viRecruiterJobCreate,
+      recruiterJobs: viRecruiterJobs,
+      recruiterSettings: viRecruiterSettings,
+      recruiterVerification: viRecruiterVerification,
+      register: viRegister,
+      search: viSearch,
+    },
+  },
+  ja: {
+    common: jaCommon,
+    pages: {
+      adminAiManagement: jaAdminAiManagement,
+      adminDashboard: jaAdminDashboard,
+      adminCvTemplates: jaAdminCvTemplates,
+      adminCompanies: jaAdminCompanies,
+      adminJobModerationPolicies: jaAdminJobModerationPolicies,
+      adminJobs: jaAdminJobs,
+      adminSettings: jaAdminSettings,
+      adminUsers: jaAdminUsers,
+      candidateCvs: jaCandidateCvs,
+      candidateSettings: jaCandidateSettings,
+      companies: jaCompanies,
+      comingSoon: jaComingSoon,
+      companyDetail: jaCompanyDetail,
+      cvTemplates: jaCvTemplates,
+      forgotPassword: jaForgotPassword,
+      home: jaHome,
+      infoPages: jaInfoPages,
+      jobDetail: jaJobDetail,
+      login: jaLogin,
+      profile: jaProfile,
+      recruiterApplications: jaRecruiterApplications,
+      recruiterCandidates: jaRecruiterCandidates,
+      recruiterCompany: jaRecruiterCompany,
+      recruiterHome: jaRecruiterHome,
+      recruiterJobCreate: jaRecruiterJobCreate,
+      recruiterJobs: jaRecruiterJobs,
+      recruiterSettings: jaRecruiterSettings,
+      recruiterVerification: jaRecruiterVerification,
+      register: jaRegister,
+      search: jaSearch,
+    },
+  },
+} satisfies Record<Locale, Translations>
+
+export function getTranslations(locale: Locale = defaultLocale) {
+  return translations[locale]
+}
+
+export function isLocale(value: string | null | undefined): value is Locale {
+  return supportedLocales.includes(value as Locale)
+}
+
+export { useLocale } from './useLocale'
+export { useTranslations } from './useTranslations'
+export type { Locale, Translations }

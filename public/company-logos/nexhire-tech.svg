@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="NexHire Tech">
+  <defs>
+    <linearGradient id="g" x1="12" x2="84" y1="14" y2="84">
+      <stop stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#14b8a6"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="url(#g)"/>
+  <path d="M27 60V36h8l16 18V36h10v24h-8L37 42v18H27Z" fill="#fff"/>
+  <circle cx="68" cy="30" r="6" fill="#dffdf8"/>
+</svg>

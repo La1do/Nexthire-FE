@@ -1,20 +1,47 @@
+import { useId } from 'react'
 import type { ComponentPropsWithoutRef } from 'react'
 
-type InputProps = ComponentPropsWithoutRef<'input'> & {
+type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'className'> & {
+  error?: string
   label: string
+  className?: string
+  reserveMessageSpace?: boolean
+  messageClassName?: string
 }
 
-export function Input({ className = '', id, label, ...props }: InputProps) {
-  const inputId = id ?? label.toLowerCase().replaceAll(' ', '-')
+export function Input({
+  className = '',
+  error,
+  id,
+  label,
+  messageClassName = '',
+  reserveMessageSpace = false,
+  ...props
+}: InputProps) {
+  const generatedId = useId()
+  const inputId = id ?? generatedId
+  const errorId = `${inputId}-error`
 
   return (
-    <label className="grid gap-2 text-sm font-medium text-[#3b414b]" htmlFor={inputId}>
-      {label}
+    <label className="grid gap-2" htmlFor={inputId}>
+      <span className="text-base font-medium text-[var(--color-text-secondary)]">{label}</span>
       <input
-        className={`h-11 rounded-md border border-[#cfd4c7] bg-white px-3 text-sm text-[#20242c] outline-none transition placeholder:text-[#8a929f] focus:border-[#116a5b] focus:ring-2 focus:ring-[#116a5b]/15 ${className}`}
+        aria-describedby={error ? errorId : undefined}
+        aria-invalid={Boolean(error)}
+        className={`form-control h-12 rounded-lg bg-[var(--color-surface-card)] px-4 text-base ${className}`}
         id={inputId}
         {...props}
       />
+      {error || reserveMessageSpace ? (
+        <span
+          aria-hidden={!error}
+          className={`min-h-[2lh] text-sm font-medium text-[var(--color-text-danger)] ${messageClassName}`.trim()}
+          id={error ? errorId : undefined}
+          role={error ? 'alert' : undefined}
+        >
+          {error ?? ' '}
+        </span>
+      ) : null}
     </label>
   )
 }

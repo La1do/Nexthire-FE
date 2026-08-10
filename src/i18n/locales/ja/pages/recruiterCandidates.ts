@@ -1,0 +1,66 @@
+import type { RecruiterCandidatesTranslations } from '../../../types'
+
+export const recruiterCandidates: RecruiterCandidatesTranslations = {
+  routeLabel: '候補者',
+  pageTitle: '候補者',
+  pageSubtitle: '会社の候補者データベースと応募履歴。',
+  hero: {
+    eyebrow: 'Talent database',
+    title: '会社の候補者',
+    description: '自社求人に応募した候補者プロフィールと応募履歴を確認できます。',
+  },
+  stats: {
+    candidates: '候補者',
+    applications: 'ページ内の応募',
+    strongMatches: 'ページ内の強いマッチ',
+  },
+  matchLevels: {
+    LOW: '低',
+    MEDIUM: '中',
+    HIGH: '高',
+    EXCELLENT: '非常に高い',
+  },
+  filters: {
+    searchLabel: '候補者を検索',
+    searchPlaceholder: '名前、メール、見出し、スキル、求人を検索...',
+    statusLabel: 'ステータス',
+    allStatuses: 'すべてのステータス',
+    sortLabel: '並び替え',
+    sortOptions: {
+      lastAppliedAt: '最新応募',
+      bestMatchScore: '最高マッチ',
+      applicationCount: '応募数',
+      candidateName: '候補者名',
+    },
+    clear: 'クリア',
+  },
+  results: {
+    countLabel: '{{count}} 名の候補者',
+    emptyTitle: '候補者が見つかりません',
+    emptyDescription: 'フィルターを変更して、自社に応募した候補者を探してください。',
+    applicationCount: '{{count}} 件の応募',
+    latestJob: '最新求人',
+    bestMatch: '最高マッチ',
+    lastApplied: '最終応募',
+    viewProfile: 'プロフィールを見る',
+    openApplication: '応募を開く',
+  },
+  detail: {
+    title: '候補者プロフィール',
+    close: 'プロフィールを閉じる',
+    contact: '連絡先',
+    skills: 'スキル',
+    applications: '応募履歴',
+    latestApplication: '最新応募',
+    bestMatchedApplication: '最高マッチ応募',
+    noSkills: 'スキル情報はまだありません。',
+    noData: 'データなし',
+  },
+  states: {
+    loading: '候補者を読み込み中...',
+    errorTitle: '候補者を読み込めませんでした',
+    errorDescription: '接続を確認するか、再度ログインしてください。',
+    detailError: '候補者プロフィールを読み込めませんでした。',
+    retry: '再試行',
+  },
+}

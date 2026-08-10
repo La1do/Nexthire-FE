@@ -1,0 +1,78 @@
+import type { AdminUsersTranslations } from '../../../types'
+
+export const adminUsers: AdminUsersTranslations = {
+  routeLabel: 'Admin — Users',
+  pageTitle: 'User management',
+  pageSubtitle: 'Track and manage candidate, employer, and admin accounts.',
+  sidebar: {
+    dashboard: 'Dashboard',
+    users: 'Users',
+    jobs: 'Job posts',
+    settings: 'Settings',
+    logout: 'Sign out',
+  },
+  topbar: {
+    searchPlaceholder: 'Quick search the console…',
+    notificationsLabel: 'Notifications',
+    toggleSidebarLabel: 'Open menu',
+    profileLabel: 'Profile',
+    notificationTitle: 'Admin notifications', notificationEmpty: 'No notifications yet.', notificationError: 'Unable to load notifications.', notificationLoading: 'Loading notifications…', markAllRead: 'Mark all as read',
+    profileSettings: 'Account settings', profileLogout: 'Sign out', adminRole: 'Administrator', quickLinks: 'Quick navigation', quickDashboard: 'Overview', quickUsers: 'Users', quickCompanies: 'Companies', quickJobs: 'Job posts', quickAi: 'AI management', quickSettings: 'Settings',
+  },
+  stats: {
+    totalLabel: 'Total users',
+    candidatesLabel: 'Candidates',
+    employersLabel: 'Employers',
+    adminsLabel: 'Admins',
+    lockedLabel: 'Locked accounts',
+    totalDelta: '+12 this week',
+    candidatesDelta: '+9 this week',
+    employersDelta: '+2 this week',
+    lockedDelta: '+1 this week',
+  },
+  filters: {
+    queryLabel: 'Find a user',
+    queryPlaceholder: 'Name or email',
+    roleLabel: 'Role',
+    statusLabel: 'Status',
+    roleAll: 'All roles',
+    statusAll: 'All statuses',
+    clear: 'Clear filters',
+  },
+  results: {
+    caption: 'User list',
+    countLabel: '{{count}} users',
+    emptyTitle: 'No matching users',
+    emptyDescription: 'Try a shorter keyword or remove a few filters to widen the result set.',
+    columns: {
+      user: 'User',
+      role: 'Role',
+      status: 'Status',
+      createdAt: 'Created',
+      lastActiveAt: 'Last active',
+      actions: 'Actions',
+    },
+    actionView: 'View details',
+    actionSuspend: 'Suspend', actionBan: 'Ban', actionArchive: 'Archive', actionRestore: 'Restore',
+  },
+  pagination: {
+    prev: 'Previous page',
+    next: 'Next page',
+    pageOf: '{{current}} / {{total}}',
+  },
+  roles: {
+    ADMIN: 'Admin', RECRUITER: 'Recruiter', CANDIDATE: 'Candidate', admin: 'Admin', recruiter: 'Recruiter', candidate: 'Candidate',
+  },
+  statusOverview: { title: 'Account statuses', description: 'Distribution and quick filtering by account status.', totalLabel: '{{count}} users', distributionLabel: 'User status distribution chart' },
+  statuses: {
+    ACTIVE: 'Active', INACTIVE: 'Inactive', SUSPENDED: 'Suspended', LOCKED: 'Locked', BANNED: 'Banned', ARCHIVED: 'Archived', active: 'Active', inactive: 'Inactive', suspended: 'Suspended', locked: 'Locked', banned: 'Banned', archived: 'Archived',
+  },
+  actions: { title: 'Confirm action', description: 'Apply this action to {{name}}.', reasonLabel: 'Reason', reasonPlaceholder: 'Enter a reason (3–500 characters)', reasonRequired: 'A reason is required.', suspend: 'Suspend', ban: 'Ban account', archive: 'Archive', restore: 'Restore', confirm: 'Confirm', cancel: 'Cancel' },
+  feedback: { loading: 'Loading users', errorTitle: 'Unable to load users', errorDescription: 'Admin user data could not be loaded.', retry: 'Retry', actionSuccess: 'User status updated.', actionError: 'Unable to update user status.', cannotManageSelf: 'Admins cannot change their own account status.' },
+  detail: { routeLabel: 'User details', back: 'Back to users', title: 'User information', contact: 'Contact', lifecycle: 'Account lifecycle', company: 'Company', noCompany: 'No company', emailVerified: 'Email verified', emailUnverified: 'Email not verified', statusReason: 'Status reason', changedAt: 'Changed at', createdAt: 'Created', updatedAt: 'Updated', lastLoginAt: 'Last login', contactDescription: 'Contact and organisation information', lifecycleDescription: 'Permissions and verification status', timeline: 'Timeline', timelineDescription: 'Account update history', phoneNotProvided: 'No phone number provided', statusReasonNotProvided: 'No status reason provided' },
+  currentUser: {
+    name: 'Man Ha',
+    email: 'manha@nexhire.vn',
+    role: 'Senior admin',
+  },
+}

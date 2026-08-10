@@ -1,0 +1,58 @@
+.admin-user-detail-page {
+  gap: 1.5rem;
+}
+
+.admin-user-detail-page__header { display: grid; gap: 0.65rem; }
+.admin-user-detail-page__header > div { display: grid; gap: 0.2rem; }
+.admin-user-detail-page__header p { color: var(--color-text-muted); font-size: 0.85rem; font-weight: 600; margin: 0; }
+.admin-user-detail-page__header h1 { color: var(--color-text-primary); font-size: clamp(1.35rem, 2vw, 1.7rem); margin: 0; }
+.admin-user-detail-page__back { align-items: center; color: var(--color-brand-solid); display: inline-flex; font-size: 0.9rem; font-weight: 700; text-decoration: none; width: fit-content; }
+.admin-user-detail-page__back:hover { text-decoration: underline; }
+
+.admin-user-detail-hero { background: linear-gradient(125deg, var(--color-surface-card) 0%, var(--color-brand-soft) 100%); border: 1px solid var(--color-border-subtle); border-radius: 18px; box-shadow: var(--shadow-control); display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr) auto; overflow: hidden; padding: clamp(1.15rem, 3vw, 1.75rem); position: relative; }
+.admin-user-detail-hero::after { background: var(--color-brand-solid); border-radius: 50%; content: ''; height: 12rem; opacity: 0.05; position: absolute; right: -5rem; top: -7rem; width: 12rem; }
+.admin-user-detail-hero__identity { align-items: center; display: flex; gap: 1rem; min-width: 0; position: relative; z-index: 1; }
+.admin-user-detail-hero .admin-user-avatar--large { box-shadow: 0 0 0 4px var(--color-surface-card), 0 0 0 5px var(--color-border-brand-soft); flex: 0 0 auto; }
+.admin-user-detail-hero__person { min-width: 0; }
+.admin-user-detail-hero__person h2, .admin-user-detail-hero__person p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-user-detail-hero__person h2 { color: var(--color-text-primary); font-size: 1.2rem; margin: 0; }
+.admin-user-detail-hero__person p { color: var(--color-text-muted); margin: 0.35rem 0 0.75rem; }
+.admin-user-detail-hero__facts { align-self: center; display: grid; gap: 0.6rem; grid-template-columns: repeat(3, minmax(7.5rem, 1fr)); position: relative; z-index: 1; }
+.admin-user-detail-hero__facts div { border-left: 1px solid var(--color-border-subtle); display: grid; gap: 0.35rem; padding-left: 0.85rem; }
+.admin-user-detail-hero__facts span { color: var(--color-text-muted); font-size: 0.72rem; }
+.admin-user-detail-hero__facts strong { color: var(--color-text-primary); font-size: 0.88rem; }
+
+.admin-user-detail-sections { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-user-detail-section { background: var(--color-surface-card); border: 1px solid var(--color-border-subtle); border-radius: 14px; box-shadow: var(--shadow-control); overflow: hidden; }
+.admin-user-detail-section--timeline { grid-column: 1 / -1; }
+.admin-user-detail-section header { border-bottom: 1px solid var(--color-border-subtle); padding: 1rem 1.1rem; }
+.admin-user-detail-section header > div { align-items: center; display: flex; gap: 0.7rem; }
+.admin-user-detail-section header > div > span { align-items: center; background: var(--color-brand-soft); border-radius: 9px; color: var(--color-brand-solid); display: inline-flex; height: 2rem; justify-content: center; width: 2rem; }
+.admin-user-detail-section header svg, .admin-user-detail-item__icon svg { height: 1rem; width: 1rem; }
+.admin-user-detail-section h2, .admin-user-detail-section p { margin: 0; }
+.admin-user-detail-section h2 { color: var(--color-text-primary); font-size: 0.95rem; }
+.admin-user-detail-section p { color: var(--color-text-muted); font-size: 0.78rem; margin-top: 0.18rem; }
+.admin-user-detail-section__list { display: grid; margin: 0; }
+.admin-user-detail-item { align-items: flex-start; display: grid; gap: 0.7rem; grid-template-columns: 1.75rem minmax(0, 1fr); padding: 0.9rem 1.1rem; }
+.admin-user-detail-item + .admin-user-detail-item { border-top: 1px solid var(--color-border-subtle); }
+.admin-user-detail-item__icon { align-items: center; background: var(--color-surface-muted); border-radius: 8px; color: var(--color-text-secondary); display: inline-flex; height: 1.75rem; justify-content: center; }
+.admin-user-detail-item dt { color: var(--color-text-muted); font-size: 0.75rem; }
+.admin-user-detail-item dd { color: var(--color-text-primary); font-size: 0.9rem; font-weight: 650; margin: 0.2rem 0 0; overflow-wrap: anywhere; }
+.admin-user-detail-item.is-muted dd { color: var(--color-text-secondary); font-weight: 500; }
+.admin-user-detail-section--timeline .admin-user-detail-section__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-user-detail-section--timeline .admin-user-detail-item:nth-child(2) { border-top: 0; }
+.admin-user-detail-section--timeline .admin-user-detail-item:nth-child(even) { border-left: 1px solid var(--color-border-subtle); }
+
+@media (max-width: 900px) {
+  .admin-user-detail-hero { grid-template-columns: 1fr; }
+  .admin-user-detail-hero__facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .admin-user-detail-page { gap: 1.1rem; }
+  .admin-user-detail-hero__identity { align-items: flex-start; }
+  .admin-user-detail-hero__facts, .admin-user-detail-sections, .admin-user-detail-section--timeline .admin-user-detail-section__list { grid-template-columns: 1fr; }
+  .admin-user-detail-hero__facts div { border-left: 0; border-top: 1px solid var(--color-border-subtle); padding: 0.65rem 0 0; }
+  .admin-user-detail-hero__facts div:first-child { border-top: 0; padding-top: 0; }
+  .admin-user-detail-section--timeline .admin-user-detail-item:nth-child(2), .admin-user-detail-section--timeline .admin-user-detail-item:nth-child(even) { border-left: 0; border-top: 1px solid var(--color-border-subtle); }
+}

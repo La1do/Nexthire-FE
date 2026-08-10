@@ -1,0 +1,66 @@
+import type { RecruiterCandidatesTranslations } from '../../../types'
+
+export const recruiterCandidates: RecruiterCandidatesTranslations = {
+  routeLabel: 'Ứng viên',
+  pageTitle: 'Ứng viên',
+  pageSubtitle: 'Kho ứng viên và lịch sử ứng tuyển của công ty.',
+  hero: {
+    eyebrow: 'Kho ứng viên',
+    title: 'Ứng viên của công ty',
+    description: 'Xem hồ sơ ứng viên đã từng ứng tuyển vào công ty và lịch sử ứng tuyển của từng người.',
+  },
+  stats: {
+    candidates: 'Ứng viên',
+    applications: 'Đơn trong trang',
+    strongMatches: 'Phù hợp cao trong trang',
+  },
+  matchLevels: {
+    LOW: 'Thấp',
+    MEDIUM: 'Trung bình',
+    HIGH: 'Cao',
+    EXCELLENT: 'Xuất sắc',
+  },
+  filters: {
+    searchLabel: 'Tìm ứng viên',
+    searchPlaceholder: 'Tìm tên, email, vị trí, kỹ năng hoặc tin tuyển dụng...',
+    statusLabel: 'Trạng thái',
+    allStatuses: 'Tất cả trạng thái',
+    sortLabel: 'Sắp xếp',
+    sortOptions: {
+      lastAppliedAt: 'Ứng tuyển gần nhất',
+      bestMatchScore: 'Độ phù hợp cao nhất',
+      applicationCount: 'Nhiều đơn nhất',
+      candidateName: 'Tên ứng viên',
+    },
+    clear: 'Xóa lọc',
+  },
+  results: {
+    countLabel: '{{count}} ứng viên',
+    emptyTitle: 'Không tìm thấy ứng viên',
+    emptyDescription: 'Hãy đổi bộ lọc để tìm những người đã ứng tuyển vào công ty.',
+    applicationCount: '{{count}} đơn ứng tuyển',
+    latestJob: 'Tin gần nhất',
+    bestMatch: 'Độ phù hợp tốt nhất',
+    lastApplied: 'Ứng tuyển gần nhất',
+    viewProfile: 'Xem hồ sơ',
+    openApplication: 'Mở đơn ứng tuyển',
+  },
+  detail: {
+    title: 'Hồ sơ ứng viên',
+    close: 'Đóng hồ sơ',
+    contact: 'Liên hệ',
+    skills: 'Kỹ năng',
+    applications: 'Lịch sử ứng tuyển',
+    latestApplication: 'Đơn gần nhất',
+    bestMatchedApplication: 'Đơn phù hợp nhất',
+    noSkills: 'Chưa có kỹ năng được bổ sung.',
+    noData: 'Chưa có dữ liệu',
+  },
+  states: {
+    loading: 'Đang tải ứng viên...',
+    errorTitle: 'Chưa tải được danh sách ứng viên',
+    errorDescription: 'Hãy kiểm tra kết nối hoặc đăng nhập lại để xem ứng viên của công ty.',
+    detailError: 'Chưa tải được hồ sơ ứng viên.',
+    retry: 'Thử lại',
+  },
+}

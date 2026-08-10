@@ -1,0 +1,90 @@
+[
+  {
+    "date": "2026-08-03",
+    "macrostructure": "Catalogue",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral-cobalt",
+    "vibe": "utilitarian candidate CV template catalogue",
+    "enrichment": "none",
+    "brief": "Expose CV templates in the home header and redesign the CV template catalogue around real builder templates"
+  },
+  {
+    "date": "2026-07-27",
+    "macrostructure": "Workbench",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral-cobalt",
+    "vibe": "normal recruiter company profile editor",
+    "enrichment": "none",
+    "brief": "Replace drag-and-drop recruiter company designer with a normal public profile editor"
+  },
+  {
+    "date": "2026-07-24",
+    "macrostructure": "Narrative Workflow",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral",
+    "vibe": "utilitarian, trustworthy company verification workspace",
+    "enrichment": "none",
+    "brief": "Build the recruiter company verification workflow with legal data and document upload"
+  },
+  {
+    "date": "2026-07-24",
+    "macrostructure": "Split Studio",
+    "theme": "Nexhire Home",
+    "theme_axes": "light / geometric-sans / coral",
+    "vibe": "quiet, focused candidate account security",
+    "enrichment": "none",
+    "brief": "Build a candidate settings page focused on password security"
+  },
+  {
+    "date": "2026-07-24",
+    "macrostructure": "Feature Stack",
+    "theme": "Coral",
+    "enrichment": "none",
+    "brief": "Build a recruiter account, language, and security settings workspace"
+  },
+  {
+    "date": "2026-07-23",
+    "macrostructure": "Workbench",
+    "theme": "custom",
+    "theme_axes": "light / geometric-sans / cool",
+    "vibe": "professional, clear, energetic career marketplace",
+    "enrichment": "live search UI + self-hosted workplace photography",
+    "brief": "Redesign the Nexhire Home palette, typography, hero opportunity board, and category icons"
+  },
+  {
+    "date": "2026-07-23",
+    "macrostructure": "Index-First",
+    "theme": "custom",
+    "theme_axes": "warm paper / editorial sans / coral",
+    "vibe": "useful, editorial, career-focused",
+    "enrichment": "self-hosted editorial photography",
+    "brief": "Redesign the home career-guide section and replace the placeholder career-guide route"
+  },
+  {
+    "date": "2026-07-23",
+    "macrostructure": "Photographic",
+    "theme": "custom",
+    "theme_axes": "warm paper / confident sans / coral",
+    "vibe": "professional, direct, human career discovery",
+    "enrichment": "E8 self-hosted workplace photography",
+    "brief": "Repair the Nexhire home cascade and rebuild the hero around real workplace imagery"
+  },
+  {
+    "date": "2026-07-22",
+    "macrostructure": "Split Studio",
+    "theme": "custom",
+    "theme_axes": "warm paper / confident sans / coral",
+    "vibe": "energetic, credible, live opportunity market",
+    "enrichment": "E5 Tier-A live opportunity mosaic",
+    "brief": "Strengthen the Nexhire home hero and distribute professional motion across discovery surfaces"
+  },
+  {
+    "date": "2026-07-22",
+    "macrostructure": "Ecosystem Index",
+    "theme": "custom",
+    "theme_axes": "warm paper / confident sans / coral",
+    "vibe": "professional, energetic, credible career index",
+    "enrichment": "live employer logo imagery",
+    "brief": "Redesign the Nexhire job-discovery home page with restrained professional motion"
+  }
+]

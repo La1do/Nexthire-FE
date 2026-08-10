@@ -1,0 +1,97 @@
+.admin-settings-page { display: grid; gap: 1.25rem; padding: 1.5rem 2.5rem 2.5rem; }
+.admin-settings-page__intro p { margin: 0; color: var(--color-text-muted); font-size: 0.94rem; line-height: 1.6; }
+.admin-settings-layout { display: grid; grid-template-columns: minmax(250px, .72fr) minmax(0, 1.6fr); gap: 1.25rem; align-items: start; }
+.admin-settings-layout__aside, .admin-settings-layout__main { display: grid; gap: 1.25rem; }
+.admin-settings-card, .admin-settings-summary { border: 1px solid var(--color-border-subtle); border-radius: 14px; background: var(--color-surface-card); box-shadow: var(--shadow-control); }
+.admin-settings-card > header { padding: 1.2rem 1.25rem; border-bottom: 1px solid var(--color-border-subtle); }
+.admin-settings-card > header h2 { margin: 0; color: var(--color-text-primary); font-size: 1rem; }
+.admin-settings-card > header p { margin: .35rem 0 0; color: var(--color-text-muted); font-size: .82rem; line-height: 1.55; }
+
+.admin-settings-summary { overflow: hidden; }
+.admin-settings-summary__identity { display: flex; align-items: center; gap: .9rem; padding: 1.25rem; background: linear-gradient(135deg, var(--color-surface-card), var(--color-surface-subtle)); }
+.admin-settings-summary__identity > span, .admin-settings-summary__identity > img { display: grid; place-items: center; flex: 0 0 auto; width: 58px; height: 58px; border: 1px solid var(--color-border-brand-soft); border-radius: 16px; background: var(--color-brand-soft); color: var(--color-brand-solid); font-size: 1.05rem; font-weight: 800; object-fit: cover; }
+.admin-settings-summary__identity h2 { margin: 0; font-size: 1rem; }
+.admin-settings-summary__identity p { overflow: hidden; margin: .25rem 0; color: var(--color-text-muted); font-size: .76rem; text-overflow: ellipsis; }
+.admin-settings-summary__identity strong { color: var(--color-brand-solid); font-size: .68rem; letter-spacing: .05em; text-transform: uppercase; }
+.admin-settings-summary dl { display: grid; margin: 0; padding: .4rem 1.25rem 1rem; }
+.admin-settings-summary dl div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: .75rem; padding: .7rem 0; border-bottom: 1px solid var(--color-border-subtle); }
+.admin-settings-summary dl div:last-child { border-bottom: 0; }
+.admin-settings-summary dt { color: var(--color-text-muted); font-size: .72rem; }
+.admin-settings-summary dd { overflow: hidden; margin: 0; color: var(--color-text-secondary); font-size: .76rem; font-weight: 650; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+
+.admin-settings-form, .admin-settings-password-form { display: grid; gap: 1.15rem; padding: 1.25rem; }
+.admin-settings-form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.admin-settings-form label { display: grid; align-content: start; gap: .42rem; color: var(--color-text-secondary); font-size: .78rem; font-weight: 650; }
+.admin-settings-form input { width: 100%; min-height: 46px; padding: .65rem .8rem; border: 1px solid var(--color-border-default); border-radius: 8px; background: var(--color-surface-card); color: var(--color-text-primary); font: inherit; outline: none; }
+.admin-settings-form input:focus { border-color: var(--color-brand-solid); box-shadow: 0 0 0 3px var(--color-brand-soft); }
+.admin-settings-form input[readonly] { background: var(--color-surface-muted); color: var(--color-text-muted); cursor: not-allowed; }
+.admin-settings-form small { color: var(--color-text-danger); font-size: .7rem; font-weight: 500; }
+.admin-settings-form__message { min-height: 2lh; }
+.admin-settings-form em { color: var(--color-text-muted); font-size: .68rem; font-style: normal; font-weight: 400; }
+.admin-settings-form__actions { display: flex; justify-content: flex-end; gap: .7rem; }
+.admin-settings-form__actions button, .admin-settings-password-form > button { min-height: 42px; font-size: .82rem; }
+
+.admin-settings-password-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-settings-password-form > :first-child, .admin-settings-password-form > :nth-child(2), .admin-settings-password-form > :nth-child(3) { min-width: 0; }
+.admin-settings-password-form > :first-child { grid-column: 1 / -1; }
+.admin-settings-password-form > button { grid-column: 2; justify-self: end; }
+.admin-settings-password-rules { grid-column: 1 / -1; padding: .85rem 1rem; border: 1px solid var(--color-border-subtle); border-radius: 9px; background: var(--color-surface-subtle); }
+.admin-settings-password-rules strong { color: var(--color-text-secondary); font-size: .75rem; }
+.admin-settings-password-rules ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem 1rem; margin: .7rem 0 0; padding: 0; list-style: none; }
+.admin-settings-password-rules li { display: flex; align-items: center; gap: .5rem; color: var(--color-text-muted); font-size: .72rem; }
+.admin-settings-password-rules li span { width: 8px; height: 8px; border-radius: 999px; background: var(--color-border-default); }
+.admin-settings-password-rules li.is-valid { color: var(--color-home-accent); }
+.admin-settings-password-rules li.is-valid span { background: var(--color-home-accent); box-shadow: 0 0 0 3px var(--color-home-accent-soft); }
+
+.admin-settings-preferences { overflow: visible; }
+.admin-settings-preference-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .85rem; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border-subtle); }
+.admin-settings-preference-row:last-child { border-bottom: 0; }
+.admin-settings-preference-row strong { color: var(--color-text-secondary); font-size: .8rem; }
+.admin-settings-preference-row p { margin: .25rem 0 0; color: var(--color-text-muted); font-size: .7rem; line-height: 1.45; }
+.admin-settings-preference-row .language-switch { min-width: 118px; }
+.admin-settings-preference-row--danger button { min-height: 40px; padding: 0 .9rem; border-color: var(--color-border-brand-soft); color: var(--color-text-danger); font-size: .78rem; }
+
+.admin-settings-avatar-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; padding: 0 1.25rem 1rem; }
+.admin-settings-avatar-actions button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; min-height: 38px; padding: .45rem .65rem; border: 1px solid var(--color-border-default); border-radius: 8px; background: var(--color-surface-card); color: var(--color-text-secondary); font-size: .72rem; font-weight: 700; cursor: pointer; }
+.admin-settings-avatar-actions button svg { width: 15px; height: 15px; }
+.admin-settings-avatar-actions button:disabled { opacity: .55; cursor: wait; }
+.admin-settings-avatar-actions small { grid-column: 1 / -1; color: var(--color-text-muted); font-size: .65rem; text-align: center; }
+
+@media (max-width: 1080px) {
+  .admin-settings-page { padding: 1.25rem; }
+  .admin-settings-layout { grid-template-columns: 1fr; }
+  .admin-settings-layout__aside { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .admin-settings-page { padding: .85rem; }
+  .admin-settings-layout__aside, .admin-settings-form__grid, .admin-settings-password-form { grid-template-columns: 1fr; }
+  .admin-settings-password-form > :first-child, .admin-settings-password-form > button, .admin-settings-password-rules { grid-column: 1; }
+  .admin-settings-password-rules ul { grid-template-columns: 1fr; }
+  .admin-settings-form__actions { flex-direction: column; }
+  .admin-settings-form__actions button, .admin-settings-password-form > button { width: 100%; }
+  .admin-settings-preference-row { grid-template-columns: 1fr; }
+  .admin-settings-preference-row .language-switch { width: 100%; }
+}
+
+/* Settings interaction refinements */
+.admin-settings-language-control { display: grid; gap: .75rem; min-width: min(305px, 100%); }
+.admin-settings-language-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.admin-settings-language-actions button { min-height: 42px; }
+.admin-settings-language-status { margin: 0 !important; }
+.admin-settings-language-status[data-tone="success"] { color: var(--color-home-accent); }
+.admin-settings-language-status[data-tone="error"] { color: var(--color-text-danger); }
+.admin-settings-password-form { column-gap: 1rem; row-gap: 1rem; }
+.admin-settings-password-form > :first-child { margin-bottom: .15rem; }
+.admin-settings-password-form .field-message:empty,
+.admin-settings-password-form [role="alert"]:empty { display: none; }
+
+@media (max-width: 700px) {
+  .admin-settings-language-control { min-width: 0; width: 100%; }
+  .admin-settings-language-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .admin-settings-language-actions button { width: 100%; }
+}
+
+@media (max-width: 430px) {
+  .admin-settings-language-actions { grid-template-columns: 1fr; }
+}

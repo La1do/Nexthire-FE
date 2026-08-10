@@ -1,0 +1,78 @@
+import type { AdminUsersTranslations } from '../../../types'
+
+export const adminUsers: AdminUsersTranslations = {
+  routeLabel: '管理者 - ユーザー',
+  pageTitle: 'ユーザー管理',
+  pageSubtitle: '候補者、企業、管理者アカウントを確認して管理します。',
+  sidebar: {
+    dashboard: 'ダッシュボード',
+    users: 'ユーザー',
+    jobs: '求人',
+    settings: '設定',
+    logout: 'ログアウト',
+  },
+  topbar: {
+    searchPlaceholder: '管理画面を検索',
+    notificationsLabel: '通知',
+    toggleSidebarLabel: 'メニューを開く',
+    profileLabel: 'プロフィール',
+    notificationTitle: '管理者通知', notificationEmpty: '通知はありません。', notificationError: '通知を読み込めません。', notificationLoading: '通知を読み込み中…', markAllRead: 'すべて既読にする',
+    profileSettings: 'アカウント設定', profileLogout: 'ログアウト', adminRole: '管理者', quickLinks: 'クイックナビゲーション', quickDashboard: '概要', quickUsers: 'ユーザー', quickCompanies: '企業', quickJobs: '求人', quickAi: 'AI管理', quickSettings: '設定',
+  },
+  stats: {
+    totalLabel: '総ユーザー',
+    candidatesLabel: '候補者',
+    employersLabel: '企業',
+    adminsLabel: '管理者',
+    lockedLabel: 'ロック済み',
+    totalDelta: '今週 +12',
+    candidatesDelta: '今週 +9',
+    employersDelta: '今週 +2',
+    lockedDelta: '今週 +1',
+  },
+  filters: {
+    queryLabel: 'ユーザー検索',
+    queryPlaceholder: '名前またはメール',
+    roleLabel: '役割',
+    statusLabel: 'ステータス',
+    roleAll: 'すべての役割',
+    statusAll: 'すべてのステータス',
+    clear: 'フィルターをクリア',
+  },
+  results: {
+    caption: 'ユーザー一覧',
+    countLabel: '{{count}}人のユーザー',
+    emptyTitle: '一致するユーザーがいません',
+    emptyDescription: 'キーワードを短くするか、フィルターを減らしてください。',
+    columns: {
+      user: 'ユーザー',
+      role: '役割',
+      status: 'ステータス',
+      createdAt: '作成日',
+      lastActiveAt: '最終活動',
+      actions: '操作',
+    },
+    actionView: '詳細を見る',
+    actionSuspend: '一時停止', actionBan: '禁止', actionArchive: 'アーカイブ', actionRestore: '復元',
+  },
+  pagination: {
+    prev: '前のページ',
+    next: '次のページ',
+    pageOf: '{{current}} / {{total}}',
+  },
+  roles: {
+    ADMIN: '管理者', RECRUITER: '採用担当者', CANDIDATE: '候補者', admin: '管理者', recruiter: '採用担当者', candidate: '候補者',
+  },
+  statusOverview: { title: 'アカウント状態', description: '状態別の分布とクイックフィルター。', totalLabel: '{{count}}人', distributionLabel: 'ユーザー状態の分布グラフ' },
+  statuses: {
+    ACTIVE: '有効', INACTIVE: '無効', SUSPENDED: '一時停止', LOCKED: 'ロック済み', BANNED: '禁止済み', ARCHIVED: 'アーカイブ済み', active: '有効', inactive: '無効', suspended: '一時停止', locked: 'ロック済み', banned: '禁止済み', archived: 'アーカイブ済み',
+  },
+  actions: { title: '操作の確認', description: '{{name}} に操作を適用します。', reasonLabel: '理由', reasonPlaceholder: '理由を入力してください', reasonRequired: '理由は必須です。', suspend: '一時停止', ban: '禁止', archive: 'アーカイブ', restore: '復元', confirm: '確認', cancel: 'キャンセル' },
+  feedback: { loading: 'ユーザーを読み込み中', errorTitle: 'ユーザーを読み込めません', errorDescription: '管理ユーザーデータを取得できませんでした。', retry: '再試行', actionSuccess: 'ユーザー状態を更新しました。', actionError: 'ユーザー状態を更新できませんでした。', cannotManageSelf: '管理者は自分のアカウント状態を変更できません。' },
+  detail: { routeLabel: 'ユーザー詳細', back: 'ユーザー一覧に戻る', title: 'ユーザー情報', contact: '連絡先', lifecycle: 'アカウント履歴', company: '会社', noCompany: '会社なし', emailVerified: 'メール確認済み', emailUnverified: 'メール未確認', statusReason: '状態理由', changedAt: '変更日時', createdAt: '作成日時', updatedAt: '更新日時', lastLoginAt: '最終ログイン', contactDescription: '連絡先と組織の情報', lifecycleDescription: '権限と認証の状態', timeline: 'タイムライン', timelineDescription: 'アカウント更新履歴', phoneNotProvided: '電話番号は未登録です', statusReasonNotProvided: '状態理由はありません' },
+  currentUser: {
+    name: 'Man Ha',
+    email: 'manha@nexhire.vn',
+    role: 'シニア管理者',
+  },
+}

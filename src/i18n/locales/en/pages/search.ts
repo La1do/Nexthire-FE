@@ -1,0 +1,60 @@
+import type { SearchTranslations } from '../../../types'
+
+export const search: SearchTranslations = {
+  routeLabel: 'Job search',
+  toolbar: {
+    title: 'Find roles around your criteria',
+    description: 'Refine keyword, location, and filters to see the most relevant open roles.',
+    keywordLabel: 'Keyword',
+    keywordPlaceholder: 'Role, skill, or company',
+    locationLabel: 'Location',
+    locationPlaceholder: 'All locations',
+    submit: 'Update search',
+  },
+  filters: {
+    title: 'Filters',
+    description: 'Keep the filter set focused so scanning results stays fast.',
+    fieldLabel: 'Career track',
+    locationLabel: 'Location',
+    salaryLabel: 'Minimum salary',
+    workModeLabel: 'Work mode',
+    allOption: 'All',
+    clear: 'Clear filters',
+    apply: 'Apply',
+    salaryOptions: [
+      { label: 'From 15M', value: '15000000' },
+      { label: 'From 20M', value: '20000000' },
+      { label: 'From 25M', value: '25000000' },
+      { label: 'From 35M', value: '35000000' },
+    ],
+    workModeOptions: [
+      { label: 'Remote', value: 'REMOTE' },
+      { label: 'Hybrid', value: 'HYBRID' },
+      { label: 'On-site', value: 'ONSITE' },
+    ],
+  },
+  results: {
+    title: 'Matched results',
+    countLabel: '{{count}} jobs found',
+    emptyQuery: 'All open roles',
+    sortLabel: 'Sort',
+    sortOptions: [
+      { label: 'Best match', value: 'relevance' },
+      { label: 'Newest', value: 'latest' },
+      { label: 'Highest salary', value: 'salary_desc' },
+    ],
+    saveLabel: 'Save job',
+    unsaveLabel: 'Remove saved job',
+    verifiedLabel: 'Verified',
+    detailLabel: 'View details',
+    activeFiltersLabel: 'Active filters',
+    loading: 'Loading jobs...',
+    errorTitle: 'Could not load results',
+    errorDescription: 'Something went wrong while loading jobs. Please try again.',
+  },
+  empty: {
+    title: 'No matching roles yet',
+    description: 'Try a shorter keyword or remove a few filters to widen the result set.',
+    action: 'View all jobs',
+  },
+}

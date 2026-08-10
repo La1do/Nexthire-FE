@@ -1,0 +1,27 @@
+import type { AdminJobsTranslations } from '../../../types'
+
+export const adminJobs: AdminJobsTranslations = {
+  routeLabel: '管理者 - 求人', pageTitle: '求人審査', pageSubtitle: '求人内容、リスク、審査キューを管理します。',
+  tabs: { all: 'すべての求人', review: '求人審査', revisions: '修正審査' },
+  stats: { total: '求人総数', review: '審査待ち', published: '公開中', revisions: '修正審査待ち' },
+  filters: { searchLabel: '検索', searchPlaceholder: '求人名、企業、勤務地、スキル', statusLabel: 'ステータス', statusAll: 'すべてのステータス', riskLabel: 'リスク', riskAll: 'すべてのリスク', companyLabel: '企業', companyAll: 'すべての企業', sortLabel: '並び替え', clear: 'フィルター解除' },
+  columns: { job: '求人', company: '企業', status: 'ステータス', risk: 'リスク', applications: '応募数', updated: '更新日', actions: '操作' },
+  statuses: { DRAFT: '下書き', PENDING_REVIEW: '審査待ち', NEEDS_REVIEW: '要確認', SHOULD_REJECT: '却下推奨', PUBLISHED: '公開中', UNPUBLISHED: '非公開', REJECTED: '却下', CLOSED: '終了', EXPIRED: '期限切れ', APPROVED: '承認済み', CANCELLED: 'キャンセル' },
+  risks: { LOW: '低', MEDIUM: '中', HIGH: '高', CRITICAL: '重大', NONE: '未評価' },
+  sorts: { latest: '新しい順', oldest: '古い順', risk: 'リスク順', applications: '応募数順' },
+  detail: {
+    title: '審査詳細', jobContent: '求人内容', description: '仕事内容', requirements: '応募要件', benefits: '福利厚生', skills: 'スキル', overview: '求人概要', employmentType: '雇用形態', workingType: '勤務形態', experienceLevel: '経験レベル', location: '勤務地', salary: '給与', openings: '募集人数', applications: '応募数', deadline: '応募期限', version: 'バージョン', systemInfo: 'システム情報', jobId: '求人ID', companyId: '企業ID', categoryId: 'カテゴリID', lifecycle: '求人ライフサイクル', createdAt: '作成', updatedAt: '最終更新', reviewedAt: '審査', publishedAt: '公開', unpublishedAt: '非公開', closedAt: '終了', reviewReason: '審査理由', unpublishReason: '非公開理由', moderation: '審査分析', moderationDecision: 'システム提案', reasons: '警告理由', rules: '該当ルール', reasonLabels: { 'Job description is too short': '求人説明が短すぎます', 'Job requirements are missing or too vague': '求人要件が不足しているか不明確です' }, ruleLabels: { LOW_DESCRIPTION_LENGTH: '求人説明が短すぎます', MISSING_OR_WEAK_REQUIREMENTS: '求人要件が不足しているか不明確です', CLIENT_SITE_SCOPE: 'クライアントの勤務地範囲', MULTI_LEVEL_PATTERN: 'マルチ商法の疑いがある表現', MISSING_COMPENSATION: '給与または待遇情報が不足しています' }, employmentTypes: { FULL_TIME: 'フルタイム', PART_TIME: 'パートタイム', CONTRACT: '契約', INTERNSHIP: 'インターン', FREELANCE: 'フリーランス' }, workingTypes: { ONSITE: '出社', REMOTE: 'リモート', HYBRID: 'ハイブリッド' }, experienceLevels: { INTERN: 'インターン', FRESHER: 'Fresher', JUNIOR: 'Junior', MIDDLE: 'Middle', SENIOR: 'Senior', LEAD: 'Lead' }, decisions: { PENDING_REVIEW: '審査待ち', NEEDS_REVIEW: '要確認', SHOULD_REJECT: '却下推奨' }, changeSummary: '変更概要', revisionInfo: '修正情報', revisionId: '修正ID', originalJobId: '元の求人ID', salaryHidden: '非公開', salaryNegotiable: '応相談', notSet: '未設定', notAssessed: '未評価', noData: 'データなし', close: '閉じる',
+  },
+  actions: { view: '詳細を見る', approve: '承認', reject: '却下', unpublish: '非公開', republish: '再公開', close: '求人終了', cancel: 'キャンセル', confirmTitle: '操作の確認', confirmDescription: '「{{title}}」を{{action}}しますか？', reasonTitle: '理由を入力', reasonDescription: '「{{title}}」を{{action}}する理由を入力してください。', reasonLabel: '理由', reasonPlaceholder: '採用担当者と監査履歴のため、明確な理由を入力してください...', reasonRequired: '理由は必須です。' },
+  feedback: { loading: '求人データを読み込み中', errorTitle: '求人を読み込めません', errorDescription: '管理者用求人データを取得できませんでした。', retry: '再試行', emptyTitle: '該当する求人はありません', emptyDescription: 'キーワードまたはフィルターを変更してください。', countLabel: '{{count}}件の求人', actionSuccess: '求人を更新しました。', actionError: '操作を完了できませんでした。' },
+  pagination: { prev: '前のページ', next: '次のページ', pageOf: '{{current}} / {{total}} ページ' },
+}
+
+Object.assign(adminJobs.detail.ruleLabels, {
+  RISK_KEYWORD_EASY_MONEY: '楽に高収入を得られるという表現', RISK_KEYWORD_UNREALISTIC_PROMISE: '未経験でも高収入という非現実的な表現', RISK_KEYWORD_UNREALISTIC_REMOTE_INCOME: '非現実的な在宅収入の約束', RISK_KEYWORD_INCOME_GUARANTEE: '根拠のない収入保証', RISK_KEYWORD_UNLIMITED_INCOME: '無制限の収入という表現', RISK_KEYWORD_MASS_HIRING: '大量採用を急かす表現', RISK_KEYWORD_NO_INTERVIEW: '面接不要という表現', RISK_KEYWORD_INSTANT_HIRING: '即日採用の約束', RISK_KEYWORD_UPFRONT_FEE: '前払い料金の要求', RISK_KEYWORD_APPLICATION_FEE: '応募手数料', RISK_KEYWORD_TRAINING_FEE: '研修費用', RISK_KEYWORD_UNIFORM_FEE: '制服代', RISK_KEYWORD_ADVANCE_TRANSFER: '事前振込の要求', RISK_KEYWORD_DEPOSIT: '保証金の要求', RISK_KEYWORD_TOP_UP: '入金の要求', RISK_KEYWORD_BUY_ACCOUNT: 'アカウント購入の要求', RISK_KEYWORD_TELEGRAM_CONTACT: 'Telegramでの連絡要求', RISK_KEYWORD_PRIVATE_ZALO: '個人Zaloでの連絡要求', RISK_KEYWORD_PRIVATE_INBOX: '個別メッセージでの連絡要求', RISK_KEYWORD_OFF_PLATFORM_CONTACT: 'プラットフォーム外での連絡要求', RISK_KEYWORD_EXTERNAL_LINK: '外部リンクへの誘導', RISK_SENSITIVE_DOCUMENT_REQUEST: '機微な本人確認書類の要求', RISK_SENSITIVE_HOUSEHOLD_DOCUMENT: '戸籍・住民登録書類の要求', RISK_BANK_CARD_REQUEST: '銀行カード画像の要求', RISK_BANK_INFO_REQUEST: '銀行口座情報の要求', MISSING_LOCATION: '勤務地が未記載または不明確', ABNORMAL_SALARY_BY_EXPERIENCE_LEVEL: '経験年数に対して給与が異常に高い', RISK_SHORTENED_URL: '短縮URLを含む', TOO_MANY_EXTERNAL_LINKS: '外部リンクが多すぎる', RISK_EXTERNAL_FORM: '外部フォームへのリンク', TITLE_ALL_CAPS: 'タイトルがすべて大文字', EXCESSIVE_SYMBOLS_IN_TITLE: 'タイトルに記号が多すぎる', KEYWORD_STUFFING: 'キーワードの過剰な繰り返し', REMOTE_JOB_WITH_UPFRONT_PAYMENT: 'リモート求人で前払いを要求', INTERNSHIP_UNREALISTIC_NO_EXPERIENCE_SALARY: '未経験で高収入をうたうインターン求人', LOW_COMPANY_TRUST_LEVEL: '企業の信頼レベルが低い',
+})
+
+Object.assign(adminJobs.detail.ruleLabels, { NEW_JOB_STANDARD_REVIEW: '新規求人の標準審査が必要です' })
+Object.assign(adminJobs.detail.ruleLabels, { AMBIGUOUS_WORKING_HOURS: '勤務時間が不明確です' })
+Object.assign(adminJobs.detail.ruleLabels, { SENSITIVE_DATA_SCOPE: '機微なデータ要求の範囲が不明確です', AMBIGUOUS_FINANCIAL_BENEFIT: '金銭的な待遇が不明確です' })
+Object.assign(adminJobs.detail.reasonLabels, { 'New job from low trust company': '信頼レベルが低い企業からの新規求人' })

@@ -2,11 +2,277 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/brand/nexhire-icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nexhire</title>
+    <style>
+      :root {
+        --boot-loader-accent: #1d82ff;
+        --boot-loader-accent-strong: #006bff;
+        --boot-loader-backdrop: rgba(17, 24, 39, 0.42);
+        --boot-loader-briefcase: #0ea5e9;
+        --boot-loader-cv: #2563eb;
+        --boot-loader-ring: rgba(37, 99, 235, 0.18);
+        --boot-loader-surface-muted: rgba(243, 248, 255, 0.92);
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .boot-loader-overlay {
+        align-items: center;
+        background: color-mix(in srgb, var(--boot-loader-backdrop) 78%, transparent);
+        color: #ffffff;
+        display: grid;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        inset: 0;
+        justify-items: center;
+        min-height: 100vh;
+        padding: clamp(1rem, 4vw, 2rem);
+        position: fixed;
+        backdrop-filter: blur(12px);
+      }
+
+      .boot-loader-card {
+        align-items: center;
+        display: grid;
+        gap: 0.9rem;
+        justify-items: center;
+        max-width: min(18rem, 100%);
+        text-align: center;
+      }
+
+      .boot-loader-card p {
+        font-size: 0.95rem;
+        font-weight: 850;
+        line-height: 1.45;
+        margin: 0;
+        text-shadow: 0 2px 18px rgba(17, 24, 39, 0.48);
+      }
+
+      .boot-loader-orbit {
+        height: 10.25rem;
+        position: relative;
+        width: 10.25rem;
+      }
+
+      .boot-loader-ring {
+        border: 1px solid var(--boot-loader-ring);
+        border-radius: 999px;
+        inset: 0;
+        position: absolute;
+      }
+
+      .boot-loader-ring::before {
+        background: linear-gradient(135deg, var(--boot-loader-accent-strong), var(--boot-loader-accent));
+        border-radius: 999px;
+        box-shadow: 0 0 24px var(--boot-loader-ring);
+        content: "";
+        height: 0.55rem;
+        left: 50%;
+        position: absolute;
+        top: -0.28rem;
+        transform: translateX(-50%);
+        width: 0.55rem;
+      }
+
+      .boot-loader-ring--outer {
+        animation: boot-loader-spin 3.8s linear infinite;
+      }
+
+      .boot-loader-ring--inner {
+        animation: boot-loader-spin 2.8s linear infinite reverse;
+        inset: 1.35rem;
+      }
+
+      .boot-loader-brand {
+        align-items: center;
+        display: grid;
+        gap: 0.35rem;
+        inset: 2.65rem;
+        justify-items: center;
+        position: absolute;
+      }
+
+      .boot-loader-brand img {
+        display: block;
+        filter: drop-shadow(0 12px 22px rgba(0, 107, 255, 0.28));
+        height: 3.25rem;
+        object-fit: contain;
+        width: 3.25rem;
+      }
+
+      .boot-loader-brand span {
+        color: #ffffff;
+        font-size: 0.78rem;
+        font-weight: 950;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        text-shadow: 0 2px 14px rgba(17, 24, 39, 0.5);
+      }
+
+      .boot-loader-particle {
+        align-items: center;
+        background: color-mix(in srgb, var(--boot-loader-accent) 10%, transparent);
+        border: 1px solid color-mix(in srgb, var(--boot-loader-accent) 34%, transparent);
+        border-radius: 14px;
+        box-shadow: 0 12px 24px rgba(17, 24, 39, 0.14);
+        display: inline-flex;
+        height: 2.15rem;
+        justify-content: center;
+        left: 50%;
+        opacity: 0;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 2.15rem;
+      }
+
+      .boot-loader-particle svg {
+        display: block;
+        fill: var(--boot-loader-surface-muted);
+        height: 1.45rem;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2.15;
+        width: 1.45rem;
+      }
+
+      .boot-loader-particle--cv {
+        animation: boot-loader-cv-in 2.8s cubic-bezier(0.2, 0, 0, 1) infinite;
+        animation-delay: var(--boot-loader-delay);
+      }
+
+      .boot-loader-particle--cv svg {
+        stroke: var(--boot-loader-cv);
+      }
+
+      .boot-loader-particle--briefcase {
+        animation: boot-loader-briefcase-out 2.8s cubic-bezier(0.2, 0, 0, 1) infinite;
+        animation-delay: var(--boot-loader-delay);
+      }
+
+      .boot-loader-particle--briefcase svg {
+        stroke: var(--boot-loader-briefcase);
+      }
+
+      @keyframes boot-loader-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes boot-loader-cv-in {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(var(--boot-loader-x), var(--boot-loader-y)) scale(0.58);
+        }
+        36% {
+          opacity: 1;
+        }
+        74% {
+          opacity: 0.95;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.72);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.42);
+        }
+      }
+
+      @keyframes boot-loader-briefcase-out {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(0, 0) scale(0.42);
+        }
+        24% {
+          opacity: 1;
+        }
+        78% {
+          opacity: 0.9;
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) translate(var(--boot-loader-x), var(--boot-loader-y)) scale(0.72);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .boot-loader-orbit {
+          height: 8.75rem;
+          width: 8.75rem;
+        }
+
+        .boot-loader-ring--inner {
+          inset: 1.1rem;
+        }
+
+        .boot-loader-brand {
+          inset: 2.2rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <section
+        aria-busy="true"
+        aria-label="Đang khởi động NexHire"
+        aria-live="polite"
+        class="boot-loader-overlay"
+        role="status"
+      >
+        <div class="boot-loader-card">
+          <div aria-hidden="true" class="boot-loader-orbit">
+            <span class="boot-loader-ring boot-loader-ring--outer"></span>
+            <span class="boot-loader-ring boot-loader-ring--inner"></span>
+
+            <span class="boot-loader-particle boot-loader-particle--cv" style="--boot-loader-delay: 0ms; --boot-loader-x: -4.9rem; --boot-loader-y: -3.7rem;">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 32 38">
+                <path d="M7 2.5h12.2L26 9.4v26.1H7z"></path>
+                <path d="M19 2.5v7h7"></path>
+                <path d="M11 17h10M11 22h8M11 27h11"></path>
+              </svg>
+            </span>
+            <span class="boot-loader-particle boot-loader-particle--cv" style="--boot-loader-delay: 420ms; --boot-loader-x: 4.5rem; --boot-loader-y: -3.2rem;">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 32 38">
+                <path d="M7 2.5h12.2L26 9.4v26.1H7z"></path>
+                <path d="M19 2.5v7h7"></path>
+                <path d="M11 17h10M11 22h8M11 27h11"></path>
+              </svg>
+            </span>
+            <span class="boot-loader-particle boot-loader-particle--cv" style="--boot-loader-delay: 840ms; --boot-loader-x: -5.1rem; --boot-loader-y: 2.2rem;">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 32 38">
+                <path d="M7 2.5h12.2L26 9.4v26.1H7z"></path>
+                <path d="M19 2.5v7h7"></path>
+                <path d="M11 17h10M11 22h8M11 27h11"></path>
+              </svg>
+            </span>
+            <span class="boot-loader-particle boot-loader-particle--briefcase" style="--boot-loader-delay: 260ms; --boot-loader-x: -5.2rem; --boot-loader-y: 4.2rem;">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 38 34">
+                <path d="M4.5 10.5h29v19h-29z"></path>
+                <path d="M13.5 10.5V7.2c0-1.5 1.2-2.7 2.7-2.7h5.6c1.5 0 2.7 1.2 2.7 2.7v3.3"></path>
+                <path d="M4.5 17.5h29M17 18.5h4"></path>
+              </svg>
+            </span>
+            <span class="boot-loader-particle boot-loader-particle--briefcase" style="--boot-loader-delay: 940ms; --boot-loader-x: 5.4rem; --boot-loader-y: 3.8rem;">
+              <svg aria-hidden="true" focusable="false" viewBox="0 0 38 34">
+                <path d="M4.5 10.5h29v19h-29z"></path>
+                <path d="M13.5 10.5V7.2c0-1.5 1.2-2.7 2.7-2.7h5.6c1.5 0 2.7 1.2 2.7 2.7v3.3"></path>
+                <path d="M4.5 17.5h29M17 18.5h4"></path>
+              </svg>
+            </span>
+
+            <span class="boot-loader-brand">
+              <img alt="" src="/brand/nexhire-icon.png" />
+              <span>NexHire</span>
+            </span>
+          </div>
+          <p>Đang khởi động NexHire...</p>
+        </div>
+      </section>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

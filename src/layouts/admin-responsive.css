@@ -1,0 +1,696 @@
+.admin-shell,
+.admin-main,
+.admin-main__content,
+.admin-main__content > * {
+  min-width: 0;
+}
+
+.admin-main__content {
+  width: 100%;
+  overflow-x: clip;
+}
+
+.admin-dashboard-page,
+.admin-users-page,
+.admin-companies-page,
+.admin-company-detail-page,
+.admin-jobs-page,
+.admin-cv-templates-page,
+.admin-settings-page,
+.admin-user-detail-page,
+.admin-ai-page {
+  box-sizing: border-box;
+  width: min(100%, 1440px);
+}
+
+.admin-dashboard-page {
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 1.75rem);
+}
+
+.admin-topbar-search-wrap,
+.admin-topbar__search,
+.admin-topbar__title {
+  min-width: 0;
+}
+
+.admin-topbar__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-topbar__actions {
+  min-width: max-content;
+}
+
+.admin-sidebar__user > div {
+  min-width: 0;
+}
+
+.admin-sidebar__user-name,
+.admin-sidebar__user-email,
+.admin-sidebar__user-role {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-sidebar__user-email {
+  word-break: normal;
+}
+
+.admin-users-filters > *,
+.admin-companies-filters > *,
+.admin-jobs-filters > *,
+.admin-ai-log-filters > *,
+.admin-ai-config__workspace > *,
+.admin-cv-templates-toolbar > *,
+.admin-settings-grid > *,
+.admin-company-detail-grid > *,
+.admin-user-detail-sections > * {
+  min-width: 0;
+}
+
+.admin-users-results,
+.admin-company-table-wrap,
+.admin-jobs-table-wrap,
+.admin-ai-summary-table-wrap,
+.admin-ai-logs-panel,
+.admin-cv-templates-table-wrap,
+.admin-cv-templates-table-scroll {
+  max-width: 100%;
+}
+
+.admin-users-table-wrap,
+.admin-company-table-wrap,
+.admin-jobs-table-wrap,
+.admin-ai-summary-table-wrap,
+.admin-ai-logs-panel,
+.admin-cv-templates-table-scroll {
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-company-document__name,
+.admin-company-overview__meta dd,
+.admin-user-card__meta dd,
+.admin-company-card__meta dd,
+.admin-job-card,
+.admin-ai-page,
+.admin-settings-page {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 901px) and (max-width: 1279px) {
+  .admin-shell {
+    grid-template-columns: 228px minmax(0, 1fr);
+  }
+
+  .admin-sidebar {
+    padding-inline: 1rem;
+  }
+
+  .admin-topbar {
+    padding-inline: 1rem;
+  }
+
+  .admin-topbar__search,
+  .admin-topbar-search-wrap {
+    max-width: 520px;
+  }
+
+  .admin-users-filters {
+    grid-template-columns:
+      minmax(14rem, 1fr)
+      minmax(9.5rem, 0.48fr)
+      minmax(9.5rem, 0.48fr)
+      auto;
+  }
+
+  .admin-companies-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-companies-filters
+    .admin-company-rejected-filter,
+  .admin-companies-filters
+    .admin-filter__clear {
+    grid-column: auto;
+  }
+
+  .admin-company-detail-grid {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(250px, 290px);
+  }
+
+  .admin-dashboard-focus-grid {
+    grid-template-columns:
+      minmax(0, 1.65fr)
+      minmax(15rem, 0.85fr);
+  }
+
+  .admin-dashboard-donut__body {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard-donut__canvas {
+    height: 10rem;
+  }
+
+  .admin-dashboard-donut__legend {
+    padding-inline: 0.35rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .admin-dashboard-stats,
+  .admin-users-stats,
+  .admin-jobs-stats,
+  .admin-cv-templates-stats {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-dashboard-focus-grid,
+  .admin-dashboard-loading-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard-distributions {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-dashboard-distributions
+    > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .admin-company-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-detail-aside {
+    position: static;
+    top: auto;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-shell {
+    display: block;
+    min-width: 0;
+  }
+
+  .admin-shell:has(.admin-sidebar.is-open)::after {
+    position: fixed;
+    z-index: 45;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.34);
+    content: '';
+  }
+
+  .admin-sidebar {
+    inset: 0 auto 0 0;
+    width: min(
+      320px,
+      calc(100vw - 3.25rem)
+    );
+    max-width: 88vw;
+    padding: 1rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    visibility: hidden;
+  }
+
+  .admin-sidebar.is-open {
+    visibility: visible;
+  }
+
+  .admin-sidebar__inner {
+    min-height: max-content;
+  }
+
+  .admin-main {
+    width: 100%;
+  }
+
+  .admin-topbar {
+    min-height: 64px;
+    padding:
+      0.65rem
+      clamp(0.75rem, 2.5vw, 1rem);
+  }
+
+  .admin-topbar__title {
+    flex: 0 1 auto;
+    max-width: min(32vw, 14rem);
+  }
+
+  .admin-topbar-search-wrap {
+    flex: 1 1 14rem;
+  }
+
+  .admin-topbar__actions {
+    margin-left: auto;
+  }
+
+  .admin-dashboard-page,
+  .admin-users-page,
+  .admin-companies-page,
+  .admin-company-detail-page,
+  .admin-jobs-page,
+  .admin-cv-templates-page,
+  .admin-settings-page,
+  .admin-user-detail-page,
+  .admin-ai-page {
+    max-width: none;
+  }
+
+  .admin-users-table-wrap,
+  .admin-company-table-wrap,
+  .admin-jobs-table-wrap {
+    display: none;
+  }
+
+  .admin-users-mobile-list,
+  .admin-company-mobile-list,
+  .admin-jobs-mobile-list {
+    display: grid;
+  }
+
+  .admin-users-filters,
+  .admin-companies-filters,
+  .admin-jobs-filters {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-users-filters
+    .admin-filter--query,
+  .admin-companies-filters
+    .admin-filter--query,
+  .admin-jobs-filters
+    .admin-filter--query {
+    grid-column: 1 / -1;
+  }
+
+  .admin-companies-filters
+    .admin-company-rejected-filter,
+  .admin-companies-filters
+    .admin-filter__clear {
+    grid-column: auto;
+  }
+
+  .admin-user-detail-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-detail-hero__facts {
+    width: 100%;
+  }
+
+  .admin-user-detail-sections {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-detail-section--timeline
+    .admin-user-detail-section__list {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-detail-section--timeline
+    .admin-user-detail-item:nth-child(2) {
+    border-top:
+      1px solid
+      var(--color-border-subtle);
+  }
+
+  .admin-user-detail-section--timeline
+    .admin-user-detail-item:nth-child(even) {
+    border-left: 0;
+  }
+
+  .admin-company-detail-aside {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-ai-summary-table-wrap,
+  .admin-ai-logs-panel {
+    overflow-x: auto;
+  }
+
+  .admin-ai-summary-table,
+  .admin-ai-logs-table {
+    min-width: 760px;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-topbar-search-wrap {
+    display: none;
+  }
+
+  .admin-topbar__title {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .admin-dashboard-distributions {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard-distributions
+    > :last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+
+  .admin-dashboard-growth__header,
+  .admin-dashboard-page__header,
+  .admin-ai-hero,
+  .admin-cv-templates-page__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-dashboard-growth__actions {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .admin-dashboard-growth__metric {
+    justify-items: start;
+  }
+
+  .admin-dashboard-periods {
+    width: 100%;
+  }
+
+  .admin-dashboard-periods button {
+    flex: 1;
+  }
+
+  .admin-dashboard-donut__body {
+    grid-template-columns:
+      minmax(7rem, 0.85fr)
+      minmax(8rem, 1.15fr);
+  }
+
+  .admin-users-filters,
+  .admin-companies-filters,
+  .admin-jobs-filters,
+  .admin-ai-log-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-users-filters
+    .admin-filter--query,
+  .admin-companies-filters
+    .admin-filter--query,
+  .admin-jobs-filters
+    .admin-filter--query,
+  .admin-companies-filters
+    .admin-company-rejected-filter,
+  .admin-companies-filters
+    .admin-filter__clear,
+  .admin-ai-log-filters__cv {
+    grid-column: auto;
+  }
+
+  .admin-filter__clear,
+  .admin-companies-filters
+    .admin-filter__clear {
+    width: 100%;
+  }
+
+  .admin-company-detail-aside {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-panel__header {
+    flex-wrap: wrap;
+  }
+
+  .admin-company-card__meta,
+  .admin-company-overview__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-overview__wide {
+    grid-column: auto;
+  }
+
+  .admin-company-card__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-document {
+    grid-template-columns:
+      34px
+      minmax(0, 1fr);
+  }
+
+  .admin-company-document__download {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .admin-user-detail-hero__facts {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-user-detail-hero__facts
+    div:nth-child(odd) {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .admin-pagination {
+    gap: 0.3rem;
+  }
+
+  .admin-pagination__list {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .admin-pagination__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-pagination__step,
+  .admin-pagination__page {
+    min-width: 36px;
+    height: 36px;
+    padding-inline: 0.5rem;
+  }
+
+  .admin-ai-summary-table,
+  .admin-ai-logs-table {
+    min-width: 680px;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-dashboard-page,
+  .admin-users-page,
+  .admin-companies-page,
+  .admin-company-detail-page,
+  .admin-jobs-page,
+  .admin-cv-templates-page,
+  .admin-settings-page,
+  .admin-user-detail-page,
+  .admin-ai-page {
+    padding-inline: 0.85rem;
+  }
+
+  .admin-topbar {
+    gap: 0.5rem;
+    padding-inline: 0.65rem;
+  }
+
+  .admin-topbar__toggle,
+  .admin-topbar__icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .admin-topbar__actions {
+    gap: 0.35rem;
+  }
+
+  .admin-topbar__title {
+    font-size: 0.95rem;
+  }
+
+  .admin-dashboard-stats,
+  .admin-users-stats,
+  .admin-jobs-stats,
+  .admin-cv-templates-stats,
+  .admin-ai-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard-refresh,
+  .admin-ai-refresh-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-dashboard-donut__body {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard-donut__canvas {
+    height: 10.5rem;
+  }
+
+  .admin-dashboard-queue {
+    align-items: flex-start;
+  }
+
+  .admin-dashboard-queue__action {
+    white-space: nowrap;
+  }
+
+  .admin-user-status-overview__items {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-card,
+  .admin-company-card,
+  .admin-users-results,
+  .admin-users-filters,
+  .admin-company-panel,
+  .admin-ai-panel {
+    border-radius: 12px;
+  }
+
+  .admin-user-card__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-card__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-card__actions > * {
+    width: 100%;
+  }
+
+  .admin-user-detail-hero__identity {
+    align-items: flex-start;
+  }
+
+  .admin-user-detail-hero__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-detail-hero__facts div,
+  .admin-user-detail-hero__facts
+    div:nth-child(odd) {
+    border-left: 0;
+    border-top:
+      1px solid
+      var(--color-border-subtle);
+    padding: 0.65rem 0 0;
+  }
+
+  .admin-user-detail-hero__facts
+    div:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .admin-company-overview__head {
+    grid-template-columns:
+      56px
+      minmax(0, 1fr);
+  }
+
+  .admin-company-overview__logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 13px;
+  }
+
+  .admin-company-quick-stats__list div {
+    align-items: flex-start;
+  }
+
+  .admin-pagination {
+    justify-content: space-between;
+  }
+
+  .admin-pagination__list {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: center;
+  }
+
+  .admin-ai-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .admin-ai-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-ai-tabs button {
+    flex: 1 0 max-content;
+  }
+
+  .admin-ai-config footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 390px) {
+  .admin-sidebar {
+    width: calc(100vw - 2.25rem);
+    max-width: none;
+  }
+
+  .admin-topbar__title {
+    font-size: 0.9rem;
+  }
+
+  .admin-topbar__actions
+    .language-switch {
+    display: none;
+  }
+
+  .admin-dashboard-periods button {
+    padding-inline: 0.45rem;
+  }
+
+  .admin-company-document {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-company-document__icon,
+  .admin-company-document__download {
+    grid-column: auto;
+  }
+
+  .admin-company-document__download {
+    justify-self: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-company-action,
+  .admin-dashboard-queue,
+  .admin-user-status-item {
+    transition-duration: 0.01ms !important;
+  }
+}
