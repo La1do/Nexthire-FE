@@ -2,12 +2,14 @@
 
 .career-guide-detail-page {
   gap: var(--space-xl);
+  width: 100%;
 }
 
 .career-guide-detail-header {
   display: grid;
   gap: var(--space-sm);
-  max-width: 70ch;
+  max-width: none;
+  width: 100%;
 }
 
 .career-guide-detail-header h1 {
@@ -32,7 +34,8 @@
 .career-guide-detail-body {
   display: grid;
   gap: var(--space-xl);
-  max-width: 70ch;
+  max-width: none;
+  width: 100%;
 }
 
 .career-guide-detail-section {
@@ -80,6 +83,7 @@
   border-block-start: var(--rule-home-hair) solid var(--color-home-rule-strong);
   display: grid;
   gap: var(--space-sm);
+  width: 100%;
   padding-block-start: var(--space-xl);
 }
 
