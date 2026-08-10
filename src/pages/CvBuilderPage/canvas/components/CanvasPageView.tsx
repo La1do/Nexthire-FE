@@ -79,6 +79,7 @@ export const CanvasPageView = ({
             element={element}
             selected={isActive && selectedIds.includes(element.id)}
             editing={editingId === element.id}
+            autoGrowText
             onStartEdit={onStartEdit}
             onStopEdit={onStopEdit}
           />

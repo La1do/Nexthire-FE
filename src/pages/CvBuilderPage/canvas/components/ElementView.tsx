@@ -14,6 +14,7 @@ interface Props {
   element: CanvasElement;
   selected: boolean;
   editing: boolean;
+  autoGrowText?: boolean;
   onStartEdit: (id: string) => void;
   onStopEdit: () => void;
 }
@@ -21,10 +22,12 @@ interface Props {
 const TextContent = ({
   element,
   editing,
+  autoGrow,
   onStopEdit,
 }: {
   element: TextElement;
   editing: boolean;
+  autoGrow: boolean;
   onStopEdit: () => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -44,15 +47,16 @@ const TextContent = ({
   }, [editing]);
 
   useLayoutEffect(() => {
-    if (!ref.current) {
+    if (!autoGrow || !ref.current) {
       return;
     }
 
-    const nextHeight = Math.ceil(ref.current.scrollHeight) + 2;
-    if (Number.isFinite(nextHeight) && nextHeight > element.height) {
+    const nextHeight = Math.ceil(ref.current.scrollHeight);
+    if (Number.isFinite(nextHeight) && nextHeight > element.height + 1) {
       updateElement(element.id, { height: nextHeight });
     }
   }, [
+    autoGrow,
     element.id,
     element.text,
     element.fontFamily,
@@ -170,6 +174,7 @@ export const ElementView = ({
   element,
   selected,
   editing,
+  autoGrowText = false,
   onStartEdit,
   onStopEdit,
 }: Props) => {
@@ -206,6 +211,7 @@ export const ElementView = ({
         <TextContent
           element={element}
           editing={editing}
+          autoGrow={autoGrowText}
           onStopEdit={onStopEdit}
         />
       )}
