@@ -30,7 +30,50 @@
 }
 
 .career-guide-detail-body {
+  display: grid;
+  gap: var(--space-xl);
   max-width: 70ch;
+}
+
+.career-guide-detail-section {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.career-guide-detail-section + .career-guide-detail-section {
+  border-block-start: var(--rule-home-hair) solid var(--color-home-rule-strong);
+  padding-block-start: var(--space-lg);
+}
+
+.career-guide-detail-section-head {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.career-guide-detail-section h3 {
+  color: var(--color-home-ink);
+  font-family: var(--font-home-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.28;
+  margin: 0;
+}
+
+.career-guide-detail-section-body {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.career-guide-detail-paragraph {
+  color: var(--color-home-ink-2);
+  font-size: var(--text-base);
+  line-height: 1.8;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.career-guide-detail-section .career-guide-inline-figure {
+  margin-block-start: var(--space-xs);
 }
 
 .career-guide-detail-not-found {

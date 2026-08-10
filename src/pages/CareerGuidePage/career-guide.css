@@ -100,23 +100,6 @@ body {
   max-width: 60ch;
 }
 
-.career-guide-back,
-.career-guide-close a {
-  align-items: center;
-  color: var(--color-home-ink);
-  display: inline-flex;
-  font-size: var(--text-sm);
-  font-weight: 700;
-  gap: var(--space-xs);
-  min-height: var(--size-home-touch);
-  text-decoration: underline;
-  text-decoration-color: var(--color-home-rule-strong);
-  text-underline-offset: var(--space-3xs);
-  transition: transform var(--dur-micro) var(--ease-out);
-  white-space: nowrap;
-  width: fit-content;
-}
-
 .career-guide-index {
   border-block-end: var(--rule-home-hair) solid var(--color-home-rule-strong);
   display: grid;
@@ -241,24 +224,17 @@ body {
   max-width: 65ch;
 }
 
-.career-guide-close p {
-  color: var(--color-home-muted);
-  font-size: var(--text-base);
-  line-height: 1.65;
-  max-width: 65ch;
-}
-
 .career-guide-body {
   display: grid;
-  gap: var(--space-md);
-  max-width: 65ch;
+  gap: var(--space-lg);
+  max-width: 70ch;
   padding-block-start: var(--space-xs);
 }
 
 .career-guide-body p {
   color: var(--color-home-ink-2);
   font-size: var(--text-base);
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .career-guide-body h3 {
@@ -322,16 +298,7 @@ body {
   padding-inline-start: var(--space-2xs);
 }
 
-.career-guide-close {
-  align-items: start;
-  display: grid;
-  gap: var(--space-lg);
-  padding-block-end: var(--space-xl);
-}
-
 @media (hover: hover) and (pointer: fine) {
-  .career-guide-back:hover,
-  .career-guide-close a:hover,
   .career-guide-readmore:hover {
     transform: translateY(calc(var(--space-3xs) * -1));
   }
@@ -343,8 +310,8 @@ body {
 
 @media (min-width: 40rem) {
   .career-guide-intro {
-    align-items: end;
-    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    max-width: 72ch;
   }
 
   .career-guide-page h1 {
@@ -362,10 +329,6 @@ body {
   .career-guide-figure-link,
   .career-guide-entry-copy {
     grid-column: auto;
-  }
-
-  .career-guide-close {
-    grid-template-columns: minmax(0, 1fr) auto;
   }
 }
 

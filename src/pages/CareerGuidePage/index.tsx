@@ -19,10 +19,6 @@ export function CareerGuidePage() {
           <h1>{pageContent.title}</h1>
           <p className="career-guide-lede">{pageContent.description}</p>
         </div>
-        <a className="career-guide-back" href={pageContent.backHref}>
-          <span>{content.backAction}</span>
-          <span aria-hidden="true">←</span>
-        </a>
       </header>
 
       <section aria-label={articles.title} className="career-guide-index">
@@ -71,13 +67,6 @@ export function CareerGuidePage() {
         })}
       </section>
 
-      <footer className="career-guide-close">
-        <p>{content.description}</p>
-        <a href={pageContent.backHref}>
-          <span>{pageContent.backLabel}</span>
-          <span aria-hidden="true">→</span>
-        </a>
-      </footer>
     </article>
   )
 }

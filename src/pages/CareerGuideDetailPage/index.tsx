@@ -1,9 +1,43 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslations } from '../../i18n'
 import { articleHeroMedia, articleInlineMedia } from '../CareerGuidePage/articleMedia'
 import '../CareerGuidePage/career-guide.css'
 import './career-guide-detail.css'
+
+type GuideBlock =
+  | { type: 'paragraph'; text: string }
+  | { type: 'heading'; text: string }
+  | { type: 'quote'; text: string; attribution: string }
+  | { type: 'list'; items: string[] }
+
+type GuideSection = {
+  heading?: string
+  blocks: Array<Exclude<GuideBlock, { type: 'heading' }>>
+}
+
+const groupGuideBlocks = (blocks: GuideBlock[]): GuideSection[] => {
+  const sections: GuideSection[] = []
+  let current: GuideSection = { blocks: [] }
+
+  for (const block of blocks) {
+    if (block.type === 'heading') {
+      if (current.blocks.length || current.heading) {
+        sections.push(current)
+      }
+      current = { heading: block.text, blocks: [] }
+      continue
+    }
+
+    current.blocks.push(block)
+  }
+
+  if (current.blocks.length || current.heading) {
+    sections.push(current)
+  }
+
+  return sections
+}
 
 export function CareerGuideDetailPage() {
   const { pages } = useTranslations()
@@ -14,6 +48,10 @@ export function CareerGuideDetailPage() {
 
   const index = articles.items.findIndex((item) => item.slug === slug)
   const article = index >= 0 ? articles.items[index] : undefined
+  const sections = useMemo(
+    () => (article ? groupGuideBlocks(article.content as GuideBlock[]) : []),
+    [article],
+  )
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -26,10 +64,6 @@ export function CareerGuideDetailPage() {
           <span>404</span>
           <h1>{pageContent.title}</h1>
           <p>{pageContent.description}</p>
-          <a className="career-guide-back" href="/career-guide">
-            <span aria-hidden="true">←</span>
-            <span>{content.backAction}</span>
-          </a>
         </section>
       </article>
     )
@@ -41,11 +75,6 @@ export function CareerGuideDetailPage() {
 
   return (
     <article className="career-guide-page career-guide-detail-page">
-      <a className="career-guide-back" href="/career-guide">
-        <span aria-hidden="true">←</span>
-        <span>{articles.title}</span>
-      </a>
-
       <header className="career-guide-detail-header">
         <p className="career-guide-category">{article.category}</p>
         <h1>{article.title}</h1>
@@ -66,61 +95,70 @@ export function CareerGuideDetailPage() {
       </figure>
 
       <div className="career-guide-body career-guide-detail-body">
-        {article.content.map((block, blockIndex) => {
-          if (block.type === 'paragraph') {
-            return <p key={blockIndex}>{block.text}</p>
-          }
-
-          if (block.type === 'heading') {
-            const shouldRenderInlineImage = !inlineImageRendered
+        {sections.map((section, sectionIndex) => {
+          const shouldRenderInlineImage = Boolean(section.heading) && !inlineImageRendered
+          if (shouldRenderInlineImage) {
             inlineImageRendered = true
-
-            return (
-              <div key={blockIndex}>
-                <h3>{block.text}</h3>
-                {shouldRenderInlineImage && (
-                  <figure className="career-guide-inline-figure">
-                    <img
-                      alt=""
-                      aria-hidden="true"
-                      decoding="async"
-                      height={inlineMedia.height}
-                      loading="lazy"
-                      src={inlineMedia.src}
-                      width={inlineMedia.width}
-                    />
-                  </figure>
-                )}
-              </div>
-            )
-          }
-
-          if (block.type === 'quote') {
-            return (
-              <blockquote className="career-guide-quote" key={blockIndex}>
-                <p>{block.text}</p>
-                <cite>{block.attribution}</cite>
-              </blockquote>
-            )
           }
 
           return (
-            <ul className="career-guide-list" key={blockIndex}>
-              {block.items.map((item, itemIndex) => (
-                <li key={itemIndex}>{item}</li>
-              ))}
-            </ul>
+            <section
+              className={`career-guide-detail-section ${
+                section.heading ? '' : 'career-guide-detail-section--intro'
+              }`}
+              key={sectionIndex}
+            >
+              {section.heading && (
+                <div className="career-guide-detail-section-head">
+                  <h3>{section.heading}</h3>
+                  {shouldRenderInlineImage && (
+                    <figure className="career-guide-inline-figure">
+                      <img
+                        alt=""
+                        aria-hidden="true"
+                        decoding="async"
+                        height={inlineMedia.height}
+                        loading="lazy"
+                        src={inlineMedia.src}
+                        width={inlineMedia.width}
+                      />
+                    </figure>
+                  )}
+                </div>
+              )}
+
+              <div className="career-guide-detail-section-body">
+                {section.blocks.map((block, blockIndex) => {
+                  if (block.type === 'paragraph') {
+                    return (
+                      <p className="career-guide-detail-paragraph" key={blockIndex}>
+                        {block.text}
+                      </p>
+                    )
+                  }
+
+                  if (block.type === 'quote') {
+                    return (
+                      <blockquote className="career-guide-quote" key={blockIndex}>
+                        <p>{block.text}</p>
+                        <cite>{block.attribution}</cite>
+                      </blockquote>
+                    )
+                  }
+
+                  return (
+                    <ul className="career-guide-list" key={blockIndex}>
+                      {block.items.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
+                  )
+                })}
+              </div>
+            </section>
           )
         })}
       </div>
-
-      <footer className="career-guide-close">
-        <p>{content.description}</p>
-        <a href="/career-guide">
-          <span>{pageContent.backLabel}</span>
-          <span aria-hidden="true">→</span>
-        </a>
-      </footer>
     </article>
   )
 }
