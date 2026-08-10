@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   PanelLeftClose,
@@ -23,6 +24,7 @@ import type { CanvasDocument } from './canvas/canvas.types';
 
 type RightTab = 'properties' | 'layers';
 type LeftTab = 'insert' | 'templates' | 'mine';
+type MobilePanel = 'left' | 'right' | null;
 
 const PageControls = () => {
   const doc = useCanvasStore((s) => s.document);
@@ -164,6 +166,53 @@ const ResizeHandle = ({
   );
 };
 
+const MobileDrawer = ({
+  open,
+  side,
+  title,
+  onClose,
+  children,
+}: {
+  open: boolean;
+  side: 'left' | 'right';
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+}) => {
+  if (!open) {
+    return null;
+  }
+
+  return (
+    <div className="fixed inset-0 z-40 md:hidden">
+      <button
+        type="button"
+        aria-label="Đóng bảng"
+        className="absolute inset-0 bg-black/40"
+        onClick={onClose}
+      />
+      <aside
+        className={`absolute top-0 flex h-full w-[min(88vw,360px)] flex-col bg-[#f7f6fb] shadow-2xl ${
+          side === 'left' ? 'left-0' : 'right-0'
+        }`}
+      >
+        <div className="flex shrink-0 items-center justify-between border-b border-[#d9d9e3] bg-white px-4 py-3">
+          <p className="text-sm font-bold text-[#111827]">{title}</p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-[#e5e7eb] text-[#6b7280]"
+            aria-label="Đóng bảng"
+          >
+            ×
+          </button>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
+      </aside>
+    </div>
+  );
+};
+
 export function CvBuilderPage() {
   useCanvasKeyboard();
   const { locale } = useLocale();
@@ -176,6 +225,7 @@ export function CvBuilderPage() {
   const [rightOpen, setRightOpen] = useState(true);
   const [leftW, setLeftW] = useState(280);
   const [rightW, setRightW] = useState(320);
+  const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
 
   useEffect(() => {
     if (!templateId) {
@@ -223,8 +273,27 @@ export function CvBuilderPage() {
     'mx-1 flex h-8 w-8 shrink-0 items-center justify-center self-center rounded-md border border-[#e5e7eb] bg-white text-[#6b7280] transition-colors hover:border-[#f23b94] hover:bg-[#fef3f8] hover:text-[#f23b94]';
 
   return (
-    <div className="flex h-screen min-h-0 flex-col overflow-hidden bg-[#f7f6fb]">
+    <div className="flex min-h-[100dvh] flex-col overflow-hidden bg-[#f7f6fb]">
       <CanvasHeader />
+
+      <div className="border-b border-[#d9d9e3] bg-white px-4 py-2 md:hidden">
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setMobilePanel('left')}
+            className="rounded-md border border-[#e5e7eb] bg-white px-3 py-2 text-sm font-medium text-[#111827]"
+          >
+            Công cụ
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobilePanel('right')}
+            className="rounded-md border border-[#e5e7eb] bg-white px-3 py-2 text-sm font-medium text-[#111827]"
+          >
+            Thuộc tính
+          </button>
+        </div>
+      </div>
 
       <div className="relative flex min-h-0 flex-1 overflow-hidden">
         {/* Left: chèn nội dung / mẫu */}
@@ -338,6 +407,70 @@ export function CvBuilderPage() {
           />
         )}
       </div>
+
+      <MobileDrawer
+        open={mobilePanel === 'left'}
+        side="left"
+        title="Công cụ"
+        onClose={() => setMobilePanel(null)}
+      >
+        <div className="flex shrink-0 border-b border-[#d9d9e3]">
+          <button
+            type="button"
+            className={tabBtn(leftTab === 'insert')}
+            onClick={() => setLeftTab('insert')}
+          >
+            Chèn
+          </button>
+          <button
+            type="button"
+            className={tabBtn(leftTab === 'templates')}
+            onClick={() => setLeftTab('templates')}
+          >
+            Mẫu
+          </button>
+          <button
+            type="button"
+            className={tabBtn(leftTab === 'mine')}
+            onClick={() => setLeftTab('mine')}
+          >
+            Đã lưu
+          </button>
+        </div>
+        <div className="pt-4">
+          {leftTab === 'insert' && <InsertPanel />}
+          {leftTab === 'templates' && <TemplatesPanel />}
+          {leftTab === 'mine' && <MyCvsPanel />}
+        </div>
+      </MobileDrawer>
+
+      <MobileDrawer
+        open={mobilePanel === 'right'}
+        side="right"
+        title="Thuộc tính"
+        onClose={() => setMobilePanel(null)}
+      >
+        <div className="flex shrink-0 border-b border-[#e5e7eb]">
+          <button
+            type="button"
+            className={tabBtn(rightTab === 'properties')}
+            onClick={() => setRightTab('properties')}
+          >
+            Thuộc tính
+          </button>
+          <button
+            type="button"
+            className={tabBtn(rightTab === 'layers')}
+            onClick={() => setRightTab('layers')}
+          >
+            Lớp
+          </button>
+        </div>
+        <div className="pt-4">
+          {rightTab === 'properties' ? <PropertiesPanel /> : <LayersPanel />}
+          <PageControls />
+        </div>
+      </MobileDrawer>
     </div>
   );
 }

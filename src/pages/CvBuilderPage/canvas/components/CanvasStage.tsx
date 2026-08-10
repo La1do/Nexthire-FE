@@ -123,14 +123,13 @@ export const CanvasStage = () => {
 
   return (
     <div
-      className="custom-scrollbar"
+      className="custom-scrollbar px-4 py-4 md:px-10 md:py-10"
       style={{
         position: 'relative',
         flex: 1,
         minWidth: 0,
         overflow: 'auto',
         background: '#e9e8ef',
-        padding: 40,
       }}
       onMouseDown={(e) => {
         // Click nền → bỏ chọn.
