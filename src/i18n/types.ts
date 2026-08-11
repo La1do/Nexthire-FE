@@ -545,6 +545,9 @@ export type AdminCvTemplatesTranslations = {
     archived: string
   }
   filters: {
+    activeView: string
+    archiveHint: string
+    archiveView: string
     searchLabel: string
     searchPlaceholder: string
     statusLabel: string

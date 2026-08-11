@@ -12,6 +12,9 @@ export const adminCvTemplates: AdminCvTemplatesTranslations = {
     archived: 'Archived',
   },
   filters: {
+    activeView: 'Managed templates',
+    archiveHint: 'Archived templates are hidden from public pages and can be restored here.',
+    archiveView: 'Archive',
     searchLabel: 'Search',
     searchPlaceholder: 'Key, name, or description',
     statusLabel: 'Status',

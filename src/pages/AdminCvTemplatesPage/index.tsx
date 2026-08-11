@@ -38,11 +38,13 @@ import { renderCanvasThumbnail } from './ai-import/renderCanvasThumbnail'
 import './admin-cv-templates-page.css'
 
 const PAGE_SIZE = 20
+const ACTIVE_VIEW_PAGE_SIZE = 1000
 const LOCALES = ['vi', 'en', 'ja'] as const
-const STATUSES: Array<CvTemplatePresetStatusFilter> = ['all', 'DRAFT', 'PUBLISHED', 'ARCHIVED']
+const ACTIVE_STATUSES: Array<CvTemplatePresetStatusFilter> = ['all', 'DRAFT', 'PUBLISHED']
 const CATEGORIES: CvTemplatePresetCategory[] = ['it', 'marketing', 'sales', 'hr']
 
 type LocaleCode = (typeof LOCALES)[number]
+type TemplateView = 'active' | 'archive'
 type TemplateDraft = {
   key: string
   defaultName: string
@@ -283,6 +285,7 @@ export function AdminCvTemplatesPage() {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [status, setStatus] = useState<CvTemplatePresetStatusFilter>('all')
+  const [view, setView] = useState<TemplateView>('active')
   const [category, setCategory] = useState<CvTemplatePresetCategory | 'all'>('all')
   const [page, setPage] = useState(1)
   const [isEditorOpen, setEditorOpen] = useState(false)
@@ -313,13 +316,16 @@ export function AdminCvTemplatesPage() {
 
   useEffect(() => {
     setPage(1)
-  }, [debouncedQuery, status, category])
+  }, [debouncedQuery, status, category, view])
+
+  const isActiveAllView = view === 'active' && status === 'all'
+  const listLimit = isActiveAllView ? ACTIVE_VIEW_PAGE_SIZE : PAGE_SIZE
 
   const listQuery = useAdminCvTemplatePresets({
-    page,
-    limit: PAGE_SIZE,
+    page: isActiveAllView ? 1 : page,
+    limit: listLimit,
     search: debouncedQuery || undefined,
-    status: status === 'all' ? undefined : status,
+    status: view === 'archive' ? 'ARCHIVED' : status === 'all' ? undefined : status,
     category: category === 'all' ? undefined : category,
     includeCanvas: false,
   })
@@ -332,7 +338,9 @@ export function AdminCvTemplatesPage() {
   )
 
   const rows = useMemo(() => {
-    const items = listQuery.data?.data ?? []
+    const items = (listQuery.data?.data ?? []).filter((preset) =>
+      view === 'archive' ? preset.status === 'ARCHIVED' : preset.status !== 'ARCHIVED',
+    )
     const statusRank: Record<CvTemplatePresetStatus, number> = {
       DRAFT: 0,
       PUBLISHED: 1,
@@ -343,9 +351,9 @@ export function AdminCvTemplatesPage() {
       if (rankDiff !== 0) return rankDiff
       return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
     })
-  }, [listQuery.data])
-  const total = listQuery.data?.meta.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  }, [listQuery.data, view])
+  const total = isActiveAllView ? rows.length : listQuery.data?.meta.total ?? 0
+  const totalPages = isActiveAllView ? 1 : Math.max(1, Math.ceil(total / PAGE_SIZE))
   const hasActiveFilters = Boolean(query.trim() || status !== 'all' || category !== 'all')
   const canvasThumbnailUrl = useMemo(
     () => getCanvasThumbnailUrlFromText(draft.canvasText, draft.defaultName.trim() || draft.key || 'Untitled template'),
@@ -570,6 +578,33 @@ export function AdminCvTemplatesPage() {
         <AdminStatCard icon={<Archive size={18} />} label={content.stats.archived} tone="amber" value={stats.archived} />
       </section>
 
+      <div className="admin-cv-template-view-tabs" role="tablist">
+        <button
+          aria-selected={view === 'active'}
+          className={view === 'active' ? 'is-active' : undefined}
+          onClick={() => {
+            setView('active')
+            setStatus('all')
+          }}
+          role="tab"
+          type="button"
+        >
+          {content.filters.activeView}
+        </button>
+        <button
+          aria-selected={view === 'archive'}
+          className={view === 'archive' ? 'is-active' : undefined}
+          onClick={() => {
+            setView('archive')
+            setStatus('all')
+          }}
+          role="tab"
+          type="button"
+        >
+          {content.filters.archiveView}
+        </button>
+      </div>
+
       <section className="admin-cv-templates-toolbar" aria-label={content.filters.searchLabel}>
         <label className="admin-cv-templates-field admin-cv-templates-field--search">
           <span>{content.filters.searchLabel}</span>
@@ -582,16 +617,23 @@ export function AdminCvTemplatesPage() {
             />
           </div>
         </label>
-        <label className="admin-cv-templates-field">
-          <span>{content.filters.statusLabel}</span>
-          <select onChange={(event) => setStatus(event.target.value as CvTemplatePresetStatusFilter)} value={status}>
-            {STATUSES.map((item) => (
-              <option key={item} value={item}>
-                {item === 'all' ? content.filters.statusAll : content.statuses[item.toLowerCase() as 'draft' | 'published' | 'archived']}
-              </option>
-            ))}
-          </select>
-        </label>
+        {view === 'active' ? (
+          <label className="admin-cv-templates-field">
+            <span>{content.filters.statusLabel}</span>
+            <select onChange={(event) => setStatus(event.target.value as CvTemplatePresetStatusFilter)} value={status}>
+              {ACTIVE_STATUSES.map((item) => (
+                <option key={item} value={item}>
+                  {item === 'all' ? content.filters.statusAll : content.statuses[item.toLowerCase() as 'draft' | 'published']}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <div className="admin-cv-templates-archive-note">
+            <strong>{content.filters.archiveView}</strong>
+            <span>{content.filters.archiveHint}</span>
+          </div>
+        )}
         <label className="admin-cv-templates-field">
           <span>{content.filters.categoryLabel}</span>
           <select onChange={(event) => setCategory(event.target.value as CvTemplatePresetCategory | 'all')} value={category}>

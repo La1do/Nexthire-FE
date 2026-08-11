@@ -12,6 +12,9 @@ export const adminCvTemplates: AdminCvTemplatesTranslations = {
     archived: '保管済み',
   },
   filters: {
+    activeView: '管理中',
+    archiveHint: '保管済みテンプレートは公開ページに表示されず、ここから復元できます。',
+    archiveView: 'アーカイブ',
     searchLabel: '検索',
     searchPlaceholder: 'Key、名前、説明',
     statusLabel: '状態',

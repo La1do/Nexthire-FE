@@ -12,6 +12,9 @@ export const adminCvTemplates: AdminCvTemplatesTranslations = {
     archived: 'Đã lưu trữ',
   },
   filters: {
+    activeView: 'Đang quản lý',
+    archiveHint: 'Mẫu đã lưu trữ không hiển thị ở public và có thể khôi phục tại đây.',
+    archiveView: 'Kho lưu trữ',
     searchLabel: 'Tìm kiếm',
     searchPlaceholder: 'Key, tên hoặc mô tả',
     statusLabel: 'Trạng thái',
