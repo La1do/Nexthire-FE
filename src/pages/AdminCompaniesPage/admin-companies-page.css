@@ -368,3 +368,103 @@
     width: 37%;
   }
 }
+
+/* Responsive filters/results hardening: adapt to the real admin content width. */
+.admin-companies-page {
+  container-name: admin-companies-page;
+  container-type: inline-size;
+}
+
+.admin-companies-results {
+  min-width: 0;
+  overflow: visible;
+}
+
+.admin-companies-filters {
+  grid-template-columns: minmax(15rem, 1.5fr) repeat(3, minmax(9rem, 1fr)) minmax(10rem, 1fr) minmax(7.5rem, auto);
+  min-width: 0;
+}
+
+.admin-companies-filters > * {
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-companies-filters .admin-filter--query,
+.admin-companies-filters .admin-filter--select,
+.admin-companies-filters .select-field,
+.admin-companies-filters .select-field__button {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+.admin-companies-filters .admin-company-rejected-filter,
+.admin-companies-filters .admin-filter__clear {
+  grid-column: auto;
+}
+
+/* Keep the desktop result table in the document flow at normal desktop scale. */
+@media (min-width: 901px) {
+  .admin-companies-results .admin-company-table-wrap {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+
+  .admin-companies-results .admin-company-mobile-list {
+    display: none;
+  }
+}
+
+@container admin-companies-page (max-width: 68rem) {
+  .admin-companies-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-companies-filters .admin-filter--query {
+    grid-column: span 2;
+  }
+}
+
+@container admin-companies-page (max-width: 50rem) {
+  .admin-companies-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-companies-filters .admin-filter--query,
+  .admin-companies-filters .admin-filter__clear {
+    grid-column: 1 / -1;
+  }
+
+  .admin-companies-filters .admin-company-rejected-filter {
+    min-height: 2.75rem;
+  }
+}
+
+@container admin-companies-page (max-width: 34rem) {
+  .admin-companies-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-companies-filters .admin-filter--query,
+  .admin-companies-filters .admin-filter__clear {
+    grid-column: auto;
+  }
+
+  .admin-companies-filters .admin-company-rejected-filter {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-companies-results .admin-company-table-wrap {
+    display: none;
+  }
+
+  .admin-companies-results .admin-company-mobile-list {
+    display: grid;
+  }
+}
+

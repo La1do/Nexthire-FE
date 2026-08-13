@@ -60,8 +60,11 @@
 }
 
 .admin-users-results {
+  container-name: admin-users-results;
+  container-type: inline-size;
   display: grid;
   gap: 0.75rem;
+  min-width: 0;
   background: var(--color-surface-card);
   border: 1px solid var(--color-border-subtle);
   border-radius: 14px;
@@ -82,12 +85,15 @@
 }
 
 .admin-users-table-wrap {
+  min-width: 0;
   overflow-x: auto;
 }
 
 .admin-users-table {
   width: 100%;
+  min-width: 62rem;
   border-collapse: collapse;
+  table-layout: auto;
   font-size: 0.9rem;
 }
 
@@ -122,8 +128,8 @@
 }
 
 .admin-users-table__actions-col {
-  width: 9.25rem;
-  min-width: 9.25rem;
+  width: 5.5rem;
+  min-width: 5.5rem;
   white-space: nowrap;
 }
 
@@ -139,6 +145,14 @@
   white-space: nowrap;
 }
 
+.admin-users-table th:nth-child(4),
+.admin-users-table td:nth-child(4),
+.admin-users-table th:nth-child(5),
+.admin-users-table td:nth-child(5) {
+  min-width: 9rem;
+  white-space: nowrap;
+}
+
 .admin-users-table__actions {
   display: inline-flex;
   align-items: center;
@@ -148,8 +162,8 @@
 
 .admin-users-table th:last-child,
 .admin-users-table td:last-child {
-  width: 9rem;
-  min-width: 9rem;
+  width: 5.5rem;
+  min-width: 5.5rem;
   text-align: center;
   white-space: nowrap;
 }
@@ -533,6 +547,16 @@
 .admin-users-empty__description {
   margin: 0;
   font-size: 0.9rem;
+}
+
+@container admin-users-results (max-width: 62rem) {
+  .admin-users-table-wrap {
+    display: none;
+  }
+
+  .admin-users-mobile-list {
+    display: grid;
+  }
 }
 
 @media (min-width: 901px) and (max-width: 1279px) {
