@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  Copy,
   PanelLeftClose,
   PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
+  Trash2,
 } from 'lucide-react';
 import { CanvasHeader } from './canvas/components/CanvasHeader';
 import { InsertPanel } from './canvas/components/InsertPanel';
@@ -37,34 +39,40 @@ const PageControls = () => {
   const idx = doc.pages.findIndex((p) => p.id === activePageId);
 
   return (
-    <div className="border-t border-[#e5e7eb] p-4">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#6b7280]">
-        Trang {idx + 1}/{doc.pages.length}
-      </p>
-      <div className="mb-3">
-        <p className="mb-1 text-sm text-[#111827]">Màu nền</p>
+    <div className="shrink-0 border-t border-[#e5e7eb] p-3">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-[#9ca3af]">
+          Trang {idx + 1}/{doc.pages.length}
+        </span>
+        <div className="flex gap-1">
+          <button
+            type="button"
+            title="Nhân bản trang"
+            aria-label="Nhân bản trang"
+            onClick={() => duplicatePage(activePageId)}
+            className="flex h-7 w-7 items-center justify-center rounded-md border border-[#e5e7eb] bg-white text-[#6b7280] transition-colors hover:border-[#f23b94] hover:bg-[#fef3f8] hover:text-[#f23b94]"
+          >
+            <Copy size={14} />
+          </button>
+          <button
+            type="button"
+            title="Xóa trang"
+            aria-label="Xóa trang"
+            disabled={doc.pages.length <= 1}
+            onClick={() => removePage(activePageId)}
+            className="flex h-7 w-7 items-center justify-center rounded-md border border-[#fecaca] bg-white text-[#dc2626] transition-colors hover:bg-[#fef2f2] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="shrink-0 text-[11px] text-[#6b7280]">Nền</span>
         <ColorField
           value={page?.background ?? '#ffffff'}
           onChange={(v) => setPageBackground(activePageId, v)}
           allowTransparent={false}
         />
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => duplicatePage(activePageId)}
-          className="rounded-md border border-[#e5e7eb] bg-white px-2 py-1.5 text-xs hover:border-[#f23b94]"
-        >
-          ⧉ Nhân bản trang
-        </button>
-        <button
-          type="button"
-          disabled={doc.pages.length <= 1}
-          onClick={() => removePage(activePageId)}
-          className="rounded-md border border-[#fecaca] bg-white px-2 py-1.5 text-xs text-[#dc2626] hover:bg-[#fef2f2] disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          🗑 Xóa trang
-        </button>
       </div>
     </div>
   );
@@ -106,6 +114,7 @@ const CollapsedRail = ({
 
 const MIN_W = 220;
 const MAX_W = 460;
+const DEFAULT_RIGHT_W = 268;
 
 function firstLocalizedText(value: Record<'vi' | 'en' | 'ja', string>, locale: string) {
   return value[locale as 'vi' | 'en' | 'ja'] || value.vi || value.en || value.ja;
@@ -224,7 +233,7 @@ export function CvBuilderPage() {
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
   const [leftW, setLeftW] = useState(280);
-  const [rightW, setRightW] = useState(320);
+  const [rightW, setRightW] = useState(DEFAULT_RIGHT_W);
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
 
   useEffect(() => {
@@ -263,7 +272,7 @@ export function CvBuilderPage() {
   }, [applyTemplate, loadDocument, locale, templateId]);
 
   const tabBtn = (active: boolean) =>
-    `flex-1 border-b-2 px-3 py-2 text-sm font-medium ${
+    `flex-1 whitespace-nowrap border-b-2 px-2 py-2 text-[13px] font-medium ${
       active
         ? 'border-[#f23b94] text-[#f23b94]'
         : 'border-transparent text-[#6b7280] hover:text-[#111827]'

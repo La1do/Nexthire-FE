@@ -68,6 +68,9 @@ interface CanvasState {
   document: CanvasDocument;
   activePageId: string;
   selectedIds: string[];
+  // Element đang ở chế độ chỉnh ảnh trong khung (kéo ảnh thay vì kéo element).
+  // null = kéo luôn di chuyển element.
+  croppingId: string | null;
   zoom: number;
   past: CanvasDocument[];
   future: CanvasDocument[];
@@ -83,6 +86,7 @@ interface CanvasState {
 
   // selection
   select: (ids: string[]) => void;
+  setCroppingId: (id: string | null) => void;
   addToSelection: (id: string) => void;
   toggleSelection: (id: string) => void;
   clearSelection: () => void;
@@ -195,6 +199,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
     document: initialDoc,
     activePageId: initialDoc.pages[0].id,
     selectedIds: [],
+    croppingId: null,
     zoom: 0.85,
     past: [],
     future: [],
@@ -204,7 +209,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
       commitField('docName', (doc) => ({ ...doc, name })),
 
     setActivePage: (pageId) =>
-      set({ activePageId: pageId, selectedIds: [] }),
+      set({ activePageId: pageId, selectedIds: [], croppingId: null }),
 
     setServerId: (id) => {
       persistServerId(id);
@@ -219,6 +224,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
         serverId,
         activePageId: doc.pages[0]?.id ?? '',
         selectedIds: [],
+        croppingId: null,
         past: [],
         future: [],
       });
@@ -233,6 +239,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
         serverId: null,
         activePageId: doc.pages[0].id,
         selectedIds: [],
+        croppingId: null,
         past: [],
         future: [],
       });
@@ -240,8 +247,18 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
 
     select: (ids) => {
       resetCoalesce();
-      set({ selectedIds: ids });
+      set((s) => ({
+        selectedIds: ids,
+        // Đổi selection → thoát chế độ chỉnh ảnh để kéo lại di chuyển element.
+        croppingId:
+          s.croppingId && ids.length === 1 && ids[0] === s.croppingId
+            ? s.croppingId
+            : null,
+      }));
     },
+
+    setCroppingId: (id) => set({ croppingId: id }),
+
     addToSelection: (id) =>
       set((s) =>
         s.selectedIds.includes(id)
@@ -254,7 +271,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           ? s.selectedIds.filter((x) => x !== id)
           : [...s.selectedIds, id],
       })),
-    clearSelection: () => set({ selectedIds: [] }),
+    clearSelection: () => set({ selectedIds: [], croppingId: null }),
 
     beginHistory: () =>
       set((state) => ({

@@ -41,6 +41,32 @@ export const useCanvasKeyboard = () => {
 
       if (editing) return;
 
+      // Esc: thoát chế độ chỉnh ảnh trong khung, sau đó mới bỏ chọn.
+      if (e.key === 'Escape') {
+        if (store.croppingId) {
+          e.preventDefault();
+          store.setCroppingId(null);
+          return;
+        }
+        if (selectedIds.length > 0) {
+          e.preventDefault();
+          store.clearSelection();
+        }
+        return;
+      }
+
+      // Chọn toàn bộ element đang hiển thị trên trang active.
+      if (mod && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        const page = store.document.pages.find((p) => p.id === store.activePageId);
+        const ids =
+          page?.elements
+            .filter((el) => !el.hidden && !el.locked)
+            .map((el) => el.id) ?? [];
+        store.select(ids);
+        return;
+      }
+
       // Xóa
       if (
         (e.key === 'Delete' || e.key === 'Backspace') &&

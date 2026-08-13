@@ -38,7 +38,7 @@ import { renderCanvasThumbnail } from './ai-import/renderCanvasThumbnail'
 import './admin-cv-templates-page.css'
 
 const PAGE_SIZE = 20
-const ACTIVE_VIEW_PAGE_SIZE = 1000
+const ACTIVE_VIEW_PAGE_SIZE = 100
 const LOCALES = ['vi', 'en', 'ja'] as const
 const ACTIVE_STATUSES: Array<CvTemplatePresetStatusFilter> = ['all', 'DRAFT', 'PUBLISHED']
 const CATEGORIES: CvTemplatePresetCategory[] = ['it', 'marketing', 'sales', 'hr']

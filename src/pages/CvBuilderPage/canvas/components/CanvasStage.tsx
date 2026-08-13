@@ -25,6 +25,7 @@ export const CanvasStage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [targets, setTargets] = useState<HTMLElement[]>([]);
 
+  const viewportRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const moveableRef = useRef<Moveable>(null);
   const selectoRef = useRef<Selecto>(null);
@@ -85,6 +86,16 @@ export const CanvasStage = () => {
   const idOf = (t: HTMLElement | SVGElement) =>
     (t as HTMLElement).dataset.elementId ?? '';
 
+  const getSelectableRect = (el: HTMLElement | SVGElement) => {
+    const rect = el.getBoundingClientRect();
+    return {
+      pos1: [rect.left, rect.top],
+      pos2: [rect.right, rect.top],
+      pos3: [rect.left, rect.bottom],
+      pos4: [rect.right, rect.bottom],
+    };
+  };
+
   // Ghi trực tiếp style vào DOM (không đụng React) để kéo/resize mượt.
   const applyDom = (
     node: HTMLElement,
@@ -123,6 +134,7 @@ export const CanvasStage = () => {
 
   return (
     <div
+      ref={viewportRef}
       className="custom-scrollbar px-4 py-4 md:px-10 md:py-10"
       style={{
         position: 'relative',
@@ -294,8 +306,14 @@ export const CanvasStage = () => {
 
           <Selecto
             ref={selectoRef}
-            dragContainer={stageRef.current ?? undefined}
-            selectableTargets={['[data-canvas-page] .canvas-element']}
+            container={viewportRef.current}
+            rootContainer={viewportRef.current}
+            dragContainer={viewportRef.current ?? undefined}
+            boundContainer={viewportRef.current}
+            getElementRect={getSelectableRect}
+            selectableTargets={[
+              `[data-canvas-page="${activePageId}"] .canvas-element`,
+            ]}
             hitRate={0}
             selectByClick
             selectFromInside={false}

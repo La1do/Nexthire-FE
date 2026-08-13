@@ -86,6 +86,8 @@ export interface ImageElement extends ElementBase {
   type: "image";
   src: string; // dataURL (upload) — không cần backend
   objectFit: "cover" | "contain" | "fill";
+  objectPositionX?: number;
+  objectPositionY?: number;
   borderRadius: number;
 }
 
@@ -96,6 +98,10 @@ export interface ShapeElement extends ElementBase {
   stroke: string;
   strokeWidth: number;
   borderRadius: number;
+  imageSrc?: string;
+  imageFit?: "cover" | "contain" | "fill";
+  imagePositionX?: number;
+  imagePositionY?: number;
 }
 
 export interface IconElement extends ElementBase {

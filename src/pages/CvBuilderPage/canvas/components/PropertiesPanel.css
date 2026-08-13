@@ -1,0 +1,65 @@
+.canvas-property-range {
+  --range-progress: 100%;
+  --range-fill: #f23b94;
+  --range-track: #e5e7eb;
+  appearance: none;
+  background:
+    linear-gradient(
+      90deg,
+      var(--range-fill) 0%,
+      var(--range-fill) var(--range-progress),
+      var(--range-track) var(--range-progress),
+      var(--range-track) 100%
+    );
+  border: 1px solid rgba(242, 59, 148, 0.28);
+  border-radius: 999px;
+  cursor: pointer;
+  display: block;
+  height: 0.75rem;
+  margin-block: 0.35rem 0.25rem;
+  width: 100%;
+}
+
+.canvas-property-range:focus-visible {
+  outline: 3px solid rgba(242, 59, 148, 0.24);
+  outline-offset: 4px;
+}
+
+.canvas-property-range::-webkit-slider-runnable-track {
+  background: transparent;
+  border-radius: 999px;
+  height: 0.75rem;
+}
+
+.canvas-property-range::-webkit-slider-thumb {
+  appearance: none;
+  background: var(--range-fill);
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.22);
+  height: 1.125rem;
+  margin-top: -0.25rem;
+  width: 1.125rem;
+}
+
+.canvas-property-range::-moz-range-track {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  height: 0.75rem;
+}
+
+.canvas-property-range::-moz-range-progress {
+  background: var(--range-fill);
+  border-radius: 999px;
+  height: 0.75rem;
+}
+
+.canvas-property-range::-moz-range-thumb {
+  background: var(--range-fill);
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.22);
+  height: 1.125rem;
+  width: 1.125rem;
+}
