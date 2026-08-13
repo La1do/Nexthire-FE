@@ -63,3 +63,6 @@
   height: 1.125rem;
   width: 1.125rem;
 }
+
+/* Scrollbar trên sidebar & canvas: dùng style mặc định của trình duyệt.
+   Chỉ cần đảm bảo thanh cuộn nội bộ hoạt động mượt. */

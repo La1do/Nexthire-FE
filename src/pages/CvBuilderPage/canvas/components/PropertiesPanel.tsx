@@ -48,8 +48,8 @@ const Field = ({
   label: string;
   children: ReactNode;
 }) => (
-  <label className="mb-2 block">
-    <span className="mb-1 block text-[11px] font-medium text-[#6b7280]">
+  <label className="mb-3 block">
+    <span className="mb-1.5 block text-[12px] font-semibold text-[#6b7280]">
       {label}
     </span>
     {children}
@@ -58,7 +58,7 @@ const Field = ({
 
 // 2 cột — dùng cho các field ngắn để bảng bên phải bớt dài.
 const Row = ({ children }: { children: ReactNode }) => (
-  <div className="grid grid-cols-2 gap-2">{children}</div>
+  <div className="grid grid-cols-2 gap-3">{children}</div>
 );
 
 const Section = ({
@@ -70,26 +70,28 @@ const Section = ({
   hint?: string;
   children: ReactNode;
 }) => (
-  <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#f1f1f5] pt-3">
-    <span className="flex min-w-0 items-center gap-1.5">
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#9ca3af]">
-        {label}
-      </span>
-      {hint && (
-        <span
-          title={`Độ sâu (z-index): ${hint}`}
-          className="shrink-0 rounded bg-[#f1f1f5] px-1 text-[10px] font-semibold tabular-nums leading-4 text-[#6b7280]"
-        >
-          {hint}
+  <div className="mt-4 rounded-lg border border-[#e5e7eb] bg-[#fafafc] p-3">
+    <div className="mb-3 flex items-center justify-between gap-2">
+      <span className="flex min-w-0 items-center gap-1.5">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-[#9ca3af]">
+          {label}
         </span>
-      )}
-    </span>
-    <div className="flex gap-1">{children}</div>
+        {hint && (
+          <span
+            title={`Độ sâu (z-index): ${hint}`}
+            className="shrink-0 rounded bg-white px-1.5 text-[10px] font-semibold tabular-nums leading-4 text-[#6b7280] border border-[#e5e7eb]"
+          >
+            {hint}
+          </span>
+        )}
+      </span>
+    </div>
+    <div className="flex flex-wrap gap-1.5">{children}</div>
   </div>
 );
 
 const iconBtnCls =
-  "flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#e5e7eb] bg-white text-[#6b7280] transition-colors hover:border-[#f23b94] hover:bg-[#fef3f8] hover:text-[#f23b94]";
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[#e5e7eb] bg-white text-[#6b7280] transition-colors hover:border-[#f23b94] hover:bg-[#fef3f8] hover:text-[#f23b94]";
 
 const IconBtn = ({
   label,
@@ -115,11 +117,11 @@ const IconBtn = ({
     onClick={onClick}
     className={
       danger
-        ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#fecaca] bg-white text-[#dc2626] transition-colors hover:bg-[#fef2f2]"
+        ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[#fecaca] bg-white text-[#dc2626] transition-colors hover:bg-[#fef2f2]"
         : warn
-          ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#fcd34d] bg-[#fffbeb] text-[#b45309]"
+          ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[#fcd34d] bg-[#fffbeb] text-[#b45309]"
           : active
-            ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#f23b94] bg-[#fef3f8] text-[#f23b94]"
+            ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[#f23b94] bg-[#fef3f8] text-[#f23b94]"
             : iconBtnCls
     }
   >
@@ -128,7 +130,7 @@ const IconBtn = ({
 );
 
 const inputCls =
-  "w-full rounded-md border border-[#e5e7eb] bg-white px-2 py-1 text-[13px] text-[#111827] focus:border-[#f23b94] focus:outline-none";
+  "w-full rounded-md border border-[#e5e7eb] bg-white px-3 py-1.5 text-[13px] text-[#111827] focus:border-[#f23b94] focus:outline-none";
 
 const NumberInput = ({
   value,
@@ -329,20 +331,20 @@ const TextProps = ({ el }: { el: TextElement }) => {
       </Field>
 
       <Field label="Kiểu & canh lề">
-        <div className="flex gap-1">
+        <div className="flex gap-1.5">
           <IconBtn
             label="Nghiêng"
             active={el.italic}
             onClick={() => set({ italic: !el.italic })}
           >
-            <Italic size={14} />
+            <Italic size={16} />
           </IconBtn>
           <IconBtn
             label="Gạch chân"
             active={el.underline}
             onClick={() => set({ underline: !el.underline })}
           >
-            <Underline size={14} />
+            <Underline size={16} />
           </IconBtn>
           <span className="mx-1 w-px bg-[#e5e7eb]" />
           {(["left", "center", "right"] as TextAlign[]).map((a) => {
@@ -356,7 +358,7 @@ const TextProps = ({ el }: { el: TextElement }) => {
                 active={el.align === a}
                 onClick={() => set({ align: a })}
               >
-                <Icon size={14} />
+                <Icon size={16} />
               </IconBtn>
             );
           })}
@@ -530,13 +532,13 @@ const ShapeProps = ({ el }: { el: ShapeElement }) => {
                   <button
                     type="button"
                     onClick={() => setCroppingId(cropping ? null : el.id)}
-                    className={`flex w-full items-center justify-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors ${
+                    className={`flex w-full items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-xs transition-colors ${
                       cropping
                         ? "border-[#f23b94] bg-[#f23b94] text-white"
                         : "border-[#e5e7eb] bg-white text-[#111827] hover:border-[#f23b94]"
                     }`}
                   >
-                    {cropping ? <Check size={13} /> : <Crop size={13} />}
+                    {cropping ? <Check size={14} /> : <Crop size={14} />}
                     {cropping ? "Xong" : "Chỉnh ảnh"}
                   </button>
                 </Field>
@@ -640,7 +642,7 @@ export const PropertiesPanel = () => {
 
   if (selected.length === 0) {
     return (
-      <div className="p-3 text-[13px] leading-snug text-[#6b7280]">
+      <div className="flex min-h-full flex-1 flex-col p-4 text-[13px] leading-snug text-[#6b7280]">
         Chọn một phần tử để chỉnh sửa thuộc tính, hoặc chèn phần tử mới từ bảng
         bên trái.
       </div>
@@ -656,8 +658,8 @@ export const PropertiesPanel = () => {
     minDepth === maxDepth ? `${minDepth}` : `${minDepth}–${maxDepth}`;
 
   return (
-    <div className="p-3">
-      <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-[#111827]">
+    <div className="flex min-h-full flex-1 flex-col gap-3 p-4">
+      <h2 className="text-sm font-bold uppercase tracking-wide text-[#111827]">
         {single ? typeLabel(single) : `${selected.length} phần tử`}
       </h2>
 
@@ -669,16 +671,16 @@ export const PropertiesPanel = () => {
 
       <Section label="Lớp" hint={depthHint}>
         <IconBtn label="Lên trên" onClick={() => bringForward(selectedIds)}>
-          <Layers2 size={14} />
+          <Layers2 size={16} />
         </IconBtn>
         <IconBtn label="Xuống dưới" onClick={() => sendBackward(selectedIds)}>
-          <Layers size={14} />
+          <Layers size={16} />
         </IconBtn>
         <IconBtn label="Trên cùng" onClick={() => bringToFront(selectedIds)}>
-          <BringToFront size={14} />
+          <BringToFront size={16} />
         </IconBtn>
         <IconBtn label="Dưới cùng" onClick={() => sendToBack(selectedIds)}>
-          <SendToBack size={14} />
+          <SendToBack size={16} />
         </IconBtn>
       </Section>
 
@@ -687,34 +689,34 @@ export const PropertiesPanel = () => {
           label="Nhân bản"
           onClick={() => duplicateElements(selectedIds)}
         >
-          <Copy size={14} />
+          <Copy size={16} />
         </IconBtn>
         <IconBtn
           label={single?.locked ? "Mở khóa" : "Khóa"}
           warn={Boolean(single?.locked)}
           onClick={() => toggleLock(selectedIds)}
         >
-          {single?.locked ? <Lock size={14} /> : <LockOpen size={14} />}
+          {single?.locked ? <Lock size={16} /> : <LockOpen size={16} />}
         </IconBtn>
         <IconBtn
           label={single?.hidden ? "Hiện phần tử" : "Ẩn phần tử"}
           warn={Boolean(single?.hidden)}
           onClick={() => toggleHidden(selectedIds)}
         >
-          {single?.hidden ? <EyeOff size={14} /> : <Eye size={14} />}
+          {single?.hidden ? <EyeOff size={16} /> : <Eye size={16} />}
         </IconBtn>
         {selected.length >= 2 && (
           <IconBtn label="Nhóm" onClick={() => groupSelected()}>
-            <Group size={14} />
+            <Group size={16} />
           </IconBtn>
         )}
         {selected.some((e) => e.groupId) && (
           <IconBtn label="Bỏ nhóm" onClick={() => ungroupSelected()}>
-            <Ungroup size={14} />
+            <Ungroup size={16} />
           </IconBtn>
         )}
         <IconBtn label="Xóa" danger onClick={() => removeElements(selectedIds)}>
-          <Trash2 size={14} />
+          <Trash2 size={16} />
         </IconBtn>
       </Section>
     </div>

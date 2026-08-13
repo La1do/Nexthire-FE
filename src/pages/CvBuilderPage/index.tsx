@@ -236,6 +236,19 @@ export function CvBuilderPage() {
   const [rightW, setRightW] = useState(DEFAULT_RIGHT_W);
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>(null);
 
+  // Trang CV builder tự quản scroll nội bộ (canvas + 2 sidebar),
+  // khóa scroll toàn trang để không bị cuộn ngoài ý muốn.
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     if (!templateId) {
       return;
@@ -282,7 +295,7 @@ export function CvBuilderPage() {
     'mx-1 flex h-8 w-8 shrink-0 items-center justify-center self-center rounded-md border border-[#e5e7eb] bg-white text-[#6b7280] transition-colors hover:border-[#f23b94] hover:bg-[#fef3f8] hover:text-[#f23b94]';
 
   return (
-    <div className="flex min-h-[100dvh] flex-col overflow-hidden bg-[#f7f6fb]">
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#f7f6fb]">
       <CanvasHeader />
 
       <div className="border-b border-[#d9d9e3] bg-white px-4 py-2 md:hidden">
