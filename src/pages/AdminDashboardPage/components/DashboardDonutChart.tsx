@@ -23,9 +23,12 @@ export function DashboardDonutChart({
 }: DashboardDonutChartProps) {
   const visibleData = data.filter((item) => item.value > 0)
   const total = visibleData.reduce((sum, item) => sum + item.value, 0)
+  const isDense = visibleData.length >= 6
 
   return (
-    <section className="admin-dashboard-panel admin-dashboard-donut">
+    <section
+      className={`admin-dashboard-panel admin-dashboard-donut${isDense ? ' admin-dashboard-donut--dense' : ''}`}
+    >
       <header className="admin-dashboard-panel__header">
         <h2>{title}</h2>
       </header>
@@ -63,8 +66,12 @@ export function DashboardDonutChart({
                   aria-hidden="true"
                   style={{ background: chartColors[index % chartColors.length] }}
                 />
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
+                <span className="admin-dashboard-donut__legend-label">
+                  {item.label}
+                </span>
+                <strong className="admin-dashboard-donut__legend-value">
+                  {item.value}
+                </strong>
               </li>
             ))}
           </ul>
