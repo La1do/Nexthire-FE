@@ -95,7 +95,7 @@ export function AdminPreferencesCard({ content, isPending, onLogout, onSaveLangu
   return <section className="admin-settings-card admin-settings-preferences">
     <header><h2>{content.title}</h2><p>{content.description}</p></header>
     <div className="admin-settings-preference-row admin-settings-preference-row--language">
-      <div><strong>{content.language}</strong><p>{content.languageHint}</p></div>
+      <div><strong>{content.language}</strong></div>
       <div className="admin-settings-language-control">
         <SelectField
           disabled={isPending}

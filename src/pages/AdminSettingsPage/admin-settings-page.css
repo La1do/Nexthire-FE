@@ -95,3 +95,53 @@
 @media (max-width: 430px) {
   .admin-settings-language-actions { grid-template-columns: 1fr; }
 }
+
+/* Admin settings responsive fixes */
+.admin-settings-preference-row--language {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.admin-settings-preference-row--language > div:first-child,
+.admin-settings-language-control,
+.admin-settings-preference-row--language .language-switch {
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-settings-language-control {
+  min-width: 0;
+}
+
+.admin-settings-password-form {
+  align-items: start;
+}
+
+.admin-settings-password-form > div > p[role="alert"],
+.admin-settings-password-form > div > p[aria-hidden="true"] {
+  min-height: 18px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+}
+
+.admin-settings-summary__identity-copy {
+  min-width: 0;
+}
+
+.admin-settings-summary__identity-copy p {
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-overflow: clip;
+}
+
+.admin-settings-summary__email-row dd {
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-overflow: clip;
+}

@@ -124,6 +124,7 @@ export function AdminChangePasswordForm({ content, isPending, onSave }: Props) {
           error={errors.currentPassword?.message}
           hidePasswordLabel={content.hide}
           label={content.current}
+          reserveMessageSpace
           showPasswordLabel={content.show}
           {...register('currentPassword')}
         />
@@ -133,6 +134,7 @@ export function AdminChangePasswordForm({ content, isPending, onSave }: Props) {
           error={errors.newPassword?.message}
           hidePasswordLabel={content.hide}
           label={content.next}
+          reserveMessageSpace
           showPasswordLabel={content.show}
           {...register('newPassword')}
         />
@@ -142,6 +144,7 @@ export function AdminChangePasswordForm({ content, isPending, onSave }: Props) {
           error={errors.confirmPassword?.message}
           hidePasswordLabel={content.hide}
           label={content.confirm}
+          reserveMessageSpace
           showPasswordLabel={content.show}
           {...register('confirmPassword')}
         />

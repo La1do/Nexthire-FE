@@ -2904,7 +2904,7 @@ export type AdminSettingsTranslations = {
     apiErrors: { invalidCredentials: string; passwordReuse: string; credentialMissing: string }
   }
   preferences: {
-    title: string; description: string; language: string; languageHint: string
+    title: string; description: string; language: string
     languageReset: string; languageSave: string; languageSaveError: string
     languageSaveSuccess: string; languageSaving: string
     sessionTitle: string; sessionDescription: string; logout: string
