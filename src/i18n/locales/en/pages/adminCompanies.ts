@@ -65,6 +65,7 @@ export const adminCompanies: AdminCompaniesTranslations = {
     descriptionTitle: 'Company overview',
     documentsTitle: 'Verification documents',
     documentsDescription: 'Documents submitted by the employer to verify the business.',
+    viewDocument: 'View',
     download: 'Download',
     reviewTitle: 'Review actions',
     pendingHint: 'This company is waiting for profile and document review.',

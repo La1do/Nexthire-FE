@@ -347,6 +347,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.58rem;
+  font-weight: 800;
 }
 
 .admin-company-document__icon svg {
@@ -361,9 +363,31 @@
 }
 
 .admin-company-document__download {
+  background: transparent;
+  border: 0;
   color: var(--color-brand-solid);
+  cursor: pointer;
   font-size: 0.86rem;
   font-weight: 700;
+}
+
+.admin-company-document__download:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.admin-company-document__download--primary {
+  background: var(--color-brand-soft);
+  border-radius: 999px;
+  padding: 0.42rem 0.72rem;
+}
+
+.admin-company-document__actions {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  white-space: nowrap;
 }
 
 .admin-company-review-panel__hint {
@@ -459,11 +483,9 @@
   .admin-company-document {
     grid-template-columns: 34px minmax(0, 1fr);
   }
-}
 
-@media (max-width: 520px) {
-
-  .admin-company-document__download {
+  .admin-company-document__actions {
     grid-column: 2;
+    justify-content: flex-start;
   }
 }

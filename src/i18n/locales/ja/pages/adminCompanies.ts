@@ -65,6 +65,7 @@ export const adminCompanies: AdminCompaniesTranslations = {
     descriptionTitle: '企業概要',
     documentsTitle: '確認書類',
     documentsDescription: '企業確認のために採用企業が提出した書類です。',
+    viewDocument: '表示',
     download: 'ダウンロード',
     reviewTitle: '審査アクション',
     pendingHint: 'この企業はプロフィールと確認書類の審査待ちです。',

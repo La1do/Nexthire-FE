@@ -902,6 +902,7 @@ export type AdminCompaniesTranslations = {
     descriptionTitle: string
     documentsTitle: string
     documentsDescription: string
+    viewDocument: string
     download: string
     reviewTitle: string
     pendingHint: string
