@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { ComponentPropsWithoutRef } from 'react'
 import { z } from 'zod'
@@ -96,7 +96,6 @@ function getSecurityApiError(
 export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps) {
   const toast = useToast()
   const [submitMessage, setSubmitMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null)
-  const hasMountedRef = useRef(false)
   const schema = useMemo(
     () => z.object({
       currentPassword: z.string()
@@ -110,7 +109,7 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
       confirmPassword: z.string()
         .min(1, translations.validation.confirmRequired),
     }).superRefine((values, context) => {
-      if (values.newPassword === values.currentPassword) {
+      if (values.currentPassword && values.newPassword && values.newPassword === values.currentPassword) {
         context.addIssue({
           code: 'custom',
           message: translations.validation.passwordReuse,
@@ -118,7 +117,7 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
         })
       }
 
-      if (values.confirmPassword !== values.newPassword) {
+      if (values.confirmPassword && values.newPassword && values.confirmPassword !== values.newPassword) {
         context.addIssue({
           code: 'custom',
           message: translations.validation.passwordMismatch,
@@ -129,11 +128,10 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
     [translations.validation],
   )
   const {
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitted, isSubmitting, touchedFields },
     handleSubmit,
     register,
     reset,
-    trigger,
   } = useForm<PasswordFormValues>({
     defaultValues: {
       currentPassword: '',
@@ -144,15 +142,6 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
     reValidateMode: 'onChange',
     resolver: zodResolver(schema),
   })
-
-  useEffect(() => {
-    if (!hasMountedRef.current) {
-      hasMountedRef.current = true
-      return
-    }
-
-    void trigger()
-  }, [schema, trigger])
 
   const handleChangePassword = handleSubmit(async (values) => {
     setSubmitMessage(null)
@@ -186,7 +175,7 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
         <div className="candidate-settings-form__fields">
           <PasswordField
             autoComplete="current-password"
-            error={errors.currentPassword?.message}
+            error={(touchedFields.currentPassword || isSubmitted) ? errors.currentPassword?.message : undefined}
             hideLabel={translations.hidePassword}
             label={translations.currentPasswordLabel}
             showLabel={translations.showPassword}
@@ -194,7 +183,7 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
           />
           <PasswordField
             autoComplete="new-password"
-            error={errors.newPassword?.message}
+            error={(touchedFields.newPassword || isSubmitted) ? errors.newPassword?.message : undefined}
             hideLabel={translations.hidePassword}
             label={translations.newPasswordLabel}
             showLabel={translations.showPassword}
@@ -202,7 +191,7 @@ export function PasswordSettingsForm({ translations }: PasswordSettingsFormProps
           />
           <PasswordField
             autoComplete="new-password"
-            error={errors.confirmPassword?.message}
+            error={(touchedFields.confirmPassword || isSubmitted) ? errors.confirmPassword?.message : undefined}
             hideLabel={translations.hidePassword}
             label={translations.confirmPasswordLabel}
             showLabel={translations.showPassword}
