@@ -352,6 +352,10 @@ export const profile: ProfileTranslations = {
       emailLabel: '連絡用メール',
       phoneLabel: '電話番号',
       lockedHint: 'このメールは採用企業からの連絡用で、ログインメールとは別に設定できます。',
+      emailRequired: '連絡先メールを入力してください。',
+      emailInvalid: '有効な連絡先メールアドレスを入力してください。',
+      phoneRequired: '電話番号を入力してください。',
+      phoneInvalid: '有効な電話番号を入力してください。',
     },
     skills: {
       title: 'スキル',

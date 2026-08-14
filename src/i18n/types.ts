@@ -1494,6 +1494,10 @@ export type ProfileTranslations = {
       emailLabel: string
       phoneLabel: string
       lockedHint: string
+      emailRequired: string
+      emailInvalid: string
+      phoneRequired: string
+      phoneInvalid: string
     }
     skills: {
       title: string

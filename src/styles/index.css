@@ -4092,21 +4092,55 @@ select {
 }
 
 .profile-field {
+  align-content: start;
   display: grid;
   gap: 0.4rem;
+  grid-template-rows: auto auto auto;
   min-width: 0;
 }
 
-.profile-field>span {
+.profile-field__label {
   color: var(--color-text-secondary);
   font-size: 0.84rem;
   font-weight: 900;
 }
 
-.profile-field small {
+.profile-field__control {
+  min-width: 0;
+}
+
+.profile-field__control > .profile-control {
+  width: 100%;
+}
+
+.profile-field__message {
+  align-items: flex-start;
+  display: flex;
+  min-height: 1rem;
+}
+
+.profile-field__hint {
   color: var(--color-text-muted);
   font-size: 0.75rem;
   font-weight: 800;
+  line-height: 1.35;
+}
+
+.profile-field__hint--danger {
+  color: var(--color-status-error, #dc2626);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.profile-field__error {
+  color: var(--color-status-error, #dc2626);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.profile-control[aria-invalid="true"] {
+  border-color: var(--color-status-error, #dc2626);
 }
 
 .profile-control {
@@ -12013,7 +12047,7 @@ select {
   color: var(--color-text-primary);
   inset: 0;
   margin: auto;
-  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
   max-width: min(58rem, calc(100vw - 2rem));
   overflow: visible;
   padding: 0;
@@ -12038,7 +12072,8 @@ select {
   border-radius: clamp(1.25rem, 3vw, 1.75rem);
   box-shadow: 0 28px 80px rgba(17, 24, 39, 0.28);
   display: grid;
-  max-height: calc(100vh - 2rem);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  max-height: calc(100dvh - 2rem);
   overflow: hidden;
 }
 
@@ -12104,8 +12139,9 @@ select {
 .cv-parse-review__list {
   display: grid;
   gap: 0.8rem;
-  max-height: min(31rem, calc(100vh - 15rem));
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: clamp(1rem, 2.5vw, 1.5rem);
 }
 
@@ -12273,7 +12309,7 @@ select {
   }
 
   .cv-parse-review__list {
-    max-height: calc(100dvh - 15rem);
+    min-height: 0;
     padding: 0.85rem;
   }
 

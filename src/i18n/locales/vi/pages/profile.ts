@@ -352,6 +352,10 @@ export const profile: ProfileTranslations = {
       emailLabel: 'Email liên hệ',
       phoneLabel: 'Số điện thoại',
       lockedHint: 'Email này dùng để nhà tuyển dụng liên hệ và có thể khác email đăng nhập.',
+      emailRequired: 'Vui lòng nhập email liên hệ.',
+      emailInvalid: 'Email liên hệ không hợp lệ.',
+      phoneRequired: 'Vui lòng nhập số điện thoại.',
+      phoneInvalid: 'Số điện thoại không hợp lệ.',
     },
     skills: {
       title: 'Kỹ năng',

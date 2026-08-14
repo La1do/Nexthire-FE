@@ -352,6 +352,10 @@ export const profile: ProfileTranslations = {
       emailLabel: 'Contact email',
       phoneLabel: 'Phone number',
       lockedHint: 'This email is for employer contact and can differ from your login email.',
+      emailRequired: 'Please enter a contact email.',
+      emailInvalid: 'Please enter a valid contact email.',
+      phoneRequired: 'Please enter a phone number.',
+      phoneInvalid: 'Please enter a valid phone number.',
     },
     skills: {
       title: 'Skills',

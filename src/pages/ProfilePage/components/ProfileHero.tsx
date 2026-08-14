@@ -4,6 +4,8 @@ import type { ProfileTranslations } from '../../../i18n/types'
 import type { CandidateProfile, ProfileCompletion } from '../types'
 
 type ProfileHeroProps = {
+  authenticatedAvatarUrl?: string | null
+  avatarRefreshKey?: number
   completion: ProfileCompletion
   content: ProfileTranslations['hero']
   hasUnsavedChanges: boolean
@@ -23,6 +25,8 @@ function getInitials(name: string) {
 }
 
 export function ProfileHero({
+  authenticatedAvatarUrl,
+  avatarRefreshKey = 0,
   completion,
   content,
   hasUnsavedChanges,
@@ -32,14 +36,20 @@ export function ProfileHero({
 }: ProfileHeroProps) {
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
   const [avatarFailed, setAvatarFailed] = useState(false)
-  const showAvatarImage = Boolean(profile.avatarUrl) && !avatarFailed
+  const avatarUrl = profile.avatarUrl?.trim() || authenticatedAvatarUrl?.trim() || null
+  const displayAvatarUrl = avatarUrl
+    ? avatarRefreshKey > 0 && !avatarUrl.includes('?')
+      ? `${avatarUrl}?v=${avatarRefreshKey}`
+      : avatarUrl
+    : null
+  const showAvatarImage = Boolean(displayAvatarUrl) && !avatarFailed
   const progressStyle = {
     '--profile-progress': `${completion.percent}%`,
   } as CSSProperties
 
   useEffect(() => {
     setAvatarFailed(false)
-  }, [profile.avatarUrl])
+  }, [displayAvatarUrl])
 
   function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -65,7 +75,7 @@ export function ProfileHero({
               <img
                 alt={profile.name || content.avatarAction}
                 onError={() => setAvatarFailed(true)}
-                src={profile.avatarUrl ?? ''}
+                src={displayAvatarUrl ?? ''}
               />
             ) : (
               getInitials(profile.name)

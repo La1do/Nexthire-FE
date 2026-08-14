@@ -6,7 +6,13 @@ import { candidateService } from '../../services/candidate.service'
 import { Button } from '../_components'
 import { BasicInfoForm } from './components/BasicInfoForm'
 import { CompletionPanel } from './components/CompletionPanel'
-import { ContactInfoForm } from './components/ContactInfoForm'
+import {
+  ContactInfoForm,
+  isValidContactEmail,
+  isValidContactPhone,
+  normalizeContactEmail,
+  normalizePhone,
+} from './components/ContactInfoForm'
 import { CvParseReviewDialog } from './components/CvParseReviewDialog'
 import { EducationEditor } from './components/EducationEditor'
 import { ExperienceEditor } from './components/ExperienceEditor'
@@ -54,7 +60,7 @@ function isSupportedAvatarFile(file: File) {
 
 export function ProfilePage() {
   const { common, pages } = useTranslations()
-  const { refreshUser } = useAuth()
+  const { refreshUser, user } = useAuth()
   const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const content = pages.profile
@@ -64,8 +70,10 @@ export function ProfilePage() {
   const [isLoading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | undefined>(undefined)
   const [saveError, setSaveError] = useState<string | undefined>(undefined)
+  const [showContactValidation, setShowContactValidation] = useState(false)
   const [isSaving, setSaving] = useState(false)
   const [isUploadingAvatar, setUploadingAvatar] = useState(false)
+  const [avatarRefreshKey, setAvatarRefreshKey] = useState(0)
   const [isUploadingResume, setUploadingResume] = useState(false)
   const [isStartingCvParse, setStartingCvParse] = useState(false)
   const [isCvAssistDismissed, setCvAssistDismissed] = useState(false)
@@ -93,6 +101,7 @@ export function ProfilePage() {
       const data = await candidateService.getMyProfile()
       setProfile(createProfileFromCandidateAggregate(data))
       setHasUnsavedChanges(false)
+      setShowContactValidation(false)
       cvParseBaselineRef.current = null
       setCvParseReview(null)
     } catch (error) {
@@ -339,6 +348,27 @@ export function ProfilePage() {
     }
   }
 
+  function saveProfileFromActions() {
+    setShowContactValidation(true)
+
+    if (!isValidContactEmail(profile.contactEmail) || !isValidContactPhone(profile.phone)) {
+      return
+    }
+
+    const normalizedProfile = {
+      ...profile,
+      contactEmail: normalizeContactEmail(profile.contactEmail),
+      phone: normalizePhone(profile.phone),
+    }
+
+    if (normalizedProfile.contactEmail !== profile.contactEmail || normalizedProfile.phone !== profile.phone) {
+      profileRef.current = normalizedProfile
+      setProfile(normalizedProfile)
+    }
+
+    void saveProfile(normalizedProfile)
+  }
+
   async function uploadAvatar(file: File) {
     if (!isSupportedAvatarFile(file)) {
       setSaveError(content.states.avatarInvalidFileType)
@@ -365,6 +395,7 @@ export function ProfilePage() {
         avatarDocumentId: data.profile.avatarDocumentId,
         avatarUrl: data.profile.avatarUrl,
       }))
+      setAvatarRefreshKey((currentKey) => currentKey + 1)
       refreshUser()
       toast.success(content.states.avatarUploadSuccess)
     } catch (error) {
@@ -589,6 +620,8 @@ export function ProfilePage() {
   return (
     <div className="profile-page">
       <ProfileHero
+        authenticatedAvatarUrl={user?.avatarUrl ?? null}
+        avatarRefreshKey={avatarRefreshKey}
         completion={completion}
         content={content.hero}
         hasUnsavedChanges={hasUnsavedChanges}
@@ -619,7 +652,12 @@ export function ProfilePage() {
             onChange={(field, value) => updateProfile({ [field]: value })}
             profile={profile}
           />
-          <ContactInfoForm content={content.sections.contact} onChange={(field, value) => updateProfile({ [field]: value })} profile={profile} />
+          <ContactInfoForm
+            content={content.sections.contact}
+            onChange={(field, value) => updateProfile({ [field]: value })}
+            profile={profile}
+            showErrors={showContactValidation}
+          />
           <SkillsEditor
             content={content.sections.skills}
             newSkill={newSkill}
@@ -664,7 +702,7 @@ export function ProfilePage() {
         content={content.hero}
         hasUnsavedChanges={hasUnsavedChanges}
         isSaving={isSaving}
-        onSave={() => void saveProfile()}
+        onSave={saveProfileFromActions}
       />
 
       {cvParseReview ? (
