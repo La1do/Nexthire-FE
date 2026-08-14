@@ -131,10 +131,6 @@ function RateIcon() {
 }
 
 function isApplicationPolling(application: RecruiterApplicationItem, matchingIds: ReadonlySet<string>) {
-  if (application.cvParseStatus === 'PARSING') {
-    return true
-  }
-
   return matchingIds.has(application.id) && application.cvParseStatus !== 'FAILED' && application.matchScore === null
 }
 

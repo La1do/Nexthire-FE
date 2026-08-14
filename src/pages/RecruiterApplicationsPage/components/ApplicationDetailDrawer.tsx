@@ -51,8 +51,12 @@ function getMatchActionLabel(
   isMatching: boolean,
   labels: RecruiterApplicationsTranslations['match'],
 ) {
-  if (isMatching || application.cvParseStatus === 'PARSING') {
+  if (isMatching) {
     return labels.processingAction
+  }
+
+  if (application.cvParseStatus === 'PARSING') {
+    return labels.retryAction
   }
 
   if (application.cvParseStatus === 'FAILED') {
@@ -98,7 +102,7 @@ export function ApplicationDetailDrawer({
   translations,
 }: ApplicationDetailDrawerProps) {
   const drawerRef = useRef<HTMLElement | null>(null)
-  const isMatchActionDisabled = isMatching || application.cvParseStatus === 'PARSING'
+  const isMatchActionDisabled = isMatching
 
   useEffect(() => {
     const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
