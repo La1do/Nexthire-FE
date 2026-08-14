@@ -4,6 +4,7 @@ import type { ProfileTranslations } from '../../../i18n/types'
 import type { CandidateProfile, ProfileCompletion } from '../types'
 
 type ProfileHeroProps = {
+  authenticatedAvatarFallbackUrl?: string | null
   authenticatedAvatarUrl?: string | null
   avatarRefreshKey?: number
   completion: ProfileCompletion
@@ -25,6 +26,7 @@ function getInitials(name: string) {
 }
 
 export function ProfileHero({
+  authenticatedAvatarFallbackUrl,
   authenticatedAvatarUrl,
   avatarRefreshKey = 0,
   completion,
@@ -35,21 +37,30 @@ export function ProfileHero({
   profile,
 }: ProfileHeroProps) {
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
-  const [avatarFailed, setAvatarFailed] = useState(false)
-  const avatarUrl = profile.avatarUrl?.trim() || authenticatedAvatarUrl?.trim() || null
+  const avatarCandidates = [
+    profile.avatarUrl?.trim(),
+    authenticatedAvatarUrl?.trim(),
+    authenticatedAvatarFallbackUrl?.trim(),
+  ].filter((avatarUrl, index, values): avatarUrl is string => Boolean(avatarUrl) && values.indexOf(avatarUrl) === index)
+  const [avatarCandidateIndex, setAvatarCandidateIndex] = useState(0)
+  const avatarUrl = avatarCandidates[avatarCandidateIndex] ?? null
   const displayAvatarUrl = avatarUrl
     ? avatarRefreshKey > 0 && !avatarUrl.includes('?')
       ? `${avatarUrl}?v=${avatarRefreshKey}`
       : avatarUrl
     : null
-  const showAvatarImage = Boolean(displayAvatarUrl) && !avatarFailed
+  const showAvatarImage = Boolean(displayAvatarUrl)
   const progressStyle = {
     '--profile-progress': `${completion.percent}%`,
   } as CSSProperties
 
   useEffect(() => {
-    setAvatarFailed(false)
-  }, [displayAvatarUrl])
+    setAvatarCandidateIndex(0)
+  }, [authenticatedAvatarFallbackUrl, authenticatedAvatarUrl, profile.avatarUrl])
+
+  function handleAvatarError() {
+    setAvatarCandidateIndex((currentIndex) => currentIndex + 1)
+  }
 
   function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -74,7 +85,7 @@ export function ProfileHero({
             {showAvatarImage ? (
               <img
                 alt={profile.name || content.avatarAction}
-                onError={() => setAvatarFailed(true)}
+                onError={handleAvatarError}
                 src={displayAvatarUrl ?? ''}
               />
             ) : (

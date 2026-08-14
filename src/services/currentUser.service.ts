@@ -48,7 +48,8 @@ async function getCandidateUser(user: AuthUser) {
     fullName: profile.fullName ?? user.fullName,
     language: profile.language ?? user.language ?? null,
     phone: profile.phone ?? user.phone,
-    avatarUrl: profile.avatarUrl ?? user.avatarUrl ?? null,
+    avatarDocumentId: profile.avatarDocumentId,
+    avatarUrl: profile.avatarUrl,
   })
 }
 

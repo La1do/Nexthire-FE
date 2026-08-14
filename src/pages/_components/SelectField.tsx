@@ -29,6 +29,7 @@ type MenuPlacement = 'bottom' | 'top'
 const MENU_GAP = 8
 const MENU_MAX_HEIGHT = 288
 const VIEWPORT_GUTTER = 12
+const MENU_MIN_WIDTH = 200
 
 function getInitialValue(options: ReadonlyArray<SelectFieldOption>, value?: string) {
   if (value !== undefined) {
@@ -104,10 +105,12 @@ export function SelectField({
     const top = shouldOpenUp
       ? Math.max(VIEWPORT_GUTTER, rect.top - menuHeight - MENU_GAP)
       : Math.min(window.innerHeight - VIEWPORT_GUTTER, rect.bottom + MENU_GAP)
-    const width = Math.min(rect.width, window.innerWidth - VIEWPORT_GUTTER * 2)
+    const viewportWidth = window.visualViewport?.width ?? window.innerWidth
+    const availableWidth = Math.max(0, viewportWidth - VIEWPORT_GUTTER * 2)
+    const width = Math.min(Math.max(rect.width, MENU_MIN_WIDTH), availableWidth)
     const left = Math.min(
       Math.max(VIEWPORT_GUTTER, rect.left),
-      window.innerWidth - width - VIEWPORT_GUTTER,
+      viewportWidth - width - VIEWPORT_GUTTER,
     )
 
     setMenuPlacement(shouldOpenUp ? 'top' : 'bottom')

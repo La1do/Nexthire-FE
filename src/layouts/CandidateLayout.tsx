@@ -16,7 +16,9 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const candidateCvs = pages.candidateCvs
   const candidateSettings = pages.candidateSettings
   const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
-  const [avatarFailed, setAvatarFailed] = useState(false)
+  const [avatarSource, setAvatarSource] = useState<string | null>(
+    user?.avatarUrl ?? null,
+  )
   const [isCompactHeader, setCompactHeader] = useState(() => {
     if (typeof window === 'undefined') {
       return false
@@ -27,11 +29,15 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const [isNavOpen, setNavOpen] = useState(false)
   const sidebarRef = useRef<HTMLElement | null>(null)
   const navId = useId()
-  const showAvatarImage = Boolean(user?.avatarUrl) && !avatarFailed
+  const showAvatarImage = Boolean(avatarSource)
 
   useEffect(() => {
-    setAvatarFailed(false)
+    setAvatarSource(user?.avatarUrl ?? null)
   }, [user?.avatarUrl])
+
+  function handleAvatarError() {
+    setAvatarSource(null)
+  }
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -43,6 +49,7 @@ export function CandidateLayout({ children }: PropsWithChildren) {
 
     syncCompactHeader()
     mediaQuery.addEventListener('change', syncCompactHeader)
+
     return () => mediaQuery.removeEventListener('change', syncCompactHeader)
   }, [])
 
@@ -101,11 +108,11 @@ export function CandidateLayout({ children }: PropsWithChildren) {
       ? profile.applications.pageTitle
       : pathname === '/profile/cvs'
         ? candidateCvs.pageTitle
-      : pathname === '/profile/jobs'
-        ? profile.managedJobs.pageTitle
-        : pathname === '/profile/settings'
-          ? candidateSettings.pageTitle
-          : profile.pageTitle
+        : pathname === '/profile/jobs'
+          ? profile.managedJobs.pageTitle
+          : pathname === '/profile/settings'
+            ? candidateSettings.pageTitle
+            : profile.pageTitle
 
   return (
     <div className="candidate-shell">
@@ -143,8 +150,8 @@ export function CandidateLayout({ children }: PropsWithChildren) {
               {showAvatarImage ? (
                 <img
                   alt={userDisplayName}
-                  onError={() => setAvatarFailed(true)}
-                  src={user?.avatarUrl ?? ''}
+                  onError={handleAvatarError}
+                  src={avatarSource ?? ''}
                 />
               ) : (
                 getInitials(userDisplayName)
@@ -170,8 +177,8 @@ export function CandidateLayout({ children }: PropsWithChildren) {
             {showAvatarImage ? (
               <img
                 alt={userDisplayName}
-                onError={() => setAvatarFailed(true)}
-                src={user?.avatarUrl ?? ''}
+                onError={handleAvatarError}
+                src={avatarSource ?? ''}
               />
             ) : (
               getInitials(userDisplayName)

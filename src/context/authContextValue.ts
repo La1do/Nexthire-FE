@@ -10,6 +10,7 @@ export type AuthContextValue = {
   login: (auth: AuthResponse, persistence?: AuthPersistence) => void
   logout: () => Promise<void>
   refreshUser: () => void
+  updateUser: (patch: Partial<AuthUser>) => void
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)

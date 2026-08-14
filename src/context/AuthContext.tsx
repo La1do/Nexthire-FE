@@ -25,7 +25,7 @@ function readStoredUser(): AuthUser | null {
       sessionStorage.getItem(AUTH_USER_STORAGE_KEY)
 
     if (!raw) return null
-    return JSON.parse(raw) as AuthUser
+    return createPersistedUser(JSON.parse(raw) as AuthUser)
   } catch {
     return null
   }
@@ -36,10 +36,23 @@ function clearStoredUser() {
   sessionStorage.removeItem(AUTH_USER_STORAGE_KEY)
 }
 
+function createPersistedUser(user: AuthUser): AuthUser {
+  if (user.role !== 'CANDIDATE') {
+    return user
+  }
+
+  // Candidate avatar URLs are short-lived download URLs. Persist only the durable
+  // document id and force a fresh /candidates/me hydration after a reload.
+  return {
+    ...user,
+    avatarUrl: null,
+  }
+}
+
 function writeStoredUser(user: AuthUser, persistence: AuthPersistence) {
   clearStoredUser()
   const storage = persistence === 'local' ? localStorage : sessionStorage
-  storage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(user))
+  storage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(createPersistedUser(user)))
 }
 
 function getStoredUserPersistence(): AuthPersistence {
@@ -133,6 +146,23 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setProfileRefreshKey((current) => current + 1)
   }, [])
 
+  const updateUser = useCallback((patch: Partial<AuthUser>) => {
+    setUser((currentUser) => {
+      if (!currentUser) {
+        return currentUser
+      }
+
+      const nextUser = { ...currentUser, ...patch }
+
+      if (isSameUser(currentUser, nextUser)) {
+        return currentUser
+      }
+
+      writeStoredUser(nextUser, userPersistenceRef.current)
+      return nextUser
+    })
+  }, [])
+
   useEffect(() => {
     if (!user || !authTokenStorage.getAccessToken()) {
       setHydratingUser(false)
@@ -206,8 +236,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       login,
       logout,
       refreshUser,
+      updateUser,
     }),
-    [user, isHydratingUser, login, logout, refreshUser],
+    [user, isHydratingUser, login, logout, refreshUser, updateUser],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
