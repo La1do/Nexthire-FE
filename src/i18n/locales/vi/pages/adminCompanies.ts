@@ -67,6 +67,7 @@ export const adminCompanies: AdminCompaniesTranslations = {
     descriptionTitle: 'Giới thiệu công ty',
     documentsTitle: 'Tài liệu xác minh',
     documentsDescription: 'Các tài liệu do nhà tuyển dụng gửi để xác thực doanh nghiệp.',
+    viewDocument: 'Xem',
     download: 'Tải xuống',
     reviewTitle: 'Hành động kiểm duyệt',
     pendingHint: 'Công ty đang chờ kiểm tra hồ sơ và tài liệu xác minh.',
