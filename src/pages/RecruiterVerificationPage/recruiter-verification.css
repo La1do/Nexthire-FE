@@ -441,16 +441,18 @@
 
 .verification-document-controls {
   display: grid;
-  gap: var(--space-sm);
+  align-items: end;
+  gap: var(--space-md);
 }
 
 .verification-document-type {
   display: grid;
   gap: var(--space-xs);
+  min-width: 0;
 }
 
 .verification-document-type select {
-  min-height: var(--size-home-touch);
+  min-height: calc(var(--size-home-touch) + var(--space-md));
   padding-inline: var(--space-sm);
   width: 100%;
 }
@@ -463,9 +465,9 @@
   color: var(--color-home-ink);
   cursor: pointer;
   display: grid;
-  gap: var(--space-sm);
-  min-height: 11rem;
-  padding: var(--space-lg);
+  gap: var(--space-xs);
+  min-height: 9.25rem;
+  padding: var(--space-md) var(--space-lg);
   position: relative;
   text-align: center;
   transition:
@@ -829,7 +831,7 @@
   }
 
   .verification-document-controls {
-    grid-template-columns: minmax(11rem, 0.42fr) minmax(0, 1fr);
+    grid-template-columns: minmax(13rem, 0.34fr) minmax(0, 1fr);
   }
 
   .verification-document-error {

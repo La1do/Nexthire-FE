@@ -137,9 +137,10 @@ export function VerificationDocumentsSection({
         </div>
       ) : null}
 
-      <div className="verification-document-group">
-        <h3>{translations.attachedTitle}</h3>
-        {documents.length > 0 ? (
+      {documents.length > 0 || queuedDocuments.length === 0 ? (
+        <div className="verification-document-group">
+          <h3>{translations.attachedTitle}</h3>
+          {documents.length > 0 ? (
           <ul className="verification-document-list">
             {documents.map((document) => {
               const isDeleting = deletingDocumentId === document.documentId
@@ -172,7 +173,7 @@ export function VerificationDocumentsSection({
               )
             })}
           </ul>
-        ) : (
+          ) : (
           <div className="verification-document-empty">
             <span aria-hidden="true">DOC</span>
             <div>
@@ -180,8 +181,9 @@ export function VerificationDocumentsSection({
               <p>{translations.emptyDescription}</p>
             </div>
           </div>
-        )}
-      </div>
+          )}
+        </div>
+      ) : null}
     </section>
   )
 }
