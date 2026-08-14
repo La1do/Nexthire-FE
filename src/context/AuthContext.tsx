@@ -41,11 +41,27 @@ function createPersistedUser(user: AuthUser): AuthUser {
     return user
   }
 
-  // Candidate avatar URLs are short-lived download URLs. Persist only the durable
-  // document id and force a fresh /candidates/me hydration after a reload.
+  // Candidate profile avatar URLs are short-lived signed URLs. Never persist them.
+  // Keep only the durable avatar document id and provider fallback between reloads.
   return {
     ...user,
     avatarUrl: null,
+    candidateAvatarUrl: null,
+  }
+}
+
+function createSessionUser(user: AuthUser): AuthUser {
+  if (user.role !== 'CANDIDATE') {
+    return user
+  }
+
+  // Do not infer provider avatar from avatarUrl here. Only the Google login
+  // mapper is allowed to classify the auth response avatar as provider-owned.
+  return {
+    ...user,
+    avatarUrl: null,
+    candidateAvatarUrl: user.candidateAvatarUrl ?? null,
+    providerAvatarUrl: user.providerAvatarUrl ?? null,
   }
 }
 
@@ -85,6 +101,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     return readStoredUser()
   })
+  const userRef = useRef<AuthUser | null>(user)
+  userRef.current = user
+  const userId = user?.id ?? null
+  const userRole = user?.role ?? null
 
   const clearSession = useCallback(() => {
     hydratedIdentityRef.current = null
@@ -113,11 +133,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
         syncLocale(auth.user.language)
       }
 
+      const sessionUser = createSessionUser(auth.user)
+
       authTokenStorage.setTokens(auth.tokens, persistence)
-      writeStoredUser(auth.user, persistence)
+      writeStoredUser(sessionUser, persistence)
       userPersistenceRef.current = persistence
       hydratedIdentityRef.current = null
-      setUser(auth.user)
+      setUser(sessionUser)
       setProfileRefreshKey((current) => current + 1)
     },
     [syncLocale],
@@ -164,15 +186,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, [])
 
   useEffect(() => {
-    if (!user || !authTokenStorage.getAccessToken()) {
+    if (!userId || !userRole || !authTokenStorage.getAccessToken()) {
       setHydratingUser(false)
       return
     }
 
-    const identityKey = `${user.id}:${user.role}:${profileRefreshKey}`
+    const identityKey = `${userId}:${userRole}:${profileRefreshKey}`
 
     if (hydratedIdentityRef.current === identityKey) {
       setHydratingUser(false)
+      return
+    }
+
+    const userSnapshot = userRef.current
+
+    if (!userSnapshot || userSnapshot.id !== userId || userSnapshot.role !== userRole) {
       return
     }
 
@@ -183,9 +211,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setHydratingUser(true)
 
     currentUserService
-      .getCurrentUser(user)
+      .getCurrentUser(userSnapshot)
       .then((nextUser) => {
-        if (!isActive) {
+        if (!isActive || hydrationRequestRef.current !== requestId) {
           return
         }
 
@@ -194,7 +222,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
 
         setUser((currentUser) => {
-          if (!currentUser || currentUser.id !== user.id || currentUser.role !== user.role) {
+          if (
+            !currentUser ||
+            currentUser.id !== userId ||
+            currentUser.role !== userRole ||
+            hydrationRequestRef.current !== requestId
+          ) {
             return currentUser
           }
 
@@ -209,7 +242,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         })
       })
       .catch((error) => {
-        if (!isActive) {
+        if (!isActive || hydrationRequestRef.current !== requestId) {
           return
         }
 
@@ -226,7 +259,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => {
       isActive = false
     }
-  }, [clearSession, profileRefreshKey, syncLocale, user])
+  }, [clearSession, profileRefreshKey, syncLocale, userId, userRole])
 
   const value = useMemo<AuthContextValue>(
     () => ({

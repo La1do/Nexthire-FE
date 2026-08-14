@@ -1,24 +1,26 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
+import { getAuthUserDisplayName, useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
 import { UserNotificationPopover } from './components/UserNotificationPopover'
+import { getUserAvatarSources, getUserInitials } from '../pages/_utils/userAvatar'
+import { useResolvedAvatar } from '../hooks/useResolvedAvatar'
 
 export function CandidateLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { logout, user } = useAuth()
+  const { isHydratingUser, logout, user } = useAuth()
   const toast = useToast()
   const profile = pages.profile
   const candidateCvs = pages.candidateCvs
   const candidateSettings = pages.candidateSettings
   const userDisplayName = user ? getAuthUserDisplayName(user) : common.brandName
-  const [avatarSource, setAvatarSource] = useState<string | null>(
-    user?.avatarUrl ?? null,
-  )
+  const avatarSources = user ? getUserAvatarSources(user) : []
+  const { src: avatarSource, onError: handleAvatarError } = useResolvedAvatar(avatarSources)
+  const initials = getUserInitials(userDisplayName)
   const [isCompactHeader, setCompactHeader] = useState(() => {
     if (typeof window === 'undefined') {
       return false
@@ -29,16 +31,6 @@ export function CandidateLayout({ children }: PropsWithChildren) {
   const [isNavOpen, setNavOpen] = useState(false)
   const sidebarRef = useRef<HTMLElement | null>(null)
   const navId = useId()
-  const showAvatarImage = Boolean(avatarSource)
-
-  useEffect(() => {
-    setAvatarSource(user?.avatarUrl ?? null)
-  }, [user?.avatarUrl])
-
-  function handleAvatarError() {
-    setAvatarSource(null)
-  }
-
   useEffect(() => {
     if (typeof window === 'undefined') {
       return
@@ -49,7 +41,6 @@ export function CandidateLayout({ children }: PropsWithChildren) {
 
     syncCompactHeader()
     mediaQuery.addEventListener('change', syncCompactHeader)
-
     return () => mediaQuery.removeEventListener('change', syncCompactHeader)
   }, [])
 
@@ -108,11 +99,11 @@ export function CandidateLayout({ children }: PropsWithChildren) {
       ? profile.applications.pageTitle
       : pathname === '/profile/cvs'
         ? candidateCvs.pageTitle
-        : pathname === '/profile/jobs'
-          ? profile.managedJobs.pageTitle
-          : pathname === '/profile/settings'
-            ? candidateSettings.pageTitle
-            : profile.pageTitle
+      : pathname === '/profile/jobs'
+        ? profile.managedJobs.pageTitle
+        : pathname === '/profile/settings'
+          ? candidateSettings.pageTitle
+          : profile.pageTitle
 
   return (
     <div className="candidate-shell">
@@ -146,15 +137,15 @@ export function CandidateLayout({ children }: PropsWithChildren) {
               <span />
               <span />
             </span>
-            <span className="candidate-nav-toggle__avatar">
-              {showAvatarImage ? (
+            <span aria-busy={isHydratingUser} className="candidate-nav-toggle__avatar">
+              {avatarSource ? (
                 <img
                   alt={userDisplayName}
-                  onError={handleAvatarError}
-                  src={avatarSource ?? ''}
+                  onError={() => handleAvatarError(avatarSource)}
+                  src={avatarSource}
                 />
               ) : (
-                getInitials(userDisplayName)
+                initials
               )}
             </span>
           </button>
@@ -173,15 +164,15 @@ export function CandidateLayout({ children }: PropsWithChildren) {
         </nav>
 
         <div className="candidate-sidebar-user">
-          <span>
-            {showAvatarImage ? (
+          <span aria-busy={isHydratingUser}>
+            {avatarSource ? (
               <img
                 alt={userDisplayName}
-                onError={handleAvatarError}
-                src={avatarSource ?? ''}
+                onError={() => handleAvatarError(avatarSource)}
+                src={avatarSource}
               />
             ) : (
-              getInitials(userDisplayName)
+              initials
             )}
           </span>
           <div>

@@ -49,7 +49,7 @@ async function getCandidateUser(user: AuthUser) {
     language: profile.language ?? user.language ?? null,
     phone: profile.phone ?? user.phone,
     avatarDocumentId: profile.avatarDocumentId,
-    avatarUrl: profile.avatarUrl,
+    candidateAvatarUrl: profile.avatarUrl,
   })
 }
 

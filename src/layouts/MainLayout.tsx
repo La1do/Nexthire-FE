@@ -3,12 +3,13 @@ import type { PropsWithChildren } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   getAuthUserDisplayName,
-  getInitials,
   useAuth,
   useToast,
 } from '../context'
 import type { AuthApiRole } from '../lib/auth/authRole'
 import type { AuthUser } from '../services/auth.service'
+import { getUserAvatarSources, getUserInitials } from '../pages/_utils/userAvatar'
+import { useResolvedAvatar } from '../hooks/useResolvedAvatar'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
 import { UserNotificationPopover } from './components/UserNotificationPopover'
@@ -46,17 +47,6 @@ function getBrandHref(user: AuthUser | null) {
   return '/recruiter'
 }
 
-function getUserAvatar(user: AuthUser) {
-  const src = user.role === 'RECRUITER'
-    ? user.logoUrl ?? user.avatarUrl ?? null
-    : user.avatarUrl ?? user.logoUrl ?? null
-
-  return {
-    alt: user.role === 'RECRUITER' && user.companyName ? `${user.companyName} logo` : getAuthUserDisplayName(user),
-    src,
-  }
-}
-
 type MainUserMenuProps = {
   labels: {
     profile: string
@@ -66,11 +56,12 @@ type MainUserMenuProps = {
     recruiterRole: string
     adminRole: string
   }
+  isHydratingUser: boolean
   onLogout: () => void
   user: AuthUser
 }
 
-function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
+function MainUserMenu({ isHydratingUser, labels, onLogout, user }: MainUserMenuProps) {
   const [isOpen, setOpen] = useState(false)
   const menuId = useId()
   const menuRef = useRef<HTMLDivElement | null>(null)
@@ -78,7 +69,12 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
   const displayName = getAuthUserDisplayName(user)
   const metaLabel = getUserMetaLabel(user, labels)
   const profileHref = getProfileHref(user.role)
-  const avatar = getUserAvatar(user)
+  const avatarSources = getUserAvatarSources(user)
+  const { src: avatarSource, onError: handleAvatarError } = useResolvedAvatar(avatarSources)
+  const avatarAlt = user.role === 'RECRUITER' && user.companyName
+    ? `${user.companyName} logo`
+    : displayName
+  const initials = getUserInitials(displayName)
 
   useEffect(() => {
     if (!isOpen) {
@@ -127,15 +123,17 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
         ref={triggerRef}
         type="button"
       >
-        {avatar.src ? (
+        {avatarSource ? (
           <img
-            alt={avatar.alt}
+            alt={avatarAlt}
+            aria-busy={isHydratingUser}
             className="main-user-avatar"
-            src={avatar.src}
+            onError={() => handleAvatarError(avatarSource)}
+            src={avatarSource}
           />
         ) : (
-          <span className="main-user-avatar main-user-avatar--initials">
-            {getInitials(displayName)}
+          <span aria-busy={isHydratingUser} className="main-user-avatar main-user-avatar--initials">
+            {initials}
           </span>
         )}
         <span className="main-user-meta">
@@ -147,15 +145,17 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 
       <div className="main-user-dropdown" hidden={!isOpen} id={menuId} role="menu">
         <div className="main-user-dropdown-header" role="none">
-          {avatar.src ? (
+          {avatarSource ? (
             <img
-              alt={avatar.alt}
+              alt={avatarAlt}
+              aria-busy={isHydratingUser}
               className="main-user-dropdown-avatar"
-              src={avatar.src}
+              onError={() => handleAvatarError(avatarSource)}
+              src={avatarSource}
             />
           ) : (
-            <span className="main-user-dropdown-avatar main-user-avatar--initials">
-              {getInitials(displayName)}
+            <span aria-busy={isHydratingUser} className="main-user-dropdown-avatar main-user-avatar--initials">
+              {initials}
             </span>
           )}
           <div className="main-user-dropdown-copy">
@@ -190,7 +190,7 @@ function MainUserMenu({ labels, onLogout, user }: MainUserMenuProps) {
 
 export function MainLayout({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, isHydratingUser, logout } = useAuth()
   const toast = useToast()
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -263,7 +263,7 @@ export function MainLayout({ children }: PropsWithChildren) {
                     variant="card"
                   />
                 ) : null}
-                <MainUserMenu labels={common.authUser} onLogout={handleLogout} user={user} />
+                <MainUserMenu isHydratingUser={isHydratingUser} labels={common.authUser} onLogout={handleLogout} user={user} />
               </>
             ) : (
               <>

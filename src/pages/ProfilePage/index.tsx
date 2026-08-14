@@ -54,7 +54,7 @@ function isSupportedAvatarFile(file: File) {
 
 export function ProfilePage() {
   const { common, pages } = useTranslations()
-  const { refreshUser, updateUser } = useAuth()
+  const { refreshUser, updateUser, user } = useAuth()
   const { track: trackGlobalLoader } = useGlobalLoader()
   const toast = useToast()
   const content = pages.profile
@@ -96,7 +96,7 @@ export function ProfilePage() {
         fullName: data.profile.fullName,
         phone: data.profile.phone,
         avatarDocumentId: data.profile.avatarDocumentId,
-        avatarUrl: data.profile.avatarUrl,
+        candidateAvatarUrl: data.profile.avatarUrl,
         language: data.profile.language ?? undefined,
       })
       setHasUnsavedChanges(false)
@@ -333,7 +333,7 @@ export function ProfilePage() {
         fullName: data.profile.fullName,
         phone: data.profile.phone,
         avatarDocumentId: data.profile.avatarDocumentId,
-        avatarUrl: data.profile.avatarUrl,
+        candidateAvatarUrl: data.profile.avatarUrl,
         language: data.profile.language ?? undefined,
       })
       setProfile(nextProfile)
@@ -381,9 +381,8 @@ export function ProfilePage() {
       }))
       updateUser({
         avatarDocumentId: data.profile.avatarDocumentId,
-        avatarUrl: data.profile.avatarUrl,
+        candidateAvatarUrl: data.profile.avatarUrl,
       })
-      refreshUser()
       toast.success(content.states.avatarUploadSuccess)
     } catch (error) {
       const message = getApiErrorEnvelope(error)?.error.message ?? content.states.avatarUploadError
@@ -609,6 +608,7 @@ export function ProfilePage() {
       <ProfileHero
         completion={completion}
         content={content.hero}
+        fallbackAvatarUrl={user?.providerAvatarUrl}
         hasUnsavedChanges={hasUnsavedChanges}
         isUploadingAvatar={isUploadingAvatar}
         onAvatarUpload={(file) => void uploadAvatar(file)}

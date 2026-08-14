@@ -1,66 +1,36 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import type { CSSProperties, ChangeEvent } from 'react'
 import type { ProfileTranslations } from '../../../i18n/types'
 import type { CandidateProfile, ProfileCompletion } from '../types'
+import { getAvatarSources, getUserInitials } from '../../_utils/userAvatar'
+import { useResolvedAvatar } from '../../../hooks/useResolvedAvatar'
 
 type ProfileHeroProps = {
-  authenticatedAvatarFallbackUrl?: string | null
-  authenticatedAvatarUrl?: string | null
-  avatarRefreshKey?: number
   completion: ProfileCompletion
   content: ProfileTranslations['hero']
   hasUnsavedChanges: boolean
+  fallbackAvatarUrl?: string | null
   isUploadingAvatar: boolean
   onAvatarUpload: (file: File) => void
   profile: CandidateProfile
 }
 
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(-2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase() || 'NH'
-}
 
 export function ProfileHero({
-  authenticatedAvatarFallbackUrl,
-  authenticatedAvatarUrl,
-  avatarRefreshKey = 0,
   completion,
   content,
+  fallbackAvatarUrl,
   hasUnsavedChanges,
   isUploadingAvatar,
   onAvatarUpload,
   profile,
 }: ProfileHeroProps) {
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
-  const avatarCandidates = [
-    profile.avatarUrl?.trim(),
-    authenticatedAvatarUrl?.trim(),
-    authenticatedAvatarFallbackUrl?.trim(),
-  ].filter((avatarUrl, index, values): avatarUrl is string => Boolean(avatarUrl) && values.indexOf(avatarUrl) === index)
-  const [avatarCandidateIndex, setAvatarCandidateIndex] = useState(0)
-  const avatarUrl = avatarCandidates[avatarCandidateIndex] ?? null
-  const displayAvatarUrl = avatarUrl
-    ? avatarRefreshKey > 0 && !avatarUrl.includes('?')
-      ? `${avatarUrl}?v=${avatarRefreshKey}`
-      : avatarUrl
-    : null
-  const showAvatarImage = Boolean(displayAvatarUrl)
+  const avatarSources = getAvatarSources(profile.avatarUrl, fallbackAvatarUrl)
+  const { src: avatarSource, onError: handleAvatarError } = useResolvedAvatar(avatarSources)
   const progressStyle = {
     '--profile-progress': `${completion.percent}%`,
   } as CSSProperties
-
-  useEffect(() => {
-    setAvatarCandidateIndex(0)
-  }, [authenticatedAvatarFallbackUrl, authenticatedAvatarUrl, profile.avatarUrl])
-
-  function handleAvatarError() {
-    setAvatarCandidateIndex((currentIndex) => currentIndex + 1)
-  }
 
   function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -82,14 +52,14 @@ export function ProfileHero({
           type="button"
         >
           <span className="profile-avatar">
-            {showAvatarImage ? (
+            {avatarSource ? (
               <img
                 alt={profile.name || content.avatarAction}
-                onError={handleAvatarError}
-                src={displayAvatarUrl ?? ''}
+                onError={() => handleAvatarError(avatarSource)}
+                src={avatarSource}
               />
             ) : (
-              getInitials(profile.name)
+              getUserInitials(profile.name)
             )}
           </span>
           <span aria-hidden="true" className="profile-avatar-action" />

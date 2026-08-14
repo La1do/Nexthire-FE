@@ -17,6 +17,10 @@ export type AuthUser = {
   companyName?: string | null
   emailVerified: boolean
   avatarUrl?: string | null
+  /** Runtime candidate profile avatar. Never persist this signed URL for candidates. */
+  candidateAvatarUrl?: string | null
+  /** Stable auth-provider fallback avatar, e.g. the Google account photo. */
+  providerAvatarUrl?: string | null
   avatarDocumentId?: string | null
   logoUrl?: string | null
   language?: Locale | null
@@ -170,7 +174,23 @@ export const authService = {
 
   async googleLogin(payload: GoogleLoginPayload) {
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/google/login', payload)
-    return response.data.data
+    const auth = response.data.data
+
+    if (auth.user.role !== 'CANDIDATE') {
+      return auth
+    }
+
+    // For Google candidate login, the auth API avatar belongs to the provider.
+    // Candidate profile avatars are resolved independently from /candidates/me.
+    return {
+      ...auth,
+      user: {
+        ...auth.user,
+        candidateAvatarUrl: null,
+        providerAvatarUrl: auth.user.providerAvatarUrl ?? auth.user.avatarUrl ?? null,
+        avatarUrl: null,
+      },
+    }
   },
 
   async register(payload: RegisterPayload) {
