@@ -1,5 +1,6 @@
 import type { RecruiterJobCreateTranslations } from '../../../i18n/types'
 import type { JobPostChecklist, JobPostFieldErrors, JobPostFormValues } from '../types'
+import { isFutureDisplayDate } from './jobPostInput'
 
 function parseOptionalNumber(value: string) {
   const trimmedValue = value.trim()
@@ -10,15 +11,6 @@ function parseOptionalNumber(value: string) {
 
   const parsedValue = Number(trimmedValue)
   return Number.isFinite(parsedValue) ? parsedValue : Number.NaN
-}
-
-function isFutureDate(value: string) {
-  if (!value) {
-    return true
-  }
-
-  const deadlineTime = new Date(`${value}T23:59:59`).getTime()
-  return Number.isFinite(deadlineTime) && deadlineTime > Date.now()
 }
 
 export function getJobPostChecklist(values: JobPostFormValues): JobPostChecklist {
@@ -37,7 +29,7 @@ export function getJobPostChecklist(values: JobPostFormValues): JobPostChecklist
     salary: !values.isSalaryVisible || (!hasInvalidMin && !hasInvalidMax && !hasInvalidRange),
     skills: values.skills.length > 0,
     content: values.description.trim().length > 0 && values.requirements.trim().length > 0,
-    deadline: !hasDeadline || isFutureDate(values.deadline),
+    deadline: !hasDeadline || isFutureDisplayDate(values.deadline),
   }
 }
 
@@ -123,7 +115,7 @@ export function validateJobPostForm(
     errors.numberOfOpenings = validation.openingsInvalid
   }
 
-  if (!isFutureDate(values.deadline)) {
+  if (!isFutureDisplayDate(values.deadline)) {
     errors.deadline = validation.deadlineInvalid
   }
 
