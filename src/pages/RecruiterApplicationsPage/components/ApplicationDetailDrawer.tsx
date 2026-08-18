@@ -70,6 +70,10 @@ function getMatchActionLabel(
   return labels.runAction
 }
 
+function isLongMatchItem(item: string) {
+  return item.length > 42 || item.includes(' ~ ') || item.includes('. ')
+}
+
 function renderStringList(title: string, items: ReadonlyArray<string>, emptyLabel: string, className?: string) {
   return (
     <div className={className}>
@@ -77,7 +81,9 @@ function renderStringList(title: string, items: ReadonlyArray<string>, emptyLabe
       {items.length > 0 ? (
         <ul>
           {items.map((item) => (
-            <li key={item}>{item}</li>
+            <li className={isLongMatchItem(item) ? 'is-long' : undefined} key={item}>
+              {item}
+            </li>
           ))}
         </ul>
       ) : (

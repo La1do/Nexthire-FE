@@ -742,7 +742,14 @@
   color: var(--color-brand-solid);
   font-size: 0.78rem;
   font-weight: 900;
+  line-height: 1.35;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   padding: 0.32rem 0.58rem;
+}.recruiter-ai-match-lists li.is-long{
+  border-radius: 10px;
+  flex-basis: 100%;
+  padding: 0.48rem 0.62rem;
 }.recruiter-ai-match-list--missing li,
 .recruiter-ai-match-list--risk li{
   background: #fff7ed;
