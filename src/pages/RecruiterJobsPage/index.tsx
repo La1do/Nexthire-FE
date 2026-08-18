@@ -265,6 +265,7 @@ export function RecruiterJobDetailPage() {
   const [actionError, setActionError] = useState<string | undefined>(undefined)
   const [actionState, setActionState] = useState<RecruiterJobActionState>(null)
   const [jobApplications, setJobApplications] = useState<ApplicationResponse[]>([])
+  const [jobApplicationsTotal, setJobApplicationsTotal] = useState<number | null>(null)
   const [isApplicationsLoading, setApplicationsLoading] = useState(false)
 
   const loadJob = useCallback(async () => {
@@ -298,6 +299,7 @@ export function RecruiterJobDetailPage() {
 
     async function loadJobApplications() {
       setApplicationsLoading(true)
+      setJobApplicationsTotal(null)
 
       try {
         const response = await applicationService.getRecruiterApplications({
@@ -308,8 +310,10 @@ export function RecruiterJobDetailPage() {
           sortOrder: 'desc',
         })
         setJobApplications(response.data)
+        setJobApplicationsTotal(response.meta.total)
       } catch {
         setJobApplications([])
+        setJobApplicationsTotal(0)
       } finally {
         setApplicationsLoading(false)
       }
@@ -372,7 +376,8 @@ export function RecruiterJobDetailPage() {
   const deadline = formatRecruiterJobDate(job.deadline, locale, content.metrics.noDeadline)
   const publishedAt = formatRecruiterJobDate(job.publishedAt, locale, content.metrics.noData)
   const updatedAt = formatRecruiterJobDate(job.updatedAt, locale, content.metrics.noData)
-  const applications = formatJobCount(job.applicationCount, locale, content.metrics.applicationsSuffix)
+  const visibleApplicationCount = jobApplicationsTotal ?? job.applicationCount
+  const applications = formatJobCount(visibleApplicationCount, locale, content.metrics.applicationsSuffix)
   const openings = job.numberOfOpenings == null
     ? content.metrics.noData
     : formatJobCount(job.numberOfOpenings, locale, content.metrics.openingsSuffix)
@@ -500,7 +505,7 @@ export function RecruiterJobDetailPage() {
             <p>{content.detail.applicationsDescription}</p>
           </div>
           <Link to={createApplicationsHref(job.id)}>
-            <span>{job.applicationCount}</span>
+            <span>{visibleApplicationCount}</span>
             {content.actions.viewApplications}
           </Link>
         </header>
