@@ -162,6 +162,46 @@ export function RecruiterJobsPage() {
   } = useRecruiterJobs(content.states.errorDescription)
   const [actionState, setActionState] = useState<RecruiterJobActionState>(null)
   const [actionError, setActionError] = useState<string | undefined>(undefined)
+  const [jobApplicationCounts, setJobApplicationCounts] = useState<Readonly<Record<string, number>>>({})
+
+  useEffect(() => {
+    let ignore = false
+
+    if (jobs.length === 0) {
+      setJobApplicationCounts({})
+      return () => {
+        ignore = true
+      }
+    }
+
+    async function loadVisibleJobApplicationCounts() {
+      const entries = await Promise.all(
+        jobs.map(async (job) => {
+          try {
+            const response = await applicationService.getRecruiterApplications({
+              jobId: job.id,
+              limit: 1,
+              page: 1,
+            })
+
+            return [job.id, response.meta.total] as const
+          } catch {
+            return [job.id, job.applicationCount] as const
+          }
+        }),
+      )
+
+      if (!ignore) {
+        setJobApplicationCounts(Object.fromEntries(entries))
+      }
+    }
+
+    void loadVisibleJobApplicationCounts()
+
+    return () => {
+      ignore = true
+    }
+  }, [jobs])
 
   const handleAction = useCallback(
     async (job: RecruiterJobResponse, action: RecruiterJobAction) => {
@@ -233,6 +273,7 @@ export function RecruiterJobsPage() {
       ) : jobs.length ? (
         <RecruiterJobList
           actionState={actionState}
+          applicationCounts={jobApplicationCounts}
           createTranslations={createContent}
           jobs={jobs}
           locale={locale}

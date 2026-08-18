@@ -13,6 +13,7 @@ import { RecruiterJobStatusBadge } from './RecruiterJobStatusBadge'
 
 type RecruiterJobListProps = {
   actionState: RecruiterJobActionState
+  applicationCounts?: Readonly<Record<string, number>>
   createTranslations: RecruiterJobCreateTranslations
   jobs: RecruiterJobResponse[]
   locale: string
@@ -120,6 +121,7 @@ function hasPriorityStatus(job: RecruiterJobResponse) {
 
 export function RecruiterJobList({
   actionState,
+  applicationCounts = {},
   createTranslations,
   jobs,
   locale,
@@ -142,6 +144,7 @@ export function RecruiterJobList({
           const deadlineTitle = deadlineState && job.deadline
             ? `${translations.table.deadline}: ${job.deadline}`
             : undefined
+          const applicationCount = applicationCounts[job.id] ?? job.applicationCount
 
           return (
             <article
@@ -183,7 +186,7 @@ export function RecruiterJobList({
                     >
                       {(() => {
                         const { number, suffix } = splitJobCount(
-                          job.applicationCount,
+                          applicationCount,
                           locale,
                           translations.metrics.applicationsSuffix,
                         )
