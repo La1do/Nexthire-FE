@@ -167,6 +167,18 @@ function mapApplicationStatus(status: ApplicationStatus, content: RecruiterHomeT
   return content.applications.statusLabels[status]
 }
 
+function formatApplicationScore(application: ApplicationResponse, content: RecruiterHomeTranslations) {
+  return application.matchScore === null ? content.applications.notScored : `${application.matchScore}%`
+}
+
+function getApplicationScoreTone(application: ApplicationResponse): RecruiterApplication['scoreTone'] {
+  if (application.matchScore === null) {
+    return 'empty'
+  }
+
+  return application.matchLevel ? application.matchLevel.toLowerCase() as RecruiterApplication['scoreTone'] : 'scored'
+}
+
 function mapApplications(
   applications: ReadonlyArray<ApplicationResponse>,
   content: RecruiterHomeTranslations,
@@ -176,7 +188,8 @@ function mapApplications(
     id: application.id,
     candidateName: application.candidateFullName || application.candidateEmail,
     role: application.jobTitle,
-    score: '-',
+    score: formatApplicationScore(application, content),
+    scoreTone: getApplicationScoreTone(application),
     stage: mapApplicationStatus(application.status, content),
     status: application.status,
     submittedAt: formatShortDate(application.submittedAt, locale),

@@ -194,6 +194,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     description: 'Các hồ sơ cần được xem và phản hồi sớm.',
     viewAll: 'Xem tất cả',
     empty: 'Chưa có ứng viên mới.',
+    notScored: 'Chưa chấm',
     statusLabels: {
       SUBMITTED: 'Mới ứng tuyển',
       OFFERED: 'Đã mời bước tiếp',

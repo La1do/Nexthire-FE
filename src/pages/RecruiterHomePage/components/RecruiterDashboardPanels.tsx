@@ -150,7 +150,9 @@ export function RecruiterApplications({ applications, translations }: RecruiterA
                 <strong>{application.candidateName}</strong>
                 <small>{application.role}</small>
               </div>
-              <em>{application.score}</em>
+              <em className={`recruiter-application-card__score is-${application.scoreTone}`}>
+                {application.score}
+              </em>
               <p>{application.stage}</p>
               <time>{application.submittedAt}</time>
             </article>

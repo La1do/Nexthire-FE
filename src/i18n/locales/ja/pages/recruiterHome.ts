@@ -194,6 +194,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     description: '早めに確認と返信が必要なプロフィールです。',
     viewAll: 'すべて見る',
     empty: '新しい候補者はまだいません。',
+    notScored: '未採点',
     statusLabels: {
       SUBMITTED: '新規応募',
       OFFERED: '次へ進行',

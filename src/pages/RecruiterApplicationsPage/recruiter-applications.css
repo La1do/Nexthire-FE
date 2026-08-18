@@ -620,7 +620,8 @@
 }.recruiter-ai-match-badge span{
   font-weight: 850;
 }.recruiter-ai-match-badge--loading,
-.recruiter-ai-match-badge--high{
+.recruiter-ai-match-badge--high,
+.recruiter-ai-match-badge--excellent{
   background: #eff6ff;
   border-color: rgba(59, 130, 246, 0.22);
   color: #2563eb;

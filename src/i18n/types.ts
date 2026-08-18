@@ -1736,6 +1736,7 @@ export type RecruiterHomeTranslations = {
     description: string
     viewAll: string
     empty: string
+    notScored: string
     statusLabels: Record<'SUBMITTED' | 'OFFERED' | 'REJECTED' | 'CANCELLED', string>
   }
   performance: {

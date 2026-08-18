@@ -1,4 +1,4 @@
-import type { ApplicationStatus } from '../../types/application.types'
+import type { ApplicationMatchLevel, ApplicationStatus } from '../../types/application.types'
 import type { CompanyStatus } from '../../types/company.types'
 
 export type CompanyVerificationStatus =
@@ -52,6 +52,7 @@ export type RecruiterApplication = {
   candidateName: string
   role: string
   score: string
+  scoreTone: 'empty' | Lowercase<ApplicationMatchLevel> | 'scored'
   stage: string
   status: ApplicationStatus
   submittedAt: string

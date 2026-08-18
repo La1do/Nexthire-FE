@@ -194,6 +194,7 @@ export const recruiterHome: RecruiterHomeTranslations = {
     description: 'Profiles that should be reviewed and answered soon.',
     viewAll: 'View all',
     empty: 'No new candidates yet.',
+    notScored: 'Not scored',
     statusLabels: {
       SUBMITTED: 'New application',
       OFFERED: 'Moved forward',

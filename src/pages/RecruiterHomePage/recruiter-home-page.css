@@ -38,6 +38,40 @@
   transform: translateY(-2px);
 }
 
+.recruiter-home-page .recruiter-application-card__score {
+  min-width: 4.4rem;
+  text-align: center;
+}
+
+.recruiter-home-page .recruiter-application-card__score.is-empty {
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.recruiter-home-page .recruiter-application-card__score.is-low {
+  background: #fff7ed;
+  border-color: rgba(249, 115, 22, 0.24);
+  color: #c2410c;
+}
+
+.recruiter-home-page .recruiter-application-card__score.is-medium {
+  background: #fffbeb;
+  border-color: rgba(245, 158, 11, 0.28);
+  color: #b45309;
+}
+
+.recruiter-home-page .recruiter-application-card__score.is-high,
+.recruiter-home-page .recruiter-application-card__score.is-excellent {
+  background: #eff6ff;
+  border-color: rgba(59, 130, 246, 0.22);
+  color: #2563eb;
+}
+
+.recruiter-home-page .recruiter-application-card__score.is-scored {
+  background: var(--color-home-accent-soft);
+  color: var(--color-home-accent);
+}
+
 @media (max-width: 1180px) {
   .recruiter-home-page .recruiter-stat-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

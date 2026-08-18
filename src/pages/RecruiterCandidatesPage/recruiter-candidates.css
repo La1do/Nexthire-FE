@@ -243,19 +243,29 @@
   color: var(--color-text-muted);
 }
 
-.recruiter-candidate-match-badge--low,
 .recruiter-candidate-match-badge--medium {
+  background: #fffbeb;
+  border-color: rgba(245, 158, 11, 0.28);
+  color: #b45309;
+}
+
+.recruiter-candidate-match-badge--low {
   background: #fff7ed;
-  border-color: rgba(251, 146, 60, 0.34);
+  border-color: rgba(249, 115, 22, 0.24);
   color: #c2410c;
 }
 
 .recruiter-candidate-match-badge--high,
-.recruiter-candidate-match-badge--excellent,
+.recruiter-candidate-match-badge--excellent {
+  background: #eff6ff;
+  border-color: rgba(59, 130, 246, 0.22);
+  color: #2563eb;
+}
+
 .recruiter-candidate-match-badge--scored {
-  background: var(--color-brand-soft);
-  border-color: var(--color-border-brand-soft);
-  color: var(--color-brand-solid);
+  background: #ecfdf5;
+  border-color: rgba(16, 185, 129, 0.28);
+  color: #047857;
 }
 
 .recruiter-candidate-card__date {
