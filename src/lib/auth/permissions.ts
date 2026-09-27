@@ -161,6 +161,9 @@ export function buildPermissionSubject(
   user: { role?: AuthApiRole; companyRole?: CompanyRole; companyMemberStatus?: MemberStatus } | null | undefined,
   plan: CompanyPlan,
 ): PermissionSubject {
+  // TODO(BE): temporary real-API fallback — a RECRUITER without `companyRole` is treated as OWNER.
+  // Remove once the BE returns companyRole / companyMemberStatus / companyId (/auth/login, /auth/me)
+  // and a company plan endpoint.
   const legacyRole: CompanyRole | undefined = user?.role === 'RECRUITER' ? 'OWNER' : undefined
 
   return {

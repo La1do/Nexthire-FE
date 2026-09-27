@@ -36,8 +36,10 @@ export const teamCompanyService = {
       const response = await apiClient.get<Envelope<CompanySubscription>>('/companies/me/subscription')
       return response.data.data
     } catch (error) {
-      // TODO(BE): legacy compatibility. Until the subscription endpoint exists (404), every company is FREE,
-      // which keeps today's real-API behavior. Any other failure stays an error (plan = unknown).
+      // TODO(BE): temporary real-API fallback — plan endpoint 404 is treated as FREE (keeps today's behavior).
+      // Remove once the BE returns companyRole / companyMemberStatus / companyId and a plan endpoint.
+      // ONLY status 404 is caught: any other failure (network, 401, 403, 5xx) is rethrown, so the plan stays
+      // unknown and gates / menu show loading or error + Retry (never FREE).
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         return { companyId: '', plan: 'FREE', renewsAt: null, seatLimit: { ...PLAN_SEAT_LIMITS.FREE } }
       }
