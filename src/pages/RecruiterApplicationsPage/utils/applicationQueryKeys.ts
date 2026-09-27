@@ -5,6 +5,7 @@ const ROOT = 'recruiter-applications' as const
 export const applicationQueryKeys = {
   all: [ROOT] as const,
   jobs: (scope: string, filters: ApplicationJobListFilters) => [ROOT, scope, 'jobs', filters] as const,
+  staffMembers: (scope: string) => [ROOT, scope, 'staff-members'] as const,
   jobOptions: (scope: string) => [ROOT, scope, 'job-options'] as const,
   jobAccess: (scope: string, jobId: string) => [ROOT, scope, 'job-access', jobId] as const,
   jobApplications: (scope: string, jobId: string, request: JobApplicationsRequest) =>

@@ -9,21 +9,20 @@
  *
  * Scoping lives HERE (service/mock layer), never in components:
  * - `cv.viewAll` (Manager, FREE Owner): every JD / CV of the company.
- * - `cv.viewOwn` (Staff): JDs with `assigneeId === me`, CVs with `handlerId === me`.
+ * - `cv.viewOwn` (Staff): JDs with `assigneeId === me` and only the CVs of those JDs.
  * - Otherwise: 403 (Axios-shaped), like the backend.
  * The real variant relies on the backend for this (TODO(BE)).
  */
 import { can } from '../../lib/auth/permissions'
-import type { PermissionSubject } from '../../lib/auth/permissions'
 import type {
   Application,
   CompanyApplicationListResponse,
 } from '../../types/application.types'
+import type { Member } from '../../types/company.types'
 import type { Job, ListEnvelope } from '../../types/job.types'
 import { jobService } from '../job.service'
-import { isTeamMockEnabled, teamApplicationsService, teamJobsService } from '../team'
-import { mockDelay, requireMockContext } from '../team/mock/mockStore'
-import type { MockContext } from '../team/mock/mockStore'
+import { isTeamMockEnabled, teamApplicationsService, teamCompanyService, teamJobsService } from '../team'
+import { mockDelay } from '../team/mock/mockStore'
 import type {
   ApplicationStage,
   ApplicationStageCounts,
@@ -31,8 +30,8 @@ import type {
   WorkspaceJobListQuery,
 } from './applicationsWorkspace.types'
 import { createForbiddenError } from './forbiddenError'
-
-const BULK_PAGE_LIMIT = 100
+import { loadMockScope } from './workspaceMockScope'
+import { BULK_PAGE_LIMIT, fetchAllPages, paginateLocally } from './workspaceShared'
 
 /**
  * THE classification of a CV into a JD group (approved mapping):
@@ -75,20 +74,6 @@ function groupStageCountsByJob(applications: ReadonlyArray<Application>): Record
   return countsByJob
 }
 
-async function fetchAllPages<TItem>(
-  loadPage: (page: number) => Promise<{ data: TItem[]; meta: { totalPages: number } }>,
-): Promise<TItem[]> {
-  const firstPage = await loadPage(1)
-  const items = [...firstPage.data]
-
-  for (let page = 2; page <= firstPage.meta.totalPages; page += 1) {
-    const response = await loadPage(page)
-    items.push(...response.data)
-  }
-
-  return items
-}
-
 // The existing BE does not send assigneeId / handlerId yet (TODO(BE)); normalize to null.
 function normalizeJob(job: Job): Job {
   return { ...job, assigneeId: job.assigneeId ?? null }
@@ -96,18 +81,6 @@ function normalizeJob(job: Job): Job {
 
 function normalizeApplication(application: Application): Application {
   return { ...application, handlerId: application.handlerId ?? null }
-}
-
-function paginateLocally<TItem>(items: TItem[], page = 1, limit = 20): ListEnvelope<TItem> {
-  const safeLimit = Math.max(1, limit)
-  const safePage = Math.max(1, page)
-  const start = (safePage - 1) * safeLimit
-
-  return {
-    data: items.slice(start, start + safeLimit),
-    meta: { limit: safeLimit, page: safePage, total: items.length, totalPages: Math.max(1, Math.ceil(items.length / safeLimit)) },
-    success: true,
-  }
 }
 
 function filterByAssignee(jobs: Job[], assigneeId: string | undefined) {
@@ -123,57 +96,31 @@ type ApplicationsWorkspaceService = {
   getJob: (jobId: string) => Promise<Job>
   /** CV group counts per JD id (only CVs in the caller's scope), via `getApplicationStage`. */
   getJobApplicationCounts: () => Promise<Record<string, ApplicationStageCounts>>
+  /**
+   * ACTIVE company members holding the Staff CV scope (options of the Staff filter).
+   * Built on `teamCompanyService` (already mock/real switched), so one implementation serves both.
+   */
+  listStaffMembers: () => Promise<Member[]>
+}
+
+/**
+ * "Staff" = ACTIVE member whose (plan, role) grants `cv.viewOwn` — the Staff CV scope.
+ * Decided with `can()` instead of a role literal (ADR-04: no role comparisons outside permissions.ts).
+ */
+async function listStaffMembers(): Promise<Member[]> {
+  const [members, subscription] = await Promise.all([
+    teamCompanyService.listMembers(),
+    teamCompanyService.getCompanyPlan(),
+  ])
+
+  return members.filter(
+    (member) =>
+      member.status === 'ACTIVE' &&
+      can({ plan: subscription.plan, role: member.role, status: member.status }, 'cv.viewOwn').allowed,
+  )
 }
 
 /* ---------------------------------------------------------------- mock --- */
-
-type MockScope = {
-  jobs: Job[]
-  applications: Application[]
-}
-
-/**
- * Staff (`cv.viewOwn`) CV scope — ASSUMPTION to confirm with the Lead:
- * CVs of JDs assigned to me, plus CVs I handle (`handlerId === me`).
- */
-function isApplicationInOwnScope(application: Application, ownJobIds: ReadonlySet<string>, userId: string) {
-  return ownJobIds.has(application.jobId) || application.handlerId === userId
-}
-
-function createMockSubject({ account, company, db }: MockContext): PermissionSubject {
-  const member = db.members.find((item) => item.id === account.memberId)
-  return { plan: company.plan, role: member?.role, status: member?.status ?? 'ACTIVE' }
-}
-
-/**
- * Data scope of the current mock session, decided with `can()` (mock services
- * may call it directly, ADR-01). No permission → 403, like the backend.
- */
-async function loadMockScope(): Promise<MockScope> {
-  const context = requireMockContext()
-  const subject = createMockSubject(context)
-  const [jobs, applications] = await Promise.all([
-    fetchAllPages((page) => teamJobsService.listRecruiterJobs({ limit: BULK_PAGE_LIMIT, page })),
-    fetchAllPages((page) => teamApplicationsService.listApplications({ limit: BULK_PAGE_LIMIT, page })),
-  ])
-
-  if (can(subject, 'cv.viewAll').allowed) {
-    return { applications, jobs }
-  }
-
-  if (can(subject, 'cv.viewOwn').allowed) {
-    const userId = context.account.userId
-    const ownJobs = jobs.filter((job) => job.assigneeId === userId)
-    const ownJobIds = new Set(ownJobs.map((job) => job.id))
-
-    return {
-      applications: applications.filter((application) => isApplicationInOwnScope(application, ownJobIds, userId)),
-      jobs: ownJobs,
-    }
-  }
-
-  throw createForbiddenError()
-}
 
 const mockApplicationsWorkspaceService: ApplicationsWorkspaceService = {
   async listJobs(params = {}) {
@@ -214,6 +161,8 @@ const mockApplicationsWorkspaceService: ApplicationsWorkspaceService = {
     const { applications } = await loadMockScope()
     return mockDelay(groupStageCountsByJob(applications))
   },
+
+  listStaffMembers,
 }
 
 /* ---------------------------------------------------------------- real --- */
@@ -251,6 +200,8 @@ const realApplicationsWorkspaceService: ApplicationsWorkspaceService = {
     )
     return groupStageCountsByJob(applications.map(normalizeApplication))
   },
+
+  listStaffMembers,
 }
 
 export const applicationsWorkspaceService: ApplicationsWorkspaceService = isTeamMockEnabled

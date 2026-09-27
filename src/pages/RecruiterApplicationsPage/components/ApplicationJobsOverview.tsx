@@ -21,7 +21,7 @@ export function ApplicationJobsOverview() {
   const staffId = searchParams.get('staff')?.trim() || 'all'
   const [queryInput, setQueryInput] = useState(urlQuery)
   const filters = useMemo<ApplicationJobListFilters>(() => ({ query: urlQuery, staffId }), [staffId, urlQuery])
-  const { canFilterByStaff, jobsQuery, staffFilterPermission } = useApplicationJobs(filters)
+  const { canFilterByStaff, jobsQuery, staffFilterPermission, staffMembersQuery } = useApplicationJobs(filters)
   const jobs = jobsQuery.data?.jobs ?? []
   const hasActiveFilters = queryInput.trim().length > 0 || (canFilterByStaff && staffId !== 'all')
 
@@ -131,7 +131,12 @@ export function ApplicationJobsOverview() {
         query={queryInput}
         staffId={staffId}
         staffFilterPermission={staffFilterPermission}
-        staffOptions={jobsQuery.data?.staffOptions ?? []}
+        staffMembers={{
+          isError: staffMembersQuery.isError,
+          isLoading: staffMembersQuery.isPending && staffMembersQuery.fetchStatus !== 'idle',
+          options: staffMembersQuery.data ?? [],
+          retry: () => void staffMembersQuery.refetch(),
+        }}
       />
 
       <section className="recruiter-applications-results" aria-busy={jobsQuery.isFetching}>

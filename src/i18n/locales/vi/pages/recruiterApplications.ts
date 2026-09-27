@@ -12,6 +12,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     staffAll: 'Tất cả nhân viên',
     staffFilterLoading: 'Đang tải...',
     staffFilterError: 'Chưa kiểm tra được quyền.',
+    staffMembersError: 'Không tải được danh sách nhân viên.',
     staffFilterRetry: 'Thử lại',
     clear: 'Xóa lọc',
     assigneeLabel: 'Phụ trách',

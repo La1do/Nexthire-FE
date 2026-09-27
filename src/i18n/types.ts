@@ -2117,6 +2117,7 @@ export type RecruiterApplicationsTranslations = {
     staffAll: string
     staffFilterLoading: string
     staffFilterError: string
+    staffMembersError: string
     staffFilterRetry: string
     clear: string
     assigneeLabel: string

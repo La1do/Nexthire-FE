@@ -86,17 +86,13 @@ function toJobSummary(job: Job, counts: ApplicationJobCounts, getName: MemberNam
   }
 }
 
-/** Staff filter options = assignees of the JDs in scope (data-derived, no role checks). */
-function collectStaffOptions(jobs: ReadonlyArray<ApplicationJobSummary>): ApplicationStaffOption[] {
-  const staff = new Map<string, string>()
+/** Staff filter options: ACTIVE Staff members (selection decided by the feature service). */
+export async function fetchStaffFilterOptions(): Promise<ApplicationStaffOption[]> {
+  const members = await applicationsWorkspaceService.listStaffMembers()
 
-  for (const job of jobs) {
-    if (job.assigneeId && job.assigneeName) {
-      staff.set(job.assigneeId, job.assigneeName)
-    }
-  }
-
-  return Array.from(staff, ([id, name]) => ({ id, name })).sort((first, second) => first.name.localeCompare(second.name))
+  return members
+    .map((member) => ({ id: member.userId ?? member.id, name: member.name }))
+    .sort((first, second) => first.name.localeCompare(second.name))
 }
 
 function toApplication(application: ApplicationResponse): Application {
@@ -111,19 +107,14 @@ function withHandlerName(application: Application, getName: MemberNameLookup): A
 export async function fetchApplicationJobs(filters: ApplicationJobListFilters): Promise<ApplicationJobListResult> {
   const assigneeId = filters.staffId === 'all' ? undefined : filters.staffId
   const query = filters.query.trim() || undefined
-  const [jobs, allJobs, countsByJob, getName] = await Promise.all([
+  const [jobs, countsByJob, getName] = await Promise.all([
     fetchScopedJobs({ assigneeId, q: query }),
-    // Staff options come from the unfiltered scope so the select keeps all choices.
-    assigneeId ? fetchScopedJobs({ q: query }) : Promise.resolve(null),
     applicationsWorkspaceService.getJobApplicationCounts(),
     loadMemberNameLookup(),
   ])
-  const toSummary = (job: Job) => toJobSummary(job, countsByJob[job.id] ?? createEmptyStageCounts(), getName)
-  const summaries = jobs.map(toSummary)
 
   return {
-    jobs: summaries,
-    staffOptions: collectStaffOptions(allJobs ? allJobs.map(toSummary) : summaries),
+    jobs: jobs.map((job) => toJobSummary(job, countsByJob[job.id] ?? createEmptyStageCounts(), getName)),
   }
 }
 

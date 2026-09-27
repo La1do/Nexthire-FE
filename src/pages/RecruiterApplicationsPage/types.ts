@@ -111,7 +111,6 @@ export type ApplicationStaffOption = {
 
 export type ApplicationJobListResult = {
   jobs: ReadonlyArray<ApplicationJobSummary>
-  staffOptions: ReadonlyArray<ApplicationStaffOption>
 }
 
 export type ApplicationJobAccess = {

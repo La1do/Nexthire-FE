@@ -12,6 +12,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     staffAll: 'All staff',
     staffFilterLoading: 'Loading...',
     staffFilterError: 'Could not check access.',
+    staffMembersError: 'Could not load staff members.',
     staffFilterRetry: 'Retry',
     clear: 'Clear',
     assigneeLabel: 'Assigned to',

@@ -12,6 +12,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     staffAll: 'すべてのスタッフ',
     staffFilterLoading: '読み込み中...',
     staffFilterError: '権限を確認できませんでした。',
+    staffMembersError: 'スタッフ一覧を読み込めませんでした。',
     staffFilterRetry: '再試行',
     clear: 'クリア',
     assigneeLabel: '担当',

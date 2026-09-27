@@ -15,7 +15,15 @@ type ApplicationJobsToolbarProps = {
   onStaffChange: (value: string) => void
   query: string
   staffId: string
-  staffOptions: ReadonlyArray<ApplicationStaffOption>
+  staffMembers: StaffMembersState
+}
+
+/** Staff filter options (ACTIVE Staff members) and their load state. */
+export type StaffMembersState = {
+  isError: boolean
+  isLoading: boolean
+  options: ReadonlyArray<ApplicationStaffOption>
+  retry: () => void
 }
 
 function SearchIcon() {
@@ -37,7 +45,7 @@ export function ApplicationJobsToolbar({
   onStaffChange,
   query,
   staffId,
-  staffOptions,
+  staffMembers,
 }: ApplicationJobsToolbarProps) {
   // Permission-dependent slot: loading -> loading state, error -> message +
   // retry, denied -> nothing. Unknown is never treated as denied/locked.
@@ -47,43 +55,60 @@ export function ApplicationJobsToolbar({
     onQueryChange(event.target.value)
   }
 
+  function renderLoadingSlot() {
+    return (
+      <div aria-busy="true" className="recruiter-application-jobs-toolbar__slot" role="status">
+        <span className="recruiter-application-jobs-toolbar__slot-label">{content.staffLabel}</span>
+        <span className="recruiter-application-jobs-toolbar__slot-box">{content.staffFilterLoading}</span>
+      </div>
+    )
+  }
+
+  function renderErrorSlot(message: string, onRetry: () => void) {
+    return (
+      <div className="recruiter-application-jobs-toolbar__slot" role="alert">
+        <span className="recruiter-application-jobs-toolbar__slot-label">{content.staffLabel}</span>
+        <span className="recruiter-application-jobs-toolbar__slot-box is-error">
+          {message}
+          <button onClick={onRetry} type="button">
+            {content.staffFilterRetry}
+          </button>
+        </span>
+      </div>
+    )
+  }
+
   function renderStaffSlot() {
     if (staffFilterPermission.isLoading) {
-      return (
-        <div aria-busy="true" className="recruiter-application-jobs-toolbar__slot" role="status">
-          <span className="recruiter-application-jobs-toolbar__slot-label">{content.staffLabel}</span>
-          <span className="recruiter-application-jobs-toolbar__slot-box">{content.staffFilterLoading}</span>
-        </div>
-      )
+      return renderLoadingSlot()
     }
 
     if (staffFilterPermission.isError) {
-      return (
-        <div className="recruiter-application-jobs-toolbar__slot" role="alert">
-          <span className="recruiter-application-jobs-toolbar__slot-label">{content.staffLabel}</span>
-          <span className="recruiter-application-jobs-toolbar__slot-box is-error">
-            {content.staffFilterError}
-            <button onClick={staffFilterPermission.retry} type="button">
-              {content.staffFilterRetry}
-            </button>
-          </span>
-        </div>
-      )
+      return renderErrorSlot(content.staffFilterError, staffFilterPermission.retry)
     }
 
     if (!canFilterByStaff) {
       return null
     }
 
+    if (staffMembers.isLoading) {
+      return renderLoadingSlot()
+    }
+
+    // Members failed to load: hide the select, keep the JD list usable.
+    if (staffMembers.isError) {
+      return renderErrorSlot(content.staffMembersError, staffMembers.retry)
+    }
+
     return (
       <SelectField
         className="recruiter-applications-filter recruiter-applications-filter--select"
-        disabled={staffOptions.length === 0}
+        disabled={staffMembers.options.length === 0}
         label={content.staffLabel}
         onChange={onStaffChange}
         options={[
           { label: content.staffAll, value: 'all' },
-          ...staffOptions.map((staff) => ({ label: staff.name, value: staff.id })),
+          ...staffMembers.options.map((staff) => ({ label: staff.name, value: staff.id })),
         ]}
         value={staffId}
       />

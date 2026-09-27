@@ -1,7 +1,11 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { ApplicationJobListFilters } from '../types'
 import { applicationQueryKeys } from '../utils/applicationQueryKeys'
-import { fetchApplicationJobOptions, fetchApplicationJobs } from '../utils/applicationsWorkspaceData'
+import {
+  fetchApplicationJobOptions,
+  fetchApplicationJobs,
+  fetchStaffFilterOptions,
+} from '../utils/applicationsWorkspaceData'
 import { useApplicationsScope } from './useApplicationsScope'
 import { useStaffFilterPermission } from './useStaffFilterPermission'
 
@@ -25,7 +29,16 @@ export function useApplicationJobs(filters: ApplicationJobListFilters) {
     queryKey: applicationQueryKeys.jobs(scope, effectiveFilters),
   })
 
-  return { canFilterByStaff, jobsQuery, staffFilterPermission }
+  // Staff filter options: loaded only for members allowed to filter; its own
+  // query so a members failure never breaks the JD list.
+  const staffMembersQuery = useQuery({
+    enabled: canFilterByStaff,
+    queryFn: fetchStaffFilterOptions,
+    queryKey: applicationQueryKeys.staffMembers(scope),
+    retry: false,
+  })
+
+  return { canFilterByStaff, jobsQuery, staffFilterPermission, staffMembersQuery }
 }
 
 /** JD options for the tier-2 quick switcher (same scope as the JD list). */
