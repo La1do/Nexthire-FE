@@ -2,6 +2,7 @@ import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
 import { AiMatchBadge } from './AiMatchBadge'
 import { ApplicationHandlerLabel } from './ApplicationHandlerLabel'
+import { getApplicationStatusBadgeClassName } from '../utils/applicationStatusBadge'
 
 type ApplicationTableHandlers = {
   onEmail: (application: RecruiterApplicationItem) => void
@@ -100,7 +101,7 @@ export function ApplicationTable({
                 <small>{application.candidateHeadline}</small>
               </td>
               <td>
-                <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
+                <span className={getApplicationStatusBadgeClassName(application.status)}>
                   {statusLabels[application.status]}
                 </span>
               </td>

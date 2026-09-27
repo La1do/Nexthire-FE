@@ -14,6 +14,7 @@ import { Button, SelectField } from '../_components'
 import { AdminPagination } from '../_components/admin/AdminPagination'
 import { AdminStatCard } from '../_components/admin/AdminStatCard'
 import './recruiter-candidates.css'
+import { getCandidateStatusBadgeClassName } from './utils/candidateStatusBadge'
 
 const PAGE_SIZE = 12
 
@@ -219,7 +220,7 @@ function CandidateCard({
       <div className="recruiter-candidate-card__latest-job">
         <strong title={candidate.latestJobTitle}>{candidate.latestJobTitle}</strong>
       </div>
-      <span className={`recruiter-application-status recruiter-application-status--${candidate.latestStatus}`}>
+      <span className={getCandidateStatusBadgeClassName(candidate.latestStatus)}>
         {statusLabels[candidate.latestStatus]}
       </span>
       <CandidateMatchBadge
@@ -314,7 +315,7 @@ function CandidateDrawer({
                   <strong>{application.jobTitle}</strong>
                   <small>{formatDate(application.submittedAt, locale, translations.detail.noData)}</small>
                 </span>
-                <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
+                <span className={getCandidateStatusBadgeClassName(application.status)}>
                   {statusLabels[application.status]}
                 </span>
                 <b>{formatMatch(application.matchScore, application.matchLevel, translations.detail.noData, matchLevelLabels)}</b>

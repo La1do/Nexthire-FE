@@ -5,6 +5,7 @@ import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecis
 import { AiMatchBadge } from './AiMatchBadge'
 import { ApplicationDecisionForm } from './ApplicationDecisionForm'
 import { ApplicationHandlerLabel } from './ApplicationHandlerLabel'
+import { getApplicationStatusBadgeClassName } from '../utils/applicationStatusBadge'
 
 type ApplicationDetailDrawerProps = {
   application: RecruiterApplicationItem
@@ -186,7 +187,7 @@ export function ApplicationDetailDrawer({
             </div>
 
             <div className="recruiter-application-status-actions" aria-label={translations.statusLabel}>
-              <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
+              <span className={getApplicationStatusBadgeClassName(application.status)}>
                 {statusLabels[application.status]}
               </span>
               <ApplicationHandlerLabel handlerName={application.handlerName} template={handledByLabel} />
