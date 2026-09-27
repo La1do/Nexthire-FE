@@ -108,3 +108,45 @@ export type UploadedCompanyDocument = {
   key: string
   url: string
 }
+
+// ---------------------------------------------------------------------------
+// Company RBAC (A0 contract). Role/plan values are compared ONLY inside
+// src/lib/auth/permissions.ts — UI code must go through usePermission/<Can>.
+// ---------------------------------------------------------------------------
+
+/** Role of a recruiter account inside its company. Separate from the platform-level AuthApiRole. */
+export type CompanyRole = 'OWNER' | 'MANAGER' | 'STAFF'
+
+/** Subscription plan of a company. FREE supports a single Owner; PRO unlocks team roles. */
+export type CompanyPlan = 'FREE' | 'PRO'
+
+/** SUSPENDED = account kept but locked (e.g. extra seats after a PRO → FREE downgrade). */
+export type MemberStatus = 'ACTIVE' | 'SUSPENDED'
+
+export type Member = {
+  id: string
+  /** Auth user id of the member account (may be null for pending invites in the future). */
+  userId?: string | null
+  companyId: string
+  name: string
+  email: string
+  role: CompanyRole
+  status: MemberStatus
+  avatarUrl?: string | null
+  joinedAt: string
+  updatedAt?: string
+}
+
+/**
+ * Seat quota per non-Owner role (the single Owner seat is always included).
+ * FREE: { MANAGER: 0, STAFF: 0 }; PRO: { MANAGER: 1, STAFF: 3 }. Only ACTIVE members count; SUSPENDED do not.
+ */
+export type CompanySeatLimit = Record<Exclude<CompanyRole, 'OWNER'>, number>
+
+/** Company plan/subscription summary. Fetched via React Query, never persisted with the auth user. */
+export type CompanySubscription = {
+  companyId: string
+  plan: CompanyPlan
+  seatLimit: CompanySeatLimit
+  renewsAt: string | null
+}
