@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { ApplicationJobListFilters } from '../types'
+import { isClientError } from '../utils/applicationAccessErrors'
 import { applicationQueryKeys } from '../utils/applicationQueryKeys'
 import {
   fetchApplicationJobOptions,
@@ -27,6 +28,7 @@ export function useApplicationJobs(filters: ApplicationJobListFilters) {
     placeholderData: keepPreviousData,
     queryFn: () => fetchApplicationJobs(effectiveFilters),
     queryKey: applicationQueryKeys.jobs(scope, effectiveFilters),
+    retry: (failureCount, error) => !isClientError(error) && failureCount < 2,
   })
 
   // Staff filter options: loaded only for members allowed to filter; its own

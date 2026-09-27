@@ -49,7 +49,11 @@ export function ApplicationJobsToolbar({
 }: ApplicationJobsToolbarProps) {
   // Permission-dependent slot: loading -> loading state, error -> message +
   // retry, denied -> nothing. Unknown is never treated as denied/locked.
-  const hasStaffSlot = staffFilterPermission.isLoading || staffFilterPermission.isError || canFilterByStaff
+  // No Staff members (e.g. FREE plan): nothing to filter by, so no select.
+  const hasStaffMembersSlot = staffMembers.isLoading || staffMembers.isError || staffMembers.options.length > 0
+  const hasStaffSlot = staffFilterPermission.isLoading ||
+    staffFilterPermission.isError ||
+    (canFilterByStaff && hasStaffMembersSlot)
 
   function handleQueryChange(event: ChangeEvent<HTMLInputElement>) {
     onQueryChange(event.target.value)
@@ -87,7 +91,7 @@ export function ApplicationJobsToolbar({
       return renderErrorSlot(content.staffFilterError, staffFilterPermission.retry)
     }
 
-    if (!canFilterByStaff) {
+    if (!canFilterByStaff || !hasStaffMembersSlot) {
       return null
     }
 
@@ -103,7 +107,6 @@ export function ApplicationJobsToolbar({
     return (
       <SelectField
         className="recruiter-applications-filter recruiter-applications-filter--select"
-        disabled={staffMembers.options.length === 0}
         label={content.staffLabel}
         onChange={onStaffChange}
         options={[

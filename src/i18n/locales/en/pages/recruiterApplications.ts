@@ -33,6 +33,8 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     loading: 'Loading job posts...',
     errorTitle: 'Job posts could not be loaded',
     errorDescription: 'Check your connection or sign in again, then retry.',
+    forbiddenTitle: 'No access to applications',
+    forbiddenDescription: 'Your account cannot view CVs of this company.',
     retry: 'Retry',
   },
   jobDetail: {

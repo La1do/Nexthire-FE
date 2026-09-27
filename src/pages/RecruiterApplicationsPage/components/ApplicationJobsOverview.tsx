@@ -6,6 +6,7 @@ import { Button } from '../../_components'
 import { useApplicationJobs } from '../hooks/useApplicationJobs'
 import { useLegacyApplicationsRedirect } from '../hooks/useLegacyApplicationsRedirect'
 import type { ApplicationJobListFilters } from '../types'
+import { isForbiddenError } from '../utils/applicationAccessErrors'
 import { ApplicationJobList } from './ApplicationJobList'
 import { ApplicationJobsToolbar } from './ApplicationJobsToolbar'
 import { ApplicationsStatePanel } from './ApplicationsStatePanel'
@@ -76,6 +77,16 @@ export function ApplicationJobsOverview() {
   function renderResults() {
     if (jobsQuery.isPending) {
       return <ApplicationsStatePanel title={content.jobList.loading} />
+    }
+
+    if (jobsQuery.isError && !jobsQuery.data && isForbiddenError(jobsQuery.error)) {
+      return (
+        <ApplicationsStatePanel
+          description={content.jobList.forbiddenDescription}
+          role="alert"
+          title={content.jobList.forbiddenTitle}
+        />
+      )
     }
 
     if (jobsQuery.isError && !jobsQuery.data) {

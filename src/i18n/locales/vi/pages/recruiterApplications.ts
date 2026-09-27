@@ -33,6 +33,8 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     loading: 'Đang tải tin tuyển dụng...',
     errorTitle: 'Chưa tải được tin tuyển dụng',
     errorDescription: 'Kiểm tra kết nối hoặc đăng nhập lại rồi thử lại.',
+    forbiddenTitle: 'Không có quyền xem hồ sơ',
+    forbiddenDescription: 'Tài khoản của bạn không được xem hồ sơ ứng tuyển của công ty này.',
     retry: 'Tải lại',
   },
   jobDetail: {

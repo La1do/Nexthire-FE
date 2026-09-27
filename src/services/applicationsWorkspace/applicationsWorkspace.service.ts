@@ -204,7 +204,9 @@ const realApplicationsWorkspaceService: ApplicationsWorkspaceService = {
   listStaffMembers,
 }
 
-export const applicationsWorkspaceService: ApplicationsWorkspaceService = isTeamMockEnabled
+export const applicationsWorkspaceService: ApplicationsWorkspaceService =
+  // `import.meta.env.DEV &&` lets the bundler drop the mock variant (and its seed imports) from production builds.
+  import.meta.env.DEV && isTeamMockEnabled
   ? mockApplicationsWorkspaceService
   : realApplicationsWorkspaceService
 

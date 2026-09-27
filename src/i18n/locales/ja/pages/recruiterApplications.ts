@@ -33,6 +33,8 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     loading: '求人を読み込み中...',
     errorTitle: '求人を読み込めませんでした',
     errorDescription: '接続を確認するか再ログインしてから、もう一度お試しください。',
+    forbiddenTitle: '応募書類を閲覧する権限がありません',
+    forbiddenDescription: 'このアカウントでは会社の応募書類を閲覧できません。',
     retry: '再読み込み',
   },
   jobDetail: {

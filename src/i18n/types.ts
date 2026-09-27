@@ -2138,6 +2138,8 @@ export type RecruiterApplicationsTranslations = {
     loading: string
     errorTitle: string
     errorDescription: string
+    forbiddenTitle: string
+    forbiddenDescription: string
     retry: string
   }
   jobDetail: {
