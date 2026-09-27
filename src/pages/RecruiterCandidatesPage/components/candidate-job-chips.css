@@ -1,0 +1,42 @@
+.recruiter-candidate-job-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.recruiter-candidate-job-chips li {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.recruiter-candidate-job-chip {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 850;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0.3rem 0.65rem;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.recruiter-candidate-job-chip:hover,
+.recruiter-candidate-job-chip:focus-visible {
+  border-color: var(--color-brand-solid);
+  color: var(--color-brand-solid);
+}
+
+.recruiter-candidate-job-chip:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-brand-soft);
+  outline: 0;
+}

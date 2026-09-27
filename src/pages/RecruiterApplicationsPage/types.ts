@@ -1,4 +1,6 @@
+import type { ApplicationStage, ApplicationStageCounts } from '../../services/applicationsWorkspace'
 import type {
+  Application,
   ApplicationCvParseStatus,
   ApplicationMatchDecision,
   ApplicationMatchLevel,
@@ -6,6 +8,7 @@ import type {
   ApplicationMatchRecommendation,
   ApplicationStatus,
 } from '../../types/application.types'
+import type { ApiMeta, CompanyJobStatus } from '../../types/job.types'
 
 export type RecruiterApplicationStatus = ApplicationStatus
 
@@ -31,6 +34,7 @@ export type RecruiterApplicationItem = {
   decidedAt: string | null
   expectedSalary: string
   experience: string
+  handlerName: string | null
   jobId: string
   jobTitle: string
   matchDecision: ApplicationMatchDecision | null
@@ -55,7 +59,6 @@ export type RecruiterApplicationItem = {
 }
 
 export type RecruiterApplicationCriteria = {
-  jobId: string | 'all'
   query: string
   sort: RecruiterApplicationSort
   status: RecruiterApplicationStatus | 'all'
@@ -71,4 +74,65 @@ export type RecruiterApplicationStats = {
   new: number
   responseRate: string
   total: number
+}
+
+/* ---------------------------------------------------------------------------
+ * Two-tier view types (tier 1: JD list, tier 2: CVs of one JD).
+ * Components depend on these view types, never on raw service shapes.
+ * ------------------------------------------------------------------------- */
+
+export type ApplicationJobStatus = CompanyJobStatus
+
+/** CV group of a JD, computed only by the service (`getApplicationStage`). */
+export type ApplicationJobStage = ApplicationStage
+
+export type ApplicationJobCounts = ApplicationStageCounts
+
+export type ApplicationJobSummary = {
+  id: string
+  title: string
+  status: ApplicationJobStatus
+  assigneeId: string | null
+  assigneeName: string | null
+  counts: ApplicationJobCounts
+  totalApplications: number
+}
+
+export type ApplicationJobListFilters = {
+  query: string
+  /** Assignee (auth user id) filter, applied by the data layer. */
+  staffId: string | 'all'
+}
+
+export type ApplicationStaffOption = {
+  id: string
+  name: string
+}
+
+export type ApplicationJobListResult = {
+  jobs: ReadonlyArray<ApplicationJobSummary>
+}
+
+export type ApplicationJobAccess = {
+  assigneeId: string | null
+  assigneeName: string | null
+  jobId: string
+  status: ApplicationJobStatus
+  title: string
+}
+
+/** Application enriched with the handler display name (resolved via members). */
+export type ApplicationWithHandler = Application & {
+  handlerName: string | null
+}
+
+export type JobApplicationsRequest = {
+  criteria: RecruiterApplicationCriteria
+  limit: number
+  page: number
+}
+
+export type JobApplicationsPage = {
+  items: ReadonlyArray<ApplicationWithHandler>
+  meta: ApiMeta
 }

@@ -10,10 +10,11 @@ import type {
 type ApplicationFiltersProps = {
   content: RecruiterApplicationsTranslations['filters']
   hasActiveFilters: boolean
-  jobId: string | 'all'
+  jobId: string
+  jobLabel: string
   jobs: ReadonlyArray<RecruiterApplicationJobOption>
   onClear: () => void
-  onJobChange: (value: string | 'all') => void
+  onJobChange: (value: string) => void
   onQueryChange: (value: string) => void
   onSortChange: (value: RecruiterApplicationSort) => void
   onStatusChange: (value: RecruiterApplicationStatus | 'all') => void
@@ -44,6 +45,7 @@ export function ApplicationFilters({
   content,
   hasActiveFilters,
   jobId,
+  jobLabel,
   jobs,
   onClear,
   onJobChange,
@@ -112,12 +114,9 @@ export function ApplicationFilters({
 
         <SelectField
           className="recruiter-applications-filter recruiter-applications-filter--select"
-          label={content.jobLabel}
+          label={jobLabel}
           onChange={onJobChange}
-          options={[
-            { label: content.jobAll, value: 'all' },
-            ...jobs.map((job) => ({ label: job.title, value: job.id })),
-          ]}
+          options={jobs.map((job) => ({ label: job.title, value: job.id }))}
           value={jobId}
         />
 

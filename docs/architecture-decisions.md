@@ -106,3 +106,7 @@ Items marked (A1) are decided here but implemented later.
 - **Decision:** `CompanySubscription.seatLimit: CompanySeatLimit = { MANAGER: number; STAFF: number }` (never null). FREE = `{ MANAGER: 0, STAFF: 0 }`, PRO = `{ MANAGER: 1, STAFF: 3 }`; the single Owner seat is always included. Only ACTIVE members count toward the quota; SUSPENDED members do not.
 - **Why:** the Members tab shows per-role quota (e.g. "Staff 3/3"); a single number or `null` (unlimited) cannot express it.
 - **Rejected:** `seatLimit: number | null`; hard-coding quotas in the Members page.
+
+## ADR-17. Per-JD CV route `/recruiter/applications/:jobId` — ownership enforced by the service
+
+- **Decision:** `/recruiter/applications` lists JDs (with new / in progress / decided CV counts from `getApplicationStage()` in `src/services/applicationsWorkspace`); `/recruiter/applications/:jobId` shows the CVs of one JD. JD ownership is enforced by the service (`applicationsWorkspaceService.getJob`), which answers an Axios-shaped 403 when the JD is outside the caller's scope; the page guard redirects (replace) to `/recruiter/applications` only on 403, leaves 401 to the shared interceptor and shows an error state for anything else.

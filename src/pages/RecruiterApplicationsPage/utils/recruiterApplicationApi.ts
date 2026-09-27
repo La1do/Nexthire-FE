@@ -33,7 +33,7 @@ function createTimelineFromProgress(
 }
 
 export function createRecruiterApplicationFromApi(
-  application: ApplicationResponse,
+  application: ApplicationResponse & { handlerName?: string | null },
   { formatDate, meta }: CreateRecruiterApplicationOptions,
 ): RecruiterApplicationItem {
   const submittedAtOrder = Number.isNaN(Date.parse(application.submittedAt))
@@ -54,6 +54,7 @@ export function createRecruiterApplicationFromApi(
     cvParseStatus: application.cvParseStatus ?? 'NOT_PARSED',
     expectedSalary: meta.notAvailable,
     experience: meta.notAvailable,
+    handlerName: application.handlerName ?? null,
     id: application.id,
     jobId: application.jobId,
     jobTitle: application.jobTitle,

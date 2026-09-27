@@ -1,6 +1,8 @@
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
 import { AiMatchBadge } from './AiMatchBadge'
+import { ApplicationHandlerLabel } from './ApplicationHandlerLabel'
+import { getApplicationStatusBadgeClassName } from '../utils/applicationStatusBadge'
 
 type ApplicationMobileListHandlers = {
   onEmail: (application: RecruiterApplicationItem) => void
@@ -12,6 +14,7 @@ type ApplicationMobileListProps = {
   actions: RecruiterApplicationsTranslations['results']
   applications: ReadonlyArray<RecruiterApplicationItem>
   columns: RecruiterApplicationsTranslations['results']['columns']
+  handledByLabel: string
   handlers: ApplicationMobileListHandlers
   matchLabels: RecruiterApplicationsTranslations['match']
   statusLabels: RecruiterApplicationsTranslations['statusLabels']
@@ -28,6 +31,7 @@ export function ApplicationMobileList({
   actions,
   applications,
   columns,
+  handledByLabel,
   handlers,
   matchLabels,
   statusLabels,
@@ -47,10 +51,11 @@ export function ApplicationMobileList({
           </div>
 
           <div className="recruiter-applications-mobile-card__badges">
-            <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
+            <span className={getApplicationStatusBadgeClassName(application.status)}>
               {statusLabels[application.status]}
             </span>
             <AiMatchBadge application={application} labels={matchLabels} />
+            <ApplicationHandlerLabel handlerName={application.handlerName} template={handledByLabel} />
           </div>
 
           <dl className="recruiter-applications-mobile-card__meta">

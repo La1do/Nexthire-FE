@@ -4,6 +4,11 @@
   gap: 1.1rem;
 }
 
+.recruiter-candidates-page {
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
 .recruiter-candidates-hero,
 .recruiter-candidates-filters,
 .recruiter-candidates-results,
@@ -42,7 +47,7 @@
   align-items: end;
   display: grid;
   gap: 0.85rem;
-  grid-template-columns: minmax(16rem, 1fr) minmax(12rem, 0.35fr) minmax(12rem, 0.35fr) auto;
+  grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 0.35fr) minmax(10rem, 0.35fr) auto;
   padding: 1rem;
 }
 
@@ -85,12 +90,12 @@
   display: grid;
   gap: 1rem;
   grid-template-columns:
-    minmax(17rem, 1.35fr)
-    minmax(14rem, 1fr)
-    minmax(8rem, 0.55fr)
-    minmax(8rem, 0.75fr)
-    minmax(8rem, 0.65fr)
-    minmax(8rem, 0.7fr);
+    minmax(13rem, 1.35fr)
+    minmax(12rem, 1.2fr)
+    minmax(6.5rem, 0.55fr)
+    minmax(7rem, 0.7fr)
+    minmax(6.5rem, 0.6fr)
+    minmax(7.5rem, 0.7fr);
 }
 
 .recruiter-candidate-card>* {

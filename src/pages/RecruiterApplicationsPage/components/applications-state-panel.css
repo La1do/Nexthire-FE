@@ -1,0 +1,10 @@
+/* ApplicationsStatePanel: loading / empty / error states. Base look comes from
+ * `.recruiter-applications-empty` in recruiter-applications.css. */
+
+.recruiter-applications-state {
+  gap: 0.25rem;
+}
+
+.recruiter-applications-state__action {
+  margin-top: 0.9rem;
+}
