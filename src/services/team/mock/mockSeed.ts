@@ -4,15 +4,28 @@
  */
 import type { Application } from '../../../types/application.types'
 import type { AuditLog } from '../../../types/auditLog.types'
-import type { CompanyPlan, CompanyResponse, CompanyRole, Member, MemberStatus } from '../../../types/company.types'
+import type {
+  CompanyPlan,
+  CompanyResponse,
+  CompanyRole,
+  CompanySeatLimit,
+  Member,
+  MemberStatus,
+} from '../../../types/company.types'
 import type { CompanyJobStatus, Job } from '../../../types/job.types'
 
 export const MOCK_PASSWORD = '123456'
 
 export type MockCompany = CompanyResponse & {
   plan: CompanyPlan
-  seatLimit: number | null
+  seatLimit: CompanySeatLimit
   renewsAt: string | null
+}
+
+/** Seat quota per plan (Owner seat always included). */
+export const MOCK_SEAT_LIMITS: Record<CompanyPlan, CompanySeatLimit> = {
+  FREE: { MANAGER: 0, STAFF: 0 },
+  PRO: { MANAGER: 1, STAFF: 3 },
 }
 
 export type MockAccount = {
@@ -46,7 +59,6 @@ function createCompany(input: {
   name: string
   ownerId: string
   plan: CompanyPlan
-  seatLimit: number | null
   taxCode: string
 }): MockCompany {
   return {
@@ -74,7 +86,7 @@ function createCompany(input: {
     plan: input.plan,
     renewsAt: input.plan === 'PRO' ? '2026-12-01T00:00:00.000Z' : null,
     rejectionReason: null,
-    seatLimit: input.seatLimit,
+    seatLimit: MOCK_SEAT_LIMITS[input.plan],
     size: '11-50',
     status: 'APPROVED',
     submittedAt: SEED_DATE,
@@ -101,7 +113,8 @@ const ACCOUNT_SEEDS: AccountSeed[] = [
   { companyId: MOCK_COMPANY_IDS.pro, email: 'staff1.pro@mock.nexhire', fullName: 'Pro Staff One', key: 'pro-staff-1', role: 'STAFF', status: 'ACTIVE' },
   { companyId: MOCK_COMPANY_IDS.pro, email: 'staff2.pro@mock.nexhire', fullName: 'Pro Staff Two', key: 'pro-staff-2', role: 'STAFF', status: 'ACTIVE' },
   { companyId: MOCK_COMPANY_IDS.pro, email: 'staff3.pro@mock.nexhire', fullName: 'Pro Staff Three', key: 'pro-staff-3', role: 'STAFF', status: 'ACTIVE' },
-  { companyId: MOCK_COMPANY_IDS.pro, email: 'suspended.pro@mock.nexhire', fullName: 'Pro Suspended Staff', key: 'pro-suspended', role: 'STAFF', status: 'SUSPENDED' },
+  // Member locked by a PRO → FREE downgrade: stays in the FREE company as SUSPENDED (not deleted).
+  { companyId: MOCK_COMPANY_IDS.free, email: 'suspended.free@mock.nexhire', fullName: 'Free Suspended Staff', key: 'free-suspended', role: 'STAFF', status: 'SUSPENDED' },
 ]
 
 const userId = (key: string) => `mock-user-${key}`
@@ -115,7 +128,7 @@ function createJob(input: {
   status: CompanyJobStatus
   assigneeKey: string | null
   applicationCount?: number
-  rejectReason?: string | null
+  returnReason?: string | null
 }): Job {
   const isPublished = input.status === 'PUBLISHED'
 
@@ -140,7 +153,7 @@ function createJob(input: {
     moderation: { decision: null, matchedRules: [], reasons: [], riskLevel: null, riskScore: null },
     numberOfOpenings: 1,
     publishedAt: isPublished ? SEED_DATE : null,
-    rejectReason: input.rejectReason ?? null,
+    returnReason: input.returnReason ?? null,
     requirements: 'Mock requirements.',
     review: null,
     reviewReason: null,
@@ -209,7 +222,6 @@ export function createMockSeed(): MockDatabase {
     name: 'Mock Free Company',
     ownerId: userId('free-owner'),
     plan: 'FREE',
-    seatLimit: 1,
     taxCode: '0000000001',
   })
   const proCompany = createCompany({
@@ -217,7 +229,6 @@ export function createMockSeed(): MockDatabase {
     name: 'Mock Pro Company',
     ownerId: userId('pro-owner'),
     plan: 'PRO',
-    seatLimit: null,
     taxCode: '0000000002',
   })
 
@@ -249,7 +260,7 @@ export function createMockSeed(): MockDatabase {
     createJob({ ...pro, applicationCount: 2, assigneeKey: 'pro-manager', id: 'mock-job-pro-1', status: 'PUBLISHED', title: 'Senior Frontend Engineer' }),
     createJob({ ...pro, applicationCount: 0, assigneeKey: 'pro-staff-1', id: 'mock-job-pro-2', status: 'PENDING_APPROVAL', title: 'Backend Engineer (Node.js)' }),
     createJob({ ...pro, assigneeKey: 'pro-staff-2', id: 'mock-job-pro-3', status: 'DRAFT', title: 'QA Engineer' }),
-    createJob({ ...pro, assigneeKey: 'pro-staff-1', id: 'mock-job-pro-4', rejectReason: 'Salary range is missing the benefits section.', status: 'REJECTED', title: 'DevOps Engineer' }),
+    createJob({ ...pro, assigneeKey: 'pro-staff-1', id: 'mock-job-pro-4', returnReason: 'Please add the benefits section before resubmitting.', status: 'RETURNED', title: 'DevOps Engineer' }),
     createJob({ ...pro, applicationCount: 2, assigneeKey: 'pro-staff-3', id: 'mock-job-pro-5', status: 'PUBLISHED', title: 'Product Designer' }),
     createJob({ ...pro, assigneeKey: null, id: 'mock-job-pro-6', status: 'DRAFT', title: 'Data Analyst (unassigned)' }),
     createJob({ ...free, applicationCount: 1, assigneeKey: 'free-owner', id: 'mock-job-free-1', status: 'PUBLISHED', title: 'Fullstack Developer' }),
@@ -295,13 +306,13 @@ export function createMockSeed(): MockDatabase {
       targetType: 'JOB',
     },
     {
-      action: 'JD_REJECTED',
+      action: 'JD_RETURNED',
       actorId: userId('pro-manager'),
       actorName: 'Pro Manager',
       companyId: proCompany.id,
       createdAt: '2026-09-11T05:00:00.000Z',
       id: 'mock-audit-3',
-      metadata: { reason: 'Salary range is missing the benefits section.' },
+      metadata: { returnReason: 'Please add the benefits section before resubmitting.' },
       targetId: 'mock-job-pro-4',
       targetLabel: 'DevOps Engineer',
       targetType: 'JOB',
@@ -316,6 +327,35 @@ export function createMockSeed(): MockDatabase {
       targetId: 'mock-job-pro-5',
       targetLabel: 'Product Designer',
       targetType: 'JOB',
+    },
+    {
+      action: 'JD_ASSIGNED',
+      actorId: userId('pro-manager'),
+      actorName: 'Pro Manager',
+      companyId: proCompany.id,
+      createdAt: '2026-09-13T07:00:00.000Z',
+      id: 'mock-audit-5',
+      metadata: {
+        fromAssigneeId: null,
+        fromAssigneeName: null,
+        toAssigneeId: userId('pro-staff-3'),
+        toAssigneeName: 'Pro Staff Three',
+      },
+      targetId: 'mock-job-pro-5',
+      targetLabel: 'Product Designer',
+      targetType: 'JOB',
+    },
+    {
+      action: 'PLAN_CHANGED',
+      actorId: userId('free-owner'),
+      actorName: 'Free Owner',
+      companyId: freeCompany.id,
+      createdAt: '2026-09-05T08:00:00.000Z',
+      id: 'mock-audit-6',
+      metadata: { fromPlan: 'PRO', toPlan: 'FREE' },
+      targetId: freeCompany.id,
+      targetLabel: freeCompany.name,
+      targetType: 'COMPANY',
     },
   ]
 

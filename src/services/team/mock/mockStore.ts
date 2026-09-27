@@ -5,7 +5,7 @@ import { createMockSeed } from './mockSeed'
 import type { MockAccount, MockCompany, MockDatabase } from './mockSeed'
 
 /** All mock data lives under this localStorage namespace. Bump the version when the seed shape changes. */
-export const MOCK_STORAGE_PREFIX = 'nexhire.mock.v1'
+export const MOCK_STORAGE_PREFIX = 'nexhire.mock.v2'
 const DB_KEY = `${MOCK_STORAGE_PREFIX}.db`
 const SESSION_KEY = `${MOCK_STORAGE_PREFIX}.session`
 

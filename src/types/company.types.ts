@@ -137,11 +137,16 @@ export type Member = {
   updatedAt?: string
 }
 
+/**
+ * Seat quota per non-Owner role (the single Owner seat is always included).
+ * FREE: { MANAGER: 0, STAFF: 0 }; PRO: { MANAGER: 1, STAFF: 3 }. Only ACTIVE members count; SUSPENDED do not.
+ */
+export type CompanySeatLimit = Record<Exclude<CompanyRole, 'OWNER'>, number>
+
 /** Company plan/subscription summary. Fetched via React Query, never persisted with the auth user. */
 export type CompanySubscription = {
   companyId: string
   plan: CompanyPlan
-  /** Seat limit for the current plan; null = unlimited. */
-  seatLimit: number | null
+  seatLimit: CompanySeatLimit
   renewsAt: string | null
 }

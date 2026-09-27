@@ -198,26 +198,30 @@ export type UpdateRecruiterJobPayload = Partial<CreateRecruiterJobPayload>
 // ---------------------------------------------------------------------------
 // Company RBAC (A0 contract): internal JD approval workflow.
 // `JobStatus` (platform moderation) is intentionally NOT modified, because it is
-// used as a Record key in several places. The internal workflow adds
-// PENDING_APPROVAL (Staff submitted → waiting for Manager approval).
-//   Draft             → 'DRAFT'
-//   Pending approval  → 'PENDING_APPROVAL'
-//   Approved/Published→ 'PUBLISHED'
-//   Rejected          → 'REJECTED' (reason in `rejectReason`)
+// used as a Record key in several places. The internal workflow adds two statuses:
+//   Draft               → 'DRAFT'
+//   Pending approval    → 'PENDING_APPROVAL' (Staff submitted, waiting for a Manager)
+//   Returned to Staff   → 'RETURNED' (Manager sent it back; reason in `returnReason`).
+//                         Staff edits and resubmits → 'PENDING_APPROVAL' again.
+//   Approved/Published  → 'PUBLISHED'
+// 'REJECTED' is ONLY the platform moderation rejection (reason in `reviewReason`).
 // ---------------------------------------------------------------------------
 
-export type CompanyJobApprovalStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'PUBLISHED' | 'REJECTED'
+export type CompanyJobInternalStatus = 'PENDING_APPROVAL' | 'RETURNED'
 
-/** Superset of platform JobStatus plus the internal approval status. */
-export type CompanyJobStatus = JobStatus | CompanyJobApprovalStatus
+/**
+ * Platform JobStatus plus the company-internal approval statuses.
+ * TODO(BE): the backend must add 'PENDING_APPROVAL' and 'RETURNED' (+ `returnReason`) to the job status contract.
+ */
+export type CompanyJobStatus = JobStatus | CompanyJobInternalStatus
 
 /** Recruiter job as seen inside a company workspace (extends RecruiterJobResponse). */
 export type Job = Omit<RecruiterJobResponse, 'status'> & {
   status: CompanyJobStatus
   /** Member (auth user id) responsible for this JD; null = unassigned. */
   assigneeId: string | null
-  /** Internal (Manager) rejection reason. Platform moderation reason stays in `reviewReason`. */
-  rejectReason?: string | null
+  /** Why a Manager returned the JD to Staff (status 'RETURNED'). Platform rejection reason stays in `reviewReason`. */
+  returnReason?: string | null
 }
 
 export type CompanyJobListQuery = Omit<RecruiterJobListQuery, 'status'> & {

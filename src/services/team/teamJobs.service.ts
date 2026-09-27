@@ -21,7 +21,7 @@ const mockTeamJobsService = {
 
 const realTeamJobsService = {
   async listRecruiterJobs(params?: CompanyJobListQuery): Promise<ListEnvelope<Job>> {
-    // Existing endpoint. TODO(BE): add assigneeId, rejectReason and PENDING_APPROVAL status to the response.
+    // Existing endpoint. TODO(BE): add assigneeId, returnReason and the PENDING_APPROVAL / RETURNED statuses to the response.
     const response = await apiClient.get<ListEnvelope<Job>>('/recruiter/jobs', { params })
     return response.data
   },
