@@ -8,7 +8,8 @@
  *
  * See docs/architecture-decisions.md.
  */
-import type { CompanyPlan, CompanyRole, MemberStatus } from '../../types/company.types'
+import type { CompanyPlan, CompanyRole, CompanySeatLimit, MemberStatus } from '../../types/company.types'
+import type { AuthApiRole } from './authRole'
 
 export type Permission =
   | 'company.edit'
@@ -42,9 +43,22 @@ export type PermissionResult =
   | { allowed: true; reason?: undefined }
   | { allowed: false; reason: PermissionDeniedReason }
 
-type PermissionTable = Record<CompanyPlan, Partial<Record<CompanyRole, readonly Permission[]>>>
+/** One permission, or a list meaning "any of these" (e.g. cv.viewAll OR cv.viewOwn). */
+export type PermissionRequirement = Permission | readonly Permission[]
 
-export const PERMISSION_TABLE: PermissionTable = {
+type PermissionTable = Readonly<Record<CompanyPlan, Readonly<Partial<Record<CompanyRole, readonly Permission[]>>>>>
+
+function deepFreeze<TValue>(value: TValue): TValue {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.values(value).forEach((child) => deepFreeze(child))
+    Object.freeze(value)
+  }
+
+  return value
+}
+
+/** Deep-frozen: mock code or pages cannot mutate the table at runtime. */
+export const PERMISSION_TABLE: PermissionTable = deepFreeze({
   FREE: {
     OWNER: ['company.edit', 'company.legal', 'billing.manage', 'jd.create', 'jd.publishDirect', 'cv.viewAll'],
   },
@@ -53,7 +67,7 @@ export const PERMISSION_TABLE: PermissionTable = {
     MANAGER: ['jd.create', 'jd.publishDirect', 'jd.approve', 'jd.assign', 'cv.viewAll', 'reports.view'],
     STAFF: ['jd.create', 'jd.submit', 'cv.viewOwn'],
   },
-}
+})
 
 const ALLOWED: PermissionResult = { allowed: true }
 const DENIED_BY_ROLE: PermissionResult = { allowed: false, reason: 'role' }
@@ -108,3 +122,90 @@ export function can(subject: PermissionSubject, permission: Permission): Permiss
 
   return DENIED_BY_ROLE
 }
+
+/**
+ * "Any of" check. Allowed when any permission is allowed; otherwise 'plan' when at least one
+ * permission is plan-blocked (upgrade would help), else 'role'. SUSPENDED still yields 'plan'.
+ */
+export function canAny(subject: PermissionSubject, permissions: readonly Permission[]): PermissionResult {
+  const results = permissions.map((permission) => can(subject, permission))
+
+  if (results.some((result) => result.allowed)) {
+    return ALLOWED
+  }
+
+  if (results.some((result) => result.reason === 'plan')) {
+    return DENIED_BY_PLAN
+  }
+
+  return DENIED_BY_ROLE
+}
+
+export function checkPermission(subject: PermissionSubject, requirement: PermissionRequirement): PermissionResult {
+  return typeof requirement === 'string' ? can(subject, requirement) : canAny(subject, requirement)
+}
+
+export function isMemberSuspended(status: MemberStatus | undefined): boolean {
+  return status === 'SUSPENDED'
+}
+
+/**
+ * Builds the subject from the auth user fields + the company plan.
+ *
+ * Legacy compatibility — TODO(BE): remove once /auth/me returns `companyRole`.
+ * The current backend has single-owner companies and does not send `companyRole`; a RECRUITER
+ * without it is treated as the OWNER of its own company, which keeps today's real-API behavior
+ * (FREE OWNER can do everything the existing recruiter pages need). Mock accounts always carry a role.
+ */
+export function buildPermissionSubject(
+  user: { role?: AuthApiRole; companyRole?: CompanyRole; companyMemberStatus?: MemberStatus } | null | undefined,
+  plan: CompanyPlan,
+): PermissionSubject {
+  const legacyRole: CompanyRole | undefined = user?.role === 'RECRUITER' ? 'OWNER' : undefined
+
+  return {
+    plan,
+    role: user?.companyRole ?? legacyRole,
+    status: user?.companyMemberStatus ?? 'ACTIVE',
+  }
+}
+
+/** Which records a member may list. Mirrors the backend rule; used by the mock services. */
+export type RecordVisibility = 'all' | 'own' | 'none'
+
+/**
+ * Jobs (JD): Manager / Owner FREE (jd.approve or jd.publishDirect) → all company jobs;
+ * Staff (jd.submit) → only jobs where assigneeId === me; anyone else (e.g. Owner PRO, suspended) → none (403).
+ */
+export function getJobVisibility(subject: PermissionSubject): RecordVisibility {
+  if (canAny(subject, ['jd.approve', 'jd.publishDirect']).allowed) {
+    return 'all'
+  }
+
+  return can(subject, 'jd.submit').allowed ? 'own' : 'none'
+}
+
+/**
+ * Applications (CV): cv.viewAll → all; cv.viewOwn → applications whose job is assigned to me
+ * or whose handlerId === me; otherwise none (403, e.g. Owner PRO, suspended).
+ */
+export function getApplicationVisibility(subject: PermissionSubject): RecordVisibility {
+  if (can(subject, 'cv.viewAll').allowed) {
+    return 'all'
+  }
+
+  return can(subject, 'cv.viewOwn').allowed ? 'own' : 'none'
+}
+
+const PLAN_RANK: Readonly<Record<CompanyPlan, number>> = Object.freeze({ FREE: 0, PRO: 1 })
+
+/** True when moving from `from` to `to` is an upgrade (e.g. FREE → PRO). */
+export function isPlanUpgrade(from: CompanyPlan, to: CompanyPlan): boolean {
+  return PLAN_RANK[to] > PLAN_RANK[from]
+}
+
+/** Seat quota per plan for non-Owner roles (the Owner seat is always included). */
+export const PLAN_SEAT_LIMITS: Readonly<Record<CompanyPlan, Readonly<CompanySeatLimit>>> = deepFreeze({
+  FREE: { MANAGER: 0, STAFF: 0 },
+  PRO: { MANAGER: 1, STAFF: 3 },
+})
