@@ -578,8 +578,13 @@ export function CompanyProfileTab({ canEdit }: CompanyProfileTabProps) {
         </div>
       </header>
 
-      <main className="recruiter-company-workspace">
+      <div className="recruiter-company-workspace">
         <form className="recruiter-company-form" onSubmit={(event) => void handleSubmit(event)}>
+          {isReadOnly ? (
+            <p className="recruiter-company-feedback is-warning" role="status">
+              {isSuspended ? content.form.readOnlyHint : content.form.viewOnlyHint}
+            </p>
+          ) : null}
           <section className="recruiter-company-panel">
             <div className="recruiter-company-panel__header">
               <h2>{content.form.storyTitle}</h2>
@@ -787,27 +792,24 @@ export function CompanyProfileTab({ canEdit }: CompanyProfileTabProps) {
             </div>
           </section>
 
-          {isReadOnly ? (
-            <p className="recruiter-company-feedback is-warning">
-              {isSuspended ? content.form.readOnlyHint : content.form.viewOnlyHint}
-            </p>
-          ) : null}
           {saveError ? <p className="recruiter-company-feedback is-error">{saveError}</p> : null}
           {saveSuccess ? <p className="recruiter-company-feedback is-success">{saveSuccess}</p> : null}
 
-          <div className="recruiter-company-actions">
-            <button className="recruiter-company-action recruiter-company-action--primary" disabled={isSaving || isReadOnly} type="submit">
-              {isSaving ? content.form.saving : content.form.save}
-            </button>
-            <button
-              className="recruiter-company-action recruiter-company-action--secondary"
-              disabled={!hasUnsavedChanges || isSaving}
-              type="button"
-              onClick={resetForm}
-            >
-              {content.form.reset}
-            </button>
-          </div>
+          {isReadOnly ? null : (
+            <div className="recruiter-company-actions">
+              <button className="recruiter-company-action recruiter-company-action--primary" disabled={isSaving} type="submit">
+                {isSaving ? content.form.saving : content.form.save}
+              </button>
+              <button
+                className="recruiter-company-action recruiter-company-action--secondary"
+                disabled={!hasUnsavedChanges || isSaving}
+                type="button"
+                onClick={resetForm}
+              >
+                {content.form.reset}
+              </button>
+            </div>
+          )}
         </form>
 
         <aside className="recruiter-company-panel recruiter-company-preview-panel" aria-labelledby="company-preview-title">
@@ -923,7 +925,7 @@ export function CompanyProfileTab({ canEdit }: CompanyProfileTabProps) {
             <small>{content.preview.reviewHint}</small>
           </div>
         </aside>
-      </main>
+      </div>
 
       {isReviewOpen ? (
         <div

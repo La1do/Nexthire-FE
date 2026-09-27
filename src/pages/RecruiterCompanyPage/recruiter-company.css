@@ -1232,6 +1232,8 @@ body {
 }
 
 .recruiter-company-tabs {
+  /* Contain the absolutely positioned sr-only lock labels so they cannot widen the page. */
+  position: relative;
   border-bottom: var(--rule-home-hair) solid var(--color-company-rule);
   display: flex;
   gap: var(--space-2xs);
