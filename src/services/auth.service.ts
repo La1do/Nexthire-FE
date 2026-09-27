@@ -1,6 +1,7 @@
 import { apiClient } from '../lib/api'
 import type { AuthApiRole, PublicAuthApiRole } from '../lib/auth/authRole'
 import type { Locale } from '../i18n'
+import type { CompanyRole, MemberStatus } from '../types/company.types'
 
 type ApiSuccessEnvelope<TData> = {
   success: true
@@ -24,6 +25,10 @@ export type AuthUser = {
   avatarDocumentId?: string | null
   logoUrl?: string | null
   language?: Locale | null
+  /** Role inside the company (RBAC). Undefined = not a company member. Compare only via src/lib/auth/permissions.ts. */
+  companyRole?: CompanyRole
+  /** Membership status inside the company. Undefined is treated as 'ACTIVE'. */
+  companyMemberStatus?: MemberStatus
 }
 
 export type AuthTokens = {

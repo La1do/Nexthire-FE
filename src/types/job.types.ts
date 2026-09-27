@@ -194,3 +194,32 @@ export type CreateRecruiterJobPayload = {
 }
 
 export type UpdateRecruiterJobPayload = Partial<CreateRecruiterJobPayload>
+
+// ---------------------------------------------------------------------------
+// Company RBAC (A0 contract): internal JD approval workflow.
+// `JobStatus` (platform moderation) is intentionally NOT modified, because it is
+// used as a Record key in several places. The internal workflow adds
+// PENDING_APPROVAL (Staff submitted → waiting for Manager approval).
+//   Draft             → 'DRAFT'
+//   Pending approval  → 'PENDING_APPROVAL'
+//   Approved/Published→ 'PUBLISHED'
+//   Rejected          → 'REJECTED' (reason in `rejectReason`)
+// ---------------------------------------------------------------------------
+
+export type CompanyJobApprovalStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'PUBLISHED' | 'REJECTED'
+
+/** Superset of platform JobStatus plus the internal approval status. */
+export type CompanyJobStatus = JobStatus | CompanyJobApprovalStatus
+
+/** Recruiter job as seen inside a company workspace (extends RecruiterJobResponse). */
+export type Job = Omit<RecruiterJobResponse, 'status'> & {
+  status: CompanyJobStatus
+  /** Member (auth user id) responsible for this JD; null = unassigned. */
+  assigneeId: string | null
+  /** Internal (Manager) rejection reason. Platform moderation reason stays in `reviewReason`. */
+  rejectReason?: string | null
+}
+
+export type CompanyJobListQuery = Omit<RecruiterJobListQuery, 'status'> & {
+  status?: CompanyJobStatus
+}

@@ -194,3 +194,15 @@ export type RecruiterApplicationMatchResponse = {
   requestType: RecruiterApplicationMatchRequestType
   status: RecruiterApplicationMatchRequestStatus
 }
+
+// Company RBAC (A0 contract): application with the member handling it.
+export type Application = ApplicationResponse & {
+  /** Member (auth user id) handling this CV; null = unassigned. */
+  handlerId: string | null
+}
+
+export type CompanyApplicationListResponse = {
+  success: true
+  data: Application[]
+  meta: ApiMeta
+}
