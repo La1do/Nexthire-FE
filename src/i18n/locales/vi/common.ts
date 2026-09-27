@@ -172,4 +172,10 @@ export const common = {
       },
     ],
   },
+  planLock: {
+    badge: 'Pro',
+    title: 'Tính năng của gói Pro',
+    description: 'Nâng cấp lên Pro để thêm Manager và Staff, duyệt tin tuyển dụng và phân công việc cho cả nhóm.',
+    upgrade: 'Nâng cấp lên Pro',
+  },
 }

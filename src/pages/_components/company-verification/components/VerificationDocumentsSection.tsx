@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import type { DragEvent } from 'react'
-import type { RecruiterVerificationTranslations } from '../../../i18n/types'
+import type { RecruiterVerificationTranslations } from '../../../../i18n/types'
 import type {
   CompanyVerificationDocument,
   CompanyVerificationDocumentType,
-} from '../../../types/company.types'
+} from '../../../../types/company.types'
 import type { QueuedVerificationDocument } from '../types'
 
 type VerificationDocumentsSectionProps = {

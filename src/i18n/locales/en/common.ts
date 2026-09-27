@@ -172,4 +172,10 @@ export const common = {
       },
     ],
   },
+  planLock: {
+    badge: 'Pro',
+    title: 'Available on the Pro plan',
+    description: 'Upgrade to Pro to add a Manager and Staff, approve job posts, and assign work across the team.',
+    upgrade: 'Upgrade to Pro',
+  },
 }

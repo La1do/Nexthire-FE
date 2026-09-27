@@ -87,7 +87,7 @@ body {
   font-weight: 800;
 }
 
-.recruiter-company-hero h1 {
+.recruiter-company-hero :is(h1, h2) {
   color: var(--color-company-ink);
   font-size: clamp(var(--text-xl), 6vw, var(--text-3xl));
   font-weight: 700;
@@ -873,7 +873,7 @@ body {
   font-weight: 800;
 }
 
-.recruiter-company-empty h1 {
+.recruiter-company-empty :is(h1, h2) {
   color: var(--color-company-ink);
   font-size: clamp(var(--text-lg), 7vw, var(--text-2xl));
   font-weight: 700;
@@ -1186,4 +1186,130 @@ body {
 .company-review__logo-edit.is-disabled {
   pointer-events: none;
   opacity: 0;
+}
+
+/* Company management shell (Task B) */
+.recruiter-company-profile {
+  display: grid;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+.recruiter-company-profile .recruiter-company-hero :is(h1, h2) {
+  font-size: clamp(var(--text-lg), 4vw, var(--text-2xl));
+}
+
+.recruiter-company-next-banner {
+  align-items: center;
+  background: var(--color-company-accent-soft);
+  border: var(--rule-home-hair) solid color-mix(in oklch, var(--color-company-accent) 32%, var(--color-company-rule));
+  border-radius: var(--radius-home-md);
+  display: grid;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+.recruiter-company-next-banner h2 {
+  color: var(--color-company-ink);
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+
+.recruiter-company-next-banner p {
+  color: var(--color-company-ink-2);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.recruiter-company-next-banner__action {
+  color: var(--color-company-accent-ink);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  justify-self: start;
+  min-height: var(--size-home-touch);
+  display: inline-flex;
+  align-items: center;
+}
+
+.recruiter-company-tabs {
+  /* Contain the absolutely positioned sr-only lock labels so they cannot widen the page. */
+  position: relative;
+  border-bottom: var(--rule-home-hair) solid var(--color-company-rule);
+  display: flex;
+  gap: var(--space-2xs);
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.recruiter-company-tab {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--color-company-muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  gap: var(--space-2xs);
+  min-height: var(--size-home-touch);
+  padding: 0 var(--space-sm);
+  transition: color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+
+.recruiter-company-tab.is-active {
+  border-bottom-color: var(--color-company-ink);
+  color: var(--color-company-ink);
+}
+
+.recruiter-company-tab__lock {
+  display: inline-flex;
+}
+
+.recruiter-company-tab__lock svg {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.recruiter-company-tabpanel {
+  display: grid;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+.recruiter-company-tabpanel:focus-visible {
+  outline: 2px solid var(--color-company-focus);
+  outline-offset: var(--space-2xs);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .recruiter-company-tab:hover {
+    color: var(--color-company-ink);
+  }
+}
+
+@media (min-width: 40rem) {
+  .recruiter-company-next-banner {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .recruiter-company-next-banner h2,
+  .recruiter-company-next-banner p {
+    grid-column: 1;
+  }
+
+  .recruiter-company-next-banner__action {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recruiter-company-tab {
+    transition: none;
+  }
 }

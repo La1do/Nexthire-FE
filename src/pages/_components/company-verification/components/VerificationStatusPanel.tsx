@@ -1,5 +1,5 @@
-import type { RecruiterVerificationTranslations } from '../../../i18n/types'
-import type { CompanyResponse } from '../../../types/company.types'
+import type { RecruiterVerificationTranslations } from '../../../../i18n/types'
+import type { CompanyResponse } from '../../../../types/company.types'
 import type { CompanyVerificationStatus } from '../types'
 
 type VerificationStatusPanelProps = {

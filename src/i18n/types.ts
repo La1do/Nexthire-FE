@@ -107,6 +107,12 @@ export type CommonTranslations = {
     uploadingCvLabel: string
     verifyEmailLabel: string
   }
+  planLock: {
+    badge: string
+    title: string
+    description: string
+    upgrade: string
+  }
 }
 
 export type LoginTranslations = {
@@ -2649,6 +2655,7 @@ export type RecruiterCompanyTranslations = {
     saveSuccess: string
     saveError: string
     readOnlyHint: string
+    viewOnlyHint: string
     validation: {
       addressMaxLength: string
       contactEmailInvalid: string
@@ -2742,6 +2749,161 @@ export type RecruiterCompanyTranslations = {
     title: string
     description: string
     action: string
+  }
+  management: {
+    kicker: string
+    title: string
+    subtitle: string
+    tabsLabel: string
+    loading: string
+    errorTitle: string
+    errorDescription: string
+  }
+  tabs: {
+    profile: string
+    legal: string
+    members: string
+    billing: string
+    audit: string
+  }
+  members: {
+    title: string
+    description: string
+    quotaLabel: string
+    quotaManager: string
+    quotaStaff: string
+    you: string
+    roles: {
+      OWNER: string
+      MANAGER: string
+      STAFF: string
+    }
+    statuses: {
+      ACTIVE: string
+      SUSPENDED: string
+    }
+    table: {
+      caption: string
+      member: string
+      role: string
+      status: string
+      joinedAt: string
+      actions: string
+    }
+    changeRoleLabel: string
+    removeAction: string
+    removeTitle: string
+    removeDescription: string
+    removeConfirm: string
+    cancel: string
+    empty: string
+    suspendedNotice: string
+    loading: string
+    errorTitle: string
+    notConnectedNotice: string
+    add: {
+      title: string
+      description: string
+      nameLabel: string
+      namePlaceholder: string
+      emailLabel: string
+      emailPlaceholder: string
+      roleLabel: string
+      submit: string
+      quotaFull: string
+      nameRequired: string
+      emailInvalid: string
+      emailDuplicate: string
+    }
+  }
+  billing: {
+    title: string
+    description: string
+    currentPlanLabel: string
+    currentBadge: string
+    plans: {
+      FREE: { name: string; summary: string }
+      PRO: { name: string; summary: string }
+    }
+    compare: {
+      caption: string
+      feature: string
+      included: string
+      notIncluded: string
+      rows: {
+        seats: string
+        seatsFree: string
+        seatsPro: string
+        directPublish: string
+        approval: string
+        assignment: string
+        reports: string
+        audit: string
+      }
+    }
+    upgrade: string
+    downgrade: string
+    processing: string
+    cancel: string
+    upgradeConfirmTitle: string
+    upgradeConfirmDescription: string
+    upgradeConfirm: string
+    downgradeConfirmTitle: string
+    downgradeConfirmDescription: string
+    downgradeConfirm: string
+    notConnectedNotice: string
+    inviteManager: {
+      title: string
+      description: string
+      action: string
+    }
+    invoices: {
+      title: string
+      description: string
+      caption: string
+      number: string
+      period: string
+      amount: string
+      status: string
+      issuedAt: string
+      empty: string
+      sampleNotice: string
+      statuses: {
+        PAID: string
+        PENDING: string
+        FAILED: string
+      }
+    }
+  }
+  audit: {
+    title: string
+    description: string
+    filterLabel: string
+    filters: {
+      all: string
+      jobs: string
+      roles: string
+      members: string
+      plan: string
+    }
+    /** One template per `AuditLogAction` (all 9). */
+    events: {
+      JD_SUBMITTED: string
+      JD_APPROVED: string
+      JD_RETURNED: string
+      JD_PUBLISHED_BY_MANAGER: string
+      JD_ASSIGNED: string
+      MEMBER_ADDED: string
+      MEMBER_REMOVED: string
+      MEMBER_ROLE_CHANGED: string
+      PLAN_CHANGED: string
+    }
+    returnReason: string
+    unassigned: string
+    directPublishBadge: string
+    empty: string
+    loading: string
+    errorTitle: string
   }
 }
 

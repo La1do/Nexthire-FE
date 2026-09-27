@@ -1,4 +1,4 @@
-import type { CompanyVerificationDocumentType } from '../../types/company.types'
+import type { CompanyVerificationDocumentType } from '../../../types/company.types'
 
 export type CompanyVerificationStatus =
   | 'NO_COMPANY'
