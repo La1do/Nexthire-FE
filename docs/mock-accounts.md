@@ -32,8 +32,8 @@ Password for every account: `123456`
 | --- | --- | --- | --- | --- | --- | --- |
 | Owner FREE | all (2) | all (1) | 403 | yes | yes | all items |
 | Owner PRO | 403 | 403 | yes | yes | yes | no Jobs / Applications / Candidates; `/recruiter/applications`, `/recruiter/jobs` redirect to `/recruiter` |
-| Manager | all (6) | all (4) | 403 | 403 | yes | no Company |
-| Staff One | own (2, `assigneeId`) | own (1) | 403 | 403 | yes | no Company |
+| Manager | all (6) | all (4) | 403 | 403 | yes | all items (Company page is view-only) |
+| Staff One | own (2, `assigneeId`) | own (1) | 403 | 403 | yes | all items (Company page is view-only) |
 | Suspended (FREE) | 403 | 403 | 403 | 403 | 403 | full-page "suspended" screen + Log out only |
 
 403 responses are real `AxiosError`s with the usual error envelope (`error.code = 'AUTH.FORBIDDEN'`). The Owner PRO dashboard currently shows its error state because its applications request gets 403 (known, owned by Task C).

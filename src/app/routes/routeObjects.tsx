@@ -48,7 +48,6 @@ import type { BusinessGate } from './businessGates'
 import { PermissionGateGuard } from './PermissionGateGuard'
 import {
   recruiterApplicationsGate,
-  recruiterCompanyEditGate,
   recruiterCompanyLegalGate,
   recruiterJobsGate,
 } from './permissionGates'
@@ -357,7 +356,6 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       element: <RecruiterCompanyPage />,
       layout: RecruiterLayout,
       access: recruiterAccess,
-      permissionGate: recruiterCompanyEditGate,
     },
     {
       path: '/recruiter/verification',

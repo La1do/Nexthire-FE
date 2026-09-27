@@ -18,6 +18,4 @@ export const recruiterApplicationsGate: PermissionGate = {
   permission: ['cv.viewAll', 'cv.viewOwn'],
 }
 
-export const recruiterCompanyEditGate: PermissionGate = { kind: 'recruiter-permission', permission: 'company.edit' }
-
 export const recruiterCompanyLegalGate: PermissionGate = { kind: 'recruiter-permission', permission: 'company.legal' }

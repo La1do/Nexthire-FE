@@ -24,7 +24,8 @@ export function getRecruiterNavItems(pages: Translations['pages']): RecruiterNav
       permission: ['cv.viewAll', 'cv.viewOwn'],
     },
     { href: '/recruiter/candidates', label: content.sidebar.candidates, permission: ['cv.viewAll', 'cv.viewOwn'] },
-    { href: '/recruiter/company', label: content.sidebar.company, permission: 'company.edit' },
+    // No permission: every active member can open the company page; editing is gated in the page (<Can permission="company.edit">).
+    { href: '/recruiter/company', label: content.sidebar.company },
     { href: '/recruiter/messages', label: content.sidebar.messages },
     { href: '/recruiter/settings', label: content.sidebar.settings },
   ]
