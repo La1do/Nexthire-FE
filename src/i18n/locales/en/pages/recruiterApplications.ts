@@ -128,6 +128,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     retry: 'Retry',
     statusError: 'Application result could not be updated.',
     statusSuccess: 'Application result updated.',
+    applicationForbidden: 'You do not have access to this CV. Returned to your job posts.',
   },
   match: {
     title: 'AI matching',

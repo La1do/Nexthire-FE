@@ -128,6 +128,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     retry: '再読み込み',
     statusError: '応募結果を更新できませんでした。',
     statusSuccess: '応募結果を更新しました。',
+    applicationForbidden: 'このCVを閲覧する権限がありません。求人一覧に戻りました。',
   },
   match: {
     title: 'AIマッチング',

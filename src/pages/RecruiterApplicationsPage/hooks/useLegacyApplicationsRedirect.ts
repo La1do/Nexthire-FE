@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useToast } from '../../../context'
+import { useTranslations } from '../../../i18n'
+import { isForbiddenError } from '../utils/applicationAccessErrors'
 import { resolveApplicationJobId } from '../utils/applicationsWorkspaceData'
 import { applicationQueryKeys } from '../utils/applicationQueryKeys'
 import { getJobApplicationsHref } from '../utils/applicationRoutes'
@@ -19,6 +22,8 @@ function buildJobApplicationsHref(jobId: string, searchParams: URLSearchParams) 
  */
 export function useLegacyApplicationsRedirect() {
   const navigate = useNavigate()
+  const toast = useToast()
+  const forbiddenMessage = useTranslations().pages.recruiterApplications.states.applicationForbidden
   const scope = useApplicationsScope()
   const [searchParams, setSearchParams] = useSearchParams()
   const legacyJobId = searchParams.get('jobId')?.trim() || null
@@ -32,12 +37,19 @@ export function useLegacyApplicationsRedirect() {
   })
   const resolvedJobId = legacyJobId ?? (shouldResolveJob ? applicationJobQuery.data : undefined)
   const isResolveFailed = shouldResolveJob && applicationJobQuery.isError
+  const isResolveForbidden = isResolveFailed && isForbiddenError(applicationJobQuery.error)
 
   useEffect(() => {
     if (resolvedJobId) {
       navigate(buildJobApplicationsHref(resolvedJobId, searchParams), { replace: true })
     }
   }, [navigate, resolvedJobId, searchParams])
+
+  useEffect(() => {
+    if (isResolveForbidden) {
+      toast.error(forbiddenMessage)
+    }
+  }, [forbiddenMessage, isResolveForbidden, toast])
 
   useEffect(() => {
     if (isResolveFailed) {

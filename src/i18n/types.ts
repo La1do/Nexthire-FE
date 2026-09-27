@@ -2233,6 +2233,7 @@ export type RecruiterApplicationsTranslations = {
     retry: string
     statusError: string
     statusSuccess: string
+    applicationForbidden: string
   }
   match: {
     title: string

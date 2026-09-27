@@ -128,6 +128,7 @@ export const recruiterApplications: RecruiterApplicationsTranslations = {
     retry: 'Tải lại',
     statusError: 'Chưa cập nhật được kết quả ứng tuyển.',
     statusSuccess: 'Đã cập nhật kết quả ứng tuyển.',
+    applicationForbidden: 'Bạn không có quyền xem CV này. Đã quay về danh sách tin tuyển dụng.',
   },
   match: {
     title: 'AI đánh giá độ phù hợp',

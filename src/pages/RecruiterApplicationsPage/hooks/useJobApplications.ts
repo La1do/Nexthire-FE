@@ -1,7 +1,9 @@
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import type { ApplicationResponse } from '../../../types/application.types'
+import { candidateQueryKeys } from '../../RecruiterCandidatesPage/utils/candidateQueryKeys'
 import type { JobApplicationsRequest } from '../types'
+import { isClientError } from '../utils/applicationAccessErrors'
 import {
   fetchApplicationDetail,
   fetchJobApplicationStats,
@@ -44,6 +46,8 @@ export function useJobApplicationDetail(applicationId: string | null, { refetchI
     queryFn: () => fetchApplicationDetail(applicationId ?? ''),
     queryKey: applicationQueryKeys.applicationDetail(scope, applicationId ?? ''),
     refetchInterval,
+    // 403 / 404 are final (e.g. a CV of a JD not assigned to me): no retry delay before the redirect.
+    retry: (failureCount, error) => !isClientError(error) && failureCount < 1,
   })
 }
 
@@ -66,6 +70,8 @@ export function useJobApplicationsCache(jobId: string) {
         queryClient.invalidateQueries({ queryKey: applicationQueryKeys.jobStatsRoot(scope, jobId) }),
         // Tier-1 counts (new / in progress / decided) change after a decision.
         queryClient.invalidateQueries({ queryKey: [...applicationQueryKeys.all, scope, 'jobs'] }),
+        // Candidate rows show the latest status per JD.
+        queryClient.invalidateQueries({ queryKey: candidateQueryKeys.all }),
       ])
     },
     [jobId, queryClient, scope],

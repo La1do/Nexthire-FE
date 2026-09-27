@@ -19,7 +19,8 @@ import type {
   RecruiterApplicationItem,
   RecruiterApplicationStats,
 } from '../types'
-import { getJobApplicationsHref } from '../utils/applicationRoutes'
+import { isForbiddenError } from '../utils/applicationAccessErrors'
+import { APPLICATION_JOBS_PATH, getJobApplicationsHref } from '../utils/applicationRoutes'
 import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecisionValidation'
 import { createRecruiterApplicationFromApi } from '../utils/recruiterApplicationApi'
 import { isActiveRecruiterApplicationFilters } from '../utils/recruiterApplicationsFilters'
@@ -235,9 +236,18 @@ export function ApplicationJobWorkspace({ access }: ApplicationJobWorkspaceProps
     return () => window.clearTimeout(timeout)
   }, [content.match.timeout, shouldPoll, toast])
 
-  const detailErrorMessage = detailQuery.error
+  const isDetailForbidden = isForbiddenError(detailQuery.error)
+  const detailErrorMessage = detailQuery.error && !isDetailForbidden
     ? getApiErrorEnvelope(detailQuery.error)?.error.message ?? content.states.detailError
     : null
+
+  // A CV opened by URL outside my scope (403): same outcome as the JD guard, back to the JD list.
+  useEffect(() => {
+    if (isDetailForbidden) {
+      toast.error(content.states.applicationForbidden)
+      navigate(APPLICATION_JOBS_PATH, { replace: true })
+    }
+  }, [content.states.applicationForbidden, isDetailForbidden, navigate, toast])
 
   useEffect(() => {
     if (detailErrorMessage && !isPolling) {
