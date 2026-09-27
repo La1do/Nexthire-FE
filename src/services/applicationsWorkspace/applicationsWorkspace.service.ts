@@ -124,9 +124,15 @@ async function listStaffMembers(): Promise<Member[]> {
 
 const mockApplicationsWorkspaceService: ApplicationsWorkspaceService = {
   async listJobs(params = {}) {
-    const { jobs } = await loadMockScope()
+    const { applications, jobs } = await loadMockScope()
     const query = params.q?.trim().toLowerCase()
-    const filtered = filterByAssignee(jobs, params.assigneeId).filter(
+    // The seed's static `applicationCount` can drift from the stored CVs; derive it so the
+    // JD card total always equals the CV total on `/recruiter/applications/:jobId`.
+    const withCounts = jobs.map((job) => ({
+      ...job,
+      applicationCount: applications.filter((application) => application.jobId === job.id).length,
+    }))
+    const filtered = filterByAssignee(withCounts, params.assigneeId).filter(
       (job) => (!params.status || job.status === params.status) && (!query || job.title.toLowerCase().includes(query)),
     )
 
