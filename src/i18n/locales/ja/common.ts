@@ -172,4 +172,10 @@ export const common = {
       },
     ],
   },
+  planLock: {
+    badge: 'Pro',
+    title: 'Proプランの機能です',
+    description: 'Proにアップグレードすると、マネージャーとスタッフの追加、求人の承認、チームへの担当割り当てができます。',
+    upgrade: 'Proにアップグレード',
+  },
 }

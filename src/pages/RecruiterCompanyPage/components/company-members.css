@@ -1,0 +1,171 @@
+.company-members {
+  display: grid;
+  gap: var(--space-lg);
+  min-width: 0;
+}
+
+.company-members__quota {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: 0;
+}
+
+.company-members__quota > div {
+  background: var(--color-company-paper-2);
+  border: var(--rule-home-hair) solid var(--color-company-rule);
+  border-radius: var(--radius-home-sm);
+  display: grid;
+  gap: var(--space-3xs);
+  min-width: 8rem;
+  padding: var(--space-sm);
+}
+
+.company-members__quota dt {
+  color: var(--color-company-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.company-members__quota dd {
+  color: var(--color-company-ink);
+  font-family: var(--font-home-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  margin: 0;
+}
+
+.company-members__table {
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  width: 100%;
+}
+
+.company-members__table :is(th, td) {
+  border-bottom: var(--rule-home-hair) solid var(--color-company-rule);
+  padding: var(--space-sm);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.company-members__table thead th {
+  color: var(--color-company-muted);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 800;
+}
+
+.company-members__table tbody th {
+  display: grid;
+  font-weight: 400;
+  gap: var(--space-3xs);
+}
+
+.company-members__name {
+  align-items: center;
+  color: var(--color-company-ink);
+  display: inline-flex;
+  flex-wrap: wrap;
+  font-weight: 800;
+  gap: var(--space-2xs);
+}
+
+.company-members__email {
+  color: var(--color-company-muted);
+  overflow-wrap: anywhere;
+}
+
+.company-members__you,
+.company-members__status {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 800;
+  line-height: 1.4;
+  padding: var(--space-3xs) var(--space-xs);
+  white-space: nowrap;
+}
+
+.company-members__you {
+  background: var(--color-company-accent-soft);
+  color: var(--color-company-accent-ink);
+}
+
+.company-members__status.is-active {
+  background: var(--color-company-success-soft);
+  color: color-mix(in oklch, var(--color-company-success) 70%, var(--color-company-ink));
+}
+
+.company-members__status.is-suspended {
+  background: var(--color-company-warning-soft);
+  color: color-mix(in oklch, var(--color-company-warning) 74%, var(--color-company-ink));
+}
+
+.company-members__empty {
+  color: var(--color-company-muted);
+  font-size: var(--text-sm);
+}
+
+.company-members__add-form fieldset {
+  border: 0;
+  display: grid;
+  gap: var(--space-md);
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.company-members__add-form fieldset > button {
+  justify-self: start;
+}
+
+@media (min-width: 56rem) {
+  .company-members__add-form fieldset {
+    align-items: end;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  }
+}
+
+/* Mobile: each row becomes a card. */
+@media (max-width: 39.99rem) {
+  .company-members__table thead {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+  }
+
+  .company-members__table,
+  .company-members__table tbody,
+  .company-members__table tr {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .company-members__table tr {
+    border: var(--rule-home-hair) solid var(--color-company-rule);
+    border-radius: var(--radius-home-sm);
+    padding: var(--space-sm);
+  }
+
+  .company-members__table :is(th, td) {
+    border: 0;
+    padding: 0;
+  }
+
+  .company-members__table tbody td {
+    align-items: center;
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: minmax(6rem, auto) minmax(0, 1fr);
+  }
+
+  .company-members__table tbody td::before {
+    color: var(--color-company-muted);
+    content: attr(data-label);
+    font-size: var(--text-xs, 0.75rem);
+    font-weight: 800;
+  }
+}

@@ -1,8 +1,8 @@
 import { Controller } from 'react-hook-form'
 import type { Control } from 'react-hook-form'
-import type { RecruiterVerificationTranslations } from '../../../i18n/types'
-import type { CompanyResponse } from '../../../types/company.types'
-import { Input } from '../../_components'
+import type { RecruiterVerificationTranslations } from '../../../../i18n/types'
+import type { CompanyResponse } from '../../../../types/company.types'
+import { Input } from '../../Input'
 import type { CompanyLegalFormValues } from '../types'
 
 type CompanyLegalSectionProps = {

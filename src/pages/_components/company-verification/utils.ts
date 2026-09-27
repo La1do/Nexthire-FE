@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import type { RecruiterVerificationTranslations } from '../../i18n/types'
-import type { CompanyResponse, UpdateCompanyPayload } from '../../types/company.types'
+import type { RecruiterVerificationTranslations } from '../../../i18n/types'
+import type { CompanyResponse, UpdateCompanyPayload } from '../../../types/company.types'
 import type { CompanyLegalFormValues } from './types'
 
 export const EMPTY_COMPANY_FORM: CompanyLegalFormValues = {
