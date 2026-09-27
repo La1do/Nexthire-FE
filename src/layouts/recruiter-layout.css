@@ -1,0 +1,80 @@
+/* Company RBAC states of the recruiter sidebar menu (see recruiterNavConfig.ts). */
+.recruiter-nav-skeleton {
+  animation: recruiter-nav-pulse 1.2s ease-in-out infinite;
+  background: var(--color-surface-muted);
+  border-radius: 14px;
+  display: block;
+  min-height: 2.75rem;
+}
+
+.recruiter-sidebar__nav a.recruiter-nav-locked {
+  color: var(--color-text-muted);
+  justify-content: space-between;
+  opacity: 0.85;
+}
+
+.recruiter-nav-locked__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recruiter-nav-locked__badge {
+  align-items: center;
+  background: var(--color-brand-soft);
+  border-radius: 999px;
+  color: var(--color-brand-solid);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  gap: 0.25rem;
+  padding: 0.15rem 0.5rem;
+}
+
+.recruiter-sidebar__nav a .recruiter-nav-locked__badge svg {
+  height: 0.8rem;
+  width: 0.8rem;
+}
+
+.recruiter-nav-error {
+  align-items: center;
+  border: 1px dashed var(--color-border-default);
+  border-radius: 14px;
+  color: var(--color-text-danger);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+}
+
+.recruiter-nav-error__retry {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+}
+
+.recruiter-nav-error__retry:focus-visible {
+  outline: 2px solid var(--color-brand-end);
+  outline-offset: 2px;
+}
+
+@keyframes recruiter-nav-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recruiter-nav-skeleton {
+    animation: none;
+  }
+}

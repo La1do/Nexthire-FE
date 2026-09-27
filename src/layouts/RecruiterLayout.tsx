@@ -3,8 +3,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
+import { RECRUITER_UPGRADE_PATH } from '../constants/recruiterPaths'
+import { checkPermission } from '../lib/auth/permissions'
+import { usePermissionSubject } from '../lib/auth/usePermissionSubject'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
+import { SuspendedGate } from './components/SuspendedGate'
 import { UserNotificationPopover } from './components/UserNotificationPopover'
+import { getRecruiterNavItems } from './recruiterNavConfig'
+import './recruiter-layout.css'
 
 function MenuIcon() {
   return (
@@ -25,8 +31,27 @@ function SearchIcon() {
   )
 }
 
+function LockIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <rect height="10" rx="2" width="14" x="5" y="11" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </svg>
+  )
+}
+
 export function RecruiterLayout({ children }: PropsWithChildren) {
+  return (
+    <SuspendedGate>
+      <RecruiterLayoutShell>{children}</RecruiterLayoutShell>
+    </SuspendedGate>
+  )
+}
+
+function RecruiterLayoutShell({ children }: PropsWithChildren) {
   const { common, pages } = useTranslations()
+  const accessText = common.companyAccess
+  const permissionState = usePermissionSubject()
   const content = pages.recruiterHome
   const { logout, user } = useAuth()
   const toast = useToast()
@@ -55,15 +80,8 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
               : content
   const displayName = user ? getAuthUserDisplayName(user) : common.brandName
   const avatarLabel = user?.logoUrl ? user.companyName ?? displayName : getInitials(displayName)
-  const navItems = [
-    { href: '/recruiter', label: content.sidebar.overview },
-    { href: '/recruiter/jobs', label: content.sidebar.jobs },
-    { href: '/recruiter/applications', label: pages.recruiterApplications.routeLabel },
-    { href: '/recruiter/candidates', label: content.sidebar.candidates },
-    { href: '/recruiter/company', label: content.sidebar.company },
-    { href: '/recruiter/messages', label: content.sidebar.messages },
-    { href: '/recruiter/settings', label: content.sidebar.settings },
-  ]
+  const navItems = getRecruiterNavItems(pages)
+  const hasGatedNavItems = navItems.some((item) => item.permission)
 
   useEffect(() => {
     if (!isSidebarOpen) {
@@ -119,17 +137,65 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
                   ? currentPath === item.href
                   : currentPath.startsWith(item.href)
 
+              if (item.permission) {
+                // Unknown plan → skeleton / nothing (never a locked item or an upgrade link).
+                if (permissionState.status === 'loading') {
+                  return <span aria-hidden="true" className="recruiter-nav-skeleton" key={item.href} />
+                }
+
+                if (permissionState.status === 'error') {
+                  return null
+                }
+
+                const result = checkPermission(permissionState.subject, item.permission)
+
+                if (!result.allowed && result.reason === 'role') {
+                  return null
+                }
+
+                if (!result.allowed) {
+                  return (
+                    <a
+                      aria-label={`${item.label} (${accessText.menuLockedLabel})`}
+                      className="recruiter-nav-locked"
+                      href={RECRUITER_UPGRADE_PATH}
+                      key={item.href}
+                      title={accessText.menuLockedLabel}
+                    >
+                      <span className="recruiter-nav-locked__label">{item.label}</span>
+                      <span className="recruiter-nav-locked__badge">
+                        <LockIcon />
+                        {accessText.lockedBadge}
+                      </span>
+                    </a>
+                  )
+                }
+              }
+
               return (
                 <a
                   aria-current={isActive ? 'page' : undefined}
                   className={isActive ? 'is-active' : undefined}
                   href={item.href}
-                  key={item.label}
+                  key={item.href}
                 >
                   {item.label}
                 </a>
               )
             })}
+            {hasGatedNavItems && permissionState.status === 'loading' ? (
+              <span className="sr-only" role="status">
+                {accessText.menuLoading}
+              </span>
+            ) : null}
+            {hasGatedNavItems && permissionState.status === 'error' ? (
+              <div className="recruiter-nav-error" role="alert">
+                <span>{accessText.menuError}</span>
+                <button className="recruiter-nav-error__retry" onClick={permissionState.retry} type="button">
+                  {accessText.retry}
+                </button>
+              </div>
+            ) : null}
           </nav>
 
           <div className="recruiter-sidebar__user">
