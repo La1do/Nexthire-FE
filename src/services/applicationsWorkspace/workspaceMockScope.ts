@@ -10,7 +10,7 @@ import type { Job } from '../../types/job.types'
 import { teamApplicationsService, teamJobsService } from '../team'
 import { requireMockContext } from '../team/mock/mockStore'
 import type { MockContext } from '../team/mock/mockStore'
-import { createForbiddenError } from './forbiddenError'
+import { createForbiddenError, createNotFoundError } from './forbiddenError'
 import { BULK_PAGE_LIMIT, fetchAllPages } from './workspaceShared'
 
 export type MockScope = {
@@ -56,4 +56,27 @@ export async function loadMockScope(): Promise<MockScope> {
   }
 
   throw createForbiddenError()
+}
+
+/**
+ * One CV in the caller's scope (same rule as the lists: Staff = CVs of JDs assigned to me).
+ * - Not in the company → Axios-shaped 404.
+ * - In the company but outside my scope → Axios-shaped 403.
+ * TODO(A1): `findVisibleMockApplication` from `src/services/team/mock` once it lands on develop
+ * (its A1 version also admits `handlerId === me`; D keeps the JD-assignment-only rule).
+ */
+export async function findMockApplicationInScope(applicationId: string): Promise<Application> {
+  const { applications } = await loadMockScope()
+  const application = applications.find((item) => item.id === applicationId)
+
+  if (application) {
+    return application
+  }
+
+  const { company, db } = requireMockContext()
+  const existsInCompany = db.applications.some((item) => item.id === applicationId && item.companyId === company.id)
+
+  throw existsInCompany
+    ? createForbiddenError('This CV belongs to a job post that is not assigned to you.', 'APPLICATION.NOT_ASSIGNED')
+    : createNotFoundError('Application not found.', 'APPLICATION.NOT_FOUND')
 }

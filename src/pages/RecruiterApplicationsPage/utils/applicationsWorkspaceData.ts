@@ -3,10 +3,13 @@
  * from services (scoping, 403 and CV grouping are decided there); this file
  * only maps service results into page view types for the React Query hooks.
  */
-import { applicationService } from '../../../services/application.service'
-import { applicationsWorkspaceService, createEmptyStageCounts } from '../../../services/applicationsWorkspace'
+import {
+  applicationDetailService,
+  applicationsWorkspaceService,
+  createEmptyStageCounts,
+} from '../../../services/applicationsWorkspace'
 import { teamCompanyService } from '../../../services/team'
-import type { Application, ApplicationResponse } from '../../../types/application.types'
+import type { Application } from '../../../types/application.types'
 import type { Member } from '../../../types/company.types'
 import type { Job } from '../../../types/job.types'
 import type {
@@ -95,10 +98,6 @@ export async function fetchStaffFilterOptions(): Promise<ApplicationStaffOption[
     .sort((first, second) => first.name.localeCompare(second.name))
 }
 
-function toApplication(application: ApplicationResponse): Application {
-  return { ...application, handlerId: (application as Partial<Application>).handlerId ?? null }
-}
-
 function withHandlerName(application: Application, getName: MemberNameLookup): ApplicationWithHandler {
   return { ...application, handlerName: getName(application.handlerId) }
 }
@@ -185,27 +184,26 @@ export async function fetchJobApplicationStats(jobId: string, query: string): Pr
   }
 }
 
-// A0 has no single-application / CV / match / decision methods; these use the
-// existing application.service (real endpoints only, not mocked yet).
+// Single-CV actions go through the feature service (mock/real switched there, scope + 403 decided there).
 export async function fetchApplicationDetail(applicationId: string): Promise<ApplicationWithHandler> {
   const [application, getName] = await Promise.all([
-    applicationService.getRecruiterApplication(applicationId),
+    applicationDetailService.getApplication(applicationId),
     loadMemberNameLookup(),
   ])
-  return withHandlerName(toApplication(application), getName)
+  return withHandlerName(application, getName)
 }
 
 export async function resolveApplicationJobId(applicationId: string): Promise<string> {
-  const application = await applicationService.getRecruiterApplication(applicationId)
+  const application = await applicationDetailService.getApplication(applicationId)
   return application.jobId
 }
 
 export function fetchApplicationCv(applicationId: string) {
-  return applicationService.getRecruiterApplicationCv(applicationId)
+  return applicationDetailService.getApplicationCv(applicationId)
 }
 
 export function requestApplicationMatch(applicationId: string) {
-  return applicationService.runRecruiterApplicationMatch(applicationId)
+  return applicationDetailService.runApplicationMatch(applicationId)
 }
 
 export async function updateApplicationDecision(
@@ -214,8 +212,8 @@ export async function updateApplicationDecision(
   note: string | null,
 ): Promise<ApplicationWithHandler> {
   const [application, getName] = await Promise.all([
-    applicationService.updateRecruiterApplicationStatus(applicationId, { note, status }),
+    applicationDetailService.decideApplication(applicationId, { note, status }),
     loadMemberNameLookup(),
   ])
-  return withHandlerName(toApplication(application), getName)
+  return withHandlerName(application, getName)
 }
