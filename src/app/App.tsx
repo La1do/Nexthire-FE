@@ -1,15 +1,21 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, GlobalLoaderProvider, ToastProvider, useAuth, useGlobalLoader } from '../context'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { useTranslations } from '../i18n'
 import { GlobalLoader } from '../pages/_components'
+import { isTeamMockEnabled } from '../services/team/mock/mockMode'
 import { queryClient } from './queryClient'
 import { BusinessGateGuard } from './routes/BusinessGateGuard'
 import { PermissionGateGuard } from './routes/PermissionGateGuard'
 import { RouteGuard } from './routes/RouteGuard'
 import { getRoutes } from './routes'
+
+// Dev-only mock toolbar: the dynamic import is dropped from production builds (import.meta.env.DEV is false).
+const DevMockToolbar = import.meta.env.DEV
+  ? lazy(() => import('../pages/_components/DevMockToolbar').then((module) => ({ default: module.DevMockToolbar })))
+  : null
 
 function AppRoutes() {
   const translations = useTranslations()
@@ -116,6 +122,11 @@ export function App() {
               <BrowserRouter>
                 <AppRoutes />
                 <GlobalLoader />
+                {DevMockToolbar && isTeamMockEnabled ? (
+                  <Suspense fallback={null}>
+                    <DevMockToolbar />
+                  </Suspense>
+                ) : null}
               </BrowserRouter>
             </AuthProvider>
           </GlobalLoaderProvider>

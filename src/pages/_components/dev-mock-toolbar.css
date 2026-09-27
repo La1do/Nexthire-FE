@@ -1,0 +1,101 @@
+/* Dev-only mock toolbar. Kept small and in a corner so it never blocks page content on mobile. */
+.dev-mock-toolbar__pill,
+.dev-mock-toolbar {
+  bottom: 0.75rem;
+  left: 0.75rem;
+  position: fixed;
+  z-index: 60;
+}
+
+.dev-mock-toolbar__pill {
+  background: var(--color-text-primary);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.22);
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  max-width: calc(100vw - 1.5rem);
+  opacity: 0.8;
+  overflow: hidden;
+  padding: 0.35rem 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dev-mock-toolbar__pill:hover,
+.dev-mock-toolbar__pill:focus-visible {
+  opacity: 1;
+}
+
+.dev-mock-toolbar {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(17, 24, 39, 0.18);
+  display: grid;
+  gap: 0.6rem;
+  max-width: calc(100vw - 1.5rem);
+  padding: 0.75rem;
+  width: 20rem;
+}
+
+.dev-mock-toolbar__header {
+  align-items: center;
+  color: var(--color-text-primary);
+  display: flex;
+  font-size: 0.85rem;
+  justify-content: space-between;
+}
+
+.dev-mock-toolbar__close {
+  background: transparent;
+  border: 0;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+}
+
+.dev-mock-toolbar__field {
+  color: var(--color-text-secondary);
+  display: grid;
+  font-size: 0.75rem;
+  font-weight: 700;
+  gap: 0.25rem;
+}
+
+.dev-mock-toolbar__field select {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 10px;
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  padding: 0.4rem 0.5rem;
+  width: 100%;
+}
+
+.dev-mock-toolbar__reset {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-default);
+  border-radius: 10px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.45rem 0.75rem;
+}
+
+.dev-mock-toolbar__reset:disabled,
+.dev-mock-toolbar__field select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dev-mock-toolbar__error {
+  color: var(--color-text-danger);
+  font-size: 0.75rem;
+  margin: 0;
+}
