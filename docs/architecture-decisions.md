@@ -13,9 +13,13 @@ Items marked (A1) are decided here but implemented later.
 
 ## ADR-02. `can(subject, permission)` with `PermissionSubject = { role, plan, status }`
 
-- **Decision:** `can({ role, plan, status }, permission)` returns `{ allowed: true }` or `{ allowed: false, reason: 'role' | 'plan' }`. Order: `status === 'SUSPENDED'` → `plan` immediately (table not consulted); `role` undefined (not a member) → `role`; in table → allowed; permission not offered by any role of the current plan but offered by another plan (in PRO, not in FREE) → `plan`; otherwise → `role`.
-- **Why:** the suspended rule lives in one pure function, so route gates and mock services that call `can()` directly cannot bypass it. The "current plan" condition keeps `PRO STAFF + jd.approve` = `role` (upgrading would not help) while `FREE OWNER + jd.approve` = `plan`.
-- **Rejected:** a separate positional `status` parameter (easy to forget / pass in the wrong order); letting hooks pre-check status (a second place with permission logic that non-hook callers skip).
+- **Decision:** `can({ role, plan, status }, permission)` returns `{ allowed: true }` or `{ allowed: false, reason: 'role' | 'plan' }`. Order:
+  1. `status === 'SUSPENDED'` → `{ allowed: false, reason: 'plan' }` immediately (table not consulted).
+  2. `role` undefined (not a company member) → `{ allowed: false, reason: 'role' }`.
+  3. Permission listed for (plan, role) → `{ allowed: true }`.
+  4. Otherwise the reason follows the lead-approved rule: **result is 'plan' when no role on the current plan has the permission but another plan does; otherwise 'role'.**
+- **Why:** the suspended rule lives in one pure function, so route gates and mock services that call `can()` directly cannot bypass it. The "current plan" condition keeps `PRO STAFF + jd.approve` = `role` (upgrading would not help) while `FREE OWNER + jd.approve` = `plan`; it satisfies all four brief examples (FREE OWNER + jd.approve → plan, FREE OWNER + members.manage → plan, PRO OWNER + jd.create → role, PRO STAFF + jd.approve → role).
+- **Rejected:** a separate positional `status` parameter (easy to forget / pass in the wrong order); letting hooks pre-check status (a second place with permission logic that non-hook callers skip); the literal "in PRO table and not in FREE table → plan" rule (gives `plan` for PRO STAFF + jd.approve, contradicting the brief).
 
 ## ADR-03. Role-blocked = hidden, plan-blocked = locked
 
@@ -25,9 +29,11 @@ Items marked (A1) are decided here but implemented later.
 
 ## ADR-04. No component compares roles
 
-- **Decision:** components only use `usePermission(permission)` or `<Can permission fallback? lockedFallback?>` (`src/lib/auth`). These only build the subject (companyRole + companyMemberStatus from the auth user, plan from React Query) and call `can()`; no extra logic. `<Can>` renders nothing while the plan is loading.
+- **Decision:** components only use `usePermission(permission)` or `<Can permission fallback? lockedFallback?>` (`src/lib/auth`). These only build the subject (companyRole + companyMemberStatus from the auth user, plan from React Query) and call `can()`; no extra logic.
+  - `usePermission` also returns `isLoading` (plan not fetched yet) and `isError` (plan query failed and no cached plan). In both cases the plan is **unknown**: the hook returns `{ allowed: false, reason: undefined, isLoading, isError }` — **never `reason: 'plan'`** — and `can()` is not called.
+  - `<Can>` renders **nothing** while loading and on error — never `lockedFallback`, never an "Upgrade to Pro" button. A paying PRO user must not be invited to upgrade because an endpoint failed (e.g. `/companies/me/subscription` missing on the BE with `VITE_USE_MOCK=false`).
 - **Why:** role checks in JSX drift from the table and are hard to find. A grep for `companyRole ===` / `'MANAGER'` / `'STAFF'` outside `permissions.ts`, types and mock seeds must return nothing.
-- **Rejected:** `user.companyRole === 'OWNER'` checks in pages; role props passed down the tree.
+- **Rejected:** `user.companyRole === 'OWNER'` checks in pages; role props passed down the tree; falling back to `FREE` on plan error (shows locked UI to PRO users).
 
 ## ADR-05. Keep `AuthApiRole`, add `companyRole`
 
@@ -55,7 +61,7 @@ Items marked (A1) are decided here but implemented later.
 
 ## ADR-09. Mocks live in the service layer
 
-- **Decision:** `src/services/team/*` expose the same signatures for real and mock implementations, switched by `VITE_USE_MOCK` (`src/services/team/mock/mockMode.ts`): ON by default in dev (`.env.development` sets `VITE_USE_MOCK=true`; to hit the real API put `VITE_USE_MOCK=false` in `.env.development.local` or the shell env — `.env` alone is overridden by `.env.development`), always OFF in production builds (`import.meta.env.DEV` is false). Mock data is persisted in localStorage under `nexhire.mock.v1.*`. Services take no role arguments; mocks read the current mock session. In A1 the mock filters JD/CV by `assigneeId` / `handlerId` like the backend.
+- **Decision:** `src/services/team/*` expose the same signatures for real and mock implementations, switched by `VITE_USE_MOCK` (`src/services/team/mock/mockMode.ts`): ON by default in dev (`.env.development` sets `VITE_USE_MOCK=true`; to hit the real API put `VITE_USE_MOCK=false` in `.env.development.local` or the shell env — `.env` alone is overridden by `.env.development`), always OFF in production builds (`import.meta.env.DEV` is false). Mock data is persisted in localStorage under `nexhire.mock.v2.*` (prefix version bumped whenever the seed shape changes). Services take no role arguments; mocks read the current mock session. In A1 the mock filters JD/CV by `assigneeId` / `handlerId` like the backend.
 - **Why:** pages/hooks are written once against the real contract; switching to the backend is an env change.
 - **Rejected:** MSW or json-server (new dependencies); mock data inside pages; role arguments on service functions.
 
@@ -82,3 +88,21 @@ Items marked (A1) are decided here but implemented later.
 - **Decision:** `RecruiterLayout` navigation items are changed only by the FE Integration owner.
 - **Why:** the sidebar is a merge-conflict hotspot and depends on every feature being ready.
 - **Rejected:** each feature PR adding its own menu entry.
+
+## ADR-14. Internal JD return uses `RETURNED`, not `REJECTED` — TODO(BE)
+
+- **Decision:** `CompanyJobStatus = JobStatus | 'PENDING_APPROVAL' | 'RETURNED'`. A Manager sending a JD back to Staff sets `RETURNED` with `returnReason`; Staff edits and resubmits → `PENDING_APPROVAL` and `returnReason` is cleared (`null`). A0 has no submit function; the rule is implemented where the submit mock lands (A1). `REJECTED` means **only** platform moderation rejection, with the existing `reviewReason`. Audit action for the internal return is `JD_RETURNED` (no `JD_REJECTED`). **TODO(BE):** the backend must add `PENDING_APPROVAL`, `RETURNED` and `returnReason` to the job contract.
+- **Why:** a JD could carry both an internal and a platform reason; one shared `REJECTED` value made the "Rejected" tab (D1) unable to classify it.
+- **Rejected:** sharing `REJECTED` and distinguishing by `rejectReason` vs `reviewReason`; a separate `internalStatus` field (two status fields to keep in sync).
+
+## ADR-15. Typed audit log metadata
+
+- **Decision:** `AuditLog` is a discriminated union on `action` (exactly 9 actions). `metadata` is typed per action: `MEMBER_ROLE_CHANGED` → `{ fromRole, toRole }`, `MEMBER_ADDED` → `{ role }`, `PLAN_CHANGED` → `{ fromPlan, toPlan }`, `JD_RETURNED` → `{ returnReason }`, `JD_ASSIGNED` → `{ fromAssigneeId, toAssigneeId, fromAssigneeName?, toAssigneeName? }`; `JD_SUBMITTED`, `JD_APPROVED`, `JD_PUBLISHED_BY_MANAGER`, `MEMBER_REMOVED` → no metadata.
+- **Why:** the audit log UI can render each row without casting `Record<string, unknown>`; the compiler catches seed/BE mismatches.
+- **Rejected:** untyped `Record<string, unknown>` metadata.
+
+## ADR-16. Structured seat limit
+
+- **Decision:** `CompanySubscription.seatLimit: CompanySeatLimit = { MANAGER: number; STAFF: number }` (never null). FREE = `{ MANAGER: 0, STAFF: 0 }`, PRO = `{ MANAGER: 1, STAFF: 3 }`; the single Owner seat is always included. Only ACTIVE members count toward the quota; SUSPENDED members do not.
+- **Why:** the Members tab shows per-role quota (e.g. "Staff 3/3"); a single number or `null` (unlimited) cannot express it.
+- **Rejected:** `seatLimit: number | null`; hard-coding quotas in the Members page.

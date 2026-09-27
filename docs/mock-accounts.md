@@ -9,23 +9,25 @@ Password for every account: `123456`
 | Email | Company | Plan | Company role | Status |
 | --- | --- | --- | --- | --- |
 | `owner.free@mock.nexhire` | Mock Free Company | FREE | OWNER | ACTIVE |
+| `suspended.free@mock.nexhire` | Mock Free Company | FREE | STAFF | SUSPENDED (locked by the PRO → FREE downgrade) |
 | `owner.pro@mock.nexhire` | Mock Pro Company | PRO | OWNER | ACTIVE |
 | `manager.pro@mock.nexhire` | Mock Pro Company | PRO | MANAGER | ACTIVE |
 | `staff1.pro@mock.nexhire` | Mock Pro Company | PRO | STAFF | ACTIVE |
 | `staff2.pro@mock.nexhire` | Mock Pro Company | PRO | STAFF | ACTIVE |
 | `staff3.pro@mock.nexhire` | Mock Pro Company | PRO | STAFF | ACTIVE |
-| `suspended.pro@mock.nexhire` | Mock Pro Company | PRO | STAFF | SUSPENDED |
 
 ## Seed summary
 
-- Jobs: 6 in Mock Pro Company (PUBLISHED / PENDING_APPROVAL / DRAFT / REJECTED, with `assigneeId` on Manager and Staff, one unassigned), 2 in Mock Free Company.
+- Mock Pro Company: exactly 1 Owner, 1 Manager, 3 Staff (all ACTIVE) — fills the PRO quota `seatLimit = { MANAGER: 1, STAFF: 3 }`.
+- Mock Free Company: 1 Owner (ACTIVE) + 1 Staff SUSPENDED (simulates the state after a PRO → FREE downgrade; suspended members do not count toward seats). FREE quota: `seatLimit = { MANAGER: 0, STAFF: 0 }`.
+- Jobs: 6 in Mock Pro Company (PUBLISHED / PENDING_APPROVAL / DRAFT / RETURNED, with `assigneeId` on Manager and Staff, one unassigned; the RETURNED one belongs to Staff One with a `returnReason`), 2 in Mock Free Company.
 - Applications: 4 in Mock Pro Company (`handlerId` on Manager / Staff, one unhandled), 1 in Mock Free Company.
-- Audit logs: 4 in Mock Pro Company.
+- Audit logs: 5 in Mock Pro Company (MEMBER_ADDED, JD_SUBMITTED, JD_RETURNED, JD_APPROVED, JD_ASSIGNED), 1 in Mock Free Company (PLAN_CHANGED PRO → FREE).
 
 ## Storage
 
-- `localStorage["nexhire.mock.v1.db"]` — mock database (seeded on first read).
-- `localStorage["nexhire.mock.v1.session"]` — current mock user id (set by `teamAuthService.login`).
+- `localStorage["nexhire.mock.v2.db"]` — mock database (seeded on first read).
+- `localStorage["nexhire.mock.v2.session"]` — current mock user id (set by `teamAuthService.login`).
 - Reset: remove both keys (or call `resetMockDb()` from `src/services/team/mock/mockStore.ts`).
 
 ## Logging in (A0)
