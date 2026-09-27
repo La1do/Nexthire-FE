@@ -18,7 +18,7 @@ import { shouldUseTeamMock } from './mock/mockMode'
  */
 export const teamCompanyService = {
   async getCurrentCompany(): Promise<CompanyResponse> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockCompanyApi.getCurrentCompany()
     }
 
@@ -27,7 +27,7 @@ export const teamCompanyService = {
   },
 
   async getCompanyPlan(): Promise<CompanySubscription> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockCompanyApi.getCompanyPlan()
     }
 
@@ -47,7 +47,7 @@ export const teamCompanyService = {
   },
 
   async listMembers(): Promise<Member[]> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockCompanyApi.listMembers()
     }
 
@@ -58,7 +58,7 @@ export const teamCompanyService = {
 
   /** Upgrade / downgrade (billing.manage). Side effects are applied by the backend (or mock). */
   async changePlan(plan: CompanyPlan): Promise<CompanySubscription> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockCompanyApi.changePlan(plan)
     }
 
@@ -69,7 +69,7 @@ export const teamCompanyService = {
 
   /** Invoice history, newest first (billing.manage). */
   async listInvoices(): Promise<Invoice[]> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockCompanyApi.listInvoices()
     }
 

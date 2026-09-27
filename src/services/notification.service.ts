@@ -10,7 +10,7 @@ import { shouldUseTeamMock } from './team/mock/mockMode'
 export const notificationService = {
   async list(query: NotificationListQuery = {}): Promise<NotificationListResponse> {
     // Dev mock session: no notifications (mock tokens never reach the backend).
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return { data: [], meta: { limit: query.limit ?? 20, page: 1, total: 0, totalPages: 1 }, success: true }
     }
 
@@ -21,7 +21,7 @@ export const notificationService = {
   },
 
   async unreadCount(): Promise<number> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return 0
     }
 

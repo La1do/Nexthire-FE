@@ -61,7 +61,7 @@ async function getRecruiterUser(user: AuthUser) {
   const account: Partial<TeamAuthProfile> = await authService.getMe()
   let company: CompanyMeResponse | undefined
 
-  if (shouldUseTeamMock()) {
+  if (import.meta.env.DEV && shouldUseTeamMock()) {
     const mockCompany = await mockCompanyApi.getCurrentCompany()
     company = { ...mockCompany, logoUrl: mockCompany.logoUrl ?? null }
   } else {

@@ -7,7 +7,7 @@ import { shouldUseTeamMock } from './mock/mockMode'
 /** Company audit log (PRO Owner, permission `audit.view`). */
 export const teamAuditLogService = {
   async listAuditLogs(params?: AuditLogQuery): Promise<ListEnvelope<AuditLog>> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockAuditLogApi.listAuditLogs(params)
     }
 

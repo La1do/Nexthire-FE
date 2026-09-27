@@ -45,7 +45,7 @@ export const jobService = {
     return response.data.data
   },
   async getRecruiterJobs(params?: RecruiterJobListQuery): Promise<ListEnvelope<RecruiterJobResponse>> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockJobsApi.listLegacyRecruiterJobs(params)
     }
 
@@ -53,7 +53,7 @@ export const jobService = {
     return response.data
   },
   async getRecruiterJobStatusCounts(): Promise<RecruiterJobStatusCounts> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockJobsApi.getLegacyRecruiterJobStatusCounts()
     }
 
@@ -61,7 +61,7 @@ export const jobService = {
     return response.data.data
   },
   async getRecruiterJobById(id: string): Promise<RecruiterJobResponse> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockJobsApi.getLegacyRecruiterJobById(id)
     }
 
@@ -77,7 +77,7 @@ export const jobService = {
     return response.data.data
   },
   async submitRecruiterJob(id: string): Promise<RecruiterJobResponse> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockJobsApi.submitLegacyRecruiterJob(id)
     }
 

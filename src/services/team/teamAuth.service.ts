@@ -16,7 +16,7 @@ export type { TeamAuthProfile, TeamLoginPayload } from './teamAuth.types'
  */
 export const teamAuthService = {
   async login(payload: TeamLoginPayload): Promise<AuthResponse> {
-    if (shouldUseTeamMockLogin(payload.email)) {
+    if (import.meta.env.DEV && shouldUseTeamMockLogin(payload.email)) {
       return mockAuthApi.login(payload)
     }
 
@@ -24,7 +24,7 @@ export const teamAuthService = {
   },
 
   async getMe(): Promise<TeamAuthProfile> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockAuthApi.getMe()
     }
 
@@ -34,7 +34,7 @@ export const teamAuthService = {
   },
 
   async logout(refreshToken?: string | null): Promise<void> {
-    if (isMockToken(refreshToken) || shouldUseTeamMock()) {
+    if (import.meta.env.DEV && (isMockToken(refreshToken) || shouldUseTeamMock())) {
       return mockAuthApi.logout()
     }
 

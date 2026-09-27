@@ -6,7 +6,7 @@ import { shouldUseTeamMock } from './mock/mockMode'
 /** Company-scoped recruiter jobs (JD) with assignee info. The backend (or mock) filters by visibility. */
 export const teamJobsService = {
   async listRecruiterJobs(params?: CompanyJobListQuery): Promise<ListEnvelope<Job>> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockJobsApi.listRecruiterJobs(params)
     }
 
@@ -20,7 +20,7 @@ export const teamJobsService = {
    * Manager / Owner FREE (jd.publishDirect) → PUBLISHED.
    */
   async submitRecruiterJob(id: string): Promise<Job> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockJobsApi.submitRecruiterJob(id)
     }
 

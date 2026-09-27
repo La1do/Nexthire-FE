@@ -18,7 +18,7 @@ export const companyService = {
     return response.data.data
   },
   async getMyCompany(): Promise<CompanyResponse> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockCompanyApi.getCurrentCompany()
     }
 
@@ -46,7 +46,7 @@ export const companyService = {
     return response.data.data
   },
   async listVerificationDocuments(id: string): Promise<CompanyVerificationDocument[]> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockCompanyApi.listVerificationDocuments()
     }
 

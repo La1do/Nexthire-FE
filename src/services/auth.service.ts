@@ -143,7 +143,7 @@ export type ManualEmailVerificationResponse = {
 
 export const authService = {
   async getMe(): Promise<AuthProfile> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockAuthApi.getMe()
     }
 
@@ -180,7 +180,7 @@ export const authService = {
 
   async login(payload: LoginPayload): Promise<AuthResponse> {
     // Dev mock: seeded @mock.nexhire recruiter accounts log in against the company RBAC mock.
-    if (payload.role === 'RECRUITER' && shouldUseTeamMockLogin(payload.email)) {
+    if (import.meta.env.DEV && payload.role === 'RECRUITER' && shouldUseTeamMockLogin(payload.email)) {
       return mockAuthApi.login(payload)
     }
 
@@ -243,7 +243,9 @@ export const authService = {
   async logout(refreshToken: string) {
     // Mock refresh tokens are never sent to the real backend.
     if (isMockToken(refreshToken)) {
-      await mockAuthApi.logout()
+      if (import.meta.env.DEV) {
+        await mockAuthApi.logout()
+      }
       return { message: 'Logged out (mock session)' }
     }
 

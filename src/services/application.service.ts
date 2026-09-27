@@ -38,7 +38,7 @@ export const applicationService = {
     return response.data.data
   },
   async getRecruiterApplications(params?: RecruiterApplicationQuery): Promise<RecruiterApplicationListResponse> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockApplicationsApi.listLegacyRecruiterApplications(params)
     }
 
@@ -46,7 +46,7 @@ export const applicationService = {
     return response.data
   },
   async getRecruiterCandidates(params?: RecruiterCandidateQuery): Promise<RecruiterCandidateListResponse> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockApplicationsApi.listLegacyRecruiterCandidates(params)
     }
 
@@ -58,7 +58,7 @@ export const applicationService = {
     return response.data.data
   },
   async getRecruiterApplication(id: string): Promise<ApplicationResponse> {
-    if (shouldUseTeamMock()) {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
       return mockApplicationsApi.getLegacyRecruiterApplication(id)
     }
 
