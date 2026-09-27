@@ -1,22 +1,31 @@
-import type { ApplicationPermissionState } from '../types'
+import { useCallback } from 'react'
+import { useCompanyPlan } from '../../../hooks/useCompanyPlan'
+import { usePermission } from '../../../lib/auth/usePermission'
 
-export type StaffFilterPermission = ApplicationPermissionState & {
+export type StaffFilterPermission = {
+  allowed: boolean
+  isError: boolean
+  isLoading: boolean
   retry: () => void
 }
 
-const noop = () => undefined
-
 /**
- * Whether the "filter by Staff" control may be shown (Manager only).
- *
- * TODO(A0): replace the body with the shared hook once A0 is merged, e.g.
- *   const permission = usePermission('jd.assign')
- *   return { allowed: permission.allowed, isError: permission.isError,
- *            isLoading: permission.isLoading, retry: <refetch company plan> }
- * (`jd.assign` is Manager-only in the A0 table; confirm the permission name with
- * the Lead.) Never compare roles here. Until then the control stays visible so
- * the UI can be reviewed.
+ * "Filter by Staff" is available to members who see every CV (`cv.viewAll`:
+ * Manager, FREE Owner). No role comparison: the decision is `can()`'s.
+ * Unknown plan (loading / failed) is exposed as-is so the UI shows a loading
+ * or error+retry state — never a locked state.
  */
 export function useStaffFilterPermission(): StaffFilterPermission {
-  return { allowed: true, isError: false, isLoading: false, retry: noop }
+  const permission = usePermission('cv.viewAll')
+  const { refetch } = useCompanyPlan()
+  const retry = useCallback(() => {
+    void refetch()
+  }, [refetch])
+
+  return {
+    allowed: permission.allowed,
+    isError: permission.isError,
+    isLoading: permission.isLoading,
+    retry,
+  }
 }

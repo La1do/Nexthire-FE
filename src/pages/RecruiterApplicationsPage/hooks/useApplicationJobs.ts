@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { ApplicationJobListFilters } from '../types'
 import { applicationQueryKeys } from '../utils/applicationQueryKeys'
-import { fetchApplicationJobOptions, fetchApplicationJobs } from '../utils/tempApplicationsAdapter'
+import { fetchApplicationJobOptions, fetchApplicationJobs } from '../utils/applicationsWorkspaceData'
 import { useApplicationsScope } from './useApplicationsScope'
 import { useStaffFilterPermission } from './useStaffFilterPermission'
 

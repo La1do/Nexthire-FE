@@ -27,7 +27,7 @@ import {
   fetchApplicationCv,
   requestApplicationMatch,
   updateApplicationDecision,
-} from '../utils/tempApplicationsAdapter'
+} from '../utils/applicationsWorkspaceData'
 import { ApplicationDetailDrawer } from './ApplicationDetailDrawer'
 import { ApplicationFilters } from './ApplicationFilters'
 import { ApplicationJobHeader } from './ApplicationJobHeader'

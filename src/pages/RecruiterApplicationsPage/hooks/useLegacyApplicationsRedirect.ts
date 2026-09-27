@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { resolveApplicationJobId } from '../utils/tempApplicationsAdapter'
+import { resolveApplicationJobId } from '../utils/applicationsWorkspaceData'
 import { applicationQueryKeys } from '../utils/applicationQueryKeys'
 import { getJobApplicationsHref } from '../utils/applicationRoutes'
 import { useApplicationsScope } from './useApplicationsScope'

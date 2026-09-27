@@ -6,7 +6,7 @@ import {
   fetchApplicationDetail,
   fetchJobApplicationStats,
   fetchJobApplications,
-} from '../utils/tempApplicationsAdapter'
+} from '../utils/applicationsWorkspaceData'
 import { applicationQueryKeys } from '../utils/applicationQueryKeys'
 import { useApplicationsScope } from './useApplicationsScope'
 

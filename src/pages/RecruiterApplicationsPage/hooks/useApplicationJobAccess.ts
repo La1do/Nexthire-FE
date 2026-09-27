@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { isClientError } from '../utils/applicationAccessErrors'
-import { fetchApplicationJobAccess } from '../utils/tempApplicationsAdapter'
+import { fetchApplicationJobAccess } from '../utils/applicationsWorkspaceData'
 import { applicationQueryKeys } from '../utils/applicationQueryKeys'
 import { useApplicationsScope } from './useApplicationsScope'
 

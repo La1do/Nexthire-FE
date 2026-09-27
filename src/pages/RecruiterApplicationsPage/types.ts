@@ -1,13 +1,14 @@
+import type { ApplicationStage, ApplicationStageCounts } from '../../services/applicationsWorkspace'
 import type {
+  Application,
   ApplicationCvParseStatus,
   ApplicationMatchDecision,
   ApplicationMatchLevel,
   ApplicationMatchPriority,
   ApplicationMatchRecommendation,
-  ApplicationResponse,
   ApplicationStatus,
 } from '../../types/application.types'
-import type { ApiMeta, JobStatus, RecruiterJobResponse } from '../../types/job.types'
+import type { ApiMeta, CompanyJobStatus } from '../../types/job.types'
 
 export type RecruiterApplicationStatus = ApplicationStatus
 
@@ -76,44 +77,16 @@ export type RecruiterApplicationStats = {
 }
 
 /* ---------------------------------------------------------------------------
- * A0 contract mirrors.
- * TODO(A0): delete these and import `Job`, `CompanyJobStatus` (job.types.ts),
- * `Application` (application.types.ts) and `Member` (company.types.ts) once
- * `feature/rbac-contract` is merged. Field names intentionally match A0.
- * ------------------------------------------------------------------------- */
-
-/** Mirrors A0 `CompanyJobStatus` (platform JobStatus + internal approval workflow). */
-export type ApplicationJobStatus = JobStatus | 'PENDING_APPROVAL' | 'RETURNED'
-
-/** Mirrors A0 `Job`. `assigneeId` is the auth user id of the responsible member. */
-export type TeamJob = Omit<RecruiterJobResponse, 'status'> & {
-  status: ApplicationJobStatus
-  assigneeId: string | null
-}
-
-/** Mirrors A0 `Application`. `handlerId` is the auth user id of the handling member. */
-export type TeamApplication = ApplicationResponse & {
-  handlerId: string | null
-}
-
-/** Mirrors the fields of A0 `Member` used for assignee/handler name lookup. */
-export type TeamMember = {
-  id: string
-  userId?: string | null
-  companyId: string
-  name: string
-  email: string
-}
-
-/* ---------------------------------------------------------------------------
  * Two-tier view types (tier 1: JD list, tier 2: CVs of one JD).
- * Page-local on purpose: components depend on these, never on raw service
- * shapes, so the A0 swap only touches utils/tempApplicationsAdapter.ts.
+ * Components depend on these view types, never on raw service shapes.
  * ------------------------------------------------------------------------- */
 
-export type ApplicationJobStage = 'new' | 'inProgress' | 'decided'
+export type ApplicationJobStatus = CompanyJobStatus
 
-export type ApplicationJobCounts = Record<ApplicationJobStage, number>
+/** CV group of a JD, computed only by the service (`getApplicationStage`). */
+export type ApplicationJobStage = ApplicationStage
+
+export type ApplicationJobCounts = ApplicationStageCounts
 
 export type ApplicationJobSummary = {
   id: string
@@ -150,7 +123,7 @@ export type ApplicationJobAccess = {
 }
 
 /** Application enriched with the handler display name (resolved via members). */
-export type ApplicationWithHandler = TeamApplication & {
+export type ApplicationWithHandler = Application & {
   handlerName: string | null
 }
 
@@ -163,11 +136,4 @@ export type JobApplicationsRequest = {
 export type JobApplicationsPage = {
   items: ReadonlyArray<ApplicationWithHandler>
   meta: ApiMeta
-}
-
-/** Same shape as A0 `usePermission()` result (+ `isError`). */
-export type ApplicationPermissionState = {
-  allowed: boolean
-  isError: boolean
-  isLoading: boolean
 }
