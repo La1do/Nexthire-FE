@@ -7,6 +7,7 @@ import { useTranslations } from '../i18n'
 import { GlobalLoader } from '../pages/_components'
 import { queryClient } from './queryClient'
 import { BusinessGateGuard } from './routes/BusinessGateGuard'
+import { PermissionGateGuard } from './routes/PermissionGateGuard'
 import { RouteGuard } from './routes/RouteGuard'
 import { getRoutes } from './routes'
 
@@ -16,18 +17,28 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {routes.map(({ access, businessGate, element, layout: Layout, path }) => (
+      {routes.map(({ access, businessGate, children, element, layout: Layout, path, permissionGate }) => (
         <Route
           element={
             <RouteGuard access={access}>
               <BusinessGateGuard gate={businessGate}>
-                <Layout>{element}</Layout>
+                <Layout>
+                  <PermissionGateGuard gate={permissionGate}>{element}</PermissionGateGuard>
+                </Layout>
               </BusinessGateGuard>
             </RouteGuard>
           }
           key={path}
           path={path}
-        />
+        >
+          {children?.map((child) =>
+            child.index ? (
+              <Route element={child.element} index key="index" />
+            ) : (
+              <Route element={child.element} key={child.path} path={child.path} />
+            ),
+          )}
+        </Route>
       ))}
       <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>

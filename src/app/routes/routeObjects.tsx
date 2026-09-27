@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 import { AdminLayout } from '../../layouts/AdminLayout'
 import { AdminAiManagementPage } from '../../pages/AdminAiManagementPage'
 import { AuthLayout } from '../../layouts/AuthLayout'
@@ -45,6 +45,13 @@ import { SearchPage } from '../../pages/SearchPage'
 import type { AppRoute } from './routeTypes'
 import type { RouteAccess } from './routeTypes'
 import type { BusinessGate } from './businessGates'
+import { PermissionGateGuard } from './PermissionGateGuard'
+import {
+  recruiterApplicationsGate,
+  recruiterCompanyEditGate,
+  recruiterCompanyLegalGate,
+  recruiterJobsGate,
+} from './permissionGates'
 import type { Translations } from '../../i18n'
 
 const publicAccess: RouteAccess = { kind: 'public' }
@@ -284,6 +291,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: RecruiterLayout,
       access: recruiterAccess,
       businessGate: recruiterCanPostJobs,
+      permissionGate: recruiterJobsGate,
     },
     {
       path: '/recruiter/jobs',
@@ -292,6 +300,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: RecruiterLayout,
       access: recruiterAccess,
       businessGate: recruiterCompanyRequired,
+      permissionGate: recruiterJobsGate,
     },
     {
       path: '/recruiter/jobs/:id/edit',
@@ -300,6 +309,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: RecruiterLayout,
       access: recruiterAccess,
       businessGate: recruiterCanPostJobs,
+      permissionGate: recruiterJobsGate,
     },
     {
       path: '/recruiter/jobs/:id',
@@ -308,14 +318,29 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: RecruiterLayout,
       access: recruiterAccess,
       businessGate: recruiterCompanyRequired,
+      permissionGate: recruiterJobsGate,
     },
     {
       path: '/recruiter/applications',
       label: pages.recruiterApplications.routeLabel,
-      element: <RecruiterApplicationsPage />,
+      // Layout route: the cv.* permission gate renders <Outlet />, so it covers every child below.
+      element: (
+        <PermissionGateGuard gate={recruiterApplicationsGate}>
+          <Outlet />
+        </PermissionGateGuard>
+      ),
       layout: RecruiterLayout,
       access: recruiterAccess,
       businessGate: recruiterCompanyApproved,
+      children: [
+        {
+          index: true,
+          label: pages.recruiterApplications.routeLabel,
+          element: <RecruiterApplicationsPage />,
+        },
+        // FE Feature: add the per-job route here, e.g.
+        // { path: ':jobId', label: pages.recruiterApplications.routeLabel, element: <RecruiterJobApplicationsPage /> },
+      ],
     },
     {
       path: '/recruiter/candidates',
@@ -324,6 +349,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       layout: RecruiterLayout,
       access: recruiterAccess,
       businessGate: recruiterCompanyApproved,
+      permissionGate: recruiterApplicationsGate,
     },
     {
       path: '/recruiter/company',
@@ -331,6 +357,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       element: <RecruiterCompanyPage />,
       layout: RecruiterLayout,
       access: recruiterAccess,
+      permissionGate: recruiterCompanyEditGate,
     },
     {
       path: '/recruiter/verification',
@@ -338,6 +365,7 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       element: <RecruiterVerificationPage />,
       layout: RecruiterLayout,
       access: recruiterAccess,
+      permissionGate: recruiterCompanyLegalGate,
     },
     {
       path: '/recruiter/messages',

@@ -1,0 +1,109 @@
+.company-access-state {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.company-access-state--page {
+  background: var(--color-background-app);
+  min-height: 100vh;
+}
+
+.company-access-state__card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 20px;
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  max-width: 32rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+.company-access-state--loading .company-access-state__card {
+  background: transparent;
+  border-color: transparent;
+}
+
+.company-access-state__title {
+  color: var(--color-text-primary);
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.company-access-state--loading .company-access-state__title {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.company-access-state--error .company-access-state__title {
+  color: var(--color-text-danger);
+}
+
+.company-access-state--warning .company-access-state__title {
+  color: var(--color-status-suspended);
+}
+
+.company-access-state__description {
+  color: var(--color-text-secondary);
+  font-size: 0.925rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.company-access-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.25rem;
+}
+
+.company-access-state__button {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 700;
+  min-height: 2.5rem;
+  padding: 0.5rem 1.25rem;
+}
+
+.company-access-state__button--primary {
+  background: linear-gradient(90deg, var(--color-brand-start), var(--color-brand-end));
+  border-color: transparent;
+  color: var(--color-text-inverse);
+}
+
+.company-access-state__button:focus-visible {
+  outline: 2px solid var(--color-brand-end);
+  outline-offset: 2px;
+}
+
+.company-access-state__spinner {
+  animation: company-access-spin 0.9s linear infinite;
+  border: 3px solid var(--color-border-subtle);
+  border-radius: 50%;
+  border-top-color: var(--color-brand-end);
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+@keyframes company-access-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .company-access-state__spinner {
+    animation: none;
+  }
+}
