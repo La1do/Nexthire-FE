@@ -15,6 +15,8 @@ import type {
   RecruiterJobStatusCounts,
   UpdateRecruiterJobPayload,
 } from '../types/job.types'
+import { mockJobsApi } from './team/mock/mockJobs'
+import { shouldUseTeamMock } from './team/mock/mockMode'
 
 export const jobService = {
   async getJobs(params?: JobListQuery) {
@@ -42,15 +44,27 @@ export const jobService = {
     const response = await apiClient.get<Envelope<PublicHomeStats>>('/jobs/home/stats')
     return response.data.data
   },
-  async getRecruiterJobs(params?: RecruiterJobListQuery) {
+  async getRecruiterJobs(params?: RecruiterJobListQuery): Promise<ListEnvelope<RecruiterJobResponse>> {
+    if (shouldUseTeamMock()) {
+      return mockJobsApi.listLegacyRecruiterJobs(params)
+    }
+
     const response = await apiClient.get<ListEnvelope<RecruiterJobResponse>>('/recruiter/jobs', { params })
     return response.data
   },
-  async getRecruiterJobStatusCounts() {
+  async getRecruiterJobStatusCounts(): Promise<RecruiterJobStatusCounts> {
+    if (shouldUseTeamMock()) {
+      return mockJobsApi.getLegacyRecruiterJobStatusCounts()
+    }
+
     const response = await apiClient.get<Envelope<RecruiterJobStatusCounts>>('/recruiter/jobs/status-counts')
     return response.data.data
   },
-  async getRecruiterJobById(id: string) {
+  async getRecruiterJobById(id: string): Promise<RecruiterJobResponse> {
+    if (shouldUseTeamMock()) {
+      return mockJobsApi.getLegacyRecruiterJobById(id)
+    }
+
     const response = await apiClient.get<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}`)
     return response.data.data
   },
@@ -62,7 +76,11 @@ export const jobService = {
     const response = await apiClient.patch<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}`, payload)
     return response.data.data
   },
-  async submitRecruiterJob(id: string) {
+  async submitRecruiterJob(id: string): Promise<RecruiterJobResponse> {
+    if (shouldUseTeamMock()) {
+      return mockJobsApi.submitLegacyRecruiterJob(id)
+    }
+
     const response = await apiClient.post<Envelope<RecruiterJobResponse>>(`/recruiter/jobs/${id}/submit`)
     return response.data.data
   },

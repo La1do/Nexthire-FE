@@ -14,6 +14,8 @@ import type {
   UpdateRecruiterApplicationStatusPayload,
 } from '../types/application.types'
 import type { Envelope } from '../types/job.types'
+import { mockApplicationsApi } from './team/mock/mockApplications'
+import { shouldUseTeamMock } from './team/mock/mockMode'
 
 export const applicationService = {
   async apply(payload: CreateApplicationPayload) {
@@ -35,11 +37,19 @@ export const applicationService = {
     const response = await apiClient.get<Envelope<ApplicationCvDownloadResponse>>(`/applications/me/${id}/cv`)
     return response.data.data
   },
-  async getRecruiterApplications(params?: RecruiterApplicationQuery) {
+  async getRecruiterApplications(params?: RecruiterApplicationQuery): Promise<RecruiterApplicationListResponse> {
+    if (shouldUseTeamMock()) {
+      return mockApplicationsApi.listLegacyRecruiterApplications(params)
+    }
+
     const response = await apiClient.get<RecruiterApplicationListResponse>('/recruiter/applications', { params })
     return response.data
   },
-  async getRecruiterCandidates(params?: RecruiterCandidateQuery) {
+  async getRecruiterCandidates(params?: RecruiterCandidateQuery): Promise<RecruiterCandidateListResponse> {
+    if (shouldUseTeamMock()) {
+      return mockApplicationsApi.listLegacyRecruiterCandidates(params)
+    }
+
     const response = await apiClient.get<RecruiterCandidateListResponse>('/recruiter/candidates', { params })
     return response.data
   },
@@ -47,7 +57,11 @@ export const applicationService = {
     const response = await apiClient.get<Envelope<RecruiterCandidateDetailResponse>>(`/recruiter/candidates/${id}`)
     return response.data.data
   },
-  async getRecruiterApplication(id: string) {
+  async getRecruiterApplication(id: string): Promise<ApplicationResponse> {
+    if (shouldUseTeamMock()) {
+      return mockApplicationsApi.getLegacyRecruiterApplication(id)
+    }
+
     const response = await apiClient.get<Envelope<ApplicationResponse>>(`/recruiter/applications/${id}`)
     return response.data.data
   },

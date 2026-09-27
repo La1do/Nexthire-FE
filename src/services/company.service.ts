@@ -9,13 +9,19 @@ import type {
   UpdateCompanyPayload,
 } from '../types/company.types'
 import type { Envelope } from '../types/job.types'
+import { mockCompanyApi } from './team/mock/mockCompany'
+import { shouldUseTeamMock } from './team/mock/mockMode'
 
 export const companyService = {
   async getPublicCompany(id: string) {
     const response = await apiClient.get<Envelope<PublicCompanyProfile>>(`/companies/public/${id}`)
     return response.data.data
   },
-  async getMyCompany() {
+  async getMyCompany(): Promise<CompanyResponse> {
+    if (shouldUseTeamMock()) {
+      return mockCompanyApi.getCurrentCompany()
+    }
+
     const response = await apiClient.get<Envelope<CompanyResponse>>('/companies/me')
     return response.data.data
   },
@@ -39,7 +45,11 @@ export const companyService = {
     const response = await apiClient.patch<Envelope<CompanyResponse>>(`/companies/${id}/hero-image`, formData)
     return response.data.data
   },
-  async listVerificationDocuments(id: string) {
+  async listVerificationDocuments(id: string): Promise<CompanyVerificationDocument[]> {
+    if (shouldUseTeamMock()) {
+      return mockCompanyApi.listVerificationDocuments()
+    }
+
     const response = await apiClient.get<Envelope<CompanyVerificationDocument[]>>(
       `/companies/${id}/verification-documents`,
     )

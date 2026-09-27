@@ -1,7 +1,9 @@
-import { apiClient } from '../lib/api'
+import { apiClient, isMockToken } from '../lib/api'
 import type { AuthApiRole, PublicAuthApiRole } from '../lib/auth/authRole'
 import type { Locale } from '../i18n'
 import type { CompanyRole, MemberStatus } from '../types/company.types'
+import { mockAuthApi } from './team/mock/mockAuth'
+import { shouldUseTeamMock, shouldUseTeamMockLogin } from './team/mock/mockMode'
 
 type ApiSuccessEnvelope<TData> = {
   success: true
@@ -140,7 +142,11 @@ export type ManualEmailVerificationResponse = {
 }
 
 export const authService = {
-  async getMe() {
+  async getMe(): Promise<AuthProfile> {
+    if (shouldUseTeamMock()) {
+      return mockAuthApi.getMe()
+    }
+
     const response = await apiClient.get<ApiSuccessEnvelope<AuthProfile>>('/auth/me')
     return response.data.data
   },
@@ -172,7 +178,12 @@ export const authService = {
     return response.data.data
   },
 
-  async login(payload: LoginPayload) {
+  async login(payload: LoginPayload): Promise<AuthResponse> {
+    // Dev mock: seeded @mock.nexhire recruiter accounts log in against the company RBAC mock.
+    if (payload.role === 'RECRUITER' && shouldUseTeamMockLogin(payload.email)) {
+      return mockAuthApi.login(payload)
+    }
+
     const response = await apiClient.post<ApiSuccessEnvelope<AuthResponse>>('/auth/login', payload)
     return response.data.data
   },
@@ -230,6 +241,12 @@ export const authService = {
   },
 
   async logout(refreshToken: string) {
+    // Mock refresh tokens are never sent to the real backend.
+    if (isMockToken(refreshToken)) {
+      await mockAuthApi.logout()
+      return { message: 'Logged out (mock session)' }
+    }
+
     const response = await apiClient.post<ApiSuccessEnvelope<{ message: string }>>('/auth/logout', { refreshToken })
     return response.data.data
   },

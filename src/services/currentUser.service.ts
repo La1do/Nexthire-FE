@@ -2,6 +2,9 @@ import axios from 'axios'
 import { apiClient } from '../lib/api'
 import type { Locale } from '../i18n'
 import { authService } from './auth.service'
+import { mockCompanyApi } from './team/mock/mockCompany'
+import { shouldUseTeamMock } from './team/mock/mockMode'
+import type { TeamAuthProfile } from './team/teamAuth.types'
 import type { AuthUser } from './auth.service'
 
 type ApiSuccessEnvelope<TData> = {
@@ -54,15 +57,21 @@ async function getCandidateUser(user: AuthUser) {
 }
 
 async function getRecruiterUser(user: AuthUser) {
-  const account = await authService.getMe()
+  // In a mock session getMe() also returns companyRole / companyMemberStatus. TODO(BE): real /auth/me should too.
+  const account: Partial<TeamAuthProfile> = await authService.getMe()
   let company: CompanyMeResponse | undefined
 
-  try {
-    const response = await apiClient.get<ApiSuccessEnvelope<CompanyMeResponse>>('/companies/me')
-    company = response.data.data
-  } catch (error) {
-    if (!axios.isAxiosError(error) || error.response?.status !== 404) {
-      throw error
+  if (shouldUseTeamMock()) {
+    const mockCompany = await mockCompanyApi.getCurrentCompany()
+    company = { ...mockCompany, logoUrl: mockCompany.logoUrl ?? null }
+  } else {
+    try {
+      const response = await apiClient.get<ApiSuccessEnvelope<CompanyMeResponse>>('/companies/me')
+      company = response.data.data
+    } catch (error) {
+      if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+        throw error
+      }
     }
   }
 
@@ -72,7 +81,9 @@ async function getRecruiterUser(user: AuthUser) {
     language: account.language ?? user.language ?? null,
     phone: account.phone,
     companyId: company?.id ?? null,
+    companyMemberStatus: account.companyMemberStatus,
     companyName: company?.name ?? null,
+    companyRole: account.companyRole,
     logoUrl: company ? company.logoUrl : account.logoUrl ?? null,
   })
 }

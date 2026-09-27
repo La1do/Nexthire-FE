@@ -1,33 +1,31 @@
 import { apiClient } from '../../lib/api'
-import type { CompanyJobListQuery, Job, ListEnvelope } from '../../types/job.types'
-import { isTeamMockEnabled } from './mock/mockMode'
-import { mockDelay, paginateMock, requireMockContext } from './mock/mockStore'
+import type { CompanyJobListQuery, Envelope, Job, ListEnvelope } from '../../types/job.types'
+import { mockJobsApi } from './mock/mockJobs'
+import { shouldUseTeamMock } from './mock/mockMode'
 
-const mockTeamJobsService = {
-  async listRecruiterJobs(params: CompanyJobListQuery = {}): Promise<ListEnvelope<Job>> {
-    const { company, db } = requireMockContext()
-    // A0: company scope + simple filters only. TODO(A1): filter by assigneeId for STAFF, like the BE.
-    const query = params.q?.trim().toLowerCase()
-    const jobs = db.jobs.filter(
-      (job) =>
-        job.companyId === company.id &&
-        (!params.status || job.status === params.status) &&
-        (!query || job.title.toLowerCase().includes(query)),
-    )
-
-    return mockDelay(paginateMock(jobs, params.page, params.limit))
-  },
-}
-
-const realTeamJobsService = {
+/** Company-scoped recruiter jobs (JD) with assignee info. The backend (or mock) filters by visibility. */
+export const teamJobsService = {
   async listRecruiterJobs(params?: CompanyJobListQuery): Promise<ListEnvelope<Job>> {
+    if (shouldUseTeamMock()) {
+      return mockJobsApi.listRecruiterJobs(params)
+    }
+
     // Existing endpoint. TODO(BE): add assigneeId, returnReason and the PENDING_APPROVAL / RETURNED statuses to the response.
     const response = await apiClient.get<ListEnvelope<Job>>('/recruiter/jobs', { params })
     return response.data
   },
-}
 
-/** Company-scoped recruiter jobs (JD) with assignee info. */
-export const teamJobsService: {
-  listRecruiterJobs: (params?: CompanyJobListQuery) => Promise<ListEnvelope<Job>>
-} = isTeamMockEnabled ? mockTeamJobsService : realTeamJobsService
+  /**
+   * Submit a DRAFT or RETURNED JD. Staff → PENDING_APPROVAL (returnReason cleared);
+   * Manager / Owner FREE (jd.publishDirect) → PUBLISHED.
+   */
+  async submitRecruiterJob(id: string): Promise<Job> {
+    if (shouldUseTeamMock()) {
+      return mockJobsApi.submitRecruiterJob(id)
+    }
+
+    // Existing endpoint. TODO(BE): Staff submissions must go to PENDING_APPROVAL and clear returnReason.
+    const response = await apiClient.post<Envelope<Job>>(`/recruiter/jobs/${id}/submit`)
+    return response.data.data
+  },
+}
