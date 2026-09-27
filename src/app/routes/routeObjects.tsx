@@ -32,7 +32,7 @@ import { CandidateCvsPage } from '../../pages/CandidateCvsPage'
 import { ProfileApplicationsPage } from '../../pages/ProfileApplicationsPage'
 import { ProfilePage } from '../../pages/ProfilePage'
 import { CandidateSettingsPage } from '../../pages/CandidateSettingsPage'
-import { RecruiterApplicationsPage } from '../../pages/RecruiterApplicationsPage'
+import { RecruiterApplicationJobPage, RecruiterApplicationsPage } from '../../pages/RecruiterApplicationsPage'
 import { RecruiterCandidatesPage } from '../../pages/RecruiterCandidatesPage'
 import { RecruiterCompanyPage } from '../../pages/RecruiterCompanyPage'
 import { RecruiterHomePage } from '../../pages/RecruiterHomePage'
@@ -313,6 +313,14 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/recruiter/applications',
       label: pages.recruiterApplications.routeLabel,
       element: <RecruiterApplicationsPage />,
+      layout: RecruiterLayout,
+      access: recruiterAccess,
+      businessGate: recruiterCompanyApproved,
+    },
+    {
+      path: '/recruiter/applications/:jobId',
+      label: pages.recruiterApplications.detailRouteLabel,
+      element: <RecruiterApplicationJobPage />,
       layout: RecruiterLayout,
       access: recruiterAccess,
       businessGate: recruiterCompanyApproved,

@@ -4,9 +4,11 @@ import type { RecruiterApplicationItem } from '../types'
 import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecisionValidation'
 import { AiMatchBadge } from './AiMatchBadge'
 import { ApplicationDecisionForm } from './ApplicationDecisionForm'
+import { ApplicationHandlerLabel } from './ApplicationHandlerLabel'
 
 type ApplicationDetailDrawerProps = {
   application: RecruiterApplicationItem
+  handledByLabel: string
   isMatching: boolean
   isStatusUpdating: boolean
   matchLabels: RecruiterApplicationsTranslations['match']
@@ -95,6 +97,7 @@ function renderStringList(title: string, items: ReadonlyArray<string>, emptyLabe
 
 export function ApplicationDetailDrawer({
   application,
+  handledByLabel,
   isMatching,
   isStatusUpdating,
   matchLabels,
@@ -186,6 +189,7 @@ export function ApplicationDetailDrawer({
               <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
                 {statusLabels[application.status]}
               </span>
+              <ApplicationHandlerLabel handlerName={application.handlerName} template={handledByLabel} />
             </div>
 
             <dl className="recruiter-application-detail-list">

@@ -33,10 +33,6 @@ export function filterRecruiterApplications(
       return false
     }
 
-    if (criteria.jobId !== 'all' && application.jobId !== criteria.jobId) {
-      return false
-    }
-
     if (!query) {
       return true
     }
@@ -72,7 +68,6 @@ export function filterRecruiterApplications(
 export function isActiveRecruiterApplicationFilters(criteria: RecruiterApplicationCriteria): boolean {
   return (
     normalizeApplicationQuery(criteria.query).length > 0 ||
-    criteria.jobId !== 'all' ||
     criteria.status !== 'all' ||
     criteria.sort !== 'newest'
   )

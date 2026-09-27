@@ -1,0 +1,67 @@
+/* ApplicationJobHeader / ApplicationJobBackLink: tier-2 header of one JD.
+ * The hero surface itself comes from `.recruiter-applications-hero`. */
+
+.recruiter-application-job-back {
+  align-items: center;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  font-size: 0.86rem;
+  font-weight: 850;
+  gap: 0.35rem;
+  justify-self: start;
+  outline: none;
+  padding: 0.25rem 0.1rem;
+  text-decoration: none;
+  transition: color 160ms var(--motion-ease-standard);
+}
+
+.recruiter-application-job-back svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.recruiter-application-job-back:hover,
+.recruiter-application-job-back:focus-visible {
+  color: var(--color-brand-solid);
+}
+
+.recruiter-application-job-back:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-brand-soft);
+}
+
+.recruiter-application-job-header {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.recruiter-application-job-header h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  max-width: 32ch;
+  overflow-wrap: anywhere;
+}
+
+.recruiter-application-job-header__meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.recruiter-application-job-header__assignee {
+  color: var(--color-text-secondary);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.recruiter-application-job-page__state {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 1440px) {
+  .recruiter-application-job-header h2 {
+    max-width: 48ch;
+  }
+}

@@ -2107,6 +2107,62 @@ export type RecruiterJobsTranslations = {
 
 export type RecruiterApplicationsTranslations = {
   routeLabel: string
+  detailRouteLabel: string
+  jobList: {
+    caption: string
+    countLabel: string
+    searchLabel: string
+    searchPlaceholder: string
+    staffLabel: string
+    staffAll: string
+    staffFilterLoading: string
+    staffFilterError: string
+    staffFilterRetry: string
+    clear: string
+    assigneeLabel: string
+    unassigned: string
+    counts: {
+      label: string
+      new: string
+      inProgress: string
+      decided: string
+    }
+    totalLabel: string
+    openAction: string
+    openActionLabel: string
+    emptyTitle: string
+    emptyDescription: string
+    emptyFilteredTitle: string
+    emptyFilteredDescription: string
+    loading: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+  }
+  jobDetail: {
+    backToList: string
+    eyebrow: string
+    assigneeLabel: string
+    jobSwitchLabel: string
+    checkingAccess: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+  }
+  jobStatusLabels: {
+    DRAFT: string
+    PENDING_REVIEW: string
+    NEEDS_REVIEW: string
+    SHOULD_REJECT: string
+    PUBLISHED: string
+    UNPUBLISHED: string
+    REJECTED: string
+    CLOSED: string
+    EXPIRED: string
+    PENDING_APPROVAL: string
+    RETURNED: string
+  }
+  handledBy: string
   pageTitle: string
   pageSubtitle: string
   hero: {

@@ -1,0 +1,29 @@
+/* ApplicationHandlerLabel: "Being handled by X" chip on CV rows and in the drawer. */
+
+.recruiter-application-handler {
+  align-items: center;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  font-size: 0.74rem;
+  font-weight: 800;
+  gap: 0.3rem;
+  max-width: 100%;
+  min-height: 1.6rem;
+  overflow: hidden;
+  padding: 0.18rem 0.6rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recruiter-application-handler svg {
+  flex: 0 0 auto;
+  height: 0.85rem;
+  width: 0.85rem;
+}
+
+.recruiter-applications-candidate-cell .recruiter-application-handler {
+  margin-top: 0.3rem;
+}

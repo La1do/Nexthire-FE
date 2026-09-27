@@ -1,0 +1,85 @@
+/* ApplicationJobsToolbar: tier-1 search + staff filter. Reuses the
+ * `.recruiter-applications-filter*` primitives from recruiter-applications.css. */
+
+.recruiter-application-jobs-toolbar {
+  align-items: end;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.recruiter-application-jobs-toolbar.has-staff-filter {
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 0.35fr) auto;
+}
+
+@media (min-width: 1440px) {
+  .recruiter-application-jobs-toolbar.has-staff-filter {
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem) auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .recruiter-application-jobs-toolbar,
+  .recruiter-application-jobs-toolbar.has-staff-filter {
+    grid-template-columns: 1fr;
+  }
+
+  .recruiter-application-jobs-toolbar .recruiter-applications-filter__clear {
+    width: 100%;
+  }
+}
+
+/* Permission-dependent staff slot: loading / error states (never "locked"). */
+.recruiter-application-jobs-toolbar__slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.recruiter-application-jobs-toolbar__slot-label {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.recruiter-application-jobs-toolbar__slot-box {
+  align-items: center;
+  background: var(--color-surface-muted);
+  border: 1px dashed var(--color-border-default);
+  border-radius: 10px;
+  color: var(--color-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.86rem;
+  font-weight: 700;
+  gap: 0.5rem;
+  justify-content: space-between;
+  min-height: 2.65rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.recruiter-application-jobs-toolbar__slot-box.is-error {
+  border-color: color-mix(in srgb, var(--color-text-danger) 35%, transparent);
+  color: var(--color-text-danger);
+}
+
+.recruiter-application-jobs-toolbar__slot-box button {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 850;
+  padding: 0.2rem 0.6rem;
+}
+
+.recruiter-application-jobs-toolbar__slot-box button:hover,
+.recruiter-application-jobs-toolbar__slot-box button:focus-visible {
+  border-color: var(--color-brand-solid);
+  color: var(--color-brand-solid);
+  outline: none;
+}
