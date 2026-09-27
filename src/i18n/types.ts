@@ -88,6 +88,23 @@ export type CommonTranslations = {
     closeLabel: string
     statusLabels: Record<'success' | 'error' | 'warning' | 'info', string>
   }
+  /** Company RBAC access states (permission gate, SuspendedGate, recruiter menu). */
+  companyAccess: {
+    checking: string
+    errorTitle: string
+    errorDescription: string
+    retry: string
+    suspendedTitle: string
+    suspendedDescription: string
+    logout: string
+    lockedTitle: string
+    lockedDescription: string
+    upgradeAction: string
+    lockedBadge: string
+    menuLockedLabel: string
+    menuLoading: string
+    menuError: string
+  }
   loader: {
     applyingCvParseLabel: string
     bootLabel: string
@@ -3171,6 +3188,22 @@ export type Translations = {
     register: RegisterTranslations
     search: SearchTranslations
   }
+}
+
+/**
+ * Dev-only mock toolbar. Intentionally NOT part of `Translations`: the toolbar imports its locale files
+ * directly so these strings stay out of production bundles.
+ */
+export type DevMockToolbarTranslations = {
+  toggleLabel: string
+  title: string
+  accountLabel: string
+  planLabel: string
+  resetAction: string
+  closeLabel: string
+  switching: string
+  switchError: string
+  resetConfirm: string
 }
 
 export type ComingSoonPageKey =
