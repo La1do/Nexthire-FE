@@ -1,10 +1,14 @@
-/* Dev-only mock toolbar. Kept small and in a corner so it never blocks page content on mobile. */
+/*
+ * Dev-only mock toolbar. Kept small in the bottom-RIGHT corner: the recruiter sidebar (and its Log out
+ * button, desktop and mobile drawer) lives on the left, so the toolbar must never cover it.
+ */
 .dev-mock-toolbar__pill,
 .dev-mock-toolbar {
   bottom: 0.75rem;
-  left: 0.75rem;
+  right: 0.75rem;
   position: fixed;
-  z-index: 60;
+  /* Below the mobile recruiter drawer (z-index 60), so an open drawer is never covered. */
+  z-index: 55;
 }
 
 .dev-mock-toolbar__pill {

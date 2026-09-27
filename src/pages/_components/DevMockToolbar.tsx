@@ -5,7 +5,7 @@
  */
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context'
 import { useLocale } from '../../i18n'
 import type { Locale } from '../../i18n'
@@ -28,6 +28,7 @@ export function DevMockToolbar() {
   const { login } = useAuth()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [isOpen, setOpen] = useState(false)
   const [isBusy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -87,6 +88,11 @@ export function DevMockToolbar() {
         queryClient.clear()
       }
     })
+  }
+
+  // The company RBAC mock only covers the recruiter area (login + /recruiter/*); stay out of other apps' pages.
+  if (!pathname.startsWith('/recruiter')) {
+    return null
   }
 
   if (!isOpen) {
