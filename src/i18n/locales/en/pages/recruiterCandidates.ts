@@ -44,6 +44,10 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     lastApplied: 'Last applied',
     viewProfile: 'View profile',
     openApplication: 'Open application',
+    candidate: 'Candidate',
+    appliedJobs: 'Applied JDs',
+    openJobApplications: 'Open CVs of {{title}}',
+    actions: 'Actions',
   },
   detail: {
     title: 'Candidate profile',
@@ -55,6 +59,10 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     bestMatchedApplication: 'Best matched application',
     noSkills: 'No skills were enriched yet.',
     noData: 'Not available',
+    email: 'Email',
+    phone: 'Phone',
+    location: 'Location',
+    loading: 'Loading profile...',
   },
   states: {
     loading: 'Loading candidates...',
@@ -62,5 +70,7 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     errorDescription: 'Check your connection or sign in again to view company candidates.',
     detailError: 'Candidate profile could not be loaded.',
     retry: 'Retry',
+    forbiddenTitle: 'No access to candidates',
+    forbiddenDescription: 'Your account cannot view candidates of this company.',
   },
 }

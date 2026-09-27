@@ -44,6 +44,10 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     lastApplied: '最終応募',
     viewProfile: 'プロフィールを見る',
     openApplication: '応募を開く',
+    candidate: '候補者',
+    appliedJobs: '応募した求人',
+    openJobApplications: '{{title}} の応募書類を開く',
+    actions: '操作',
   },
   detail: {
     title: '候補者プロフィール',
@@ -55,6 +59,10 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     bestMatchedApplication: '最高マッチ応募',
     noSkills: 'スキル情報はまだありません。',
     noData: 'データなし',
+    email: 'メール',
+    phone: '電話番号',
+    location: '所在地',
+    loading: 'プロフィールを読み込み中...',
   },
   states: {
     loading: '候補者を読み込み中...',
@@ -62,5 +70,7 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     errorDescription: '接続を確認するか、再度ログインしてください。',
     detailError: '候補者プロフィールを読み込めませんでした。',
     retry: '再試行',
+    forbiddenTitle: '候補者を閲覧する権限がありません',
+    forbiddenDescription: 'このアカウントでは会社の候補者を閲覧できません。',
   },
 }

@@ -2378,6 +2378,10 @@ export type RecruiterCandidatesTranslations = {
     lastApplied: string
     viewProfile: string
     openApplication: string
+    candidate: string
+    appliedJobs: string
+    openJobApplications: string
+    actions: string
   }
   detail: {
     title: string
@@ -2389,6 +2393,10 @@ export type RecruiterCandidatesTranslations = {
     bestMatchedApplication: string
     noSkills: string
     noData: string
+    email: string
+    phone: string
+    location: string
+    loading: string
   }
   states: {
     loading: string
@@ -2396,6 +2404,8 @@ export type RecruiterCandidatesTranslations = {
     errorDescription: string
     detailError: string
     retry: string
+    forbiddenTitle: string
+    forbiddenDescription: string
   }
 }
 

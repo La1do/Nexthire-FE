@@ -44,6 +44,10 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     lastApplied: 'Ứng tuyển gần nhất',
     viewProfile: 'Xem hồ sơ',
     openApplication: 'Mở đơn ứng tuyển',
+    candidate: 'Ứng viên',
+    appliedJobs: 'JD đã ứng tuyển',
+    openJobApplications: 'Mở CV của {{title}}',
+    actions: 'Thao tác',
   },
   detail: {
     title: 'Hồ sơ ứng viên',
@@ -55,6 +59,10 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     bestMatchedApplication: 'Đơn phù hợp nhất',
     noSkills: 'Chưa có kỹ năng được bổ sung.',
     noData: 'Chưa có dữ liệu',
+    email: 'Email',
+    phone: 'Điện thoại',
+    location: 'Địa điểm',
+    loading: 'Đang tải hồ sơ...',
   },
   states: {
     loading: 'Đang tải ứng viên...',
@@ -62,5 +70,7 @@ export const recruiterCandidates: RecruiterCandidatesTranslations = {
     errorDescription: 'Hãy kiểm tra kết nối hoặc đăng nhập lại để xem ứng viên của công ty.',
     detailError: 'Chưa tải được hồ sơ ứng viên.',
     retry: 'Thử lại',
+    forbiddenTitle: 'Không có quyền xem ứng viên',
+    forbiddenDescription: 'Tài khoản của bạn không được xem ứng viên của công ty này.',
   },
 }
