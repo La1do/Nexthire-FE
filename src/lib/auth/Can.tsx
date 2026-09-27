@@ -17,20 +17,21 @@ type CanProps = {
  * - reason 'role' → `fallback` (default nothing)
  * - reason 'plan' → `lockedFallback(result)` if provided, else nothing
  * - plan still loading → nothing
+ * - plan query failed → nothing (never a locked state or upgrade button for an unknown plan)
  */
 export function Can({ permission, children, fallback = null, lockedFallback }: CanProps) {
-  const { isLoading, ...result } = usePermission(permission)
+  const state = usePermission(permission)
 
-  if (isLoading) {
+  if (state.isLoading || state.isError) {
     return null
   }
 
-  if (result.allowed) {
+  if (state.allowed) {
     return <>{children}</>
   }
 
-  if (result.reason === 'plan') {
-    return <>{lockedFallback ? lockedFallback(result) : null}</>
+  if (state.reason === 'plan') {
+    return <>{lockedFallback ? lockedFallback({ allowed: false, reason: 'plan' }) : null}</>
   }
 
   return <>{fallback}</>
