@@ -47,7 +47,7 @@ Password for every account: `123456`
 ## Logging in
 
 - Recruiter login page: log in with any account above and password `123456` (`authService.login` routes `@mock.nexhire` recruiter e-mails to the mock in dev).
-- Dev toolbar (bottom-left "Mock" pill, dev only): switch account, switch the current company plan (runs the downgrade / upgrade side effects), reset.
+- Dev toolbar (bottom-right "Mock" pill, dev only, shown on `/recruiter*` routes): switch account, switch the current company plan (runs the downgrade / upgrade side effects), reset.
 - A real account logged in on the same dev server keeps using the real API (the switch is per session, by token).
 
 ## Helpers for feature mocks
