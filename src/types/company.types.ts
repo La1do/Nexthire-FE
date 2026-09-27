@@ -123,6 +123,9 @@ export type CompanyPlan = 'FREE' | 'PRO'
 /** SUSPENDED = account kept but locked (e.g. extra seats after a PRO → FREE downgrade). */
 export type MemberStatus = 'ACTIVE' | 'SUSPENDED'
 
+/** Why a member is SUSPENDED. PLAN_DOWNGRADE members are reactivated on the next upgrade to PRO (A1). */
+export type MemberSuspendedReason = 'PLAN_DOWNGRADE'
+
 export type Member = {
   id: string
   /** Auth user id of the member account (may be null for pending invites in the future). */
@@ -132,6 +135,8 @@ export type Member = {
   email: string
   role: CompanyRole
   status: MemberStatus
+  /** Set when status is SUSPENDED; null/undefined otherwise. */
+  suspendedReason?: MemberSuspendedReason | null
   avatarUrl?: string | null
   joinedAt: string
   updatedAt?: string
@@ -149,4 +154,27 @@ export type CompanySubscription = {
   plan: CompanyPlan
   seatLimit: CompanySeatLimit
   renewsAt: string | null
+}
+
+export type InvoiceStatus = 'PAID' | 'OPEN' | 'VOID'
+
+/** Billing history entry (billing.manage). */
+export type Invoice = {
+  id: string
+  companyId: string
+  /** Human-readable invoice number, e.g. NH-2026-0009. */
+  number: string
+  plan: CompanyPlan
+  amount: number
+  currency: string
+  status: InvoiceStatus
+  periodStart: string
+  periodEnd: string
+  issuedAt: string
+  /** Signed download URL when the backend provides one. */
+  downloadUrl: string | null
+}
+
+export type ChangeCompanyPlanPayload = {
+  plan: CompanyPlan
 }

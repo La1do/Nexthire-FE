@@ -2,6 +2,7 @@
  * Seed data for the company RBAC mock services. Obviously fake data only.
  * Login credentials are documented in docs/mock-accounts.md.
  */
+import { PLAN_SEAT_LIMITS } from '../../../lib/auth/permissions'
 import type { Application } from '../../../types/application.types'
 import type { AuditLog } from '../../../types/auditLog.types'
 import type {
@@ -9,6 +10,7 @@ import type {
   CompanyResponse,
   CompanyRole,
   CompanySeatLimit,
+  Invoice,
   Member,
   MemberStatus,
 } from '../../../types/company.types'
@@ -22,10 +24,10 @@ export type MockCompany = CompanyResponse & {
   renewsAt: string | null
 }
 
-/** Seat quota per plan (Owner seat always included). */
-export const MOCK_SEAT_LIMITS: Record<CompanyPlan, CompanySeatLimit> = {
-  FREE: { MANAGER: 0, STAFF: 0 },
-  PRO: { MANAGER: 1, STAFF: 3 },
+/** Monthly price per plan used for mock invoices (VND). */
+export const MOCK_PLAN_PRICES: Record<CompanyPlan, number> = {
+  FREE: 0,
+  PRO: 499_000,
 }
 
 export type MockAccount = {
@@ -45,6 +47,7 @@ export type MockDatabase = {
   jobs: Job[]
   applications: Application[]
   auditLogs: AuditLog[]
+  invoices: Invoice[]
 }
 
 const SEED_DATE = '2026-09-01T02:00:00.000Z'
@@ -86,7 +89,7 @@ function createCompany(input: {
     plan: input.plan,
     renewsAt: input.plan === 'PRO' ? '2026-12-01T00:00:00.000Z' : null,
     rejectionReason: null,
-    seatLimit: MOCK_SEAT_LIMITS[input.plan],
+    seatLimit: { ...PLAN_SEAT_LIMITS[input.plan] },
     size: '11-50',
     status: 'APPROVED',
     submittedAt: SEED_DATE,
@@ -216,6 +219,25 @@ function createApplication(input: {
   }
 }
 
+function createInvoice(input: { id: string; companyId: string; number: string; month: number }): Invoice {
+  const month = String(input.month).padStart(2, '0')
+  const nextMonth = String(input.month + 1).padStart(2, '0')
+
+  return {
+    amount: MOCK_PLAN_PRICES.PRO,
+    companyId: input.companyId,
+    currency: 'VND',
+    downloadUrl: null,
+    id: input.id,
+    issuedAt: `2026-${month}-01T00:00:00.000Z`,
+    number: input.number,
+    periodEnd: `2026-${nextMonth}-01T00:00:00.000Z`,
+    periodStart: `2026-${month}-01T00:00:00.000Z`,
+    plan: 'PRO',
+    status: 'PAID',
+  }
+}
+
 export function createMockSeed(): MockDatabase {
   const freeCompany = createCompany({
     id: MOCK_COMPANY_IDS.free,
@@ -250,6 +272,7 @@ export function createMockSeed(): MockDatabase {
     name: seed.fullName,
     role: seed.role,
     status: seed.status,
+    suspendedReason: seed.status === 'SUSPENDED' ? 'PLAN_DOWNGRADE' : null,
     userId: userId(seed.key),
   }))
 
@@ -359,11 +382,19 @@ export function createMockSeed(): MockDatabase {
     },
   ]
 
+  const invoices: Invoice[] = [
+    createInvoice({ companyId: freeCompany.id, id: 'mock-invoice-free-1', month: 6, number: 'NH-2026-0001' }),
+    createInvoice({ companyId: proCompany.id, id: 'mock-invoice-pro-1', month: 7, number: 'NH-2026-0002' }),
+    createInvoice({ companyId: proCompany.id, id: 'mock-invoice-pro-2', month: 8, number: 'NH-2026-0003' }),
+    createInvoice({ companyId: proCompany.id, id: 'mock-invoice-pro-3', month: 9, number: 'NH-2026-0004' }),
+  ]
+
   return {
     accounts,
     applications,
     auditLogs,
     companies: [freeCompany, proCompany],
+    invoices,
     jobs,
     members,
   }

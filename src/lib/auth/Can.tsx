@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
-import type { Permission, PermissionResult } from './permissions'
+import type { PermissionRequirement, PermissionResult } from './permissions'
 import { usePermission } from './usePermission'
 
 type CanProps = {
-  permission: Permission
+  /** One permission, or an array meaning "any of". */
+  permission: PermissionRequirement
   children: ReactNode
   /** Rendered when denied by role (default: nothing, i.e. hidden). */
   fallback?: ReactNode

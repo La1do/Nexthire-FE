@@ -1,0 +1,58 @@
+.plan-lock-placeholder {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.plan-lock-placeholder__card {
+  background: var(--color-surface-card);
+  border: 1px dashed var(--color-border-brand-soft);
+  border-radius: 20px;
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  max-width: 30rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+.plan-lock-placeholder__badge {
+  background: var(--color-brand-soft);
+  border-radius: 999px;
+  color: var(--color-brand-solid);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.75rem;
+  text-transform: uppercase;
+}
+
+.plan-lock-placeholder__title {
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.plan-lock-placeholder__description {
+  color: var(--color-text-secondary);
+  font-size: 0.925rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.plan-lock-placeholder__action {
+  background: linear-gradient(90deg, var(--color-brand-start), var(--color-brand-end));
+  border-radius: 999px;
+  color: var(--color-text-inverse);
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.6rem 1.4rem;
+  text-decoration: none;
+}
+
+.plan-lock-placeholder__action:focus-visible {
+  outline: 2px solid var(--color-brand-end);
+  outline-offset: 2px;
+}

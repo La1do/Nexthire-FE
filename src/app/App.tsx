@@ -1,14 +1,21 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, GlobalLoaderProvider, ToastProvider, useAuth, useGlobalLoader } from '../context'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { useTranslations } from '../i18n'
 import { GlobalLoader } from '../pages/_components'
+import { isTeamMockEnabled } from '../services/team/mock/mockMode'
 import { queryClient } from './queryClient'
 import { BusinessGateGuard } from './routes/BusinessGateGuard'
+import { PermissionGateGuard } from './routes/PermissionGateGuard'
 import { RouteGuard } from './routes/RouteGuard'
 import { getRoutes } from './routes'
+
+// Dev-only mock toolbar: the dynamic import is dropped from production builds (import.meta.env.DEV is false).
+const DevMockToolbar = import.meta.env.DEV
+  ? lazy(() => import('../pages/_components/DevMockToolbar').then((module) => ({ default: module.DevMockToolbar })))
+  : null
 
 function AppRoutes() {
   const translations = useTranslations()
@@ -16,18 +23,28 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {routes.map(({ access, businessGate, element, layout: Layout, path }) => (
+      {routes.map(({ access, businessGate, children, element, layout: Layout, path, permissionGate }) => (
         <Route
           element={
             <RouteGuard access={access}>
               <BusinessGateGuard gate={businessGate}>
-                <Layout>{element}</Layout>
+                <Layout>
+                  <PermissionGateGuard gate={permissionGate}>{element}</PermissionGateGuard>
+                </Layout>
               </BusinessGateGuard>
             </RouteGuard>
           }
           key={path}
           path={path}
-        />
+        >
+          {children?.map((child) =>
+            child.index ? (
+              <Route element={child.element} index key="index" />
+            ) : (
+              <Route element={child.element} key={child.path} path={child.path} />
+            ),
+          )}
+        </Route>
       ))}
       <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>
@@ -105,6 +122,11 @@ export function App() {
               <BrowserRouter>
                 <AppRoutes />
                 <GlobalLoader />
+                {DevMockToolbar && isTeamMockEnabled ? (
+                  <Suspense fallback={null}>
+                    <DevMockToolbar />
+                  </Suspense>
+                ) : null}
               </BrowserRouter>
             </AuthProvider>
           </GlobalLoaderProvider>

@@ -5,6 +5,7 @@ import type {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios'
+import { isMockToken } from './mockToken'
 
 type RetryableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean
@@ -124,7 +125,8 @@ apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = authTokenStorage.getAccessToken()
 
-    if (token) {
+    // Dev mock session tokens are never sent to the real backend.
+    if (token && !isMockToken(token)) {
       config.headers.Authorization = `Bearer ${token}`
     }
 
@@ -147,6 +149,8 @@ apiClient.interceptors.response.use(
       error.response?.status === 401 &&
       !originalRequest._retry &&
       accessToken &&
+      // Dev mock session tokens are never refreshed against the real backend.
+      !isMockToken(accessToken) &&
       !isPublicAuthRequest(originalRequest.url)
     ) {
       originalRequest._retry = true

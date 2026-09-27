@@ -5,16 +5,26 @@ import type {
   NotificationListQuery,
   NotificationListResponse,
 } from '../types/notification.types'
+import { shouldUseTeamMock } from './team/mock/mockMode'
 
 export const notificationService = {
-  async list(query: NotificationListQuery = {}) {
+  async list(query: NotificationListQuery = {}): Promise<NotificationListResponse> {
+    // Dev mock session: no notifications (mock tokens never reach the backend).
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
+      return { data: [], meta: { limit: query.limit ?? 20, page: 1, total: 0, totalPages: 1 }, success: true }
+    }
+
     const response = await apiClient.get<NotificationListResponse>('/notifications', {
       params: query,
     })
     return response.data
   },
 
-  async unreadCount() {
+  async unreadCount(): Promise<number> {
+    if (import.meta.env.DEV && shouldUseTeamMock()) {
+      return 0
+    }
+
     const response = await apiClient.get<NotificationCountEnvelope>(
       '/notifications/unread-count',
     )
