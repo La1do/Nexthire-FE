@@ -113,7 +113,7 @@ export type RecruiterCandidateApplicationHistoryResponse = {
 export type RecruiterCandidateResponse = {
   candidateId: string
   candidateUserId?: string | null
-  fullName: string
+  fullName: string | null
   email: string
   phone?: string | null
   avatarDocumentId?: string | null

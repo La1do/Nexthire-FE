@@ -27,8 +27,13 @@ type CandidateCriteria = {
 
 const statusOrder: ReadonlyArray<ApplicationStatus> = ['SUBMITTED', 'OFFERED', 'REJECTED', 'CANCELLED']
 
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/)
+function getInitials(name: string | null | undefined) {
+  const normalizedName = name?.trim()
+  if (!normalizedName) {
+    return '?'
+  }
+
+  const parts = normalizedName.split(/\s+/)
   const first = parts[0]?.[0] ?? ''
   const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : ''
   return `${first}${last}`.toUpperCase() || '?'
@@ -194,20 +199,21 @@ function CandidateCard({
   translations: RecruiterCandidatesTranslations
 }) {
   const skillPreview = candidate.skills.slice(0, 4)
+  const candidateName = candidate.fullName?.trim() || candidate.email
 
   return (
     <article className="recruiter-candidate-card">
       <button
-        aria-label={`${translations.results.viewProfile}: ${candidate.fullName}`}
+        aria-label={`${translations.results.viewProfile}: ${candidateName}`}
         className="recruiter-candidate-card__main"
         onClick={() => onOpen(candidate.candidateId)}
         type="button"
       >
         <span className="recruiter-candidate-avatar">
-          {candidate.avatarUrl ? <img alt="" src={candidate.avatarUrl} /> : getInitials(candidate.fullName)}
+          {candidate.avatarUrl ? <img alt="" src={candidate.avatarUrl} /> : getInitials(candidateName)}
         </span>
         <span>
-          <strong>{candidate.fullName}</strong>
+          <strong>{candidateName}</strong>
           <small>{candidate.headline || candidate.email}</small>
           <span className="recruiter-candidate-card__skills">
             {skillPreview.length
@@ -256,6 +262,8 @@ function CandidateDrawer({
   statusLabels: Record<ApplicationStatus, string>
   translations: RecruiterCandidatesTranslations
 }) {
+  const candidateName = candidate.fullName?.trim() || candidate.email
+
   return (
     <div className="recruiter-candidate-drawer" role="dialog" aria-modal="true" aria-label={translations.detail.title}>
       <button className="recruiter-candidate-drawer__backdrop" onClick={onClose} type="button" />
@@ -263,11 +271,11 @@ function CandidateDrawer({
         <header>
           <div className="recruiter-candidate-drawer__identity">
             <span className="recruiter-candidate-avatar recruiter-candidate-avatar--large">
-              {candidate.avatarUrl ? <img alt="" src={candidate.avatarUrl} /> : getInitials(candidate.fullName)}
+              {candidate.avatarUrl ? <img alt="" src={candidate.avatarUrl} /> : getInitials(candidateName)}
             </span>
             <div>
               <p>{translations.detail.title}</p>
-              <h2>{candidate.fullName}</h2>
+              <h2>{candidateName}</h2>
               <span>{candidate.headline || candidate.email}</span>
             </div>
           </div>
