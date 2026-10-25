@@ -428,6 +428,9 @@ export function RecruiterApplicationsPage() {
 
   const pagedApplications = applications
   const hasActiveFilters = isActiveRecruiterApplicationFilters(criteria)
+  const selectedIndex = applications.findIndex((application) => application.id === selectedApplicationId)
+  const hasPrevious = selectedIndex > 0
+  const hasNext = selectedIndex >= 0 && selectedIndex < applications.length - 1
 
   function updateApplicationSearch(nextCriteria: RecruiterApplicationCriteria, applicationId?: string | null) {
     const criteriaChanged = criteria.jobId !== nextCriteria.jobId ||
@@ -637,6 +640,7 @@ export function RecruiterApplicationsPage() {
                 onView: (application) => openApplicationDetail(application.id),
               }}
               matchLabels={content.match}
+              onSelectApplication={(application) => openApplicationDetail(application.id)}
               statusLabels={content.statusLabels}
             />
             <ApplicationMobileList
@@ -660,16 +664,32 @@ export function RecruiterApplicationsPage() {
       {selectedApplication ? (
         <ApplicationDetailDrawer
           application={selectedApplication}
+          applications={applications}
+          currentIndex={selectedIndex >= 0 ? selectedIndex + 1 : undefined}
+          hasNext={hasNext}
+          hasPrevious={hasPrevious}
           isMatching={matchingApplicationIds.has(selectedApplication.id)}
           isStatusUpdating={statusUpdatingIds.has(selectedApplication.id)}
           matchLabels={content.match}
           meta={content.meta}
           onClose={closeApplicationDetail}
           onEmail={(application) => void handleApplicationAction('mailto', application)}
+          onNavigateNext={() => {
+            if (hasNext) {
+              openApplicationDetail(applications[selectedIndex + 1].id)
+            }
+          }}
+          onNavigatePrevious={() => {
+            if (hasPrevious) {
+              openApplicationDetail(applications[selectedIndex - 1].id)
+            }
+          }}
           onOpenResume={(application) => void handleApplicationAction('resume', application)}
           onRunMatch={(application) => void handleRunMatch(application)}
+          onSelectApplication={(app) => openApplicationDetail(app.id)}
           onStatusChange={handleStatusChange}
           statusLabels={content.statusLabels}
+          totalCount={applications.length}
           translations={content.drawer}
         />
       ) : null}

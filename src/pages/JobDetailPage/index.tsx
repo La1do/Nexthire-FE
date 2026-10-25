@@ -7,6 +7,7 @@ import { JobDetailSection } from './components/JobDetailSection'
 import { JobDetailSidebar } from './components/JobDetailSidebar'
 import { RelatedJobs } from './components/RelatedJobs'
 import { useJobDetail } from './hooks/useJobDetail'
+import './job-detail.css'
 
 export function JobDetailPage() {
   const { pages } = useTranslations()

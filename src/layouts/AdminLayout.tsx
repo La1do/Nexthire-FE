@@ -20,8 +20,8 @@ function MenuIcon() {
   )
 }
 
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/)
+function getInitials(name?: string | null) {
+  const parts = (name ?? '').trim().split(/\s+/).filter(Boolean)
   const first = parts[0]?.[0] ?? ''
   const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : ''
   return `${first}${last}`.toUpperCase() || '?'
@@ -36,6 +36,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const [openPopover, setOpenPopover] = useState<'notifications' | 'profile' | null>(null)
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 900 : false))
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
   const { pathname: currentPath } = useLocation()
   const pageTitle = currentPath.startsWith('/admin/dashboard')
@@ -93,7 +94,22 @@ export function AdminLayout({ children }: PropsWithChildren) {
     return () => { window.removeEventListener('keydown', closeOnEscape); window.removeEventListener('mousedown', closeOnOutside) }
   }, [openPopover])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mediaQuery = window.matchMedia('(max-width: 900px)')
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsMobile(event.matches)
+      if (!event.matches) {
+        setSidebarOpen(false)
+      }
+    }
+    setIsMobile(mediaQuery.matches)
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
+
   const sidebarOpen = isSidebarOpen
+  const isSidebarHidden = isMobile && !sidebarOpen
   const handleLogout = () => {
     void logout().then(() => {
       toast.success(common.authFeedback.logoutSuccess)
@@ -105,12 +121,16 @@ export function AdminLayout({ children }: PropsWithChildren) {
     <div className="admin-shell">
       <aside
         aria-label="Admin navigation"
-        aria-hidden={sidebarOpen ? undefined : 'true'}
+        aria-hidden={isSidebarHidden ? 'true' : undefined}
         className={`admin-sidebar${sidebarOpen ? ' is-open' : ''}`}
         id="admin-sidebar"
       >
         <div className="admin-sidebar__inner">
-          <Link className="admin-sidebar__brand" to="/admin/dashboard">
+          <Link
+            className="admin-sidebar__brand"
+            tabIndex={isSidebarHidden ? -1 : undefined}
+            to="/admin/dashboard"
+          >
             <BrandMark compact label={common.brandName} />
           </Link>
 
@@ -118,7 +138,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/dashboard"
             >
               {content.sidebar.dashboard}
@@ -126,7 +146,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/users"
             >
               {content.sidebar.users}
@@ -134,7 +154,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/companies"
             >
               {common.navigation.companies}
@@ -142,7 +162,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/jobs"
             >
               {content.sidebar.jobs}
@@ -150,7 +170,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/job-moderation-policies"
             >
               {pages.adminJobModerationPolicies.sidebarLabel}
@@ -158,7 +178,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/cv-templates"
             >
               {pages.adminCvTemplates.sidebarLabel}
@@ -166,7 +186,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/ai-management"
             >
               {pages.adminAiManagement.sidebarLabel}
@@ -174,14 +194,14 @@ export function AdminLayout({ children }: PropsWithChildren) {
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}
-              tabIndex={sidebarOpen ? undefined : -1}
+              tabIndex={isSidebarHidden ? -1 : undefined}
               to="/admin/settings"
             >
               {content.sidebar.settings}
             </NavLink>
           </nav>
 
-          <div className="admin-sidebar__user" tabIndex={sidebarOpen ? undefined : -1}>
+          <div className="admin-sidebar__user">
             {user?.avatarUrl ? <img alt="" className="admin-sidebar__user-avatar admin-sidebar__user-avatar--image" src={user.avatarUrl} /> : <span aria-hidden="true" className="admin-sidebar__user-avatar">{getInitials(user?.fullName || user?.email || content.currentUser.name)}</span>}
             <div>
               <p className="admin-sidebar__user-name">{user?.fullName || content.currentUser.name}</p>
@@ -193,7 +213,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
           <button
             className="admin-sidebar__logout"
             onClick={handleLogout}
-            tabIndex={sidebarOpen ? undefined : -1}
+            tabIndex={isSidebarHidden ? -1 : undefined}
             type="button"
           >
             {content.sidebar.logout}

@@ -12,7 +12,8 @@ type ReasonModalProps = {
   onCancel: () => void
   onConfirm: (reason: string) => void
   placeholder?: string
-  requiredMessage: string
+  required?: boolean
+  requiredMessage?: string
   title: string
 }
 
@@ -27,7 +28,8 @@ export function ReasonModal({
   onCancel,
   onConfirm,
   placeholder,
-  requiredMessage,
+  required = true,
+  requiredMessage = '',
   title,
 }: ReasonModalProps) {
   const inputId = useId()
@@ -53,7 +55,7 @@ export function ReasonModal({
 
   const submit = () => {
     const normalizedReason = reason.trim()
-    if (!normalizedReason) {
+    if (required && !normalizedReason) {
       setError(requiredMessage)
       return
     }
@@ -64,7 +66,7 @@ export function ReasonModal({
     <div
       aria-labelledby="reason-modal-title"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/45 p-4"
       role="dialog"
     >
       <form

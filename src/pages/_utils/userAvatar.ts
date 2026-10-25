@@ -34,8 +34,8 @@ export function getUserAvatarSources(user: AuthUser): string[] {
   return getAvatarSources(user.avatarUrl, user.logoUrl)
 }
 
-export function getUserInitials(value: string): string {
-  const parts = value.trim().split(/\s+/).filter(Boolean)
+export function getUserInitials(value?: string | null): string {
+  const parts = (value ?? '').trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return '?'
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()

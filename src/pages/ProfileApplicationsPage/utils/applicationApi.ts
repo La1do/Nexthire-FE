@@ -6,6 +6,24 @@ export function createCandidateApplicationFromApi(
   fallbackLabel: string,
   noCoverLetterLabel: string,
 ): CandidateApplication {
+  const extra = application as Record<string, unknown>
+  const job = extra.job as Record<string, unknown> | undefined
+
+  const location =
+    (typeof extra.location === 'string' && extra.location.trim()) ||
+    (typeof job?.location === 'string' && job.location.trim()) ||
+    fallbackLabel
+
+  const workingType =
+    (typeof extra.workingType === 'string' && extra.workingType.trim()) ||
+    (typeof job?.workingType === 'string' && job.workingType.trim()) ||
+    fallbackLabel
+
+  const salaryLabel =
+    (typeof extra.salaryLabel === 'string' && extra.salaryLabel.trim()) ||
+    (typeof job?.salaryLabel === 'string' && job.salaryLabel.trim()) ||
+    fallbackLabel
+
   return {
     appliedAt: application.submittedAt,
     companyName: application.companyName,
@@ -15,11 +33,11 @@ export function createCandidateApplicationFromApi(
     id: application.id,
     jobId: application.jobId,
     jobTitle: application.jobTitle,
-    location: fallbackLabel,
+    location,
     progress: application.progress ?? null,
-    salaryLabel: fallbackLabel,
+    salaryLabel,
     status: application.status,
     updatedAt: application.updatedAt,
-    workingType: fallbackLabel,
+    workingType,
   }
 }

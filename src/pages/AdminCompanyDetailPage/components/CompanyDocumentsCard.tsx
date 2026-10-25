@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FileText } from 'lucide-react'
 import type { AdminCompaniesTranslations } from '../../../i18n/types'
 import { adminCompaniesService } from '../../../services/admin'
 import type { CompanyVerificationDocument } from '../../../types/admin.types'
@@ -117,7 +118,7 @@ export function CompanyDocumentsCard({ companyId, content, documents, isError, i
             return (
               <li className="admin-company-document" key={verificationDocument.id}>
                 <span aria-hidden="true" className="admin-company-document__icon">
-                  DOC
+                  <FileText size={17} />
                 </span>
                 <span className="admin-company-document__name">
                   <strong>{verificationDocument.fileName}</strong>

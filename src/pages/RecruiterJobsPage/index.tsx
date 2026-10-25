@@ -7,7 +7,7 @@ import { applicationService } from '../../services/application.service'
 import { jobService } from '../../services/job.service'
 import type { ApplicationResponse } from '../../types/application.types'
 import type { RecruiterJobResponse } from '../../types/job.types'
-import { Button } from '../_components'
+import { Button, ConfirmModal, ReasonModal } from '../_components'
 import { RecruiterJobActions } from './components/RecruiterJobActions'
 import { RecruiterJobFilters } from './components/RecruiterJobFilters'
 import { RecruiterJobList } from './components/RecruiterJobList'
@@ -17,6 +17,7 @@ import { RecruiterJobStatusTabs } from './components/RecruiterJobStatusTabs'
 import { useRecruiterJobs } from './hooks/useRecruiterJobs'
 import type { RecruiterJobAction, RecruiterJobActionState } from './types'
 import {
+  canJobHaveApplications,
   formatJobCount,
   formatRecruiterJobDate,
   formatRecruiterJobSalary,
@@ -45,23 +46,11 @@ type JobActionResult =
       type: 'cancelled'
     }
 
-async function runRecruiterJobAction(
+async function executeRecruiterJobAction(
   job: RecruiterJobResponse,
   action: RecruiterJobAction,
-  translations: RecruiterJobsTranslations,
+  reason?: string,
 ): Promise<JobActionResult> {
-  if (action === 'submit' && !window.confirm(translations.actions.confirmSubmit)) {
-    return { type: 'cancelled' }
-  }
-
-  if (action === 'delete' && !window.confirm(translations.actions.confirmDelete)) {
-    return { type: 'cancelled' }
-  }
-
-  if (action === 'republish' && !window.confirm(translations.actions.confirmRepublish)) {
-    return { type: 'cancelled' }
-  }
-
   if (action === 'submit') {
     return { job: await jobService.submitRecruiterJob(job.id), type: 'updated' }
   }
@@ -76,28 +65,90 @@ async function runRecruiterJobAction(
   }
 
   if (action === 'unpublish') {
-    const reason = window.prompt(translations.actions.reasonUnpublishPrompt)
-
-    if (reason === null) {
-      return { type: 'cancelled' }
-    }
-
     return {
-      job: await jobService.unpublishRecruiterJob(job.id, { reason: reason.trim() || null }),
+      job: await jobService.unpublishRecruiterJob(job.id, { reason: reason?.trim() || null }),
       type: 'updated',
     }
   }
 
-  const reason = window.prompt(translations.actions.reasonClosePrompt)
-
-  if (reason === null) {
-    return { type: 'cancelled' }
-  }
-
   return {
-    job: await jobService.closeRecruiterJob(job.id, { reason: reason.trim() || null }),
+    job: await jobService.closeRecruiterJob(job.id, { reason: reason?.trim() || null }),
     type: 'updated',
   }
+}
+
+type RecruiterJobActionModalsProps = {
+  actionState: RecruiterJobActionState
+  cancelLabel: string
+  content: RecruiterJobsTranslations
+  onCancel: () => void
+  onConfirm: (reason?: string) => Promise<void>
+  pendingAction: {
+    action: RecruiterJobAction
+    job: RecruiterJobResponse
+  } | null
+}
+
+function RecruiterJobActionModals({
+  actionState,
+  cancelLabel,
+  content,
+  onCancel,
+  onConfirm,
+  pendingAction,
+}: RecruiterJobActionModalsProps) {
+  if (!pendingAction) return null
+
+  const isConfirmAction =
+    pendingAction.action === 'submit' ||
+    pendingAction.action === 'delete' ||
+    pendingAction.action === 'republish'
+
+  const isReasonAction =
+    pendingAction.action === 'unpublish' ||
+    pendingAction.action === 'close'
+
+  const getConfirmDescription = () => {
+    if (pendingAction.action === 'submit') return content.actions.confirmSubmit
+    if (pendingAction.action === 'delete') return content.actions.confirmDelete
+    if (pendingAction.action === 'republish') return content.actions.confirmRepublish
+    return ''
+  }
+
+  const getReasonLabel = () => {
+    if (pendingAction.action === 'unpublish') return content.actions.reasonUnpublishPrompt
+    if (pendingAction.action === 'close') return content.actions.reasonClosePrompt
+    return ''
+  }
+
+  const actionTitle = content.actions[pendingAction.action]
+
+  return (
+    <>
+      <ConfirmModal
+        cancelLabel={cancelLabel}
+        confirmLabel={actionTitle}
+        description={getConfirmDescription()}
+        isOpen={isConfirmAction}
+        isPending={Boolean(actionState)}
+        onCancel={onCancel}
+        onConfirm={() => void onConfirm()}
+        title={actionTitle}
+      />
+      <ReasonModal
+        cancelLabel={cancelLabel}
+        confirmLabel={actionTitle}
+        description={pendingAction.job.title}
+        inputLabel={getReasonLabel()}
+        isOpen={isReasonAction}
+        isPending={Boolean(actionState)}
+        onCancel={onCancel}
+        onConfirm={(reason) => void onConfirm(reason)}
+        required={false}
+        title={actionTitle}
+      />
+    </>
+  )
 }
 
 function JobPageState({
@@ -163,6 +214,14 @@ export function RecruiterJobsPage() {
   const [actionState, setActionState] = useState<RecruiterJobActionState>(null)
   const [actionError, setActionError] = useState<string | undefined>(undefined)
   const [jobApplicationCounts, setJobApplicationCounts] = useState<Readonly<Record<string, number>>>({})
+  const [pendingAction, setPendingAction] = useState<{
+    action: RecruiterJobAction
+    job: RecruiterJobResponse
+  } | null>(null)
+
+  const cancelLabel =
+    pages.recruiterApplications?.drawer?.decision?.confirmModal?.cancelAction ??
+    (locale === 'vi' ? 'Hủy' : locale === 'ja' ? 'キャンセル' : 'Cancel')
 
   useEffect(() => {
     let ignore = false
@@ -204,12 +263,23 @@ export function RecruiterJobsPage() {
   }, [jobs])
 
   const handleAction = useCallback(
-    async (job: RecruiterJobResponse, action: RecruiterJobAction) => {
+    (job: RecruiterJobResponse, action: RecruiterJobAction) => {
+      setActionError(undefined)
+      setPendingAction({ action, job })
+    },
+    [],
+  )
+
+  const handleConfirmAction = useCallback(
+    async (reason?: string) => {
+      if (!pendingAction) return
+      const { action, job } = pendingAction
       setActionError(undefined)
       setActionState({ action, jobId: job.id })
 
       try {
-        const result = await runRecruiterJobAction(job, action, content)
+        const result = await executeRecruiterJobAction(job, action, reason)
+        setPendingAction(null)
 
         if (result.type !== 'cancelled') {
           await loadJobs()
@@ -220,7 +290,7 @@ export function RecruiterJobsPage() {
         setActionState(null)
       }
     },
-    [content, loadJobs],
+    [content.actions.actionError, loadJobs, pendingAction],
   )
 
   return (
@@ -231,7 +301,11 @@ export function RecruiterJobsPage() {
           <h1>{content.hero.title}</h1>
           <p>{content.hero.description}</p>
         </div>
-        <Link className="job-post-link-button job-post-link-button--primary" to="/recruiter/jobs/new">
+        <Link
+          className="job-post-link-button job-post-link-button--primary"
+          state={{ from: '/recruiter/jobs' }}
+          to="/recruiter/jobs/new"
+        >
           {content.hero.createAction}
         </Link>
       </section>
@@ -289,6 +363,15 @@ export function RecruiterJobsPage() {
           title={content.states.emptyTitle}
         />
       )}
+
+      <RecruiterJobActionModals
+        actionState={actionState}
+        cancelLabel={cancelLabel}
+        content={content}
+        onCancel={() => setPendingAction(null)}
+        onConfirm={handleConfirmAction}
+        pendingAction={pendingAction}
+      />
     </div>
   )
 }
@@ -305,9 +388,21 @@ export function RecruiterJobDetailPage() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [actionError, setActionError] = useState<string | undefined>(undefined)
   const [actionState, setActionState] = useState<RecruiterJobActionState>(null)
+  const [pendingAction, setPendingAction] = useState<{
+    action: RecruiterJobAction
+    job: RecruiterJobResponse
+  } | null>(null)
   const [jobApplications, setJobApplications] = useState<ApplicationResponse[]>([])
   const [jobApplicationsTotal, setJobApplicationsTotal] = useState<number | null>(null)
   const [isApplicationsLoading, setApplicationsLoading] = useState(false)
+
+  const canViewApplications = job
+    ? canJobHaveApplications(job.status, jobApplicationsTotal ?? job.applicationCount)
+    : false
+
+  const cancelLabel =
+    pages.recruiterApplications?.drawer?.decision?.confirmModal?.cancelAction ??
+    (locale === 'vi' ? 'Hủy' : locale === 'ja' ? 'キャンセル' : 'Cancel')
 
   const loadJob = useCallback(async () => {
     if (!id) {
@@ -334,7 +429,9 @@ export function RecruiterJobDetailPage() {
   }, [loadJob])
 
   useEffect(() => {
-    if (!id) {
+    if (!id || !canViewApplications) {
+      setJobApplications([])
+      setJobApplicationsTotal(0)
       return
     }
 
@@ -361,15 +458,26 @@ export function RecruiterJobDetailPage() {
     }
 
     void loadJobApplications()
-  }, [id])
+  }, [canViewApplications, id])
 
   const handleAction = useCallback(
-    async (targetJob: RecruiterJobResponse, action: RecruiterJobAction) => {
+    (targetJob: RecruiterJobResponse, action: RecruiterJobAction) => {
+      setActionError(undefined)
+      setPendingAction({ action, job: targetJob })
+    },
+    [],
+  )
+
+  const handleConfirmAction = useCallback(
+    async (reason?: string) => {
+      if (!pendingAction) return
+      const { action, job: targetJob } = pendingAction
       setActionError(undefined)
       setActionState({ action, jobId: targetJob.id })
 
       try {
-        const result = await runRecruiterJobAction(targetJob, action, content)
+        const result = await executeRecruiterJobAction(targetJob, action, reason)
+        setPendingAction(null)
 
         if (result.type === 'updated') {
           setJob(result.job)
@@ -384,7 +492,7 @@ export function RecruiterJobDetailPage() {
         setActionState(null)
       }
     },
-    [content, navigate],
+    [content.actions.actionError, navigate, pendingAction],
   )
 
   if (isLoading) {
@@ -443,15 +551,20 @@ export function RecruiterJobDetailPage() {
             <span>{content.detail.jobId}: {job.id}</span>
           </div>
           <dl className="recruiter-job-detail-hero-metrics">
-            <JobDetailMetric label={content.detail.applications} value={applications} />
+            <JobDetailMetric
+              label={content.detail.applications}
+              value={canViewApplications ? applications : content.metrics.noData}
+            />
             <JobDetailMetric label={content.detail.deadline} value={deadline} />
             <JobDetailMetric label={content.detail.updatedAt} value={updatedAt} />
           </dl>
         </div>
         <div className="recruiter-job-detail-header__actions">
-          <Link className="job-post-link-button job-post-link-button--primary" to={createApplicationsHref(job.id)}>
-            {content.actions.viewApplications}
-          </Link>
+          {canViewApplications ? (
+            <Link className="job-post-link-button job-post-link-button--primary" to={createApplicationsHref(job.id)}>
+              {content.actions.viewApplications}
+            </Link>
+          ) : null}
           {job.status === 'PUBLISHED' ? (
             <Link className="job-post-link-button" to={`/jobs/${job.id}`}>
               {content.actions.viewPublic}
@@ -539,40 +652,42 @@ export function RecruiterJobDetailPage() {
         </section>
       </div>
 
-      <section className="recruiter-job-detail-panel recruiter-job-detail-panel--applications recruiter-panel">
-        <header className="recruiter-job-detail-applications__header">
-          <div>
-            <h2>{content.detail.applications}</h2>
-            <p>{content.detail.applicationsDescription}</p>
-          </div>
-          <Link to={createApplicationsHref(job.id)}>
-            <span>{visibleApplicationCount}</span>
-            {content.actions.viewApplications}
-          </Link>
-        </header>
-        {isApplicationsLoading ? (
-          <p className="recruiter-job-detail-muted">{content.states.loading}</p>
-        ) : jobApplications.length ? (
-          <div className="recruiter-job-detail-applications">
-            {jobApplications.map((application) => (
-              <Link key={application.id} to={createApplicationsHref(job.id, application.id)}>
-                <span className="recruiter-job-detail-applications__candidate">
-                  <strong>{application.candidateFullName}</strong>
-                  <small>{application.candidateEmail}</small>
-                </span>
-                <span className="recruiter-job-detail-applications__score">
-                  {application.matchScore == null ? content.metrics.noData : application.matchScore}
-                </span>
-                <span className="recruiter-job-detail-applications__level">
-                  {application.matchLevel ? pages.recruiterApplications.match.levels[application.matchLevel] : content.metrics.noData}
-                </span>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className="recruiter-job-detail-muted">{content.detail.noApplications}</p>
-        )}
-      </section>
+      {canViewApplications ? (
+        <section className="recruiter-job-detail-panel recruiter-job-detail-panel--applications recruiter-panel">
+          <header className="recruiter-job-detail-applications__header">
+            <div>
+              <h2>{content.detail.applications}</h2>
+              <p>{content.detail.applicationsDescription}</p>
+            </div>
+            <Link to={createApplicationsHref(job.id)}>
+              <span>{visibleApplicationCount}</span>
+              {content.actions.viewApplications}
+            </Link>
+          </header>
+          {isApplicationsLoading ? (
+            <p className="recruiter-job-detail-muted">{content.states.loading}</p>
+          ) : jobApplications.length ? (
+            <div className="recruiter-job-detail-applications">
+              {jobApplications.map((application) => (
+                <Link key={application.id} to={createApplicationsHref(job.id, application.id)}>
+                  <span className="recruiter-job-detail-applications__candidate">
+                    <strong>{application.candidateFullName}</strong>
+                    <small>{application.candidateEmail}</small>
+                  </span>
+                  <span className="recruiter-job-detail-applications__score">
+                    {application.matchScore == null ? content.metrics.noData : application.matchScore}
+                  </span>
+                  <span className="recruiter-job-detail-applications__level">
+                    {application.matchLevel ? pages.recruiterApplications.match.levels[application.matchLevel] : content.metrics.noData}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="recruiter-job-detail-muted">{content.detail.noApplications}</p>
+          )}
+        </section>
+      ) : null}
 
       <section className="recruiter-job-detail-panel recruiter-job-detail-panel--review recruiter-panel">
         <h2>{content.detail.moderation}</h2>
@@ -589,6 +704,15 @@ export function RecruiterJobDetailPage() {
           <p>{reviewMessage}</p>
         </div>
       </section>
+
+      <RecruiterJobActionModals
+        actionState={actionState}
+        cancelLabel={cancelLabel}
+        content={content}
+        onCancel={() => setPendingAction(null)}
+        onConfirm={handleConfirmAction}
+        pendingAction={pendingAction}
+      />
     </div>
   )
 }

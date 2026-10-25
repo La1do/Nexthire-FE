@@ -39,7 +39,7 @@ export function ConfirmModal({
     <div
       aria-labelledby="confirm-modal-title"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/45 p-4"
       role="dialog"
     >
       <div className="w-full max-w-md rounded-lg border border-[var(--color-border-default)] bg-[var(--color-surface-card)] p-6 shadow-xl">

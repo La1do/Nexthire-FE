@@ -4,6 +4,7 @@ import type { RecruiterJobCreateTranslations, RecruiterJobsTranslations } from '
 import type { ApiMeta, RecruiterJobResponse } from '../../../types/job.types'
 import type { RecruiterJobAction, RecruiterJobActionState } from '../types'
 import {
+  canJobHaveApplications,
   formatRecruiterJobDate,
   formatRecruiterJobSalary,
   splitJobCount,
@@ -145,6 +146,7 @@ export function RecruiterJobList({
             ? `${translations.table.deadline}: ${job.deadline}`
             : undefined
           const applicationCount = applicationCounts[job.id] ?? job.applicationCount
+          const canViewApplications = canJobHaveApplications(job.status, applicationCount)
 
           return (
             <article
@@ -177,27 +179,33 @@ export function RecruiterJobList({
                 <div>
                   <dt>{translations.table.applications}</dt>
                   <dd>
-                    <Link
-                      aria-label={`${translations.actions.viewApplications}: ${job.title}`}
-                      className="recruiter-job-row-card__applications"
-                      onClick={(event) => event.stopPropagation()}
-                      onKeyDown={(event) => event.stopPropagation()}
-                      to={createApplicationsHref(job.id)}
-                    >
-                      {(() => {
-                        const { number, suffix } = splitJobCount(
-                          applicationCount,
-                          locale,
-                          translations.metrics.applicationsSuffix,
-                        )
-                        return (
-                          <>
-                            <strong>{number}</strong>
-                            <span className="recruiter-job-row-card__applications-suffix">{suffix}</span>
-                          </>
-                        )
-                      })()}
-                    </Link>
+                    {canViewApplications ? (
+                      <Link
+                        aria-label={`${translations.actions.viewApplications}: ${job.title}`}
+                        className="recruiter-job-row-card__applications"
+                        onClick={(event) => event.stopPropagation()}
+                        onKeyDown={(event) => event.stopPropagation()}
+                        to={createApplicationsHref(job.id)}
+                      >
+                        {(() => {
+                          const { number, suffix } = splitJobCount(
+                            applicationCount,
+                            locale,
+                            translations.metrics.applicationsSuffix,
+                          )
+                          return (
+                            <>
+                              <strong>{number}</strong>
+                              <span className="recruiter-job-row-card__applications-suffix">{suffix}</span>
+                            </>
+                          )
+                        })()}
+                      </Link>
+                    ) : (
+                      <span className="recruiter-job-row-card__applications-muted">
+                        {translations.metrics.noData}
+                      </span>
+                    )}
                   </dd>
                 </div>
                 <div>

@@ -1,8 +1,10 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-type ButtonVariant = 'ghost' | 'primary' | 'secondary'
+export type ButtonVariant = 'ghost' | 'primary' | 'secondary' | 'destructive'
+export type ButtonSize = 'sm' | 'md' | 'lg'
 
-type ButtonProps = ComponentPropsWithoutRef<'button'> & {
+export type ButtonProps = ComponentPropsWithoutRef<'button'> & {
+  size?: ButtonSize
   variant?: ButtonVariant
 }
 
@@ -11,12 +13,26 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary: 'brand-gradient brand-action-shadow text-[var(--color-text-inverse)] hover:brightness-105',
   secondary:
     'border border-[var(--color-border-default)] bg-[var(--color-surface-card)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-subtle)]',
+  destructive:
+    'bg-[var(--color-status-danger-text,#ef4444)] text-white hover:brightness-110',
 }
 
-export function Button({ className = '', type = 'button', variant = 'primary', ...props }: ButtonProps) {
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: 'min-h-8 px-3 text-sm rounded-md',
+  md: 'min-h-12 px-5 text-base rounded-lg',
+  lg: 'min-h-14 px-6 text-lg rounded-xl',
+}
+
+export function Button({
+  className = '',
+  size = 'md',
+  type = 'button',
+  variant = 'primary',
+  ...props
+}: ButtonProps) {
   return (
     <button
-      className={`button-motion inline-flex min-h-12 items-center justify-center rounded-lg px-5 text-base font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-solid)] disabled:cursor-not-allowed disabled:opacity-60 ${variantClasses[variant]} ${className}`}
+      className={`button-motion inline-flex items-center justify-center font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-solid)] disabled:cursor-not-allowed disabled:opacity-60 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
       type={type}
       {...props}
     />

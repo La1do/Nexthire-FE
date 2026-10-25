@@ -27,13 +27,13 @@ type CandidateCriteria = {
 
 const statusOrder: ReadonlyArray<ApplicationStatus> = ['SUBMITTED', 'OFFERED', 'REJECTED', 'CANCELLED']
 
-function getInitials(name: string | null | undefined) {
-  const normalizedName = name?.trim()
+function getInitials(name?: string | null) {
+  const normalizedName = (name ?? '').trim()
   if (!normalizedName) {
     return '?'
   }
 
-  const parts = normalizedName.split(/\s+/)
+  const parts = normalizedName.split(/\s+/).filter(Boolean)
   const first = parts[0]?.[0] ?? ''
   const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : ''
   return `${first}${last}`.toUpperCase() || '?'

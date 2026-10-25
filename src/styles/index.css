@@ -2650,14 +2650,6 @@ select {
   position: relative;
 }
 
-.job-detail-hero::before {
-  background: linear-gradient(90deg, var(--color-brand-start), var(--color-brand-end));
-  content: "";
-  height: 4px;
-  inset: 0 0 auto;
-  position: absolute;
-}
-
 .job-detail-logo-panel {
   align-items: stretch;
   aspect-ratio: 16 / 9;
@@ -11325,6 +11317,30 @@ select {
   font-size: .72rem;
   font-weight: 900;
   line-height: 1;
+}
+
+.user-notification-card__avatar--blue {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+.user-notification-card__avatar--coral {
+  background: #fff1f2;
+  color: #e11d48;
+  border-color: rgba(225, 29, 72, 0.2);
+}
+
+.user-notification-card__avatar--green {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: rgba(5, 150, 105, 0.2);
+}
+
+.user-notification-card__avatar--violet {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border-color: rgba(124, 58, 237, 0.2);
 }
 
 .user-notification-card__avatar img {

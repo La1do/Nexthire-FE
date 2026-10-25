@@ -1,0 +1,296 @@
+/* Page-level styles for ProfileApplicationsPage */
+
+/* Turn off old legacy pseudo-elements from global index.css */
+.profile-application-progress-steps li::after,
+.profile-application-progress-steps li:not(:last-child)::after {
+  display: none !important;
+}
+
+.profile-application-progress {
+  border-top: 1px solid var(--color-border-subtle);
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.6rem;
+  padding-top: 1.15rem;
+}
+
+.profile-application-progress__header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: space-between;
+}
+
+.profile-application-progress__header h3 {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.profile-application-progress__counter {
+  background: color-mix(in srgb, var(--color-brand-start) 10%, var(--color-surface-muted));
+  border: 1px solid color-mix(in srgb, var(--color-brand-start) 25%, transparent);
+  border-radius: 999px;
+  color: var(--color-brand-end);
+  font-size: 0.74rem;
+  font-weight: 850;
+  padding: 0.2rem 0.65rem;
+}
+
+/* Steps grid */
+.profile-application-progress-steps {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-application-progress-steps__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+  position: relative;
+}
+
+/* Connecting track (Node + Line) */
+.profile-application-progress-steps__track {
+  align-items: center;
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.profile-application-progress-steps__node {
+  align-items: center;
+  border-radius: 999px;
+  display: flex;
+  flex-shrink: 0;
+  height: 1.6rem;
+  justify-content: center;
+  position: relative;
+  transition: all 220ms var(--motion-ease-standard);
+  width: 1.6rem;
+  z-index: 2;
+}
+
+.profile-application-progress-steps__line {
+  background: var(--color-border-subtle);
+  border-radius: 999px;
+  flex: 1;
+  height: 3px;
+  margin-left: 0.5rem;
+  transition: background 260ms var(--motion-ease-standard);
+}
+
+.profile-application-progress-steps__line.is-active {
+  background: linear-gradient(90deg, var(--color-brand-start), var(--color-brand-end));
+  box-shadow: 0 0 8px rgba(242, 85, 85, 0.35);
+}
+
+/* Node variant: Completed */
+.profile-application-progress-steps__item.is-completed .profile-application-progress-steps__node {
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+  box-shadow: 0 2px 8px rgba(242, 85, 85, 0.35);
+  color: #ffffff;
+}
+
+.profile-application-progress-steps__check {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+/* Node variant: Current active */
+.profile-application-progress-steps__item.is-current .profile-application-progress-steps__node {
+  background: var(--color-surface-card);
+  border: 2.5px solid var(--color-brand-solid);
+  box-shadow: 0 0 0 4px var(--color-brand-soft);
+}
+
+.profile-application-progress-steps__pulse-dot {
+  animation: profile-step-pulse 1.8s ease-in-out infinite;
+  background: var(--color-brand-solid);
+  border-radius: 999px;
+  height: 0.55rem;
+  width: 0.55rem;
+}
+
+@keyframes profile-step-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.75;
+  }
+}
+
+/* Node variant: Pending */
+.profile-application-progress-steps__item.is-pending .profile-application-progress-steps__node {
+  background: var(--color-surface-muted);
+  border: 1.5px solid var(--color-border-default);
+  color: var(--color-text-muted);
+}
+
+.profile-application-progress-steps__step-num {
+  font-size: 0.74rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+/* Step Card content */
+.profile-application-progress-steps__card {
+  border-radius: 12px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem 0.95rem;
+  transition: all 200ms var(--motion-ease-standard);
+}
+
+/* Completed card (colored background & subtle border) */
+.profile-application-progress-steps__item.is-completed .profile-application-progress-steps__card {
+  background: color-mix(in srgb, var(--color-brand-start) 4%, var(--color-surface-card));
+  border: 1px solid color-mix(in srgb, var(--color-brand-start) 20%, var(--color-border-subtle));
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.03);
+}
+
+/* Current card (active focus card) */
+.profile-application-progress-steps__item.is-current .profile-application-progress-steps__card {
+  background: color-mix(in srgb, var(--color-brand-soft) 28%, var(--color-surface-card));
+  border: 1.5px solid var(--color-brand-solid);
+  box-shadow: 0 4px 18px rgba(242, 85, 85, 0.14);
+}
+
+/* Pending card (muted state) */
+.profile-application-progress-steps__item.is-pending .profile-application-progress-steps__card {
+  background: var(--color-surface-subtle);
+  border: 1px dashed var(--color-border-subtle);
+  opacity: 0.65;
+}
+
+/* Meta row (tag + time) */
+.profile-application-progress-steps__meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: space-between;
+}
+
+/* Status Badges */
+.profile-application-progress-step-tag {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  padding: 0.16rem 0.55rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.profile-application-progress-step-tag--completed {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  color: #047857;
+}
+
+.profile-application-progress-step-tag--current {
+  background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+  box-shadow: 0 2px 6px rgba(242, 85, 85, 0.25);
+  color: #ffffff;
+}
+
+.profile-application-progress-step-tag--pending {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-muted);
+}
+
+/* Time pill */
+.profile-application-progress-steps__time {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 750;
+  padding: 0.15rem 0.45rem;
+}
+
+.profile-application-progress-steps__item.is-current .profile-application-progress-steps__time {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-brand-soft);
+  color: var(--color-brand-solid);
+  font-weight: 850;
+}
+
+/* Title & Description */
+.profile-application-progress-steps__title {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 900;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.profile-application-progress-steps__item.is-completed .profile-application-progress-steps__title {
+  color: var(--color-text-primary);
+}
+
+.profile-application-progress-steps__item.is-current .profile-application-progress-steps__title {
+  color: var(--color-brand-solid);
+  font-weight: 950;
+}
+
+.profile-application-progress-steps__item.is-pending .profile-application-progress-steps__title {
+  color: var(--color-text-muted);
+  font-weight: 800;
+}
+
+.profile-application-progress-steps__desc {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  margin: 0.15rem 0 0;
+}
+
+.profile-application-progress-steps__item.is-pending .profile-application-progress-steps__desc {
+  color: var(--color-text-muted);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 860px) {
+  .profile-application-progress-steps {
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+
+  .profile-application-progress-steps__item {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .profile-application-progress-steps__track {
+    flex-direction: column;
+    height: 100%;
+    width: auto;
+  }
+
+  .profile-application-progress-steps__line {
+    height: 100%;
+    margin-left: 0;
+    margin-top: 0.4rem;
+    width: 3px;
+  }
+}

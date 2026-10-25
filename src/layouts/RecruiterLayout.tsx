@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { getAuthUserDisplayName, getInitials, useAuth, useToast } from '../context'
 import { useTranslations } from '../i18n'
 import { BrandMark, LanguageSwitch } from '../pages/_components'
@@ -33,7 +33,8 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
   const navigate = useNavigate()
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null)
-  const currentPath = typeof window === 'undefined' ? '' : window.location.pathname
+  const location = useLocation()
+  const currentPath = location.pathname
   const isJobFormPath = currentPath.startsWith('/recruiter/jobs/new') ||
     (currentPath.startsWith('/recruiter/jobs/') && currentPath.endsWith('/edit'))
   const isApplicationsPath = currentPath.startsWith('/recruiter/applications')
@@ -108,9 +109,9 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
         id="recruiter-sidebar"
       >
         <div className="recruiter-sidebar__inner">
-          <a className="recruiter-sidebar__brand" href="/recruiter">
+          <Link className="recruiter-sidebar__brand" to="/recruiter">
             <BrandMark compact label={common.brandName} />
-          </a>
+          </Link>
 
           <nav aria-label={content.routeLabel} className="recruiter-sidebar__nav">
             {navItems.map((item) => {
@@ -120,14 +121,15 @@ export function RecruiterLayout({ children }: PropsWithChildren) {
                   : currentPath.startsWith(item.href)
 
               return (
-                <a
+                <NavLink
                   aria-current={isActive ? 'page' : undefined}
                   className={isActive ? 'is-active' : undefined}
-                  href={item.href}
+                  end={item.href === '/recruiter'}
                   key={item.label}
+                  to={item.href}
                 >
                   {item.label}
-                </a>
+                </NavLink>
               )
             })}
           </nav>

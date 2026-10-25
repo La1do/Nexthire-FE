@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
+import { useToast } from '../../context'
 import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { categoryService } from '../../services/category.service'
@@ -17,7 +19,6 @@ import type {
   JobPostAction,
   JobPostFieldErrors,
   JobPostFormValues,
-  JobPostSubmitResult,
 } from './types'
 import {
   createJobPostPayload,
@@ -87,6 +88,10 @@ function isCompanyNotFound(error: unknown) {
 
 export function RecruiterJobCreatePage() {
   const { id: editJobId } = useParams()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const toast = useToast()
+  const queryClient = useQueryClient()
   const { locale } = useLocale()
   const { pages } = useTranslations()
   const content = pages.recruiterJobCreate
@@ -100,7 +105,6 @@ export function RecruiterJobCreatePage() {
   const [errors, setErrors] = useState<JobPostFieldErrors>({})
   const [submitError, setSubmitError] = useState<string | undefined>(undefined)
   const [submittingAction, setSubmittingAction] = useState<JobPostAction | undefined>(undefined)
-  const [submitResult, setSubmitResult] = useState<JobPostSubmitResult | undefined>(undefined)
   const [draftJob, setDraftJob] = useState<RecruiterJobResponse | undefined>(undefined)
   const [draftPayloadKey, setDraftPayloadKey] = useState<string | undefined>(undefined)
   const [isReviewDialogOpen, setReviewDialogOpen] = useState(false)
@@ -189,7 +193,6 @@ export function RecruiterJobCreatePage() {
         return nextErrors
       })
       setSubmitError(undefined)
-      setSubmitResult(undefined)
     },
     [],
   )
@@ -225,7 +228,6 @@ export function RecruiterJobCreatePage() {
       return nextErrors
     })
     setSubmitError(undefined)
-    setSubmitResult(undefined)
   }, [])
 
   const handleRemoveSkill = useCallback((skill: string) => {
@@ -233,7 +235,6 @@ export function RecruiterJobCreatePage() {
       ...currentValues,
       skills: currentValues.skills.filter((currentSkill) => currentSkill !== skill),
     }))
-    setSubmitResult(undefined)
   }, [])
 
   const handleReset = useCallback(() => {
@@ -242,7 +243,6 @@ export function RecruiterJobCreatePage() {
       setValues(nextValues)
       setErrors({})
       setSubmitError(undefined)
-      setSubmitResult(undefined)
       setDraftPayloadKey(createPayloadKey(nextValues))
       return
     }
@@ -250,7 +250,6 @@ export function RecruiterJobCreatePage() {
     setValues(createInitialJobPostValues())
     setErrors({})
     setSubmitError(undefined)
-    setSubmitResult(undefined)
     setDraftJob(undefined)
     setDraftPayloadKey(undefined)
   }, [draftJob, isEditMode])
@@ -264,6 +263,7 @@ export function RecruiterJobCreatePage() {
       if (Object.keys(nextErrors).length) {
         setErrors(nextErrors)
         setSubmitError(content.form.submitError)
+        toast.error(content.form.submitError)
         return false
       }
 
@@ -295,18 +295,69 @@ export function RecruiterJobCreatePage() {
         if (effectiveAction === 'submit') {
           job = await jobService.submitRecruiterJob(job.id)
           setDraftJob(job)
+
+          void queryClient.invalidateQueries({ queryKey: ['recruiter-jobs'] })
+          void queryClient.invalidateQueries({ queryKey: ['recruiter-job-status-counts'] })
+          void queryClient.invalidateQueries({ queryKey: ['recruiter-dashboard'] })
+
+          toast.success(content.form.successDescription, {
+            title: content.form.successSubmit,
+          })
+
+          setReviewDialogOpen(false)
+
+          const fromPath = (location.state as { from?: string } | null)?.from
+          if (fromPath) {
+            navigate(fromPath)
+          } else if (window.history.length > 1 && window.history.state?.idx > 0) {
+            navigate(-1)
+          } else if (isEditMode && editJobId) {
+            navigate(`/recruiter/jobs/${editJobId}`)
+          } else {
+            navigate('/recruiter/jobs')
+          }
+
+          return true
         }
 
-        setSubmitResult({ action: effectiveAction, job })
+        void queryClient.invalidateQueries({ queryKey: ['recruiter-jobs'] })
+        void queryClient.invalidateQueries({ queryKey: ['recruiter-job-status-counts'] })
+        void queryClient.invalidateQueries({ queryKey: ['recruiter-dashboard'] })
+
+        toast.success(isPublishedEdit ? content.form.actions.saved : content.form.successDraft)
+
+        if (!isEditMode && job?.id) {
+          navigate(`/recruiter/jobs/${job.id}/edit`, { replace: true })
+        }
+
         return true
       } catch (error) {
-        setSubmitError(getApiErrorEnvelope(error)?.error.message ?? content.form.submitError)
+        const message = getApiErrorEnvelope(error)?.error.message ?? content.form.submitError
+        setSubmitError(message)
+        toast.error(message)
         return false
       } finally {
         setSubmittingAction(undefined)
       }
     },
-    [content.form.submitError, content.validation, draftJob, draftPayloadKey, isPublishedEdit, values],
+    [
+      content.form.actions.saved,
+      content.form.submitError,
+      content.form.successDescription,
+      content.form.successDraft,
+      content.form.successSubmit,
+      content.validation,
+      draftJob,
+      draftPayloadKey,
+      editJobId,
+      isEditMode,
+      isPublishedEdit,
+      location.state,
+      navigate,
+      queryClient,
+      toast,
+      values,
+    ],
   )
 
   const handleRequestReview = useCallback(() => {
@@ -315,12 +366,13 @@ export function RecruiterJobCreatePage() {
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors)
       setSubmitError(content.form.submitError)
+      toast.error(content.form.submitError)
       return
     }
 
     setSubmitError(undefined)
     setReviewDialogOpen(true)
-  }, [content.form.submitError, content.validation, values])
+  }, [content.form.submitError, content.validation, toast, values])
 
   const handleSaveDraftFromReview = useCallback(async () => {
     const isSaved = await handleSubmit('draft')
@@ -364,24 +416,6 @@ export function RecruiterJobCreatePage() {
       </section>
 
       <JobPostCompanyGate isLoading={isLoading} status={companyStatus} translations={content.gate}>
-        {submitResult ? (
-          <section className="job-post-success recruiter-panel">
-            <span>{content.statusLabels[submitResult.job.status]}</span>
-            <div>
-              <h2>{submitResult.action === 'submit' ? content.form.successSubmit : content.form.successDraft}</h2>
-              <p>{content.form.successDescription}</p>
-            </div>
-            <div>
-              <Link className="job-post-link-button job-post-link-button--primary" to="/recruiter/jobs">
-                {content.form.viewJobs}
-              </Link>
-              <Button onClick={handleReset} type="button" variant="secondary">
-                {content.form.createAnother}
-              </Button>
-            </div>
-          </section>
-        ) : null}
-
         <div className="job-post-workspace">
           <JobPostForm
             categories={categories}

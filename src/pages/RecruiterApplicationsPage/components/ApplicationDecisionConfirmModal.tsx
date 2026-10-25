@@ -60,6 +60,7 @@ export function ApplicationDecisionConfirmModal({
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape' && !isSubmittingRef.current) {
+        event.stopPropagation()
         onCancel()
         return
       }

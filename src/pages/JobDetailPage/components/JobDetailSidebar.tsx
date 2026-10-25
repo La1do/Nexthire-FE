@@ -19,24 +19,38 @@ export function JobDetailSidebar({ content, job }: JobDetailSidebarProps) {
   ].filter((item): item is { label: string; value: string } => item !== null)
 
   return (
-    <aside className="job-detail-sidebar">
-      <div className="job-detail-panel job-detail-motion">
-        <h2>{content.title}</h2>
+    <>
+      <aside className="job-detail-sidebar">
+        <div className="job-detail-panel job-detail-motion">
+          <h2>{content.title}</h2>
 
-        <dl className="job-detail-overview-list">
-          {overviewItems.map((item) => (
-            <div key={item.label}>
-              <dt>{item.label}</dt>
-              <dd>{item.value}</dd>
-            </div>
-          ))}
-        </dl>
+          <dl className="job-detail-overview-list">
+            {overviewItems.map((item) => (
+              <div key={item.label}>
+                <dt>{item.label}</dt>
+                <dd>{item.value}</dd>
+              </div>
+            ))}
+          </dl>
 
-        <div className="job-detail-actions">
+          <div className="job-detail-actions">
+            <ApplyJobButton content={content} job={job} />
+            <SaveJobButton content={content} jobId={job.id} />
+          </div>
+        </div>
+      </aside>
+
+      <div className="job-detail-mobile-apply-bar" aria-label={job.title}>
+        <div className="job-detail-mobile-apply-bar__summary">
+          <span className="job-detail-mobile-apply-bar__title">{job.title}</span>
+          {job.salary ? (
+            <span className="job-detail-mobile-apply-bar__salary">{job.salary}</span>
+          ) : null}
+        </div>
+        <div className="job-detail-mobile-apply-bar__action">
           <ApplyJobButton content={content} job={job} />
-          <SaveJobButton content={content} jobId={job.id} />
         </div>
       </div>
-    </aside>
+    </>
   )
 }

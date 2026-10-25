@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { CheckCircle2, Clock, PauseCircle, XCircle } from 'lucide-react'
 import { useToast } from '../../context'
 import { useAdminCompanies, useAdminCompaniesOverview, useVerifyAdminCompany } from '../../hooks/useAdminQueries'
 import { useTranslations } from '../../i18n'
@@ -20,10 +21,6 @@ const PAGE_SIZE = 20
 const companyStatuses: CompanyStatus[] = ['PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED']
 
 type ReviewAction = { company: AdminCompany; type: 'approve' | 'reject' }
-
-function MetricIcon({ children }: { children: string }) {
-  return <span aria-hidden="true" className="admin-company-metric-icon">{children}</span>
-}
 
 export function AdminCompaniesPage() {
   const { pages } = useTranslations()
@@ -89,10 +86,10 @@ export function AdminCompaniesPage() {
   return <div className="admin-companies-page">
     <header className="admin-companies-page__header"><p className="admin-users-page__subtitle">{content.pageSubtitle}</p></header>
     <div className="admin-users-stats admin-companies-stats">
-      <AdminStatCard icon={<MetricIcon>⌛</MetricIcon>} label={content.stats.pendingLabel} tone="amber" value={overview.byStatus.PENDING} />
-      <AdminStatCard icon={<MetricIcon>✓</MetricIcon>} label={content.stats.approvedLabel} tone="blue" value={overview.byStatus.APPROVED} />
-      <AdminStatCard icon={<MetricIcon>×</MetricIcon>} label={content.stats.rejectedLabel} tone="coral" value={overview.byStatus.REJECTED} />
-      <AdminStatCard icon={<MetricIcon>Ⅱ</MetricIcon>} label={content.stats.suspendedLabel} tone="violet" value={overview.byStatus.SUSPENDED} />
+      <AdminStatCard icon={<Clock size={20} />} label={content.stats.pendingLabel} tone="amber" value={overview.byStatus.PENDING} />
+      <AdminStatCard icon={<CheckCircle2 size={20} />} label={content.stats.approvedLabel} tone="blue" value={overview.byStatus.APPROVED} />
+      <AdminStatCard icon={<XCircle size={20} />} label={content.stats.rejectedLabel} tone="coral" value={overview.byStatus.REJECTED} />
+      <AdminStatCard icon={<PauseCircle size={20} />} label={content.stats.suspendedLabel} tone="violet" value={overview.byStatus.SUSPENDED} />
     </div>
     <CompanyReviewFilters content={content.filters} hasActiveFilters={hasActiveFilters} isSearching={listQuery.isFetching} onClear={() => { setQuery(''); setStatus('all'); setTrustLevel('all'); setRejectedBefore(false); setSort('latest') }} onQueryChange={setQuery} onRejectedBeforeChange={setRejectedBefore} onSortChange={setSort} onStatusChange={setStatus} onTrustLevelChange={setTrustLevel} query={query} rejectedBefore={rejectedBefore} sort={sort} status={status} statusesLabel={content.statuses} trustLevel={trustLevel} trustLevelsLabel={content.trustLevels} />
     {listQuery.error ? <div className="admin-users-search-error" role="alert"><span>{content.feedback.errorDescription}</span><button onClick={() => void listQuery.refetch()} type="button">{content.feedback.retry}</button></div> : null}

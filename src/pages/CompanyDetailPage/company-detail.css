@@ -65,12 +65,7 @@
 }
 
 .company-detail-hero::before {
-  background: linear-gradient(90deg, var(--color-brand-start), var(--color-brand-end), var(--color-home-accent));
-  content: "";
-  height: 4px;
-  inset: 0 0 auto;
-  position: absolute;
-  z-index: 3;
+  display: none;
 }
 
 .company-detail-hero-cover {
