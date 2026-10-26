@@ -1,0 +1,89 @@
+.jd-plan { margin-block: 24px; padding: clamp(16px, 3vw, 28px); color: var(--color-text, #1e293b); min-width: 0; scroll-margin-top: 24px; }
+.jd-plan p { line-height: 1.6; }
+.jd-plan__header, .jd-plan__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.jd-plan__header h2 { margin: 4px 0 12px; font-size: 24px; }
+.jd-plan__eyebrow { color: #52647d; font-size: 13px; margin: 0; }
+.jd-plan__status { border-radius: 16px; background: #eef2ff; color: #3730a3; padding: 7px 12px; font-size: 13px; font-weight: 600; }
+.jd-plan__status--stale { background: #fff3d6; color: #854d0e; }
+.jd-plan__status--hr_confirmed { background: #e7f5ef; color: #166047; }
+.jd-plan__notice { background: #fff8e8; border: 1px solid #e9d3a3; border-radius: 10px; padding: 12px 16px; }
+.jd-plan__success { color: #166047; padding: 12px; background: #e7f5ef; border-radius: 10px; }
+.jd-plan__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 18px; }
+.jd-plan button { min-height: 40px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 14px; background: white; color: #25426b; cursor: pointer; font: inherit; font-weight: 600; line-height: 1.4; }
+.jd-plan button:hover:not(:disabled) { background: #edf3ff; border-color: #6b8ec4; }
+.jd-plan button:disabled { opacity: .55; cursor: default; }
+.jd-plan button:focus-visible, .jd-plan input:focus-visible, .jd-plan textarea:focus-visible, .jd-plan select:focus-visible, .jd-plan summary:focus-visible { outline: 3px solid #5689e0; outline-offset: 3px; }
+.jd-plan input:not([type=checkbox]), .jd-plan textarea, .jd-plan select { box-sizing: border-box; width: 100%; max-width: 100%; border: 1px solid #b8c5d6; border-radius: 6px; padding: 10px; font: inherit; color: #1e293b; background: white; }
+.jd-plan textarea { resize: vertical; }
+.jd-plan small, .jd-plan__core-hint { color: #52647d; font-size: 12px; line-height: 1.5; }
+.jd-plan .jd-plan__sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.jd-plan__table-wrap { border: 1px solid #dce3ed; border-radius: 12px; overflow: hidden; }
+.jd-plan table { border-collapse: collapse; width: 100%; text-align: left; font-size: 14px; table-layout: fixed; }
+.jd-plan th { padding: 12px 16px; background: #f5f7fb; color: #52647d; font-size: 12px; font-weight: 600; }
+.jd-plan td { padding: 12px 16px; border-top: 1px solid #e7edf5; overflow-wrap: anywhere; vertical-align: middle; line-height: 1.6; }
+.jd-plan__summary-table th:first-child { width: 64%; }
+.jd-plan__summary-table th:nth-child(2) { width: 20%; }
+.jd-plan__summary-table td:last-child { text-align: right; }
+.jd-plan__row-number { display: inline-block; color: #7a8da7; min-width: 24px; }
+.jd-plan__table-rule { display: block; margin: 5px 0 0 24px; font-size: 12px; color: #315782; }
+.jd-plan__dialog { position: fixed; margin: auto; padding: 0; width: min(860px, calc(100vw - 32px)); max-width: none; max-height: min(720px, 88dvh); border: 1px solid #dce3ed; border-radius: 16px; color: #1e293b; background: white; box-shadow: 0 24px 80px #172d4c40; overflow: hidden; }
+.jd-plan__dialog::backdrop { background: #17283d70; }
+.jd-plan__dialog-content { display: flex; flex-direction: column; max-height: min(720px, 88dvh); }
+.jd-plan__dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #e7edf5; flex-shrink: 0; }
+.jd-plan__dialog-header h3 { margin: 0; font-size: 18px; }
+.jd-plan__dialog-header button { font-size: 22px; min-width: 40px; padding: 2px; }
+.jd-plan__dialog-source { margin: 0; padding: 12px 20px; background: #f5f7fb; max-height: 90px; overflow: auto; white-space: pre-wrap; flex-shrink: 0; }
+.jd-plan__fields { border: 0; padding: 0; margin: 0; min-width: 0; }
+.jd-plan__dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.jd-plan__dialog-fields { padding: 16px 20px; }
+.jd-plan__relation-hint { font-size: 12px; color: #52647d; margin: 0 0 12px; }
+.jd-plan__edit-table th, .jd-plan__edit-table td { padding: 10px 8px; }
+.jd-plan__edit-table th:nth-last-child(2) { width: 20%; }
+.jd-plan__edit-table th:last-child { width: 36px; }
+.jd-plan__edit-table td:last-child button { padding: 5px; min-width: 32px; }
+.jd-plan__source-binding { margin-top: 6px; font-size: 12px; color: #64748b; }
+.jd-plan__source-binding summary { padding: 4px 0; }
+.jd-plan__source-binding textarea { margin-top: 6px; }
+.jd-plan__edit-table-wrap + button { margin-top: 12px; }
+.jd-plan__rule { background: #edf3ff; border-left: 3px solid #527bb5; padding: 10px 14px; margin-top: 16px; border-radius: 0 8px 8px 0; }
+.jd-plan__rule strong { color: #52647d; font-size: 12px; }
+.jd-plan__rule p { margin: 4px 0 0; font-weight: 600; overflow-wrap: anywhere; white-space: pre-wrap; }
+.jd-plan__dialog-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #e7edf5; flex-shrink: 0; }
+.jd-plan__dialog-footer > span { margin-right: auto; color: #64748b; font-size: 12px; max-width: 55%; }
+.jd-plan button.jd-plan__apply, .jd-plan__confirm button { background: #244f95; color: white; }
+.jd-plan__context-settings, .jd-plan__custom-logic { margin-top: 16px; font-size: 12px; color: #52647d; }
+.jd-plan__check { display: flex; align-items: flex-start; gap: 10px; margin-block: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.jd-plan__check input { flex: 0 0 auto; margin-top: 5px; width: 17px; height: 17px; accent-color: #315da9; }
+.jd-plan__check span { min-width: 0; }
+.jd-plan__confirm { margin-top: 20px; padding: 14px 16px; background: #edf3ff; border-radius: 10px; }
+.jd-plan__validation { color: #9c3520; line-height: 1.7; padding-left: 24px; }
+.jd-plan__technical { margin-block: 20px; color: #64748b; }
+.jd-plan__technical p { overflow-wrap: anywhere; font: 12px monospace; }
+.jd-plan summary { cursor: pointer; padding-block: 8px; }
+.jd-plan__history { border-top: 1px solid #e2e8f0; padding-top: 16px; }
+.jd-plan__history ul { line-height: 1.8; }
+@media (max-width: 600px) {
+  .jd-plan__actions { flex-direction: column; }
+  .jd-plan button { max-width: 100%; white-space: normal; }
+  .jd-plan__header h2 { font-size: 21px; }
+  .jd-plan__summary-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .jd-plan__summary-table tr { display: grid; grid-template-columns: 1fr auto; padding: 12px; border-top: 1px solid #e7edf5; }
+  .jd-plan__summary-table td { display: block; border: 0; padding: 5px; }
+  .jd-plan__summary-table td:first-child { grid-column: 1 / -1; }
+  .jd-plan__summary-table select { width: auto; max-width: 170px; }
+  .jd-plan__dialog { width: calc(100vw - 16px); max-height: 92dvh; }
+  .jd-plan__dialog-content { max-height: 92dvh; }
+  .jd-plan__dialog-header, .jd-plan__dialog-footer { padding: 12px; }
+  .jd-plan__dialog-fields { padding: 12px; }
+  .jd-plan__dialog-footer { flex-wrap: wrap; }
+  .jd-plan__dialog-footer > span { flex-basis: 100%; max-width: 100%; }
+  .jd-plan__edit-table thead { display: none; }
+  .jd-plan__edit-table tr { display: block; margin-bottom: 12px; padding: 10px; border: 1px solid #dce3ed; border-radius: 10px; }
+  .jd-plan__edit-table td { display: block; border: 0; padding: 5px 0; }
+  .jd-plan__edit-table td[data-label]::before { display: block; content: attr(data-label); font-size: 12px; color: #52647d; margin-bottom: 4px; }
+}
+
+.jd-plan__dialog-preview { margin: 0 20px 12px; flex-shrink: 0; max-height: 100px; overflow-y: auto; }
+.jd-plan__dialog-footer { background: white; }
+.jd-plan__guidance { font-size: 13px; color: #52647d; }
+@media (max-width: 600px) { .jd-plan__dialog-preview { margin-inline: 12px; } }

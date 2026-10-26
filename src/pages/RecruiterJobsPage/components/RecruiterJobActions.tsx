@@ -1,3 +1,5 @@
+import { useLocale } from '../../../i18n'
+import { planCopy } from './requirement-plan/planCopy'
 import { Button } from '../../_components'
 import { Link } from 'react-router-dom'
 import type { RecruiterJobsTranslations } from '../../../i18n/types'
@@ -36,16 +38,16 @@ export function RecruiterJobActions({
   onAction,
   translations,
 }: RecruiterJobActionsProps) {
+  const { locale } = useLocale()
   const actions = getAvailableJobActions(job)
 
   const canEdit = Boolean(editHref) && (job.status === 'DRAFT' || job.status === 'PUBLISHED')
 
-  if (!actions.length && !canEdit) {
-    return <span className="recruiter-job-actions-empty">{translations.actions.none}</span>
-  }
+
 
   return (
     <div className="recruiter-job-actions">
+      <Link className="recruiter-job-edit-link recruiter-job-action" onClick={event => event.stopPropagation()} to={'/recruiter/jobs/' + job.id + '#requirement-plan'}>{planCopy[locale].title}</Link>
       {canEdit && editHref ? (
         <Link
           className="recruiter-job-edit-link recruiter-job-action"

@@ -1,3 +1,4 @@
+import { planCopy } from '../RecruiterJobsPage/components/requirement-plan/planCopy'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useLocale, useTranslations } from '../../i18n'
@@ -362,6 +363,8 @@ export function RecruiterJobCreatePage() {
           {isEditMode ? content.hero.backToDetail : content.hero.backAction}
         </Link>
       </section>
+
+      {(editJobId || submitResult?.job.id || draftJob?.id) && <Link className="job-post-link-button" to={'/recruiter/jobs/' + (editJobId || submitResult?.job.id || draftJob?.id) + '#requirement-plan'}>{planCopy[locale].title}</Link>}
 
       <JobPostCompanyGate isLoading={isLoading} status={companyStatus} translations={content.gate}>
         {submitResult ? (

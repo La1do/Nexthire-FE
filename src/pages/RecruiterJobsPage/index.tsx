@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useLocale, useTranslations } from '../../i18n'
 import type { RecruiterJobsTranslations } from '../../i18n/types'
@@ -21,6 +21,7 @@ import {
   formatRecruiterJobDate,
   formatRecruiterJobSalary,
 } from './utils/recruiterJobsData'
+import { RequirementPlanPanel } from './components/requirement-plan/RequirementPlanPanel'
 import './recruiter-jobs-page.css'
 
 function createApplicationsHref(jobId: string, applicationId?: string) {
@@ -295,6 +296,11 @@ export function RecruiterJobsPage() {
 
 export function RecruiterJobDetailPage() {
   const { id } = useParams()
+  return <RecruiterJobDetailContent key={id} />
+}
+
+function RecruiterJobDetailContent() {
+  const { id } = useParams()
   const { locale } = useLocale()
   const { pages } = useTranslations()
   const content = pages.recruiterJobs
@@ -309,7 +315,12 @@ export function RecruiterJobDetailPage() {
   const [jobApplicationsTotal, setJobApplicationsTotal] = useState<number | null>(null)
   const [isApplicationsLoading, setApplicationsLoading] = useState(false)
 
+  const alive = useRef(false)
+  const loadEpoch = useRef(0)
+  useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
+
   const loadJob = useCallback(async () => {
+    const epoch = ++loadEpoch.current
     if (!id) {
       setError(content.states.detailErrorDescription)
       setLoading(false)
@@ -320,12 +331,14 @@ export function RecruiterJobDetailPage() {
     setError(undefined)
 
     try {
-      setJob(await jobService.getRecruiterJobById(id))
+      const loaded = await jobService.getRecruiterJobById(id)
+      if (alive.current && epoch === loadEpoch.current && loaded.id === id) setJob(loaded)
     } catch (loadError) {
+      if (!alive.current || epoch !== loadEpoch.current) return
       setJob(null)
       setError(getApiErrorEnvelope(loadError)?.error.message ?? content.states.detailErrorDescription)
     } finally {
-      setLoading(false)
+      if (alive.current && epoch === loadEpoch.current) setLoading(false)
     }
   }, [content.states.detailErrorDescription, id])
 
@@ -347,7 +360,7 @@ export function RecruiterJobDetailPage() {
           jobId: id,
           limit: 6,
           page: 1,
-          sortBy: 'matchScore',
+          sortBy: 'submittedAt',
           sortOrder: 'desc',
         })
         setJobApplications(response.data)
@@ -370,6 +383,7 @@ export function RecruiterJobDetailPage() {
 
       try {
         const result = await runRecruiterJobAction(targetJob, action, content)
+        if (!alive.current) return
 
         if (result.type === 'updated') {
           setJob(result.job)
@@ -379,15 +393,16 @@ export function RecruiterJobDetailPage() {
           navigate('/recruiter/jobs')
         }
       } catch (actionErrorValue) {
+        if (!alive.current) return
         setActionError(getApiErrorEnvelope(actionErrorValue)?.error.message ?? content.actions.actionError)
       } finally {
-        setActionState(null)
+        if (alive.current) setActionState(null)
       }
     },
     [content, navigate],
   )
 
-  if (isLoading) {
+  if (isLoading || (job && job.id !== id)) {
     return (
       <div className="recruiter-job-detail-page">
         <JobPageState description={content.states.detailLoading} title={content.states.detailLoading} />
@@ -475,6 +490,8 @@ export function RecruiterJobDetailPage() {
         </p>
       ) : null}
 
+      {job.id === id && <RequirementPlanPanel key={job.id} jobId={job.id} />}
+
       <div className="recruiter-job-detail-grid">
         <section className="recruiter-job-detail-panel recruiter-job-detail-panel--overview recruiter-panel">
           <h2>{content.detail.overview}</h2>
@@ -559,12 +576,6 @@ export function RecruiterJobDetailPage() {
                 <span className="recruiter-job-detail-applications__candidate">
                   <strong>{application.candidateFullName}</strong>
                   <small>{application.candidateEmail}</small>
-                </span>
-                <span className="recruiter-job-detail-applications__score">
-                  {application.matchScore == null ? content.metrics.noData : application.matchScore}
-                </span>
-                <span className="recruiter-job-detail-applications__level">
-                  {application.matchLevel ? pages.recruiterApplications.match.levels[application.matchLevel] : content.metrics.noData}
                 </span>
               </Link>
             ))}

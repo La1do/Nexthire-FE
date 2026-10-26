@@ -113,7 +113,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     ruleLabels: { LOW_DESCRIPTION_LENGTH: 'Mô tả công việc quá ngắn', MISSING_OR_WEAK_REQUIREMENTS: 'Yêu cầu tuyển dụng bị thiếu hoặc chưa rõ ràng', CLIENT_SITE_SCOPE: 'Tin tuyển dụng chỉ áp dụng cho ứng viên tại khu vực của khách hàng', MULTI_LEVEL_PATTERN: 'Nội dung có dấu hiệu mô hình đa cấp', MISSING_COMPENSATION: 'Thiếu thông tin lương hoặc đãi ngộ' },
     noModeration: 'Chưa có dữ liệu kiểm duyệt.',
     publicLinkUnavailable: 'Link public chỉ mở khi tin đã được đăng.',
-    applicationsDescription: 'Danh sách ứng viên của tin này, ưu tiên theo điểm phù hợp.',
+    applicationsDescription: 'Hồ sơ ứng tuyển gần đây, mới nhất trước.',
     noApplications: 'Chưa có đơn ứng tuyển nào cho tin này.',
     reviewMessage: 'Thông tin duyệt',
     reviewStatus: 'Trạng thái',
