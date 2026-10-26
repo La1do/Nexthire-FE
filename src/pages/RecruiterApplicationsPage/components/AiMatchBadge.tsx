@@ -2,7 +2,7 @@ import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
 
 type AiMatchBadgeProps = {
-  application: Pick<RecruiterApplicationItem, 'cvParseStatus' | 'matchLevel' | 'matchScore'>
+  application: Pick<RecruiterApplicationItem, 'cvParseStatus'>
   labels: RecruiterApplicationsTranslations['match']
 }
 
@@ -23,21 +23,9 @@ export function AiMatchBadge({ application, labels }: AiMatchBadgeProps) {
     )
   }
 
-  if (application.matchScore === null) {
-    return (
-      <span className="recruiter-ai-match-badge recruiter-ai-match-badge--empty">
-        {labels.notScored}
-      </span>
-    )
-  }
-
-  const levelClassName = application.matchLevel?.toLowerCase() ?? 'scored'
-  const levelLabel = application.matchLevel ? labels.levels[application.matchLevel] : labels.scored
-
   return (
-    <span className={`recruiter-ai-match-badge recruiter-ai-match-badge--${levelClassName}`}>
-      <strong>{application.matchScore}%</strong>
-      <span>{levelLabel}</span>
+    <span className="recruiter-ai-match-badge recruiter-ai-match-badge--empty">
+      {labels.cvParseStatus[application.cvParseStatus]}
     </span>
   )
 }

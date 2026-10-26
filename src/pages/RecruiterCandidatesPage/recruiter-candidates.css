@@ -35,7 +35,7 @@
 .recruiter-candidates-stats {
   display: grid;
   gap: 0.85rem;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .recruiter-candidates-filters {
@@ -88,7 +88,6 @@
     minmax(17rem, 1.35fr)
     minmax(14rem, 1fr)
     minmax(8rem, 0.55fr)
-    minmax(8rem, 0.75fr)
     minmax(8rem, 0.65fr)
     minmax(8rem, 0.7fr);
 }
@@ -455,7 +454,7 @@
   color: inherit;
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   padding: 0.75rem;
   text-decoration: none;
 }

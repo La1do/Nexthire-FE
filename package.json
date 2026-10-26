@@ -7,6 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test:ai1-ui": "node --test tests/ai1/ai1-ui.test.mjs",
+    "test:ai1-browser": "node tests/ai1/ai1-browser-smoke.mjs",
+    "test": "node --test tests/ai1/ai1-ui.test.mjs tests/jd-plan/jd-plan-dev.test.mjs tests/matching-runtime/baseline-005-dev.test.mjs",
+    "test:jd-plan": "node --test tests/jd-plan/jd-plan-dev.test.mjs",
+    "test:jd-plan-browser": "node tests/jd-plan/jd-plan-dev-browser.mjs",
+    "test:matching-runtime": "node --test tests/matching-runtime/baseline-005-dev.test.mjs",
+    "test:matching-browser": "node tests/matching-runtime/baseline-005-dev-browser.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

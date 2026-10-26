@@ -5,7 +5,6 @@ import type { RecruiterCandidatesTranslations } from '../../i18n/types'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { applicationService } from '../../services/application.service'
 import type {
-  ApplicationMatchLevel,
   ApplicationStatus,
   RecruiterCandidateDetailResponse,
   RecruiterCandidateResponse,
@@ -17,7 +16,7 @@ import './recruiter-candidates.css'
 
 const PAGE_SIZE = 12
 
-type CandidateSort = 'lastAppliedAt' | 'bestMatchScore' | 'applicationCount' | 'candidateName'
+type CandidateSort = 'lastAppliedAt' | 'applicationCount' | 'candidateName'
 
 type CandidateCriteria = {
   query: string
@@ -45,7 +44,7 @@ function readCriteria(searchParams: URLSearchParams): CandidateCriteria {
 
   return {
     query: searchParams.get('search') ?? '',
-    sort: sort === 'bestMatchScore' || sort === 'applicationCount' || sort === 'candidateName'
+    sort: sort === 'applicationCount' || sort === 'candidateName'
       ? sort
       : 'lastAppliedAt',
     status: status === 'SUBMITTED' ||
@@ -69,44 +68,6 @@ function formatDate(value: string, locale: string, fallback: string) {
     month: 'short',
     year: 'numeric',
   }).format(date)
-}
-
-function formatMatch(
-  score: number | null,
-  level: ApplicationMatchLevel | null,
-  fallback: string,
-  levelLabels: Record<ApplicationMatchLevel, string>,
-) {
-  if (score == null) {
-    return fallback
-  }
-
-  return level ? `${score} · ${levelLabels[level]}` : String(score)
-}
-
-function CandidateMatchBadge({
-  fallback,
-  level,
-  levelLabels,
-  score,
-}: {
-  fallback: string
-  level: ApplicationMatchLevel | null
-  levelLabels: Record<ApplicationMatchLevel, string>
-  score: number | null
-}) {
-  if (score == null) {
-    return <span className="recruiter-candidate-match-badge recruiter-candidate-match-badge--empty">{fallback}</span>
-  }
-
-  const levelClassName = level?.toLowerCase() ?? 'scored'
-
-  return (
-    <span className={`recruiter-candidate-match-badge recruiter-candidate-match-badge--${levelClassName}`}>
-      <strong>{score}%</strong>
-      {level ? <span>{levelLabels[level]}</span> : null}
-    </span>
-  )
 }
 
 function createApplicationHref(applicationId: string, jobId?: string | null) {
@@ -170,7 +131,6 @@ function CandidateFilters({
         onChange={(value) => onCriteriaChange({ ...criteria, sort: value as CandidateSort })}
         options={[
           { label: translations.sortOptions.lastAppliedAt, value: 'lastAppliedAt' },
-          { label: translations.sortOptions.bestMatchScore, value: 'bestMatchScore' },
           { label: translations.sortOptions.applicationCount, value: 'applicationCount' },
           { label: translations.sortOptions.candidateName, value: 'candidateName' },
         ]}
@@ -187,13 +147,11 @@ function CandidateCard({
   candidate,
   locale,
   onOpen,
-  matchLevelLabels,
   statusLabels,
   translations,
 }: {
   candidate: RecruiterCandidateResponse
   locale: string
-  matchLevelLabels: Record<ApplicationMatchLevel, string>
   onOpen: (candidateId: string) => void
   statusLabels: Record<ApplicationStatus, string>
   translations: RecruiterCandidatesTranslations
@@ -228,12 +186,6 @@ function CandidateCard({
       <span className={`recruiter-application-status recruiter-application-status--${candidate.latestStatus}`}>
         {statusLabels[candidate.latestStatus]}
       </span>
-      <CandidateMatchBadge
-        fallback={translations.detail.noData}
-        level={candidate.bestMatchLevel}
-        levelLabels={matchLevelLabels}
-        score={candidate.bestMatchScore}
-      />
       <time className="recruiter-candidate-card__date" dateTime={candidate.lastAppliedAt}>
         {formatDate(candidate.lastAppliedAt, locale, translations.detail.noData)}
       </time>
@@ -251,13 +203,11 @@ function CandidateDrawer({
   candidate,
   locale,
   onClose,
-  matchLevelLabels,
   statusLabels,
   translations,
 }: {
   candidate: RecruiterCandidateDetailResponse
   locale: string
-  matchLevelLabels: Record<ApplicationMatchLevel, string>
   onClose: () => void
   statusLabels: Record<ApplicationStatus, string>
   translations: RecruiterCandidatesTranslations
@@ -285,10 +235,6 @@ function CandidateDrawer({
           <div>
             <dt>{translations.detail.applications}</dt>
             <dd>{candidate.applications.length}</dd>
-          </div>
-          <div>
-            <dt>{translations.results.bestMatch}</dt>
-            <dd>{formatMatch(candidate.bestMatchScore, candidate.bestMatchLevel, translations.detail.noData, matchLevelLabels)}</dd>
           </div>
           <div>
             <dt>{translations.results.lastApplied}</dt>
@@ -325,7 +271,6 @@ function CandidateDrawer({
                 <span className={`recruiter-application-status recruiter-application-status--${application.status}`}>
                   {statusLabels[application.status]}
                 </span>
-                <b>{formatMatch(application.matchScore, application.matchLevel, translations.detail.noData, matchLevelLabels)}</b>
               </Link>
             ))}
           </div>
@@ -385,8 +330,7 @@ export function RecruiterCandidatesPage() {
 
   const stats = useMemo(() => {
     const applications = candidates.reduce((total, candidate) => total + candidate.applicationCount, 0)
-    const strongMatches = candidates.filter((candidate) => (candidate.bestMatchScore ?? 0) >= 70).length
-    return { applications, strongMatches }
+    return { applications }
   }, [candidates])
 
   function updateCriteria(nextCriteria: CandidateCriteria) {
@@ -433,7 +377,6 @@ export function RecruiterCandidatesPage() {
       <section className="recruiter-candidates-stats">
         <AdminStatCard icon={<CandidateIcon />} label={content.stats.candidates} tone="blue" value={meta.total} />
         <AdminStatCard icon={<CandidateIcon />} label={content.stats.applications} tone="coral" value={stats.applications} />
-        <AdminStatCard icon={<CandidateIcon />} label={content.stats.strongMatches} tone="violet" value={stats.strongMatches} />
       </section>
       <CandidateFilters
         criteria={criteria}
@@ -452,7 +395,6 @@ export function RecruiterCandidatesPage() {
               <span>{applicationContent.results.columns.candidate}</span>
               <span>{content.results.latestJob}</span>
               <span>{content.filters.statusLabel}</span>
-              <span>{content.results.bestMatch}</span>
               <span>{content.results.lastApplied}</span>
               <span>{applicationContent.results.columns.actions}</span>
             </div>
@@ -462,7 +404,6 @@ export function RecruiterCandidatesPage() {
                   candidate={candidate}
                   key={candidate.candidateId}
                   locale={locale}
-                  matchLevelLabels={applicationContent.match.levels}
                   onOpen={(candidateId) => void openCandidate(candidateId)}
                   statusLabels={applicationContent.statusLabels}
                   translations={content}
@@ -487,7 +428,6 @@ export function RecruiterCandidatesPage() {
         <CandidateDrawer
           candidate={selectedCandidate}
           locale={locale}
-          matchLevelLabels={applicationContent.match.levels}
           onClose={() => setSelectedCandidate(null)}
           statusLabels={applicationContent.statusLabels}
           translations={content}

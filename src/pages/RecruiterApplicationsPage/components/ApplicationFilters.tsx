@@ -127,8 +127,6 @@ export function ApplicationFilters({
           onChange={handleSortChange}
           options={[
             { label: content.sortOptions.newest, value: 'newest' },
-            { label: content.sortOptions.scoreDesc, value: 'score-desc' },
-            { label: content.sortOptions.scoreAsc, value: 'score-asc' },
           ]}
           value={sort}
         />

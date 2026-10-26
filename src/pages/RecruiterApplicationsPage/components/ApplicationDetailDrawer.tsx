@@ -1,4 +1,6 @@
+import './application-detail-drawer.css'
 import { useEffect, useRef } from 'react'
+import { Ai1EvidencePanel } from './ai1/Ai1EvidencePanel'
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
 import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecisionValidation'
@@ -9,6 +11,7 @@ type ApplicationDetailDrawerProps = {
   application: RecruiterApplicationItem
   isMatching: boolean
   isStatusUpdating: boolean
+  matchingMessage?: string
   matchLabels: RecruiterApplicationsTranslations['match']
   meta: RecruiterApplicationsTranslations['meta']
   onClose: () => void
@@ -63,34 +66,8 @@ function getMatchActionLabel(
     return labels.retryAction
   }
 
-  if (application.matchScore !== null) {
-    return labels.refreshAction
-  }
 
   return labels.runAction
-}
-
-function isLongMatchItem(item: string) {
-  return item.length > 42 || item.includes(' ~ ') || item.includes('. ')
-}
-
-function renderStringList(title: string, items: ReadonlyArray<string>, emptyLabel: string, className?: string) {
-  return (
-    <div className={className}>
-      <h4>{title}</h4>
-      {items.length > 0 ? (
-        <ul>
-          {items.map((item) => (
-            <li className={isLongMatchItem(item) ? 'is-long' : undefined} key={item}>
-              {item}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="recruiter-ai-match-empty">{emptyLabel}</p>
-      )}
-    </div>
-  )
 }
 
 export function ApplicationDetailDrawer({
@@ -98,6 +75,7 @@ export function ApplicationDetailDrawer({
   isMatching,
   isStatusUpdating,
   matchLabels,
+  matchingMessage,
   meta,
   onClose,
   onEmail,
@@ -131,7 +109,7 @@ export function ApplicationDetailDrawer({
       <aside
         aria-label={`${translations.title}: ${application.candidateName}`}
         aria-modal="true"
-        className="recruiter-application-detail-drawer"
+        className="recruiter-application-detail-drawer recruiter-application-detail-drawer--hr-review"
         role="dialog"
         ref={drawerRef}
         onMouseDown={(event) => event.stopPropagation()}
@@ -202,10 +180,6 @@ export function ApplicationDetailDrawer({
                 <dd>{application.updatedAt}</dd>
               </div>
               <div>
-                <dt>{translations.scoreLabel}</dt>
-                <dd>{application.matchScore === null ? matchLabels.notScored : `${application.matchScore}%`}</dd>
-              </div>
-              <div>
                 <dt>{matchLabels.cvParseStatusLabel}</dt>
                 <dd>{matchLabels.cvParseStatus[application.cvParseStatus]}</dd>
               </div>
@@ -221,44 +195,21 @@ export function ApplicationDetailDrawer({
             />
           </section>
 
+          <Ai1EvidencePanel
+            key={application.id}
+            applicationId={application.id}
+            jobId={application.jobId}
+            updatedAt={application.updatedAt}
+            isMatching={isMatching}
+          />
+
           <section className="recruiter-application-detail-card recruiter-ai-match-panel">
+            {matchingMessage ? <p role="status">{matchingMessage}</p> : null}
             <div className="recruiter-ai-match-panel__header">
-              <div>
-                <h3>{matchLabels.title}</h3>
-                <p>{matchLabels.description}</p>
-              </div>
+              <div><h3>{matchLabels.title}</h3><p>{matchLabels.description}</p></div>
               <button disabled={isMatchActionDisabled} onClick={() => onRunMatch(application)} type="button">
                 {getMatchActionLabel(application, isMatching, matchLabels)}
               </button>
-            </div>
-
-            <div className="recruiter-ai-match-summary">
-              <AiMatchBadge application={application} labels={matchLabels} />
-              <p>{application.matchSummary ?? matchLabels.emptySummary}</p>
-            </div>
-
-            <dl className="recruiter-ai-match-grid">
-              <div>
-                <dt>{matchLabels.recommendationLabel}</dt>
-                <dd>{application.matchRecommendation ? matchLabels.recommendations[application.matchRecommendation] : meta.notAvailable}</dd>
-              </div>
-              <div>
-                <dt>{matchLabels.decisionLabel}</dt>
-                <dd>{application.matchDecision ? matchLabels.decisions[application.matchDecision] : meta.notAvailable}</dd>
-              </div>
-              <div>
-                <dt>{matchLabels.priorityLabel}</dt>
-                <dd>{application.matchPriority ? matchLabels.priorities[application.matchPriority] : meta.notAvailable}</dd>
-              </div>
-            </dl>
-
-            <div className="recruiter-ai-match-lists">
-              {renderStringList(matchLabels.matchedSkills, application.matchMatchedSkills, matchLabels.emptyList)}
-              {renderStringList(matchLabels.missingSkills, application.matchMissingSkills, matchLabels.emptyList, 'recruiter-ai-match-list--missing')}
-              {renderStringList(matchLabels.nextActions, application.matchNextActions, matchLabels.emptyList)}
-              {application.matchRiskFlags.length > 0
-                ? renderStringList(matchLabels.riskFlags, application.matchRiskFlags, matchLabels.emptyList, 'recruiter-ai-match-list--risk')
-                : null}
             </div>
           </section>
 

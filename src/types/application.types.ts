@@ -8,7 +8,7 @@ export type ApplicationProgressActorType = 'SYSTEM' | 'CANDIDATE' | 'RECRUITER' 
 export type ApplicationMatchRecommendation = 'GOOD_FIT' | 'PARTIAL_FIT' | 'LOW_FIT' | 'INSUFFICIENT_DATA'
 export type ApplicationMatchDecision = 'SHORTLIST' | 'REVIEW_MANUALLY' | 'REJECT' | 'INSUFFICIENT_DATA'
 export type ApplicationMatchPriority = 'LOW' | 'MEDIUM' | 'HIGH'
-export type RecruiterApplicationMatchRequestStatus = 'PENDING' | 'WAITING_FOR_CV_PARSE'
+export type RecruiterApplicationMatchRequestStatus = 'PENDING' | 'PROCESSING' | 'WAITING_FOR_CV_PARSE'
 export type RecruiterApplicationMatchRequestType = 'RECRUITER_MANUAL'
 
 export type ApplicationProgressEvent = {
@@ -88,9 +88,7 @@ export type RecruiterApplicationQuery = {
   jobId?: string
   status?: ApplicationStatus
   search?: string
-  matchLevel?: ApplicationMatchLevel
-  minMatchScore?: number
-  sortBy?: 'submittedAt' | 'updatedAt' | 'matchScore'
+  sortBy?: 'submittedAt' | 'updatedAt'
   sortOrder?: 'asc' | 'desc'
 }
 
@@ -144,9 +142,7 @@ export type RecruiterCandidateQuery = {
   jobId?: string
   status?: ApplicationStatus
   search?: string
-  matchLevel?: ApplicationMatchLevel
-  minMatchScore?: number
-  sortBy?: 'lastAppliedAt' | 'bestMatchScore' | 'applicationCount' | 'candidateName'
+  sortBy?: 'lastAppliedAt' | 'applicationCount' | 'candidateName'
   sortOrder?: 'asc' | 'desc'
 }
 
