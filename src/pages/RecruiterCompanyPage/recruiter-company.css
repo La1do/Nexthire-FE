@@ -4,7 +4,6 @@
  * enrichment: none · nav: existing recruiter side navigation · footer: none (authenticated workspace)
  * interaction: form states + logo upload + live preview + internal review modal · contrast: pass · responsive: 320/375/414/768 ready
  */
-@import "../../../tokens.css";
 
 html,
 body {
@@ -32,7 +31,7 @@ body {
   --color-company-warning-soft: var(--color-home-highlight-soft);
   color: var(--color-company-ink);
   display: grid;
-  font-family: var(--font-home-body);
+  font-family: var(--font-sans);
   gap: var(--space-lg);
   min-width: 0;
 }
@@ -42,7 +41,7 @@ body {
 }
 
 .recruiter-company-page :where(h1, h2, h3) {
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-style: normal;
   letter-spacing: 0;
   min-width: 0;
@@ -122,7 +121,7 @@ body {
   border-radius: var(--radius-home-sm);
   color: var(--color-company-accent-ink);
   display: inline-grid;
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-sm);
   font-weight: 700;
   height: var(--size-home-touch);
@@ -236,7 +235,7 @@ body {
   border-radius: var(--radius-home-md);
   color: var(--color-company-accent-ink);
   display: inline-grid;
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-md);
   font-weight: 800;
   justify-content: center;
@@ -261,7 +260,7 @@ body {
 
 .recruiter-company-logo-field__copy strong {
   color: var(--color-company-ink);
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-base);
   font-weight: 800;
   line-height: 1.2;

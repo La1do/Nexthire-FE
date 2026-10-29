@@ -199,7 +199,7 @@ export const createTextElement = (
     width: 280,
     height: p.height,
     text: p.text,
-    fontFamily: "Roboto, sans-serif",
+    fontFamily: "Inter, sans-serif",
     fontSize: p.fontSize,
     fontWeight: p.fontWeight,
     italic: false,

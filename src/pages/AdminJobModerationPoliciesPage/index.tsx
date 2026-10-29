@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Search } from 'lucide-react'
+import { Eye, FileText, Layers, Plus, RefreshCw, Search, ShieldCheck, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useToast } from '../../context'
@@ -18,7 +18,8 @@ import type {
   JobModerationTestJob,
   UpdateJobModerationPolicyPayload,
 } from '../../types/jobModerationPolicy.types'
-import { ConfirmModal } from '../_components'
+import { ConfirmModal, SelectField } from '../_components'
+import { AdminStatCard } from '../_components/admin/AdminStatCard'
 import './admin-job-moderation-policies.css'
 
 const experienceLevels: JobExperienceLevel[] = ['INTERN', 'FRESHER', 'JUNIOR', 'MIDDLE', 'SENIOR', 'LEAD']
@@ -181,7 +182,7 @@ function TextField({
   )
 }
 
-function SelectField<TValue extends string>({
+function DrawerSelectField<TValue extends string>({
   label,
   onChange,
   options,
@@ -552,103 +553,149 @@ export function AdminJobModerationPoliciesPage() {
   return (
     <div className="admin-moderation-page">
       <header className="admin-moderation-hero">
-        <div>
-          <p className="admin-moderation-eyebrow">{content.hero.eyebrow}</p>
-          <h1>{content.hero.title}</h1>
-          <p>{content.hero.description}</p>
-        </div>
-        <button onClick={beginCreateDraft} type="button">{content.actions.createDraft}</button>
+        <p className="admin-moderation-subtitle">{content.hero.description}</p>
+        <button className="admin-moderation-create-btn" onClick={beginCreateDraft} type="button">
+          <Plus size={16} />
+          <span>{content.actions.createDraft}</span>
+        </button>
       </header>
 
-      <section className="admin-moderation-summary">
-        <article>
-          <span>{content.summary.activePolicy}</span>
-          <strong>{activePolicy?.name ?? content.summary.notLoaded}</strong>
-          <small>{activePolicy ? `${content.summary.version} ${activePolicy.version}` : content.summary.noActive}</small>
-        </article>
-        <article>
-          <span>{content.summary.visiblePolicies}</span>
-          <strong>{filteredPolicies.length}</strong>
-          <small>
-            {content.summary.currentFilter}: {selectedStatusLabel}
-            {policySearch.trim() ? ` - ${content.summary.searching}: ${policySearch.trim()}` : ''}
-          </small>
-        </article>
-        <article>
-          <span>{content.summary.selected}</span>
-          <strong>{mode === 'create' ? content.summary.newDraft : mode === 'detail' ? selectedPolicy?.name ?? content.summary.loading : content.summary.none}</strong>
-          <small>{mode === 'create' ? content.summary.unsavedPolicy : mode === 'detail' && selectedPolicy ? `${content.statuses[selectedPolicy.status]} v${selectedPolicy.version}` : content.summary.chooseRow}</small>
-        </article>
+      <section aria-label={content.hero.title} className="admin-users-stats admin-moderation-stats">
+        <AdminStatCard
+          delta={activePolicy ? `${content.summary.version} ${activePolicy.version}` : content.summary.noActive}
+          icon={<ShieldCheck size={20} />}
+          label={content.summary.activePolicy}
+          tone="blue"
+          value={activePolicy?.name ?? content.summary.notLoaded}
+        />
+        <AdminStatCard
+          delta={`${content.summary.currentFilter}: ${selectedStatusLabel}${policySearch.trim() ? ` - ${content.summary.searching}: ${policySearch.trim()}` : ''}`}
+          icon={<FileText size={20} />}
+          label={content.summary.visiblePolicies}
+          tone="coral"
+          value={filteredPolicies.length}
+        />
+        <AdminStatCard
+          delta={mode === 'create' ? content.summary.unsavedPolicy : mode === 'detail' && selectedPolicy ? `${content.statuses[selectedPolicy.status]} v${selectedPolicy.version}` : content.summary.chooseRow}
+          icon={<Layers size={20} />}
+          label={content.summary.selected}
+          tone="violet"
+          value={mode === 'create' ? content.summary.newDraft : mode === 'detail' ? selectedPolicy?.name ?? content.summary.loading : content.summary.none}
+        />
       </section>
 
-      <section className="moderation-policy-browser">
-        <div className="moderation-browser-toolbar">
-          <label className="moderation-policy-filter-field moderation-policy-filter-field--search">
-            <span>{content.fields.searchPolicy}</span>
-            <div className="moderation-policy-search">
+      <section className="admin-users-filters admin-moderation-filters">
+        <div className="admin-filter admin-filter--query">
+          <span className="admin-filter__label">{content.fields.searchPolicy}</span>
+          <div className="admin-moderation-search-control">
+            <span aria-hidden="true" className="admin-filter__icon">
               <Search size={16} />
-              <input
-                onChange={(event) => setPolicySearch(event.target.value)}
-                placeholder={content.fields.searchPolicyPlaceholder}
-                type="search"
-                value={policySearch}
-              />
-            </div>
-          </label>
-          <label className="moderation-policy-filter-field">
-            <span>{content.fields.status}</span>
-            <select
-              onChange={(event) => {
-                setStatus(event.target.value as JobModerationPolicyStatus | 'ALL')
-                setMode('list')
-                setSelectedPolicyId(null)
-              }}
-              value={status}
-            >
-              {policyStatuses.map((item) => (
-                <option key={item} value={item}>
-                  {item === 'ALL' ? content.fields.allStatuses : content.statuses[item]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button onClick={() => void listQuery.refetch()} type="button">{content.actions.refresh}</button>
-        </div>
-        {listQuery.isError ? (
-          <div className="admin-moderation-state admin-moderation-state--error">
-            <p>{content.feedback.loadError}</p>
-            <button onClick={() => void listQuery.refetch()} type="button">{content.actions.retry}</button>
+            </span>
+            <input
+              className="admin-filter__input"
+              onChange={(event) => setPolicySearch(event.target.value)}
+              placeholder={content.fields.searchPolicyPlaceholder}
+              type="search"
+              value={policySearch}
+            />
           </div>
-        ) : null}
-        <div className="moderation-table-wrap">
-          <table className="moderation-policy-table">
-            <thead>
-              <tr>
-                <th>{content.table.name}</th>
-                <th>{content.table.status}</th>
-                <th>{content.table.version}</th>
-                <th>{content.table.rules}</th>
-                <th>{content.table.updated}</th>
-                <th>{content.table.action}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPolicies.map((policy) => (
-                <tr className={selectedPolicyId === policy.id ? 'is-selected' : ''} key={policy.id}>
-                  <td><strong>{policy.name}</strong><small>{policy.id}</small></td>
-                  <td><span className={`moderation-status moderation-status--${policy.status.toLowerCase()}`}>{content.statuses[policy.status]}</span></td>
-                  <td>{policy.version}</td>
-                  <td>{content.table.keywords.replace('{{count}}', String(policy.rules.keywordRules.length))}</td>
-                  <td>{formatDate(policy.updatedAt, content.misc.never)}</td>
-                  <td><button onClick={() => selectPolicy(policy)} type="button">{content.actions.viewDetail}</button></td>
-                </tr>
-              ))}
-              {!filteredPolicies.length && !listQuery.isLoading ? (
-                <tr><td colSpan={6}>{content.table.empty}</td></tr>
-              ) : null}
-            </tbody>
-          </table>
         </div>
+        <SelectField
+          className="admin-filter admin-filter--select"
+          label={content.fields.status}
+          menuClassName="admin-filter-menu"
+          onChange={(value) => {
+            setStatus(value as JobModerationPolicyStatus | 'ALL')
+            setMode('list')
+            setSelectedPolicyId(null)
+          }}
+          options={[
+            { label: content.fields.allStatuses, value: 'ALL' },
+            ...policyStatuses
+              .filter((item) => item !== 'ALL')
+              .map((item) => ({ label: content.statuses[item], value: item })),
+          ]}
+          value={status}
+        />
+        <button
+          className="admin-filter__clear admin-moderation-refresh-btn"
+          onClick={() => void listQuery.refetch()}
+          type="button"
+        >
+          <RefreshCw size={14} />
+          <span>{content.actions.refresh}</span>
+        </button>
+      </section>
+
+      {listQuery.isError ? (
+        <div className="admin-users-search-error" role="alert">
+          <span>{content.feedback.loadError}</span>
+          <button onClick={() => void listQuery.refetch()} type="button">{content.actions.retry}</button>
+        </div>
+      ) : null}
+
+      <section className="admin-users-results admin-moderation-results">
+        <header className="admin-users-results__header">
+          <p className="admin-users-results__count">
+            {content.summary.visiblePolicies}: <strong>{filteredPolicies.length}</strong>
+          </p>
+        </header>
+
+        {!filteredPolicies.length && !listQuery.isLoading ? (
+          <div className="admin-users-empty">
+            <p className="admin-users-empty__title">{content.table.empty}</p>
+          </div>
+        ) : (
+          <div className="admin-users-table-wrap">
+            <table className="admin-users-table admin-moderation-policy-table">
+              <thead>
+                <tr>
+                  <th>{content.table.name}</th>
+                  <th>{content.table.status}</th>
+                  <th>{content.table.version}</th>
+                  <th>{content.table.rules}</th>
+                  <th>{content.table.updated}</th>
+                  <th className="admin-moderation-table__actions-head">{content.table.action}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPolicies.map((policy) => (
+                  <tr className={selectedPolicyId === policy.id ? 'is-selected' : ''} key={policy.id}>
+                    <td>
+                      <div className="admin-moderation-policy-cell">
+                        <strong>{policy.name}</strong>
+                        <small className="is-mono">{policy.id}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`moderation-status moderation-status--${policy.status.toLowerCase()}`}>
+                        <i aria-hidden="true" />
+                        <span>{content.statuses[policy.status]}</span>
+                      </span>
+                    </td>
+                    <td className="admin-users-table__meta">{policy.version}</td>
+                    <td className="admin-users-table__meta">
+                      <span className="admin-moderation-rules-pill">
+                        {content.table.keywords.replace('{{count}}', String(policy.rules.keywordRules.length))}
+                      </span>
+                    </td>
+                    <td className="admin-users-table__meta">{formatDate(policy.updatedAt, content.misc.never)}</td>
+                    <td className="admin-moderation-table__actions-cell">
+                      <button
+                        className="admin-moderation-row-action"
+                        onClick={() => selectPolicy(policy)}
+                        type="button"
+                      >
+                        <Eye size={14} />
+                        <span>{content.actions.viewDetail}</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       {mode !== 'list' ? (
@@ -668,7 +715,9 @@ export function AdminJobModerationPoliciesPage() {
                 <h2>{mode === 'create' ? content.drawer.createTitle : selectedPolicy?.name ?? content.drawer.detailFallbackTitle}</h2>
                 <p>{mode === 'create' ? content.drawer.createDescription : content.drawer.detailDescription}</p>
               </div>
-              <button aria-label={content.actions.close} onClick={closeEditor} type="button">x</button>
+              <button aria-label={content.actions.close} className="moderation-drawer__close" onClick={closeEditor} type="button">
+                <X size={18} />
+              </button>
             </header>
 
             <main className="admin-moderation-editor">
@@ -820,12 +869,12 @@ export function AdminJobModerationPoliciesPage() {
 
           <Section title={content.sections.testPanel} description={rulesEditable ? content.sections.testDraftDescription : content.sections.testActiveDescription}>
             <div className="moderation-grid moderation-grid--three">
-              <SelectField label={content.fields.companyTrust} onChange={setCompanyTrustLevel} options={trustLevels} value={companyTrustLevel} />
+              <DrawerSelectField label={content.fields.companyTrust} onChange={setCompanyTrustLevel} options={trustLevels} value={companyTrustLevel} />
               <TextField label={content.fields.title} onChange={(value) => setTestJob((current) => ({ ...current, title: value }))} value={testJob.title} />
               <TextField label={content.fields.location} onChange={(value) => setTestJob((current) => ({ ...current, location: value }))} value={testJob.location} />
-              <SelectField label={content.fields.experience} onChange={(value) => setTestJob((current) => ({ ...current, experienceLevel: value }))} options={experienceLevels} value={testJob.experienceLevel} />
-              <SelectField label={content.fields.workingType} onChange={(value) => setTestJob((current) => ({ ...current, workingType: value }))} options={workingTypes} value={testJob.workingType} />
-              <SelectField label={content.fields.employmentType} onChange={(value) => setTestJob((current) => ({ ...current, employmentType: value }))} options={employmentTypes} value={testJob.employmentType} />
+              <DrawerSelectField label={content.fields.experience} onChange={(value) => setTestJob((current) => ({ ...current, experienceLevel: value }))} options={experienceLevels} value={testJob.experienceLevel} />
+              <DrawerSelectField label={content.fields.workingType} onChange={(value) => setTestJob((current) => ({ ...current, workingType: value }))} options={workingTypes} value={testJob.workingType} />
+              <DrawerSelectField label={content.fields.employmentType} onChange={(value) => setTestJob((current) => ({ ...current, employmentType: value }))} options={employmentTypes} value={testJob.employmentType} />
               <NumberField label={content.fields.salaryMin} onChange={(value) => setTestJob((current) => ({ ...current, salaryMin: value }))} value={testJob.salaryMin ?? 0} />
               <NumberField label={content.fields.salaryMax} onChange={(value) => setTestJob((current) => ({ ...current, salaryMax: value }))} value={testJob.salaryMax ?? 0} />
               <TextField label={content.fields.skills} onChange={(value) => setTestJob((current) => ({ ...current, skills: parseTags(value) }))} value={testJob.skills.join(', ')} />
@@ -852,30 +901,30 @@ export function AdminJobModerationPoliciesPage() {
               ) : null}
             </div>
           </Section>
-
-          <div className="admin-moderation-actions">
-            <button disabled={defaultRulesQuery.isFetching || !rulesEditable} onClick={() => setPendingConfirmAction('loadDefault')} type="button">
-              {defaultRulesQuery.isFetching ? content.actions.loadingDefault : content.actions.loadDefault}
-            </button>
-            <button disabled={isMutating || !nameEditable} onClick={saveDraft} type="button">
-              {createMutation.isPending || updateMutation.isPending ? content.actions.saving : saveActionLabel}
-            </button>
-            <button
-              disabled={isMutating || !selectedPolicy || !canPublishOrRestore(selectedPolicy.status)}
-              onClick={() => selectedPolicy && setPendingConfirmAction('publish')}
-              type="button"
-            >
-              {publishMutation.isPending ? publishActionPendingLabel : publishActionLabel}
-            </button>
-            <button
-              disabled={isMutating || !selectedPolicy || !canArchive(selectedPolicy.status)}
-              onClick={() => selectedPolicy && setPendingConfirmAction('archive')}
-              type="button"
-            >
-              {archiveMutation.isPending ? content.actions.archiving : content.actions.archive}
-            </button>
-          </div>
             </main>
+
+            <footer className="admin-moderation-actions">
+              <button disabled={defaultRulesQuery.isFetching || !rulesEditable} onClick={() => setPendingConfirmAction('loadDefault')} type="button">
+                {defaultRulesQuery.isFetching ? content.actions.loadingDefault : content.actions.loadDefault}
+              </button>
+              <button disabled={isMutating || !nameEditable} onClick={saveDraft} type="button">
+                {createMutation.isPending || updateMutation.isPending ? content.actions.saving : saveActionLabel}
+              </button>
+              <button
+                disabled={isMutating || !selectedPolicy || !canPublishOrRestore(selectedPolicy.status)}
+                onClick={() => selectedPolicy && setPendingConfirmAction('publish')}
+                type="button"
+              >
+                {publishMutation.isPending ? publishActionPendingLabel : publishActionLabel}
+              </button>
+              <button
+                disabled={isMutating || !selectedPolicy || !canArchive(selectedPolicy.status)}
+                onClick={() => selectedPolicy && setPendingConfirmAction('archive')}
+                type="button"
+              >
+                {archiveMutation.isPending ? content.actions.archiving : content.actions.archive}
+              </button>
+            </footer>
           </aside>
         </div>
       ) : null}

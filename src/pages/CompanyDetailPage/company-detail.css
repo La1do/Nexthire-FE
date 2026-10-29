@@ -177,14 +177,14 @@
   border-radius: 999px;
   color: var(--color-home-accent);
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.24rem 0.58rem;
 }
 
 .company-detail-hero h1 {
   color: var(--color-text-primary);
   font-size: clamp(2.35rem, 5vw, 5rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1;
   overflow-wrap: anywhere;
@@ -215,7 +215,7 @@
   border-radius: 999px;
   cursor: pointer;
   display: inline-flex;
-  font-weight: 950;
+  font-weight: 800;
   justify-content: center;
   min-height: 3rem;
   padding: 0 1.05rem;
@@ -296,13 +296,13 @@
 .company-detail-stat span {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .company-detail-stat strong {
   color: var(--color-text-primary);
   font-size: clamp(1.15rem, 3vw, 1.55rem);
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.2;
 }
 
@@ -343,7 +343,7 @@
 .company-detail-not-found h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.2rem, 3vw, 1.5rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.2;
 }
@@ -408,7 +408,7 @@
 .company-detail-culture-card span {
   color: var(--color-text-primary);
   font-size: 1.02rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.25;
 }
 
@@ -434,7 +434,7 @@
 
 .company-detail-empty strong {
   color: var(--color-text-primary);
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .company-detail-facts {
@@ -451,12 +451,12 @@
 .company-detail-facts dt {
   color: var(--color-text-muted);
   font-size: 0.76rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .company-detail-facts dd {
   color: var(--color-text-primary);
-  font-weight: 950;
+  font-weight: 800;
   margin: 0;
   overflow-wrap: anywhere;
 }
@@ -478,7 +478,7 @@
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: 0.8rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0.36rem 0.7rem;
 }
 
@@ -496,7 +496,7 @@
   border-radius: 14px;
   color: var(--color-text-secondary);
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.45;
   padding: 0.78rem 0.85rem;
 }
@@ -517,7 +517,7 @@
   border-radius: 999px;
   color: var(--color-brand-solid);
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.55rem 0.85rem;
 }
 

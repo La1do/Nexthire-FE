@@ -21,7 +21,7 @@
 .recruiter-candidates-hero h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.45rem, 2vw, 2.1rem);
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.15;
   margin: 0.15rem 0 0.4rem;
 }
@@ -71,7 +71,7 @@
 .recruiter-candidates-results>header {
   color: var(--color-text-muted);
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .recruiter-candidates-table,
@@ -204,7 +204,7 @@
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: 0.76rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0.35rem 0.55rem;
 }
 
@@ -230,7 +230,7 @@
   border-radius: 999px;
   display: inline-flex;
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   gap: 0.35rem;
   justify-self: start;
   min-height: 1.75rem;
@@ -271,7 +271,7 @@
 .recruiter-candidate-card__date {
   color: var(--color-text-primary);
   font-size: 0.84rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .recruiter-candidate-card footer {
@@ -302,7 +302,7 @@
 .recruiter-candidate-card footer button small {
   color: var(--color-brand-solid);
   font-size: 0.74rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .recruiter-candidate-card footer button:hover {
@@ -407,7 +407,7 @@
 .recruiter-candidate-drawer__summary dd {
   color: var(--color-text-primary);
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
   margin: 0.25rem 0 0;
 }
 
@@ -437,7 +437,7 @@
 
 .recruiter-candidate-drawer__facts dd {
   color: var(--color-text-primary);
-  font-weight: 850;
+  font-weight: 700;
   margin: 0.1rem 0 0;
   overflow-wrap: anywhere;
 }
@@ -481,7 +481,7 @@
   border-radius: 999px;
   display: inline-flex;
   font-size: 0.76rem;
-  font-weight: 950;
+  font-weight: 800;
   min-height: 1.75rem;
   padding: 0.24rem 0.62rem;
   white-space: nowrap;

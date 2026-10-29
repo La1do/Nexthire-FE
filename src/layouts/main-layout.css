@@ -80,7 +80,7 @@
     0 12px 30px rgba(17, 24, 39, 0.07);
   color: var(--color-text-secondary);
   font-size: 0.875rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0.28rem;
 }
 
@@ -718,7 +718,7 @@
   padding: 0.75rem 1rem;
   border-radius: 12px;
   font-size: 0.95rem;
-  font-weight: 750;
+  font-weight: 700;
   color: var(--color-text-secondary);
   text-decoration: none;
   transition:
@@ -736,7 +736,7 @@
 .main-mobile-drawer__link.is-active {
   background: var(--color-brand-soft);
   color: var(--color-brand-solid);
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .main-mobile-drawer__actions {

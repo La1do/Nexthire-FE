@@ -33,6 +33,7 @@ import type {
 } from "../canvas.types";
 
 const FONT_FAMILIES = [
+  "Inter, sans-serif",
   "Roboto, sans-serif",
   "Arial, sans-serif",
   "Georgia, serif",

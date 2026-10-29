@@ -1,3 +1,4 @@
+@import "./tokens.css";
 @import "tailwindcss";
 
 :root {
@@ -53,7 +54,7 @@
   --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --layout-public-max: clamp(72rem, 86vw, 112rem);
   --layout-public-gutter: clamp(1rem, 2.5vw, 3rem);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
   color: var(--color-text-primary);
   background: var(--color-background-app);
   font-synthesis: none;
@@ -70,6 +71,22 @@
 
 * {
   box-sizing: border-box;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-sans);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
 }
 
 html {
@@ -93,7 +110,8 @@ a {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -200,7 +218,7 @@ select {
 .brand-mark__label {
   color: inherit;
   font-size: 1.45rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: -0.02em;
 }
 
@@ -274,7 +292,7 @@ select {
   color: var(--toast-accent);
   display: inline-flex;
   font-size: 0.85rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 1.65rem;
   justify-content: center;
   line-height: 1;
@@ -290,14 +308,14 @@ select {
 .toast__title {
   color: var(--color-text-primary);
   font-size: 0.9rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.25;
 }
 
 .toast__message {
   color: var(--color-text-secondary);
   font-size: 0.86rem;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.45;
 }
 
@@ -436,7 +454,7 @@ select {
 .global-loader-overlay__card p {
   color: var(--color-text-inverse);
   font-size: 0.95rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.45;
   margin: 0;
   text-shadow: 0 2px 18px rgba(17, 24, 39, 0.48);
@@ -502,7 +520,7 @@ select {
 .global-loader-orbit__brand span {
   color: var(--color-text-inverse);
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
   text-shadow: 0 2px 14px rgba(17, 24, 39, 0.5);
@@ -805,7 +823,7 @@ select {
 .select-field__label {
   color: var(--color-text-secondary);
   font-size: 0.84rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .select-field__button {
@@ -933,7 +951,7 @@ select {
   display: flex;
   font: inherit;
   font-size: 0.92rem;
-  font-weight: 760;
+  font-weight: 700;
   gap: 0.75rem;
   justify-content: space-between;
   min-height: 2.35rem;
@@ -982,7 +1000,7 @@ select {
 }
 
 .language-switch .select-field__button {
-  font-weight: 850;
+  font-weight: 700;
   min-width: 8.25rem;
 }
 
@@ -1222,7 +1240,7 @@ select {
 .home-hero h1 {
   color: var(--color-text-primary);
   font-size: clamp(2.4rem, 7vw, 4.75rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 0.98;
   margin-top: 1.25rem;
@@ -1442,7 +1460,7 @@ select {
 .home-hero-stats strong {
   color: var(--color-text-primary);
   font-size: 1.25rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .home-hero-stats small {
@@ -1472,7 +1490,7 @@ select {
 .home-hero-board-header p {
   color: var(--color-text-primary);
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .home-hero-board-header span {
@@ -1504,7 +1522,7 @@ select {
   color: var(--color-text-primary);
   display: block;
   font-size: 0.9rem;
-  font-weight: 950;
+  font-weight: 800;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1537,7 +1555,7 @@ select {
 .home-newsletter h2 {
   color: var(--color-text-primary);
   font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.1;
   margin-top: 0.35rem;
@@ -1862,7 +1880,7 @@ select {
 .job-card h3 {
   color: var(--color-text-primary);
   font-size: 1.05rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.25;
 }
 
@@ -2036,7 +2054,7 @@ select {
 .home-category-arrow {
   color: var(--color-brand-end);
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
   margin: 0;
 }
 
@@ -2056,7 +2074,7 @@ select {
 
 .home-industry-heading h3 {
   font-size: 1.2rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .home-article-grid {
@@ -2117,7 +2135,7 @@ select {
 
 .home-article-card h3 {
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .home-article-card p {
@@ -2183,7 +2201,7 @@ select {
 
 .home-newsletter-card p {
   color: var(--color-home-newsletter-accent);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 0.85rem;
   font-weight: 900;
   margin: 0;
@@ -2225,7 +2243,7 @@ select {
 .search-toolbar h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.8rem, 5vw, 3rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.05;
 }
@@ -2268,7 +2286,7 @@ select {
 .search-sort-form .select-field__label {
   color: var(--color-text-secondary);
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .search-toolbar-form input,
@@ -2358,7 +2376,7 @@ select {
 .search-empty-state h2 {
   color: var(--color-text-primary);
   font-size: 1.25rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -2397,7 +2415,7 @@ select {
 .search-results-header p {
   color: var(--color-brand-end);
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -2506,7 +2524,7 @@ select {
 .search-result-company a {
   color: var(--color-text-muted);
   font-size: 0.88rem;
-  font-weight: 850;
+  font-weight: 700;
   transition: color 160ms var(--motion-ease-standard);
 }
 
@@ -2526,7 +2544,7 @@ select {
 .search-result-card h3 {
   color: var(--color-text-primary);
   font-size: clamp(1.1rem, 3vw, 1.35rem);
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.25;
 }
 
@@ -2542,7 +2560,7 @@ select {
 .search-result-meta span {
   color: var(--color-text-secondary);
   font-size: 0.82rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .search-result-meta span+span::before {
@@ -2560,7 +2578,7 @@ select {
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: 0.75rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0.3rem 0.65rem;
 }
 
@@ -2585,7 +2603,7 @@ select {
   color: var(--color-brand-solid);
   display: inline-flex;
   font-size: 1.5rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 4rem;
   justify-content: center;
   width: 4rem;
@@ -2725,14 +2743,14 @@ select {
   border-radius: 999px;
   color: var(--color-home-accent);
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.24rem 0.58rem;
 }
 
 .job-detail-hero h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.9rem, 6vw, 3.45rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.05;
   max-width: 18ch;
@@ -2767,7 +2785,7 @@ select {
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: 0.78rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0.32rem 0.68rem;
 }
 
@@ -2805,7 +2823,7 @@ select {
 .job-detail-not-found h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.2rem, 3vw, 1.5rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.2;
 }
@@ -2856,12 +2874,12 @@ select {
 .job-detail-overview-list dt {
   color: var(--color-text-muted);
   font-size: 0.76rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .job-detail-overview-list dd {
   color: var(--color-text-primary);
-  font-weight: 950;
+  font-weight: 800;
   margin: 0;
 }
 
@@ -2879,7 +2897,7 @@ select {
   border-radius: 999px;
   cursor: pointer;
   display: inline-flex;
-  font-weight: 950;
+  font-weight: 800;
   justify-content: center;
   min-height: 3rem;
   padding: 0 1rem;
@@ -2942,7 +2960,7 @@ select {
 .job-detail-related-heading a {
   color: var(--color-brand-solid);
   font-size: 0.85rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .job-detail-related-grid {
@@ -2986,7 +3004,7 @@ select {
 .job-detail-related-card h3 {
   color: var(--color-text-primary);
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.3;
   margin-top: 0.2rem;
 }
@@ -2994,14 +3012,14 @@ select {
 .job-detail-related-card p {
   color: var(--color-text-muted);
   font-size: 0.82rem;
-  font-weight: 850;
+  font-weight: 700;
   margin-top: 0.35rem;
 }
 
 .job-detail-related-card a {
   color: var(--color-brand-solid);
   font-size: 0.84rem;
-  font-weight: 950;
+  font-weight: 800;
   justify-self: start;
 }
 
@@ -3021,7 +3039,7 @@ select {
   border-radius: 999px;
   color: var(--color-brand-solid);
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.55rem 0.85rem;
 }
 
@@ -3137,14 +3155,14 @@ select {
   border-radius: 999px;
   color: var(--color-home-accent);
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.24rem 0.58rem;
 }
 
 .company-detail-hero h1 {
   color: var(--color-text-primary);
   font-size: clamp(2rem, 7vw, 4rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.02;
 }
@@ -3171,7 +3189,7 @@ select {
   border-radius: 999px;
   cursor: pointer;
   display: inline-flex;
-  font-weight: 950;
+  font-weight: 800;
   justify-content: center;
   min-height: 3rem;
   padding: 0 1.05rem;
@@ -3274,13 +3292,13 @@ select {
 .company-detail-stat span {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .company-detail-stat strong {
   color: var(--color-text-primary);
   font-size: clamp(1.15rem, 3vw, 1.55rem);
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.2;
 }
 
@@ -3321,7 +3339,7 @@ select {
 .company-detail-not-found h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.2rem, 3vw, 1.5rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.2;
 }
@@ -3384,7 +3402,7 @@ select {
 .company-detail-culture-card span {
   color: var(--color-text-primary);
   font-size: 1.02rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.25;
 }
 
@@ -3410,7 +3428,7 @@ select {
 
 .company-detail-empty strong {
   color: var(--color-text-primary);
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .company-detail-facts {
@@ -3427,12 +3445,12 @@ select {
 .company-detail-facts dt {
   color: var(--color-text-muted);
   font-size: 0.76rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .company-detail-facts dd {
   color: var(--color-text-primary);
-  font-weight: 950;
+  font-weight: 800;
   margin: 0;
   overflow-wrap: anywhere;
 }
@@ -3454,7 +3472,7 @@ select {
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: 0.8rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0.36rem 0.7rem;
 }
 
@@ -3472,7 +3490,7 @@ select {
   border-radius: 14px;
   color: var(--color-text-secondary);
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.45;
   padding: 0.78rem 0.85rem;
 }
@@ -3493,7 +3511,7 @@ select {
   border-radius: 999px;
   color: var(--color-brand-solid);
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.55rem 0.85rem;
 }
 
@@ -3564,7 +3582,7 @@ select {
   display: inline-flex;
   flex: 0 0 auto;
   font-size: 0.7rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 2rem;
   justify-content: center;
   overflow: hidden;
@@ -3600,7 +3618,7 @@ select {
   border-radius: 12px;
   color: var(--color-text-muted);
   font-size: 0.92rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0.8rem 0.9rem;
   transition:
     background-color 160ms var(--motion-ease-standard),
@@ -3666,7 +3684,7 @@ select {
   display: inline-flex;
   flex: 0 0 auto;
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 2.35rem;
   justify-content: center;
   overflow: hidden;
@@ -3719,7 +3737,7 @@ select {
 .candidate-topbar h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.2rem, 3vw, 1.55rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -3736,7 +3754,7 @@ select {
   color: var(--color-text-muted);
   cursor: pointer;
   font-size: 0.88rem;
-  font-weight: 850;
+  font-weight: 700;
   padding: 0;
 }
 
@@ -3816,7 +3834,7 @@ select {
   color: var(--color-text-inverse);
   display: inline-flex;
   font-size: clamp(1.65rem, 5vw, 2.2rem);
-  font-weight: 950;
+  font-weight: 800;
   height: clamp(4.5rem, 12vw, 5.4rem);
   justify-content: center;
   overflow: hidden;
@@ -3901,7 +3919,7 @@ select {
 .profile-hero h2 {
   color: var(--color-text-primary);
   font-size: clamp(1.25rem, 4vw, 1.75rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.15;
 }
@@ -3919,7 +3937,7 @@ select {
   color: var(--color-home-accent);
   flex: 0 0 auto;
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.28rem 0.65rem;
 }
 
@@ -3955,7 +3973,7 @@ select {
 .profile-progress-row strong {
   color: var(--color-home-accent);
   font-size: 0.86rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .profile-sticky-actions button {
@@ -3973,7 +3991,7 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-size: 0.86rem;
-  font-weight: 950;
+  font-weight: 800;
   justify-content: center;
   min-height: 2.65rem;
   padding: 0 1rem;
@@ -4015,7 +4033,7 @@ select {
 .profile-application-state h2 {
   color: var(--color-text-primary);
   font-size: 1.15rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .profile-state-card p,
@@ -4027,7 +4045,7 @@ select {
 .profile-api-message {
   border-radius: 12px;
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.5;
   margin: 0;
   padding: 0.85rem 1rem;
@@ -4068,7 +4086,7 @@ select {
 .profile-completion-panel h2 {
   color: var(--color-text-primary);
   font-size: clamp(1.05rem, 2.5vw, 1.24rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -4207,7 +4225,7 @@ select {
   border-radius: 999px;
   color: var(--color-brand-end);
   display: inline-flex;
-  font-weight: 950;
+  font-weight: 800;
   height: 1.25rem;
   justify-content: center;
   width: 1.25rem;
@@ -4261,7 +4279,7 @@ select {
   color: var(--color-text-secondary);
   display: flex;
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 700;
   gap: 0.5rem;
 }
 
@@ -4316,13 +4334,13 @@ select {
   border: 0;
   color: var(--color-home-accent);
   cursor: pointer;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .profile-cv-draft-message {
   color: var(--color-home-accent);
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.5;
   margin: 0;
 }
@@ -4343,7 +4361,7 @@ select {
   border-radius: 999px;
   color: var(--color-text-inverse);
   display: inline-flex;
-  font-weight: 950;
+  font-weight: 800;
   height: 3.6rem;
   justify-content: center;
   margin-bottom: 0.75rem;
@@ -4363,7 +4381,7 @@ select {
   color: var(--color-text-muted);
   display: flex;
   font-size: 0.84rem;
-  font-weight: 850;
+  font-weight: 700;
   gap: 0.55rem;
 }
 
@@ -4437,7 +4455,7 @@ select {
   color: var(--color-brand-solid);
   display: inline-flex;
   font-size: 0.76rem;
-  font-weight: 950;
+  font-weight: 800;
   margin-bottom: 0.35rem;
   text-transform: uppercase;
 }
@@ -4445,7 +4463,7 @@ select {
 .profile-applications-hero h2 {
   color: var(--color-text-primary);
   font-size: clamp(1.25rem, 3vw, 1.65rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.18;
 }
@@ -4467,7 +4485,7 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-size: 0.86rem;
-  font-weight: 950;
+  font-weight: 800;
   justify-content: center;
   min-height: 2.65rem;
   padding: 0 1rem;
@@ -4506,14 +4524,14 @@ select {
 .profile-application-stats strong {
   color: var(--color-text-primary);
   font-size: clamp(1.35rem, 4vw, 1.75rem);
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1;
 }
 
 .profile-application-stats span {
   color: var(--color-text-muted);
   font-size: 0.8rem;
-  font-weight: 850;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
@@ -4591,7 +4609,7 @@ select {
 .profile-application-card h2 {
   color: var(--color-text-primary);
   font-size: clamp(1.04rem, 2.4vw, 1.22rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.25;
   overflow-wrap: anywhere;
@@ -4599,7 +4617,7 @@ select {
 
 .profile-application-card p {
   color: var(--color-text-muted);
-  font-weight: 850;
+  font-weight: 700;
   margin-top: 0.18rem;
 }
 
@@ -4626,7 +4644,7 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-size: 0.8rem;
-  font-weight: 950;
+  font-weight: 800;
   max-width: 100%;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -4681,13 +4699,13 @@ select {
 .profile-application-cv-modal-header span {
   color: var(--color-brand-solid);
   font-size: 0.76rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .profile-application-cv-modal-header h2 {
   color: var(--color-text-primary);
   font-size: clamp(1.1rem, 3vw, 1.35rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   margin-top: 0.18rem;
   overflow-wrap: anywhere;
@@ -4709,7 +4727,7 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-size: 1.05rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 2.3rem;
   justify-content: center;
   width: 2.3rem;
@@ -4747,7 +4765,7 @@ select {
   color: var(--color-text-inverse);
   display: inline-flex;
   font-size: 1.05rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 3rem;
   justify-content: center;
   width: 3rem;
@@ -4756,14 +4774,14 @@ select {
 .profile-application-cv-document-hero h3 {
   color: var(--color-text-primary);
   font-size: clamp(1.35rem, 4vw, 1.8rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.12;
 }
 
 .profile-application-cv-document-hero p {
   color: var(--color-text-muted);
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.45;
   margin-top: 0.24rem;
 }
@@ -4778,7 +4796,7 @@ select {
 .profile-application-cv-section h4 {
   color: var(--color-text-primary);
   font-size: 0.92rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -4807,7 +4825,7 @@ select {
 .profile-application-cv-state {
   align-self: center;
   color: var(--color-brand-solid);
-  font-weight: 950;
+  font-weight: 800;
   justify-self: center;
   padding: 1.5rem;
 }
@@ -4878,14 +4896,14 @@ select {
 .profile-application-cv-timeline strong {
   color: var(--color-text-primary);
   font-size: 0.95rem;
-  font-weight: 950;
+  font-weight: 800;
   overflow-wrap: anywhere;
 }
 
 .profile-application-status {
   border-radius: 999px;
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   justify-self: start;
   padding: 0.32rem 0.65rem;
 }
@@ -4959,7 +4977,7 @@ select {
   color: var(--color-brand-solid);
   cursor: pointer;
   font-size: 0.82rem;
-  font-weight: 950;
+  font-weight: 800;
   width: fit-content;
 }
 
@@ -4973,7 +4991,7 @@ select {
   border-radius: 12px;
   color: var(--color-text-secondary);
   font-size: 0.88rem;
-  font-weight: 750;
+  font-weight: 700;
   line-height: 1.58;
   margin: 0.7rem 0 0;
   overflow-wrap: anywhere;
@@ -5004,7 +5022,7 @@ select {
   color: var(--color-brand-solid);
   cursor: pointer;
   font-size: 0.84rem;
-  font-weight: 950;
+  font-weight: 800;
   min-height: 2.45rem;
   padding: 0.65rem 0.9rem;
 }
@@ -5029,7 +5047,7 @@ select {
   border-radius: 999px;
   color: var(--color-brand-solid);
   display: inline-flex;
-  font-weight: 950;
+  font-weight: 800;
   height: 3.2rem;
   justify-content: center;
   width: 3.2rem;
@@ -5038,7 +5056,7 @@ select {
 .profile-application-empty h2 {
   color: var(--color-text-primary);
   font-size: clamp(1.04rem, 3vw, 1.25rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -6078,7 +6096,7 @@ select {
   color: var(--color-text-muted);
   display: flex;
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 700;
   gap: 0.75rem;
   min-height: 2.75rem;
   padding: 0.625rem 1rem;
@@ -6259,7 +6277,7 @@ select {
 
 .recruiter-topbar__heading h1 {
   font-size: 1.1rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-topbar__heading p {
@@ -6412,7 +6430,7 @@ select {
 
 .recruiter-hero h2 {
   font-size: clamp(1.65rem, 4vw, 2.7rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 1.04;
   margin-top: 0.45rem;
@@ -6436,7 +6454,7 @@ select {
 .recruiter-eyebrow {
   color: var(--color-brand-end);
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -6473,7 +6491,7 @@ select {
   color: #235789;
   display: inline-flex;
   font-size: 1rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 4.25rem;
   justify-content: center;
   object-fit: cover;
@@ -6489,7 +6507,7 @@ select {
 
 .recruiter-verification-card__title-row h2 {
   font-size: clamp(1.2rem, 3vw, 1.55rem);
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.2;
 }
 
@@ -6511,7 +6529,7 @@ select {
 .recruiter-status-pill {
   border-radius: 999px;
   font-size: 0.72rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.3rem 0.65rem;
 }
 
@@ -6547,13 +6565,13 @@ select {
 .recruiter-verification-card__meta dt {
   color: var(--color-text-muted);
   font-size: 0.8rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .recruiter-verification-card__progress strong {
   color: var(--color-home-accent);
   font-size: 0.92rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-verification-card__progress>span {
@@ -6608,7 +6626,7 @@ select {
 
 .recruiter-panel__header h2 {
   font-size: 1.08rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-panel__header p {
@@ -6620,7 +6638,7 @@ select {
 .recruiter-panel__header a {
   color: var(--color-brand-end);
   font-size: 0.85rem;
-  font-weight: 950;
+  font-weight: 800;
   flex: 0 0 auto;
 }
 
@@ -6632,7 +6650,7 @@ select {
 .recruiter-dashboard-state h2 {
   color: var(--color-text-primary);
   font-size: 1.2rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-dashboard-state p,
@@ -6645,7 +6663,7 @@ select {
   background: var(--color-surface-subtle);
   border: 1px solid var(--color-border-subtle);
   border-radius: 12px;
-  font-weight: 850;
+  font-weight: 700;
   margin: 0;
   padding: 1rem;
 }
@@ -6670,12 +6688,12 @@ select {
 .recruiter-stat-card small {
   color: var(--color-text-muted);
   font-size: 0.8rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .recruiter-stat-card strong {
   font-size: clamp(1.6rem, 4vw, 2.2rem);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -6744,7 +6762,7 @@ select {
 }
 
 .recruiter-action-card strong {
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-action-card small,
@@ -6797,7 +6815,7 @@ select {
 
 .recruiter-pipeline-item strong {
   font-size: 1.1rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-pipeline-bar {
@@ -6848,7 +6866,7 @@ select {
   color: #235789;
   display: inline-flex;
   font-size: 0.75rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 2.6rem;
   justify-content: center;
   width: 2.6rem;
@@ -6863,7 +6881,7 @@ select {
 }
 
 .recruiter-application-card strong {
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-application-card small,
@@ -6877,7 +6895,7 @@ select {
   border-radius: 999px;
   font-size: 0.78rem;
   font-style: normal;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.32rem 0.6rem;
 }
 
@@ -6941,7 +6959,7 @@ select {
 
 .recruiter-task-card strong {
   font-size: 0.9rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-task-card small {
@@ -7182,7 +7200,7 @@ select {
 
 .company-verification-drawer__header h2 {
   font-size: clamp(1.35rem, 3vw, 1.8rem);
-  font-weight: 950;
+  font-weight: 800;
   margin-top: 0.35rem;
 }
 
@@ -7228,7 +7246,7 @@ select {
 .company-verification-textarea>span,
 .company-document-options legend {
   color: var(--color-text-secondary);
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .company-verification-textarea textarea {
@@ -7252,7 +7270,7 @@ select {
 .company-document-options__error {
   color: var(--color-text-danger);
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .company-document-options {
@@ -7308,7 +7326,7 @@ select {
   display: inline-flex;
   font-size: 0.78rem;
   font-style: normal;
-  font-weight: 950;
+  font-weight: 800;
   justify-content: center;
   min-height: 2rem;
   min-width: 2rem;
@@ -7338,7 +7356,7 @@ select {
   color: var(--color-text-danger);
   flex: 1 1 100%;
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 700;
   margin: 0;
   text-align: right;
 }
@@ -7370,7 +7388,7 @@ select {
 .job-post-page-header h1 {
   color: var(--color-text-primary);
   font-size: 2rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.08;
   margin-top: 0.4rem;
 }
@@ -7425,7 +7443,7 @@ select {
 .job-post-gate h2,
 .job-post-success h2 {
   font-size: 1.25rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .job-post-state p,
@@ -7442,7 +7460,7 @@ select {
   border-radius: 999px;
   color: #c2410c;
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   padding: 0.32rem 0.72rem;
 }
 
@@ -7492,7 +7510,7 @@ select {
 .job-post-textarea>span,
 .job-post-skills-field>label {
   color: var(--color-text-secondary);
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .job-post-select {
@@ -7544,7 +7562,7 @@ select {
   border-radius: 12px;
   color: #92400e;
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.5;
   padding: 0.8rem 0.95rem;
 }
@@ -7616,7 +7634,7 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-size: 0.8rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 1.35rem;
   justify-content: center;
   width: 1.35rem;
@@ -7638,7 +7656,7 @@ select {
 
 .job-post-form-actions p {
   color: var(--color-text-danger);
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.5;
   margin: 0;
   text-align: right;
@@ -7704,7 +7722,7 @@ select {
 .job-post-checklist h3 {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   margin: 0;
   text-transform: uppercase;
 }
@@ -7718,7 +7736,7 @@ select {
 .job-post-preview-card__header h3 {
   color: var(--color-text-primary);
   font-size: 1.18rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
@@ -7741,7 +7759,7 @@ select {
 .job-post-preview-meta dt {
   color: var(--color-text-muted);
   font-size: 0.82rem;
-  font-weight: 850;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
@@ -7772,7 +7790,7 @@ select {
   border-radius: 999px;
   color: #047857;
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   max-width: 100%;
   overflow-wrap: anywhere;
   padding: 0.32rem 0.65rem;
@@ -7833,7 +7851,7 @@ select {
 .job-post-checklist p {
   color: var(--color-text-secondary);
   font-size: 0.88rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.4;
   margin: 0;
 }
@@ -7956,7 +7974,7 @@ select {
 .review-card h3 {
   color: var(--color-text-primary);
   font-size: 1.05rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.3;
   margin: 0;
   overflow-wrap: anywhere;
@@ -7965,7 +7983,7 @@ select {
 .review-card h4 {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.04em;
   margin: 0;
   text-transform: uppercase;
@@ -8000,14 +8018,14 @@ select {
 .review-meta__row dt {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 850;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
 .review-meta__row dd {
   color: var(--color-text-primary);
   font-size: 0.88rem;
-  font-weight: 850;
+  font-weight: 700;
   margin: 0;
   overflow-wrap: anywhere;
 }
@@ -8022,7 +8040,7 @@ select {
 .review-meta__skills>p {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.04em;
   margin: 0;
   text-transform: uppercase;
@@ -8042,7 +8060,7 @@ select {
   border-radius: 999px;
   color: #047857;
   font-size: 0.76rem;
-  font-weight: 850;
+  font-weight: 700;
   max-width: 100%;
   overflow-wrap: anywhere;
   padding: 0.28rem 0.6rem;
@@ -8062,7 +8080,7 @@ select {
 .review-readiness__head span {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -8070,7 +8088,7 @@ select {
 .review-readiness__head strong {
   color: var(--color-text-primary);
   font-size: 1.5rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .review-readiness__bar {
@@ -8640,7 +8658,7 @@ select {
 .recruiter-job-status-tabs span,
 .recruiter-job-status-tabs strong {
   font-size: 0.88rem;
-  font-weight: 850;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -8698,7 +8716,7 @@ select {
   border-radius: 12px;
   color: var(--color-text-danger);
   font-size: 0.92rem;
-  font-weight: 760;
+  font-weight: 700;
   margin: 0;
   padding: 0.8rem 0.95rem;
 }
@@ -8747,7 +8765,7 @@ select {
 .recruiter-job-title-cell small {
   color: var(--color-text-muted);
   font-size: 0.8rem;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 .recruiter-job-status {
@@ -8805,7 +8823,7 @@ select {
   border-radius: 0.5rem;
   display: inline-flex;
   font-size: 0.9rem;
-  font-weight: 760;
+  font-weight: 700;
   justify-content: center;
   min-height: 2.2rem;
   padding-inline: 0.7rem;
@@ -8829,7 +8847,7 @@ select {
 .recruiter-job-actions-empty {
   color: var(--color-text-muted);
   font-size: 0.82rem;
-  font-weight: 760;
+  font-weight: 700;
 }
 
 .recruiter-jobs-pagination {
@@ -8858,7 +8876,7 @@ select {
 .recruiter-jobs-pagination span {
   color: var(--color-text-muted);
   font-size: 0.9rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .recruiter-job-detail-header {
@@ -8889,7 +8907,7 @@ select {
 .recruiter-job-detail-header__actions>span {
   color: var(--color-text-muted);
   font-size: 0.82rem;
-  font-weight: 760;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
@@ -8970,7 +8988,7 @@ select {
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: 0.82rem;
-  font-weight: 820;
+  font-weight: 700;
   padding: 0.35rem 0.62rem;
 }
 
@@ -9254,7 +9272,7 @@ select {
   color: var(--color-text-primary);
   display: block;
   font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1;
   margin-top: 0.38rem;
 }
@@ -9263,7 +9281,7 @@ select {
   color: var(--color-text-muted);
   display: block;
   font-size: 0.84rem;
-  font-weight: 720;
+  font-weight: 700;
   line-height: 1.45;
   margin-top: 0.5rem;
 }
@@ -9335,12 +9353,12 @@ select {
 
 .recruiter-job-row-card__deadline.is-deadline-soon {
   color: #b45309;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-job-row-card__deadline.is-deadline-overdue {
   color: var(--color-text-danger);
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .recruiter-job-row-card__main {
@@ -9366,7 +9384,7 @@ select {
 .recruiter-job-title-cell small {
   color: var(--color-text-muted);
   font-size: 0.82rem;
-  font-weight: 740;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
@@ -9390,7 +9408,7 @@ select {
 .recruiter-job-detail-facts dd {
   color: var(--color-text-primary);
   font-size: 0.92rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.35;
   margin: 0.18rem 0 0;
   overflow-wrap: anywhere;
@@ -9537,13 +9555,13 @@ select {
 .job-post-readiness strong {
   color: var(--color-text-primary);
   font-size: 1.4rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .job-post-readiness p {
   color: var(--color-text-muted);
   font-size: 0.84rem;
-  font-weight: 760;
+  font-weight: 700;
 }
 
 .job-post-readiness__bar {
@@ -10171,7 +10189,7 @@ select {
   color: var(--color-brand-solid);
   display: block;
   font-size: 0.74rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.04em;
   margin-block-end: 0.4rem;
   text-transform: uppercase;
@@ -10181,7 +10199,7 @@ select {
   color: var(--color-text-primary);
   font-size: clamp(1.35rem, 5vw, 2rem);
   font-style: normal;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.08;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -10205,7 +10223,7 @@ select {
   display: inline-flex;
   font: inherit;
   font-size: 1.15rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 2.75rem;
   justify-content: center;
   line-height: 1;
@@ -10270,7 +10288,7 @@ select {
 .job-apply-field>span {
   color: var(--color-text-primary);
   font-size: 0.9rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .job-apply-field small,
@@ -10343,7 +10361,7 @@ select {
 .job-apply-modal__notice strong {
   color: var(--color-text-primary);
   font-size: 0.95rem;
-  font-weight: 950;
+  font-weight: 800;
   overflow-wrap: anywhere;
 }
 
@@ -10393,7 +10411,7 @@ select {
 .job-apply-upload__copy strong {
   color: var(--color-text-primary);
   font-size: 0.95rem;
-  font-weight: 950;
+  font-weight: 800;
   overflow-wrap: anywhere;
 }
 
@@ -10420,7 +10438,7 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-size: 0.88rem;
-  font-weight: 950;
+  font-weight: 800;
   gap: 0.5rem;
   min-height: 2.75rem;
   min-width: 0;
@@ -10444,7 +10462,7 @@ select {
   color: var(--color-brand-solid);
   display: inline-flex;
   font-size: 0.72rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 1.55rem;
   justify-content: center;
   line-height: 1;
@@ -10482,12 +10500,12 @@ select {
 
 .job-apply-upload__actions small.is-error {
   color: var(--color-text-danger);
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .job-apply-upload__actions small.is-success {
   color: var(--color-home-accent);
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .job-apply-modal__loading {
@@ -10498,7 +10516,7 @@ select {
 
 .job-apply-modal__submit-error {
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.5;
   margin: 0;
 }
@@ -10525,7 +10543,7 @@ select {
   display: inline-flex;
   font: inherit;
   font-size: 0.9rem;
-  font-weight: 950;
+  font-weight: 800;
   gap: 0.5rem;
   justify-content: center;
   min-height: 2.75rem;
@@ -10585,7 +10603,7 @@ select {
   color: var(--color-text-inverse);
   display: inline-flex;
   font-size: 1.1rem;
-  font-weight: 950;
+  font-weight: 800;
   height: 2.75rem;
   justify-content: center;
   width: 2.75rem;
@@ -10595,7 +10613,7 @@ select {
   color: var(--color-text-primary);
   font-size: 1.25rem;
   font-style: normal;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.15;
 }
 
@@ -10749,7 +10767,7 @@ select {
   color: var(--color-text-secondary);
   display: inline-flex;
   font-size: 0.75rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1;
   min-height: 1.75rem;
   padding-inline: 0.75rem;
@@ -10863,7 +10881,7 @@ select {
   border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
-  font-weight: 850;
+  font-weight: 700;
   justify-content: center;
   min-height: 2.75rem;
   transition:
@@ -10943,12 +10961,12 @@ select {
 
 .profile-cv-message.is-error {
   color: var(--color-text-danger);
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .profile-cv-message.is-success {
   color: var(--color-text-secondary);
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .profile-cv-message.is-success::before {
@@ -11477,7 +11495,7 @@ select {
 .template-replace-dialog__header h2 {
   color: var(--color-text-primary);
   font-size: 1rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.25;
   margin: 0;
 }
@@ -11544,7 +11562,7 @@ select {
 .template-replace-dialog__template strong {
   color: var(--color-text-primary);
   font-size: 0.95rem;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.35;
 }
 
@@ -11645,7 +11663,7 @@ select {
 .profile-application-progress h3 {
   color: var(--color-text-primary);
   font-size: 0.9rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -11699,14 +11717,14 @@ select {
   color: var(--color-text-primary);
   display: block;
   font-size: 0.78rem;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.35;
 }
 
 .profile-application-progress-cancelled p {
   color: var(--color-text-muted);
   font-size: 0.76rem;
-  font-weight: 750;
+  font-weight: 700;
   line-height: 1.45;
   margin: 0.2rem 0 0;
 }
@@ -11715,7 +11733,7 @@ select {
   color: var(--color-text-muted);
   display: inline-flex;
   font-size: 0.72rem;
-  font-weight: 850;
+  font-weight: 700;
   margin-top: 0.25rem;
 }
 
@@ -11729,7 +11747,7 @@ select {
 .profile-application-progress-cancelled strong {
   color: var(--color-text-danger);
   font-size: 0.86rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 
@@ -11887,7 +11905,7 @@ select {
 .profile-cv-assist-copy p {
   color: var(--color-brand-solid);
   font-size: 0.72rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -11896,7 +11914,7 @@ select {
   color: var(--color-text-primary);
   font-size: clamp(1rem, 2.6vw, 1.18rem);
   font-style: normal;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1.18;
 }
 
@@ -11909,7 +11927,7 @@ select {
 .profile-cv-assist-copy small {
   color: var(--color-text-muted);
   font-size: 0.78rem;
-  font-weight: 750;
+  font-weight: 700;
   line-height: 1.45;
 }
 
@@ -11928,7 +11946,7 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-size: 0.84rem;
-  font-weight: 950;
+  font-weight: 800;
   gap: 0.45rem;
   justify-content: center;
   min-height: 2.65rem;
