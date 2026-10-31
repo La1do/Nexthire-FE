@@ -5,6 +5,7 @@ export const ai1Copy = {
     navigation: 'Yêu cầu JD', selected: 'Đang xem', passage: 'Đoạn', fullQuote: 'Đọc toàn bộ nội dung', technical: 'Dành cho kỹ thuật / Debug', how: 'Cách đọc kết quả', duplicate: 'Cùng nội dung tại', positions: 'vị trí', planUnavailable: 'Không tải được cấu trúc JD; vẫn xem bằng chứng',
     hasEvidenceGroup: 'Đã có bằng chứng', needReviewGroup: 'Chưa thấy / Cần đối chiếu', criteriaReview: 'tiêu chí đối soát', hasEvidenceCount: 'có bằng chứng', needReviewCount: 'cần đối chiếu', foundInSkills: '✓ Tìm thấy trong mục Kỹ năng', relevanceHigh: 'Khớp cao', relevanceMedium: 'Khớp vừa', relevanceLow: 'Khớp thấp',
     skillNotFound: 'Chưa thấy trong hồ sơ ứng viên', skillNotFoundDesc: 'Ứng viên chưa đề cập kỹ năng "{skill}" trong phần Kỹ năng, Kinh nghiệm hay Dự án.',
+    matchedKeywordsLabel: 'Từ khóa phát hiện',
     sources: { profile: 'Giới thiệu bản thân', summary: 'Giới thiệu bản thân · tóm tắt', headline: 'Giới thiệu bản thân · tiêu đề', skill: 'Kỹ năng liệt kê', experience: 'Kinh nghiệm làm việc', project: 'Dự án', technology: 'Dự án · công nghệ được liệt kê', education: 'Học vấn', certification: 'Chứng chỉ', unknown: 'Mục hồ sơ khác' },
     warningText: {
       UNREVIEWED_DESCRIPTION_FALLBACK: 'Đang dùng mô tả JD khi chưa có yêu cầu riêng; HR cần kiểm tra lại yêu cầu.',
@@ -41,6 +42,7 @@ export const ai1Copy = {
     navigation: 'JD requirements', selected: 'Viewing', passage: 'Passage', fullQuote: 'Read full content', technical: 'Technical / Debug', how: 'How to read results', duplicate: 'Same text at', positions: 'locations', planUnavailable: 'Could not load the JD structure; evidence is still available',
     hasEvidenceGroup: 'Supporting evidence found', needReviewGroup: 'Missing / Review required', criteriaReview: 'criteria to review', hasEvidenceCount: 'with evidence', needReviewCount: 'needs review', foundInSkills: '✓ Found in Skills section', relevanceHigh: 'High match', relevanceMedium: 'Moderate match', relevanceLow: 'Low match',
     skillNotFound: 'Not found in candidate profile', skillNotFoundDesc: 'The candidate did not mention skill "{skill}" in Skills, Experience or Projects.',
+    matchedKeywordsLabel: 'Detected keywords',
     sources: { profile: 'Personal profile', summary: 'Personal profile · summary', headline: 'Personal profile · headline', skill: 'Listed skills', experience: 'Work experience', project: 'Projects', technology: 'Projects · listed technologies', education: 'Education', certification: 'Certifications', unknown: 'Other profile section' },
     warningText: {
       UNREVIEWED_DESCRIPTION_FALLBACK: 'Using the JD description because separate requirements are unavailable; HR should check the requirements.',
@@ -77,6 +79,7 @@ export const ai1Copy = {
     navigation: '求人要件', selected: '表示中', passage: '文章', fullQuote: '内容全体を読む', technical: '技術詳細 / デバッグ', how: '結果の読み方', duplicate: '同一文章の出典数', positions: '件', planUnavailable: '求人構造を取得できません。根拠は引き続き確認できます',
     hasEvidenceGroup: '根拠あり', needReviewGroup: '未検出 / 要確認', criteriaReview: '件の照合要件', hasEvidenceCount: '件の根拠あり', needReviewCount: '件の要確認', foundInSkills: '✓ スキル項目に記載あり', relevanceHigh: '高い関連度', relevanceMedium: '中程度の関連度', relevanceLow: '低い関連度',
     skillNotFound: '候補者プロフィールに未記載', skillNotFoundDesc: '候補者のスキル・職歴・プロジェクトに「{skill}」の記載は見つかりませんでした。',
+    matchedKeywordsLabel: '検出されたキーワード',
     sources: { profile: '自己紹介', summary: '自己紹介 · 概要', headline: '自己紹介 · 見出し', skill: '記載スキル', experience: '職務経歴', project: 'プロジェクト', technology: 'プロジェクト · 記載技術', education: '学歴', certification: '資格', unknown: 'その他のCV項目' },
     warningText: {
       UNREVIEWED_DESCRIPTION_FALLBACK: '個別要件がないため求人説明を使用しています。HRが要件を確認してください。',

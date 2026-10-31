@@ -95,6 +95,54 @@ function getRelevanceLabel(score: number, copy: Ai1Copy): string {
   return copy.relevanceLow
 }
 
+function extractMatchingKeywords(passageText: string, reqText: string): string[] {
+  if (!passageText || !reqText) return []
+  const normPassage = passageText.toLowerCase()
+  const rawTerms = reqText
+    .replace(/[.,;!?()]/g, ' ')
+    .split(/\s+/)
+    .map(w => w.trim())
+    .filter(w => w.length >= 2)
+
+  const stopWords = new Set([
+    'hiểu', 'biết', 'về', 'có', 'kinh', 'nghiệm', 'thành', 'thạo', 'nắm', 'vững',
+    'kỹ', 'năng', 'sử', 'dụng', 'làm', 'việc', 'với', 'các', 'cho', 'và', 'hoặc',
+    'trong', 'được', 'tốt', 'yêu', 'cầu', 'ưu', 'tiên', 'cần', 'tham', 'gia', 'phát', 'triển',
+    'the', 'a', 'an', 'and', 'or', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
+    'experience', 'knowledge', 'good', 'skills', 'understanding',
+  ])
+
+  const found: string[] = []
+  const commonPhrases = ['gitlab ci', 'rest api', 'ci/cd', 'docker compose', 'next.js', 'node.js', 'react native']
+  const reqLower = reqText.toLowerCase()
+  for (const phrase of commonPhrases) {
+    if (reqLower.includes(phrase) && normPassage.includes(phrase)) {
+      found.push(phrase)
+    }
+  }
+
+  for (const term of rawTerms) {
+    const termLower = term.toLowerCase()
+    if (stopWords.has(termLower)) continue
+    const regex = new RegExp(`\\b${term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i')
+    if (regex.test(passageText)) {
+      found.push(term)
+    }
+  }
+
+  const seen = new Set<string>()
+  const result: string[] = []
+  for (const item of found) {
+    const lower = item.toLowerCase()
+    if (!seen.has(lower)) {
+      seen.add(lower)
+      const m = passageText.match(new RegExp(`\\b${item.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i'))
+      result.push(m ? m[0] : item)
+    }
+  }
+  return result
+}
+
 function hasEvidence(q: HrReview['requirements'][number]): boolean {
   if (!q.evidence || q.evidence.length === 0) return false
   if (q.retrievalStatus === 'NO_EVIDENCE' || q.retrievalStatus === 'INSUFFICIENT_SIGNAL') return false
@@ -137,6 +185,7 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
   const showSkillMatch = Boolean(requirementText && topHit && isExactSkillMatch(topHit, requirementText))
   const tier = getRelevanceTier(hit.similarityScore)
   const relevanceText = getRelevanceLabel(hit.similarityScore, copy)
+  const matchedKeywords = requirementText ? extractMatchingKeywords(hit.text, requirementText) : []
 
   return (
     <div className="ai1-evidence__passages">
@@ -172,6 +221,14 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
             <span>{relevanceText} · <strong>{hit.similarityScore.toFixed(1)} / 100</strong></span>
           </span>
         </div>
+        {matchedKeywords.length > 0 && (
+          <div className="ai1-evidence__matched-keywords">
+            <span className="ai1-evidence__matched-label">{copy.matchedKeywordsLabel}:</span>
+            {matchedKeywords.map(kw => (
+              <span key={kw} className="ai1-evidence__keyword-badge">✓ {kw}</span>
+            ))}
+          </div>
+        )}
         {group.length > 1 && <p className="ai1-evidence__duplicate">{copy.duplicate} {group.length} {copy.positions}</p>}
         <Warnings codes={group.flatMap(item => item.hit.reasonCodes ?? [])} copy={copy} />
         {hit.text.length > 650 ? (
