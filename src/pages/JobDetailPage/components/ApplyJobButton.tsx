@@ -1,6 +1,7 @@
 import type { ChangeEvent, FormEvent } from 'react'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Send } from 'lucide-react'
 import { useToast } from '../../../context'
 import { useAuthGuard } from '../../../hooks/useAuthGuard'
 import type { JobDetailTranslations } from '../../../i18n/types'
@@ -346,7 +347,8 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     return (
       <div className="job-detail-apply-block">
         <Link className="job-detail-apply-cta" to={loginHref}>
-          {content.apply}
+          <Send size={15} className="job-detail-apply-icon" />
+          <span>{content.apply}</span>
         </Link>
         <p className="job-detail-apply-hint">{content.applyLoginHint}</p>
       </div>
@@ -357,7 +359,8 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     return (
       <div className="job-detail-apply-block">
         <button className="job-detail-apply-cta job-detail-apply-cta-disabled" disabled type="button">
-          {content.apply}
+          <Send size={15} className="job-detail-apply-icon" />
+          <span>{content.apply}</span>
         </button>
         <p className="job-detail-apply-hint">{content.candidateOnly}</p>
       </div>
@@ -368,7 +371,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     return (
       <div className="job-detail-apply-block">
         <Link className="job-detail-apply-cta job-detail-apply-cta-success" to="/profile/applications">
-          {content.applied}
+          <span>{content.applied}</span>
         </Link>
         <p className="job-detail-apply-hint">{content.appliedHint}</p>
       </div>
@@ -380,7 +383,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
       <div className="job-detail-apply-block">
         <button className="job-detail-apply-cta job-detail-apply-cta-disabled" disabled type="button">
           <span aria-hidden="true" className="job-apply-spinner" />
-          {content.apply}
+          <span>{content.apply}</span>
         </button>
         <p className="job-detail-apply-hint">{content.applyStatusLoading}</p>
       </div>
@@ -390,7 +393,8 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
   return (
     <div className="job-detail-apply-block">
       <button className="job-detail-apply-cta" type="button" onClick={openDialog}>
-        {content.apply}
+        <Send size={15} className="job-detail-apply-icon" />
+        <span>{content.apply}</span>
       </button>
       <p className="job-detail-apply-hint">{content.applyHint}</p>
 

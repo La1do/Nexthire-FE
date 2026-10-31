@@ -49,7 +49,8 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
       },
       content: {
         title: 'Nội dung tuyển dụng',
-        description: 'Mô tả rõ việc cần làm, yêu cầu bắt buộc và quyền lợi nổi bật.',
+        description:
+          'Mô tả rõ việc cần làm, yêu cầu bắt buộc và quyền lợi. Mẹo: Bắt đầu mỗi ý bằng dấu "-" để hiển thị dạng gạch đầu dòng chuyên nghiệp.',
       },
     },
     fields: {
@@ -103,15 +104,18 @@ export const recruiterJobCreate: RecruiterJobCreateTranslations = {
       },
       description: {
         label: 'Mô tả công việc',
-        placeholder: 'Mô tả trách nhiệm chính, sản phẩm hoặc team mà ứng viên sẽ tham gia.',
+        placeholder:
+          'Mô tả trách nhiệm chính. Gợi ý:\n- Thiết kế và phát triển giao diện web với React, TypeScript\n- Phối hợp cùng backend tích hợp API',
       },
       requirements: {
         label: 'Yêu cầu ứng viên',
-        placeholder: 'Liệt kê năng lực, kinh nghiệm, công nghệ hoặc tiêu chí bắt buộc.',
+        placeholder:
+          'Liệt kê tiêu chí, năng lực. Gợi ý:\n- Tối thiểu 2 năm kinh nghiệm lập trình React\n- Thành thạo TypeScript và REST API',
       },
       benefits: {
         label: 'Quyền lợi',
-        placeholder: 'Lương thưởng, bảo hiểm, thiết bị, học tập, remote day...',
+        placeholder:
+          'Lương thưởng, đãi ngộ. Gợi ý:\n- Lương tháng 13 + thưởng hiệu suất\n- Chế độ làm việc Hybrid (2 ngày WFH/tuần)',
       },
     },
     options: {

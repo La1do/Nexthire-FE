@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import type { JobDetailTranslations } from '../../../i18n/types'
 import { CompanyLogoMark } from '../../_components'
 import { createCompanyDetailHrefById, createJobDetailHrefById } from '../../_utils/jobRoutes'
@@ -8,39 +9,48 @@ type RelatedJobsProps = {
   jobs: ReadonlyArray<RelatedJobView>
 }
 
-export function RelatedJobs({ content, jobs }: RelatedJobsProps) {
-  if (!jobs.length) {
+export function RelatedJobs({ jobs }: RelatedJobsProps) {
+  if (!jobs || jobs.length === 0) {
     return null
   }
 
   return (
-    <section className="job-detail-related job-detail-motion">
-      <div className="job-detail-related-heading">
-        <h2>{content.title}</h2>
-        <a href="/search">{content.viewAll}</a>
-      </div>
+    <section className="job-detail-card job-detail-related-card-section">
+      <header className="job-detail-card__header">
+        <h2 className="job-detail-card__title">Việc làm liên quan</h2>
+      </header>
 
       <div className="job-detail-related-grid">
-        {jobs.map((job) => {
-          const companyHref = createCompanyDetailHrefById(job.companyId)
+        {jobs.map((item) => {
+          const companyHref = createCompanyDetailHrefById(item.companyId)
+          const jobHref = createJobDetailHrefById(item.id)
 
           return (
-            <article className="job-detail-related-card home-hover-card" key={job.id}>
-              <a aria-label={job.company} className="job-detail-related-logo-link" href={companyHref}>
+            <article className="job-detail-related-job-item" key={item.id}>
+              <Link to={companyHref} className="job-detail-related-job-item__logo-link">
                 <CompanyLogoMark
-                  alt={job.logo.alt}
-                  className="job-detail-related-logo"
-                  fallbackText={job.logo.fallbackText}
-                  src={job.logo.src}
-                  tone={job.logo.tone}
+                  alt={item.logo.alt}
+                  className="job-detail-related-job-item__logo"
+                  fallbackText={item.logo.fallbackText}
+                  src={item.logo.src}
+                  tone={item.logo.tone}
                 />
-              </a>
-              <div>
-                <a className="job-detail-related-company" href={companyHref}>{job.company}</a>
-                <h3>{job.title}</h3>
-                <p>{job.location}</p>
+              </Link>
+
+              <div className="job-detail-related-job-item__info">
+                <h3 className="job-detail-related-job-item__title">
+                  <Link to={jobHref}>{item.title}</Link>
+                </h3>
+                <Link to={companyHref} className="job-detail-related-job-item__company">
+                  {item.company}
+                </Link>
+                <div className="job-detail-related-job-item__meta">
+                  {item.salary && (
+                    <span className="job-detail-related-job-item__salary">{item.salary}</span>
+                  )}
+                  <span className="job-detail-related-job-item__location">{item.location}</span>
+                </div>
               </div>
-              <a href={createJobDetailHrefById(job.id)}>{content.viewDetail}</a>
             </article>
           )
         })}

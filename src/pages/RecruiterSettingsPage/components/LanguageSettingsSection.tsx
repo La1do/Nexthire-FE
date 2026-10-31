@@ -119,6 +119,7 @@ export function LanguageSettingsSection({
           hideLabel
           id="settings-language-select"
           label={translations.controlLabel}
+          menuClassName="admin-filter-menu"
           onChange={(value) => setSelectedLocale(value as Locale)}
           options={options}
           value={selectedLocale}

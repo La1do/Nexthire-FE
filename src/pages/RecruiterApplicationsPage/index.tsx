@@ -577,15 +577,7 @@ export function RecruiterApplicationsPage() {
 
   return (
     <div className="recruiter-applications-page">
-      <section className="recruiter-applications-hero">
-        <div>
-          <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
-          <h2>{content.hero.title}</h2>
-          <p>{content.hero.description}</p>
-        </div>
-      </section>
-
-      <section className="recruiter-applications-stats" aria-label={content.stats.title}>
+      <section className="admin-users-stats recruiter-applications-stats" aria-label={content.stats.title}>
         <AdminStatCard delta={content.stats.totalDelta} icon={<ApplicationsIcon />} label={content.stats.totalLabel} tone="blue" value={applicationStats.total} />
         <AdminStatCard delta={content.stats.newDelta} icon={<NewIcon />} label={content.stats.newLabel} tone="coral" value={applicationStats.new} />
         <AdminStatCard delta={content.stats.interviewDelta} icon={<InterviewIcon />} label={content.stats.interviewLabel} tone="amber" value={applicationStats.interview} />

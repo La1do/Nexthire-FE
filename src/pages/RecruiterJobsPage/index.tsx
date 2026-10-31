@@ -295,12 +295,8 @@ export function RecruiterJobsPage() {
 
   return (
     <div className="recruiter-jobs-page">
-      <section className="recruiter-jobs-page-header">
-        <div>
-          <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
-          <h1>{content.hero.title}</h1>
-          <p>{content.hero.description}</p>
-        </div>
+      <div className="recruiter-jobs-page-actions">
+        <p className="recruiter-page-subtitle">{content.hero.description}</p>
         <Link
           className="job-post-link-button job-post-link-button--primary"
           state={{ from: '/recruiter/jobs' }}
@@ -308,7 +304,9 @@ export function RecruiterJobsPage() {
         >
           {content.hero.createAction}
         </Link>
-      </section>
+      </div>
+
+      <RecruiterJobSummary counts={counts} locale={locale} translations={content} />
 
       <RecruiterJobStatusTabs
         activeStatus={filters.status}
@@ -317,8 +315,6 @@ export function RecruiterJobsPage() {
         onChange={setStatus}
         translations={content}
       />
-
-      <RecruiterJobSummary counts={counts} locale={locale} translations={content} />
 
       <RecruiterJobFilters
         filters={filters}
@@ -544,7 +540,6 @@ export function RecruiterJobDetailPage() {
             </span>
             {content.actions.backToList}
           </Link>
-          <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
           <h1>{job.title}</h1>
           <div className="recruiter-job-detail-heading-meta">
             <RecruiterJobStatusBadge label={statusLabel} status={job.status} />

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 import type { JobDetailTranslations } from '../../../i18n/types'
 import { useAuthGuard } from '../../../hooks/useAuthGuard'
 import { useToggleSavedJob } from '../../../hooks/useToggleSavedJob'
@@ -7,22 +8,6 @@ import { useTranslations } from '../../../i18n'
 type SaveJobButtonProps = {
   content: JobDetailTranslations['sidebar']
   jobId: string
-}
-
-function BookmarkIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      aria-hidden="true"
-      fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z" />
-    </svg>
-  )
 }
 
 function LoadingIcon() {
@@ -45,7 +30,7 @@ function LoadingIcon() {
   )
 }
 
-export function SaveJobButton({ content, jobId }: SaveJobButtonProps) {
+export function SaveJobButton({ jobId }: SaveJobButtonProps) {
   const { common } = useTranslations()
   const { canSaveJobs, isAuthenticated, loginHref } = useAuthGuard()
   const { isSaved, pending, errorCode, toggle } = useToggleSavedJob(jobId)
@@ -55,11 +40,10 @@ export function SaveJobButton({ content, jobId }: SaveJobButtonProps) {
       <div className="job-detail-save-block">
         <Link className="save-job-bookmark job-detail-save-cta" to={loginHref}>
           <span className="save-job-bookmark__icon">
-            <BookmarkIcon filled={false} />
+            <Heart size={16} fill="none" />
           </span>
-          <span>{content.save}</span>
+          <span>Lưu tin</span>
         </Link>
-        <p className="job-detail-save-hint">{content.loginHint}</p>
       </div>
     )
   }
@@ -74,23 +58,16 @@ export function SaveJobButton({ content, jobId }: SaveJobButtonProps) {
           type="button"
         >
           <span className="save-job-bookmark__icon">
-            <BookmarkIcon filled={false} />
+            <Heart size={16} fill="none" />
           </span>
-          <span>{content.save}</span>
+          <span>Lưu tin</span>
         </button>
-        <p className="job-detail-save-hint">{common.savedJobs.candidateOnly}</p>
       </div>
     )
   }
 
   const notPublic = errorCode === 'JOB.JOB_NOT_PUBLIC'
-  const pendingLabel = isSaved ? common.savedJobs.saving : common.savedJobs.removing
-  const buttonLabel = pending ? pendingLabel : isSaved ? content.saved : content.save
-  const errorMessage = notPublic
-    ? content.jobNotPublic
-    : errorCode
-      ? content.saveError
-      : ''
+  const buttonLabel = pending ? 'Đang lưu...' : isSaved ? 'Đã lưu tin' : 'Lưu tin'
   const stateClass = [
     isSaved ? 'save-job-bookmark-saved is-saved' : 'save-job-bookmark-idle',
     pending ? 'save-job-bookmark-loading' : '',
@@ -108,18 +85,16 @@ export function SaveJobButton({ content, jobId }: SaveJobButtonProps) {
         className={`save-job-bookmark job-detail-save-cta ${stateClass}`}
         disabled={pending || notPublic}
         onClick={() => void toggle()}
-        title={errorCode ? common.savedJobs.saveError : buttonLabel}
+        title={buttonLabel}
         type="button"
       >
         <span className="save-job-bookmark__icon">
-          <BookmarkIcon filled={isSaved} />
+          <Heart size={16} fill={isSaved ? 'currentColor' : 'none'} />
         </span>
         <span>{buttonLabel}</span>
         {pending ? <LoadingIcon /> : null}
         {errorCode ? <span aria-hidden="true" className="save-job-bookmark__error-mark">!</span> : null}
       </button>
-
-      <p aria-live="assertive" className="job-detail-save-hint">{errorMessage}</p>
     </div>
   )
 }

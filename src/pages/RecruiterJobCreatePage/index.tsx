@@ -404,16 +404,12 @@ export function RecruiterJobCreatePage() {
 
   return (
     <div className="recruiter-job-create-page">
-      <section className="job-post-page-header">
-        <div>
-          <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
-          <h1>{isEditMode ? content.hero.editTitle : content.hero.title}</h1>
-          <p>{isEditMode ? content.hero.editDescription : content.hero.description}</p>
-        </div>
-        <Link className="job-post-link-button" to={isEditMode && editJobId ? `/recruiter/jobs/${editJobId}` : '/recruiter'}>
+      <div className="job-post-page-actions">
+        <p className="recruiter-page-subtitle">{isEditMode ? content.hero.editDescription : content.hero.description}</p>
+        <Link className="job-post-link-button" to={isEditMode && editJobId ? `/recruiter/jobs/${editJobId}` : '/recruiter/jobs'}>
           {isEditMode ? content.hero.backToDetail : content.hero.backAction}
         </Link>
-      </section>
+      </div>
 
       <JobPostCompanyGate isLoading={isLoading} status={companyStatus} translations={content.gate}>
         <div className="job-post-workspace">

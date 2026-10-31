@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { Search } from 'lucide-react'
 import { useLocale, useTranslations } from '../../i18n'
 import type { RecruiterCandidatesTranslations } from '../../i18n/types'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
@@ -147,16 +148,22 @@ function CandidateFilters({
     <section className="recruiter-candidates-filters" aria-label={translations.searchLabel}>
       <label className="recruiter-candidates-search">
         <span className="sr-only">{translations.searchLabel}</span>
-        <input
-          onChange={(event) => onCriteriaChange({ ...criteria, query: event.target.value })}
-          placeholder={translations.searchPlaceholder}
-          type="search"
-          value={criteria.query}
-        />
+        <div className="admin-moderation-search-control">
+          <span aria-hidden="true" className="admin-filter__icon">
+            <Search size={16} />
+          </span>
+          <input
+            onChange={(event) => onCriteriaChange({ ...criteria, query: event.target.value })}
+            placeholder={translations.searchPlaceholder}
+            type="search"
+            value={criteria.query}
+          />
+        </div>
       </label>
       <SelectField
         className="recruiter-candidates-select"
         label={translations.statusLabel}
+        menuClassName="admin-filter-menu"
         onChange={(value) => onCriteriaChange({ ...criteria, status: value as ApplicationStatus | 'all' })}
         options={[
           { label: translations.allStatuses, value: 'all' },
@@ -167,6 +174,7 @@ function CandidateFilters({
       <SelectField
         className="recruiter-candidates-select"
         label={translations.sortLabel}
+        menuClassName="admin-filter-menu"
         onChange={(value) => onCriteriaChange({ ...criteria, sort: value as CandidateSort })}
         options={[
           { label: translations.sortOptions.lastAppliedAt, value: 'lastAppliedAt' },
@@ -425,12 +433,7 @@ export function RecruiterCandidatesPage() {
 
   return (
     <div className="recruiter-candidates-page">
-      <section className="recruiter-candidates-hero">
-        <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
-        <h1>{content.hero.title}</h1>
-        <p>{content.hero.description}</p>
-      </section>
-      <section className="recruiter-candidates-stats">
+      <section className="admin-users-stats recruiter-candidates-stats">
         <AdminStatCard icon={<CandidateIcon />} label={content.stats.candidates} tone="blue" value={meta.total} />
         <AdminStatCard icon={<CandidateIcon />} label={content.stats.applications} tone="coral" value={stats.applications} />
         <AdminStatCard icon={<CandidateIcon />} label={content.stats.strongMatches} tone="violet" value={stats.strongMatches} />
