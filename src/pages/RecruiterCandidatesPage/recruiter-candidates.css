@@ -21,7 +21,7 @@
 .recruiter-candidates-hero h1 {
   color: var(--color-text-primary);
   font-size: clamp(1.45rem, 2vw, 2.1rem);
-  font-weight: 800;
+  font-weight: 950;
   line-height: 1.15;
   margin: 0.15rem 0 0.4rem;
 }
@@ -35,7 +35,7 @@
 .recruiter-candidates-stats {
   display: grid;
   gap: 0.85rem;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .recruiter-candidates-filters {
@@ -71,7 +71,7 @@
 .recruiter-candidates-results>header {
   color: var(--color-text-muted);
   font-size: 0.86rem;
-  font-weight: 700;
+  font-weight: 850;
 }
 
 .recruiter-candidates-table,
@@ -88,7 +88,6 @@
     minmax(17rem, 1.35fr)
     minmax(14rem, 1fr)
     minmax(8rem, 0.55fr)
-    minmax(8rem, 0.75fr)
     minmax(8rem, 0.65fr)
     minmax(8rem, 0.7fr);
 }
@@ -204,7 +203,7 @@
   border-radius: 999px;
   color: var(--color-text-secondary);
   font-size: 0.76rem;
-  font-weight: 700;
+  font-weight: 850;
   padding: 0.35rem 0.55rem;
 }
 
@@ -230,7 +229,7 @@
   border-radius: 999px;
   display: inline-flex;
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 950;
   gap: 0.35rem;
   justify-self: start;
   min-height: 1.75rem;
@@ -271,7 +270,7 @@
 .recruiter-candidate-card__date {
   color: var(--color-text-primary);
   font-size: 0.84rem;
-  font-weight: 700;
+  font-weight: 850;
 }
 
 .recruiter-candidate-card footer {
@@ -302,7 +301,7 @@
 .recruiter-candidate-card footer button small {
   color: var(--color-brand-solid);
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 850;
 }
 
 .recruiter-candidate-card footer button:hover {
@@ -407,7 +406,7 @@
 .recruiter-candidate-drawer__summary dd {
   color: var(--color-text-primary);
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 950;
   margin: 0.25rem 0 0;
 }
 
@@ -437,7 +436,7 @@
 
 .recruiter-candidate-drawer__facts dd {
   color: var(--color-text-primary);
-  font-weight: 700;
+  font-weight: 850;
   margin: 0.1rem 0 0;
   overflow-wrap: anywhere;
 }
@@ -455,7 +454,7 @@
   color: inherit;
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   padding: 0.75rem;
   text-decoration: none;
 }
@@ -473,42 +472,6 @@
 .recruiter-candidate-history b {
   color: var(--color-brand-solid);
   font-size: 0.86rem;
-}
-
-.recruiter-application-status {
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  display: inline-flex;
-  font-size: 0.76rem;
-  font-weight: 800;
-  min-height: 1.75rem;
-  padding: 0.24rem 0.62rem;
-  white-space: nowrap;
-}
-
-.recruiter-application-status--SUBMITTED {
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.28);
-  color: #3b82f6;
-}
-
-.recruiter-application-status--OFFERED {
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.28);
-  color: #10b981;
-}
-
-.recruiter-application-status--REJECTED {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.28);
-  color: #ef4444;
-}
-
-.recruiter-application-status--CANCELLED {
-  background: rgba(148, 163, 184, 0.12);
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  color: #94a3b8;
 }
 
 @media (max-width: 1100px) {

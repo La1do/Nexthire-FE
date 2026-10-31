@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "node --test tests/ai1/ai1-ui.test.mjs tests/matching-runtime/baseline-005-dev.test.mjs",
+    "test:ai1-ui": "node --test tests/ai1/ai1-ui.test.mjs",
+    "test:matching-runtime": "node --test tests/matching-runtime/baseline-005-dev.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

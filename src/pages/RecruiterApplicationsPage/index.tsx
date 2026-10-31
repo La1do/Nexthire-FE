@@ -5,6 +5,9 @@ import { useLocale, useTranslations } from '../../i18n'
 import { getApiErrorEnvelope } from '../../lib/api/apiError'
 import { applicationService } from '../../services/application.service'
 import { jobService } from '../../services/job.service'
+import { InvalidMatchingStatusError, validateMatchingIdentity } from '../../types/matching-status.types'
+import { pollMatchingStatus, validateMatchRequest } from './utils/pollMatchingStatus'
+import { matchingCopy, type MatchingMessage } from './matchingCopy'
 import type { ApplicationResponse } from '../../types/application.types'
 import type { ApiMeta } from '../../types/job.types'
 import { Button } from '../_components'
@@ -28,7 +31,6 @@ import {
 } from './utils/recruiterApplicationsFilters'
 
 const PAGE_SIZE = 6
-const MATCH_POLL_INTERVAL_MS = 4_000
 const MATCH_POLL_TIMEOUT_MS = 90_000
 const emptyApplicationMeta: ApiMeta = { limit: PAGE_SIZE, page: 1, total: 0, totalPages: 1 }
 const emptyApplicationStats: RecruiterApplicationStats = {
@@ -41,13 +43,12 @@ const emptyApplicationStats: RecruiterApplicationStats = {
 type RecruiterDecisionStatus = Extract<RecruiterApplicationStatus, 'OFFERED' | 'REJECTED'>
 
 function readApplicationCriteria(searchParams: URLSearchParams): RecruiterApplicationCriteria {
-  const sort = searchParams.get('sort')
   const status = searchParams.get('status')
 
   return {
     jobId: searchParams.get('jobId')?.trim() || 'all',
     query: searchParams.get('search') ?? '',
-    sort: sort === 'score-desc' || sort === 'score-asc' ? sort : 'newest',
+    sort: 'newest',
     status: status === 'SUBMITTED' ||
       status === 'OFFERED' ||
       status === 'REJECTED' ||
@@ -57,15 +58,7 @@ function readApplicationCriteria(searchParams: URLSearchParams): RecruiterApplic
   }
 }
 
-function getApplicationQueryParams(criteria: RecruiterApplicationCriteria) {
-  if (criteria.sort === 'score-desc') {
-    return { sortBy: 'matchScore' as const, sortOrder: 'desc' as const }
-  }
-
-  if (criteria.sort === 'score-asc') {
-    return { sortBy: 'matchScore' as const, sortOrder: 'asc' as const }
-  }
-
+function getApplicationQueryParams() {
   return { sortBy: 'submittedAt' as const, sortOrder: 'desc' as const }
 }
 
@@ -130,10 +123,6 @@ function RateIcon() {
   )
 }
 
-function isApplicationPolling(application: RecruiterApplicationItem, matchingIds: ReadonlySet<string>) {
-  return matchingIds.has(application.id) && application.cvParseStatus !== 'FAILED' && application.matchScore === null
-}
-
 export function RecruiterApplicationsPage() {
   const { locale } = useLocale()
   const { pages } = useTranslations()
@@ -149,10 +138,26 @@ export function RecruiterApplicationsPage() {
   const [loadError, setLoadError] = useState<string | undefined>(undefined)
   const [matchingApplicationIds, setMatchingApplicationIds] = useState<ReadonlySet<string>>(new Set())
   const [statusUpdatingIds, setStatusUpdatingIds] = useState<ReadonlySet<string>>(new Set())
-  const [isPollingPaused, setPollingPaused] = useState(false)
   const [page, setPage] = useState(1)
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null)
-  const pollingStartedAtRef = useRef<number | null>(null)
+  const matchingSessions = useRef(new Map<string, AbortController>())
+  const [matchMessages, setMatchMessages] = useState<Record<string, MatchingMessage>>({})
+
+  useEffect(() => {
+    const sessions = matchingSessions.current
+    return () => {
+      for (const session of sessions.values()) session.abort()
+      sessions.clear()
+    }
+  }, [])
+
+  function matchingMessageFor(id: string) {
+    const key = matchMessages[id]
+    if (!key) return undefined
+    return key === 'started' || key === 'timeout' || key === 'processingAction'
+      ? content.match[key]
+      : matchingCopy[locale][key]
+  }
 
   const dateFormatter = useMemo(
     () =>
@@ -192,20 +197,6 @@ export function RecruiterApplicationsPage() {
       return [application, ...currentApplications]
     })
 
-    setMatchingApplicationIds((currentIds) => {
-      if (!currentIds.has(application.id)) {
-        return currentIds
-      }
-
-      if (application.cvParseStatus === 'FAILED' || application.matchScore !== null) {
-        const nextIds = new Set(currentIds)
-        nextIds.delete(application.id)
-        return nextIds
-      }
-
-      return currentIds
-    })
-
     return application
   }, [])
 
@@ -218,7 +209,7 @@ export function RecruiterApplicationsPage() {
 
       try {
         const response = await applicationService.getRecruiterApplications({
-          ...getApplicationQueryParams(criteria),
+          ...getApplicationQueryParams(),
           jobId: criteria.jobId === 'all' ? undefined : criteria.jobId,
           limit: PAGE_SIZE,
           page,
@@ -229,19 +220,6 @@ export function RecruiterApplicationsPage() {
 
         setApplications(nextApplications)
         setApplicationMeta(response.meta)
-        setMatchingApplicationIds((currentIds) => {
-          const nextIds = new Set<string>()
-
-          for (const id of currentIds) {
-            const application = nextApplications.find((item) => item.id === id)
-
-            if (application && application.cvParseStatus !== 'FAILED' && application.matchScore === null) {
-              nextIds.add(id)
-            }
-          }
-
-          return nextIds
-        })
       } catch (error) {
         const errorMessage = getApiErrorEnvelope(error)?.error.message ?? content.states.errorDescription
 
@@ -317,10 +295,6 @@ export function RecruiterApplicationsPage() {
     () => applications.find((application) => application.id === selectedApplicationId) ?? null,
     [applications, selectedApplicationId],
   )
-  const hasPollingApplications = useMemo(
-    () => applications.some((application) => isApplicationPolling(application, matchingApplicationIds)),
-    [applications, matchingApplicationIds],
-  )
 
   useEffect(() => {
     void loadApplications()
@@ -389,42 +363,6 @@ export function RecruiterApplicationsPage() {
   useEffect(() => {
     setPage((currentPage) => Math.min(currentPage, totalPages))
   }, [totalPages])
-
-  useEffect(() => {
-    if (!hasPollingApplications || isPollingPaused) {
-      pollingStartedAtRef.current = null
-      return undefined
-    }
-
-    pollingStartedAtRef.current ??= Date.now()
-
-    const interval = window.setInterval(() => {
-      const startedAt = pollingStartedAtRef.current ?? Date.now()
-
-      if (Date.now() - startedAt > MATCH_POLL_TIMEOUT_MS) {
-        setPollingPaused(true)
-        setMatchingApplicationIds(new Set())
-        toast.warning(content.match.timeout)
-        return
-      }
-
-      void loadApplications({ silent: true })
-
-      if (selectedApplicationId) {
-        void refreshApplicationDetail(selectedApplicationId, { silent: true })
-      }
-    }, MATCH_POLL_INTERVAL_MS)
-
-    return () => window.clearInterval(interval)
-  }, [
-    content.match.timeout,
-    hasPollingApplications,
-    isPollingPaused,
-    loadApplications,
-    refreshApplicationDetail,
-    selectedApplicationId,
-    toast,
-  ])
 
   const pagedApplications = applications
   const hasActiveFilters = isActiveRecruiterApplicationFilters(criteria)
@@ -512,20 +450,75 @@ export function RecruiterApplicationsPage() {
   }
 
   async function handleRunMatch(application: RecruiterApplicationItem) {
-    setPollingPaused(false)
-    setMatchingApplicationIds((currentIds) => new Set(currentIds).add(application.id))
-
+    if (matchingSessions.current.has(application.id)) return
+    const session = new AbortController()
+    matchingSessions.current.set(application.id, session)
+    const timer = window.setTimeout(
+      () => session.abort(new DOMException('Matching deadline', 'TimeoutError')),
+      MATCH_POLL_TIMEOUT_MS,
+    )
+    const publish = (message: MatchingMessage) => {
+      if (!session.signal.aborted) {
+        setMatchMessages((current) => ({ ...current, [application.id]: message }))
+      }
+    }
+    setMatchMessages((current) => ({ ...current, [application.id]: 'processingAction' }))
+    setMatchingApplicationIds((current) => new Set(current).add(application.id))
     try {
-      await applicationService.runRecruiterApplicationMatch(application.id)
-      toast.success(content.match.started)
-      await refreshApplicationDetail(application.id, { silent: true })
-    } catch (error) {
-      setMatchingApplicationIds((currentIds) => {
-        const nextIds = new Set(currentIds)
-        nextIds.delete(application.id)
-        return nextIds
+      const current = await applicationService.getRecruiterApplication(application.id, session.signal)
+      session.signal.throwIfAborted()
+      if (current.id !== application.id || current.jobId !== application.jobId) {
+        throw new InvalidMatchingStatusError('Application changed')
+      }
+      const identity = {
+        applicationId: current.id,
+        jobId: current.jobId,
+        candidateId: current.candidateId,
+        candidateCvId: current.candidateCvId,
+      }
+      const request = validateMatchRequest(
+        await applicationService.runRecruiterApplicationMatch(application.id, session.signal),
+        application.id,
+      )
+      session.signal.throwIfAborted()
+      publish(request.id === null ? 'waitingCv' : 'started')
+      let latestApplication = current
+      const outcome = await pollMatchingStatus({
+        identity,
+        requestId: request.id,
+        signal: session.signal,
+        readApplication: async (signal) => {
+          const updated = await applicationService.getRecruiterApplication(application.id, signal)
+          validateMatchingIdentity({ ...updated, applicationId: updated.id }, identity)
+          latestApplication = updated
+          return updated
+        },
+        readStatus: (signal) => applicationService.getRecruiterApplicationMatchingStatus(application.id, signal),
       })
-      toast.error(getApiErrorEnvelope(error)?.error.message ?? content.match.error)
+      session.signal.throwIfAborted()
+      publish(outcome)
+      upsertMappedApplication(mapApplication(latestApplication))
+    } catch (error) {
+      if (session.signal.aborted && session.signal.reason?.name !== 'TimeoutError') return
+      const status = (error as { response?: { status?: number } } | null)?.response?.status
+      const message: MatchingMessage = session.signal.aborted
+        ? 'timeout'
+        : error instanceof InvalidMatchingStatusError
+          ? 'invalid'
+          : status === 401 || status === 403 || status === 404
+            ? 'denied'
+            : 'network'
+      setMatchMessages((current) => ({ ...current, [application.id]: message }))
+    } finally {
+      window.clearTimeout(timer)
+      if (matchingSessions.current.get(application.id) === session) {
+        matchingSessions.current.delete(application.id)
+        setMatchingApplicationIds((current) => {
+          const next = new Set(current)
+          next.delete(application.id)
+          return next
+        })
+      }
     }
   }
 
@@ -670,6 +663,7 @@ export function RecruiterApplicationsPage() {
           hasPrevious={hasPrevious}
           isMatching={matchingApplicationIds.has(selectedApplication.id)}
           isStatusUpdating={statusUpdatingIds.has(selectedApplication.id)}
+          matchingMessage={matchingMessageFor(selectedApplication.id)}
           matchLabels={content.match}
           meta={content.meta}
           onClose={closeApplicationDetail}

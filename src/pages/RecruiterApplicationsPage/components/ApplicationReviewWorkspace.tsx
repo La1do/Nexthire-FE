@@ -22,6 +22,7 @@ import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { applicationService } from '../../../services/application.service'
 import { jobService } from '../../../services/job.service'
 import type { ApplicationCvDownloadResponse } from '../../../types/application.types'
+import { parseHrReviewEnvelope, type HrReview } from '../../../types/hr-review.types'
 import type {
   JobExperienceLevel,
   JobType,
@@ -33,6 +34,7 @@ import type { RecruiterApplicationItem } from '../types'
 export type ApplicationReviewWorkspaceProps = {
   application: RecruiterApplicationItem
   className?: string
+  hrReview?: HrReview | null
   initialTab?: 'cv' | 'criteria'
   job?: RecruiterJobResponse | null
   onOpenResumeExternal?: () => void
@@ -107,9 +109,146 @@ function parseRequirements(requirementsText?: string | null): string[] {
     .filter((line) => line.length > 0)
 }
 
+function isShortSkillQuery(text: string): boolean {
+  const trimmed = text.trim()
+  if (!trimmed) return false
+  const words = trimmed.split(/\s+/)
+  return words.length <= 4 && trimmed.length <= 40 && !/[.;\n]/.test(trimmed)
+}
+
+function passageRelatesToSkill(passageText: string, reqText: string): boolean {
+  const normPassage = passageText.toLowerCase()
+  const normReq = reqText.trim().toLowerCase()
+  if (normPassage.includes(normReq)) return true
+  const strip = (s: string) => s.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim()
+  const cleanPassage = strip(normPassage)
+  const cleanReq = strip(normReq)
+  if (cleanPassage.includes(cleanReq)) return true
+  const reqWords = cleanReq.split(' ').filter((w) => w.length > 2)
+  if (reqWords.length > 0 && reqWords.some((w) => cleanPassage.includes(w))) {
+    return true
+  }
+  return false
+}
+
+export function checkAi1SkillMatch(
+  skillName: string,
+  hrReview: HrReview | null | undefined,
+): { isMatched: boolean; score?: number } {
+  if (!hrReview?.requirements || hrReview.requirements.length === 0) {
+    return { isMatched: false }
+  }
+
+  const sLower = skillName.trim().toLowerCase()
+  const sClean = sLower.replace(/[^a-z0-9+#]/g, '')
+  if (!sClean) return { isMatched: false }
+
+  let bestScore = 0
+  let matched = false
+
+  for (const req of hrReview.requirements) {
+    const reqTextLower = req.text.trim().toLowerCase()
+    const reqTextClean = reqTextLower.replace(/[^a-z0-9+#]/g, '')
+
+    const isReqForSkill =
+      reqTextLower === sLower ||
+      reqTextClean === sClean ||
+      (req.requirementId.startsWith('skills/') && (reqTextLower.includes(sLower) || sLower.includes(reqTextLower))) ||
+      (isShortSkillQuery(req.text) && (reqTextLower.includes(sLower) || sLower.includes(reqTextLower)))
+
+    if (req.evidence) {
+      for (const ev of req.evidence) {
+        const evTextLower = ev.text.trim().toLowerCase()
+        const evTextClean = evTextLower.replace(/[^a-z0-9+#]/g, '')
+        const isExact = evTextLower === sLower || evTextClean === sClean
+
+        if (isReqForSkill) {
+          if (isExact || (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName))) {
+            matched = true
+            bestScore = Math.max(bestScore, ev.similarityScore)
+          }
+        } else {
+          if (isExact) {
+            matched = true
+            bestScore = Math.max(bestScore, ev.similarityScore)
+          } else if (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName)) {
+            matched = true
+            bestScore = Math.max(bestScore, ev.similarityScore)
+          }
+        }
+      }
+    }
+
+    if (req.components) {
+      for (const comp of req.components) {
+        const compTextLower = comp.text.trim().toLowerCase()
+        const compTextClean = compTextLower.replace(/[^a-z0-9+#]/g, '')
+        const isCompForSkill =
+          compTextLower === sLower ||
+          compTextClean === sClean ||
+          (isShortSkillQuery(comp.text) && (compTextLower.includes(sLower) || sLower.includes(compTextLower)))
+
+        if (comp.evidence) {
+          for (const ev of comp.evidence) {
+            const evTextLower = ev.text.trim().toLowerCase()
+            const evTextClean = evTextLower.replace(/[^a-z0-9+#]/g, '')
+            const isExact = evTextLower === sLower || evTextClean === sClean
+
+            if (isCompForSkill || isReqForSkill) {
+              if (isExact || (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName))) {
+                matched = true
+                bestScore = Math.max(bestScore, ev.similarityScore)
+              }
+            } else if (isExact || (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName))) {
+              matched = true
+              bestScore = Math.max(bestScore, ev.similarityScore)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Also check all candidate parsed CV skills across all evidence
+  for (const req of hrReview.requirements) {
+    const allEvidence = [
+      ...(req.evidence || []),
+      ...(req.components?.flatMap((c) => c.evidence || []) || []),
+    ]
+    for (const ev of allEvidence) {
+      const isSkillSource =
+        ev.source.toLowerCase() === 'skill' ||
+        ev.source.toLowerCase() === 'skills' ||
+        ev.evidenceId.startsWith('skills/') ||
+        ev.evidenceId.startsWith('skill')
+
+      if (isSkillSource && ev.text) {
+        const evSkillLower = ev.text.trim().toLowerCase()
+        const evSkillClean = evSkillLower.replace(/[^a-z0-9+#]/g, '')
+
+        if (
+          evSkillLower === sLower ||
+          evSkillClean === sClean ||
+          evSkillLower.includes(sLower) ||
+          sLower.includes(evSkillLower)
+        ) {
+          matched = true
+          bestScore = Math.max(bestScore, ev.similarityScore || 100)
+        }
+      }
+    }
+  }
+
+  return {
+    isMatched: matched,
+    score: matched ? (bestScore > 0 ? bestScore : 100) : undefined,
+  }
+}
+
 export function ApplicationReviewWorkspace({
   application,
   className = '',
+  hrReview: propHrReview,
   initialTab = 'cv',
   job: initialJob = null,
   onOpenResumeExternal,
@@ -127,6 +266,40 @@ export function ApplicationReviewWorkspace({
   const [jobData, setJobData] = useState<RecruiterJobResponse | null>(initialJob)
   const [isJobLoading, setIsJobLoading] = useState<boolean>(!initialJob && Boolean(application.jobId))
   const [jobError, setJobError] = useState<string | null>(null)
+
+  // Fallback to fetch hrReview if not passed down as prop
+  const [internalHrReview, setInternalHrReview] = useState<HrReview | null>(null)
+
+  useEffect(() => {
+    if (propHrReview !== undefined) {
+      return
+    }
+
+    let active = true
+    const controller = new AbortController()
+
+    applicationService
+      .getRecruiterApplicationHrReview(application.id, controller.signal)
+      .then((payload) => {
+        if (!active) return
+        try {
+          const parsed = parseHrReviewEnvelope(payload, application.id, application.jobId)
+          setInternalHrReview(parsed)
+        } catch {
+          setInternalHrReview(null)
+        }
+      })
+      .catch(() => {
+        if (active) setInternalHrReview(null)
+      })
+
+    return () => {
+      active = false
+      controller.abort()
+    }
+  }, [application.id, application.jobId, propHrReview])
+
+  const effectiveHrReview = propHrReview !== undefined ? propHrReview : internalHrReview
 
   // Fetch CV data when application changes
   const fetchCv = useCallback(async (appId: string) => {
@@ -213,7 +386,13 @@ export function ApplicationReviewWorkspace({
       return {
         matchedCount: 0,
         totalRequired: 0,
-        skillsWithMatchStatus: [] as Array<{ name: string; isMatched: boolean }>,
+        skillsWithMatchStatus: [] as Array<{
+          name: string
+          isMatched: boolean
+          statusLabel: string
+          score?: number
+          isAiMatched?: boolean
+        }>,
       }
     }
 
@@ -226,14 +405,30 @@ export function ApplicationReviewWorkspace({
 
     const skillsWithMatchStatus = jobData.skills.map((skill) => {
       const skillLower = skill.trim().toLowerCase()
-      const isMatched =
+      const aiMatch = checkAi1SkillMatch(skill, effectiveHrReview)
+
+      const isProfileMatched =
         candidateSkillsLower.has(skillLower) ||
         matchSkillsLower.has(skillLower) ||
-        application.skills.some((s) => s.toLowerCase().includes(skillLower) || skillLower.includes(s.toLowerCase()))
+        application.skills.some((s) => {
+          const sLow = s.toLowerCase()
+          return sLow.includes(skillLower) || skillLower.includes(sLow)
+        })
+
+      const isMatched = aiMatch.isMatched || isProfileMatched
+      let statusLabel = 'Chưa thấy'
+      if (aiMatch.isMatched) {
+        statusLabel = 'Đã tìm thấy trên CV'
+      } else if (isProfileMatched) {
+        statusLabel = 'Khớp hồ sơ'
+      }
 
       return {
         name: skill,
         isMatched,
+        statusLabel,
+        score: aiMatch.score,
+        isAiMatched: aiMatch.isMatched,
       }
     })
 
@@ -244,7 +439,7 @@ export function ApplicationReviewWorkspace({
       totalRequired: jobData.skills.length,
       skillsWithMatchStatus,
     }
-  }, [jobData?.skills, application.skills, application.matchMatchedSkills])
+  }, [jobData?.skills, application.skills, application.matchMatchedSkills, effectiveHrReview])
 
   return (
     <div className={`recruiter-review-workspace ${className}`}>
@@ -622,7 +817,7 @@ export function ApplicationReviewWorkspace({
                     <CheckCircle2 className="recruiter-criteria-card__icon recruiter-criteria-card__icon--success" size={18} />
                     <div>
                       <h4>Kỹ năng mong muốn ({skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired} khớp)</h4>
-                      <p>Danh sách kỹ năng cần đối chiếu trực tiếp trên CV</p>
+                      <p>Danh sách kỹ năng đối chiếu từ CV ứng viên và đánh giá AI1</p>
                     </div>
                   </div>
 
@@ -634,6 +829,7 @@ export function ApplicationReviewWorkspace({
                             skill.isMatched ? 'is-matched' : 'is-unmatched'
                           }`}
                           key={skill.name}
+                          title={skill.score ? `Độ khớp AI1: ${Math.round(skill.score)}%` : undefined}
                         >
                           {skill.isMatched ? (
                             <CheckCircle2 className="recruiter-criteria-skill-pill__icon" size={14} />
@@ -642,7 +838,7 @@ export function ApplicationReviewWorkspace({
                           )}
                           <span className="recruiter-criteria-skill-pill__name">{skill.name}</span>
                           <span className="recruiter-criteria-skill-pill__status">
-                            {skill.isMatched ? 'Khớp hồ sơ' : 'Chưa thấy'}
+                            {skill.statusLabel}
                           </span>
                         </div>
                       ))}

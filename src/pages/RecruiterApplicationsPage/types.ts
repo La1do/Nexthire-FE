@@ -9,7 +9,7 @@ import type {
 
 export type RecruiterApplicationStatus = ApplicationStatus
 
-export type RecruiterApplicationSort = 'newest' | 'score-desc' | 'score-asc'
+export type RecruiterApplicationSort = 'newest'
 
 export type RecruiterApplicationTimelineItem = {
   id: string

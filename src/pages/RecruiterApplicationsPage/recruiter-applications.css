@@ -2004,6 +2004,12 @@
   padding: 0.1rem 0.4rem;
 }
 
+.recruiter-criteria-skill-pill.is-matched .recruiter-criteria-skill-pill__status {
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
+  font-weight: 700;
+}
+
 /* Requirements Callout Box */
 .recruiter-criteria-requirements-list {
   background: var(--color-surface-subtle);

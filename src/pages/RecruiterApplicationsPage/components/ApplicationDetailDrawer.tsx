@@ -1,3 +1,4 @@
+import './application-detail-drawer.css'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ChevronLeft,
@@ -10,9 +11,11 @@ import {
   X,
 } from 'lucide-react'
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
+import type { HrReview } from '../../../types/hr-review.types'
 import type { RecruiterApplicationItem } from '../types'
 import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecisionValidation'
 import { AiMatchBadge } from './AiMatchBadge'
+import { Ai1EvidencePanel } from './ai1/Ai1EvidencePanel'
 import { ApplicationDecisionForm, type ApplicationDecisionFormHandle } from './ApplicationDecisionForm'
 import { ApplicationKeyboardShortcutsModal } from './ApplicationKeyboardShortcutsModal'
 import { ApplicationReviewWorkspace } from './ApplicationReviewWorkspace'
@@ -25,6 +28,7 @@ type ApplicationDetailDrawerProps = {
   hasPrevious?: boolean
   isMatching: boolean
   isStatusUpdating: boolean
+  matchingMessage?: string
   matchLabels: RecruiterApplicationsTranslations['match']
   meta: RecruiterApplicationsTranslations['meta']
   onClose: () => void
@@ -84,34 +88,7 @@ function getMatchActionLabel(
     return labels.retryAction
   }
 
-  if (application.matchScore !== null) {
-    return labels.refreshAction
-  }
-
   return labels.runAction
-}
-
-function isLongMatchItem(item: string) {
-  return item.length > 42 || item.includes(' ~ ') || item.includes('. ')
-}
-
-function renderStringList(title: string, items: ReadonlyArray<string>, emptyLabel: string, className?: string) {
-  return (
-    <div className={className}>
-      <h4>{title}</h4>
-      {items.length > 0 ? (
-        <ul>
-          {items.map((item) => (
-            <li className={isLongMatchItem(item) ? 'is-long' : undefined} key={item}>
-              {item}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="recruiter-ai-match-empty">{emptyLabel}</p>
-      )}
-    </div>
-  )
 }
 
 export function ApplicationDetailDrawer({
@@ -122,6 +99,7 @@ export function ApplicationDetailDrawer({
   hasPrevious,
   isMatching,
   isStatusUpdating,
+  matchingMessage,
   matchLabels,
   meta,
   onClose,
@@ -140,9 +118,44 @@ export function ApplicationDetailDrawer({
   const [isExpanded, setIsExpanded] = useState(true)
   const [mobileActiveTab, setMobileActiveTab] = useState<'evaluation' | 'workspace'>('evaluation')
   const [showShortcuts, setShowShortcuts] = useState(false)
+  const [hrReview, setHrReview] = useState<HrReview | null>(null)
   const drawerRef = useRef<HTMLElement | null>(null)
   const decisionFormRef = useRef<ApplicationDecisionFormHandle | null>(null)
   const isMatchActionDisabled = isMatching
+
+  useEffect(() => {
+    setHrReview(null)
+  }, [application.id])
+
+  const candidateCvSkills = useMemo(() => {
+    if (!hrReview?.requirements) return []
+    const set = new Set<string>()
+    for (const req of hrReview.requirements) {
+      for (const ev of req.evidence || []) {
+        const isSkillSrc =
+          ev.source.toLowerCase() === 'skill' ||
+          ev.source.toLowerCase() === 'skills' ||
+          ev.evidenceId.startsWith('skills/') ||
+          ev.evidenceId.startsWith('skill')
+        if (isSkillSrc && ev.text?.trim()) {
+          set.add(ev.text.trim())
+        }
+      }
+      for (const comp of req.components || []) {
+        for (const ev of comp.evidence || []) {
+          const isSkillSrc =
+            ev.source.toLowerCase() === 'skill' ||
+            ev.source.toLowerCase() === 'skills' ||
+            ev.evidenceId.startsWith('skills/') ||
+            ev.evidenceId.startsWith('skill')
+          if (isSkillSrc && ev.text?.trim()) {
+            set.add(ev.text.trim())
+          }
+        }
+      }
+    }
+    return Array.from(set)
+  }, [hrReview])
 
   const derivedIndex = useMemo(() => {
     if (currentIndex !== undefined) return currentIndex
@@ -280,7 +293,7 @@ export function ApplicationDetailDrawer({
       <aside
         aria-label={`${translations.title}: ${application.candidateName}`}
         aria-modal="true"
-        className={`recruiter-application-detail-drawer ${
+        className={`recruiter-application-detail-drawer recruiter-application-detail-drawer--hr-review ${
           isExpanded ? 'is-expanded recruiter-application-detail-drawer--split' : ''
         }`}
         role="dialog"
@@ -401,6 +414,7 @@ export function ApplicationDetailDrawer({
             >
               <ApplicationReviewWorkspace
                 application={application}
+                hrReview={hrReview}
                 onOpenResumeExternal={() => onOpenResume(application)}
               />
             </div>
@@ -473,10 +487,6 @@ export function ApplicationDetailDrawer({
                   <dd>{application.updatedAt}</dd>
                 </div>
                 <div>
-                  <dt>{translations.scoreLabel}</dt>
-                  <dd>{application.matchScore === null ? matchLabels.notScored : `${application.matchScore}%`}</dd>
-                </div>
-                <div>
                   <dt>{matchLabels.cvParseStatusLabel}</dt>
                   <dd>{matchLabels.cvParseStatus[application.cvParseStatus]}</dd>
                 </div>
@@ -493,7 +503,17 @@ export function ApplicationDetailDrawer({
               />
             </section>
 
+            <Ai1EvidencePanel
+              key={application.id}
+              applicationId={application.id}
+              jobId={application.jobId}
+              updatedAt={application.updatedAt}
+              isMatching={isMatching}
+              onReviewLoaded={setHrReview}
+            />
+
             <section className="recruiter-application-detail-card recruiter-ai-match-panel">
+              {matchingMessage ? <p role="status">{matchingMessage}</p> : null}
               <div className="recruiter-ai-match-panel__header">
                 <div>
                   <h3>{matchLabels.title}</h3>
@@ -502,35 +522,6 @@ export function ApplicationDetailDrawer({
                 <button disabled={isMatchActionDisabled} onClick={() => onRunMatch(application)} type="button">
                   {getMatchActionLabel(application, isMatching, matchLabels)}
                 </button>
-              </div>
-
-              <div className="recruiter-ai-match-summary">
-                <AiMatchBadge application={application} labels={matchLabels} />
-                <p>{application.matchSummary ?? matchLabels.emptySummary}</p>
-              </div>
-
-              <dl className="recruiter-ai-match-grid">
-                <div>
-                  <dt>{matchLabels.recommendationLabel}</dt>
-                  <dd>{application.matchRecommendation ? matchLabels.recommendations[application.matchRecommendation] : meta.notAvailable}</dd>
-                </div>
-                <div>
-                  <dt>{matchLabels.decisionLabel}</dt>
-                  <dd>{application.matchDecision ? matchLabels.decisions[application.matchDecision] : meta.notAvailable}</dd>
-                </div>
-                <div>
-                  <dt>{matchLabels.priorityLabel}</dt>
-                  <dd>{application.matchPriority ? matchLabels.priorities[application.matchPriority] : meta.notAvailable}</dd>
-                </div>
-              </dl>
-
-              <div className="recruiter-ai-match-lists">
-                {renderStringList(matchLabels.matchedSkills, application.matchMatchedSkills, matchLabels.emptyList)}
-                {renderStringList(matchLabels.missingSkills, application.matchMissingSkills, matchLabels.emptyList, 'recruiter-ai-match-list--missing')}
-                {renderStringList(matchLabels.nextActions, application.matchNextActions, matchLabels.emptyList)}
-                {application.matchRiskFlags.length > 0
-                  ? renderStringList(matchLabels.riskFlags, application.matchRiskFlags, matchLabels.emptyList, 'recruiter-ai-match-list--risk')
-                  : null}
               </div>
             </section>
 
@@ -569,6 +560,8 @@ export function ApplicationDetailDrawer({
               <div className="recruiter-application-skill-list">
                 {application.skills.length > 0 ? (
                   application.skills.map((skill) => <span key={skill}>{skill}</span>)
+                ) : candidateCvSkills.length > 0 ? (
+                  candidateCvSkills.map((skill) => <span key={skill}>{skill}</span>)
                 ) : (
                   <p className="recruiter-ai-match-empty">{matchLabels.emptyList}</p>
                 )}
