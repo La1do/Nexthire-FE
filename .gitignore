@@ -27,3 +27,4 @@ dist-ssr
 .agent/*
 !.agent/rule/
 .claude/
+.codegraph/

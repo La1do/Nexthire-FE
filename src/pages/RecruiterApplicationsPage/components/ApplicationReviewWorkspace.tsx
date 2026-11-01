@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import {
   AlertCircle,
   AlertTriangle,
+  ArrowLeft,
   Briefcase,
   Building2,
   Calendar,
@@ -14,15 +15,20 @@ import {
   ListChecks,
   MapPin,
   RefreshCw,
+  Search,
   Sparkles,
   UserCheck,
+  X,
   XCircle,
 } from 'lucide-react'
+import { LocaleContext } from '../../../i18n/localeContext'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { applicationService } from '../../../services/application.service'
 import { jobService } from '../../../services/job.service'
 import type { ApplicationCvDownloadResponse } from '../../../types/application.types'
 import { parseHrReviewEnvelope, type HrReview } from '../../../types/hr-review.types'
+import { Ai1EvidenceView } from './ai1/Ai1EvidenceView'
+import { ai1Copy } from './ai1/ai1Copy'
 import type {
   JobExperienceLevel,
   JobType,
@@ -180,6 +186,22 @@ export function ApplicationReviewWorkspace({
   onOpenResumeExternal,
 }: ApplicationReviewWorkspaceProps) {
   const [activeTab, setActiveTab] = useState<'cv' | 'criteria'>(initialTab)
+  const [pdfSearchQuery, setPdfSearchQuery] = useState<string | null>(null)
+  const localeContext = useContext(LocaleContext)
+  const currentLocale = localeContext?.locale ?? 'vi'
+  const copy = ai1Copy[currentLocale as keyof typeof ai1Copy] ?? ai1Copy.vi
+
+  const handleJumpToPdf = useCallback((phrase: string) => {
+    if (!phrase?.trim()) return
+    const clean = phrase
+      .trim()
+      .split(/\s+/)
+      .slice(0, 4)
+      .join(' ')
+      .replace(/[.,;:!?()"']/g, '')
+    setPdfSearchQuery(clean)
+    setActiveTab('cv')
+  }, [])
 
   // CV Preview State
   const [cvData, setCvData] = useState<ApplicationCvDownloadResponse | null>(null)
@@ -295,11 +317,15 @@ export function ApplicationReviewWorkspace({
       cvData.fileName?.toLowerCase().endsWith('.pdf') ||
       cvData.url.toLowerCase().includes('.pdf')
 
-    if (isPdf && !cvData.url.includes('#')) {
-      return `${cvData.url}#toolbar=1&navpanes=0&view=FitH`
+    if (isPdf) {
+      const baseUrl = cvData.url.split('#')[0]
+      if (pdfSearchQuery) {
+        return `${baseUrl}#search="${encodeURIComponent(pdfSearchQuery)}"`
+      }
+      return `${baseUrl}#toolbar=1&navpanes=0&view=FitH`
     }
     return cvData.url
-  }, [cvData])
+  }, [cvData, pdfSearchQuery])
 
   // Parse job requirements into list items
   const parsedRequirements = useMemo(() => {
@@ -367,6 +393,18 @@ export function ApplicationReviewWorkspace({
     }
   }, [jobData?.skills, application.skills, application.matchMatchedSkills, effectiveHrReview])
 
+  const matchPercentage = useMemo(() => {
+    if (!skillMatchAnalysis.totalRequired || skillMatchAnalysis.totalRequired === 0) return null
+    return Math.round((skillMatchAnalysis.matchedCount / skillMatchAnalysis.totalRequired) * 100)
+  }, [skillMatchAnalysis.matchedCount, skillMatchAnalysis.totalRequired])
+
+  const matchAssessment = useMemo(() => {
+    if (matchPercentage === null) return null
+    if (matchPercentage >= 80) return { label: 'Rất phù hợp', tone: 'high' }
+    if (matchPercentage >= 60) return { label: 'Khá phù hợp', tone: 'medium' }
+    return { label: 'Cần xem xét kỹ', tone: 'low' }
+  }, [matchPercentage])
+
   return (
     <div className={`recruiter-review-workspace ${className}`}>
       {/* Top Navigation Tabs */}
@@ -400,7 +438,7 @@ export function ApplicationReviewWorkspace({
                   : ''
               }`}
             >
-              {skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired} Kỹ năng
+              {skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired} Khớp {matchPercentage !== null ? `(${matchPercentage}%)` : ''}
             </span>
           )}
         </button>
@@ -433,6 +471,30 @@ export function ApplicationReviewWorkspace({
                   </div>
                 </div>
               </div>
+
+              {pdfSearchQuery && (
+                <div className="recruiter-cv-workspace__search-pill">
+                  <Search size={13} className="recruiter-cv-workspace__search-pill-icon" />
+                  <span>Đang soi trên PDF: <strong>"{pdfSearchQuery}"</strong></span>
+                  <button
+                    type="button"
+                    className="recruiter-cv-workspace__search-pill-clear"
+                    onClick={() => setPdfSearchQuery(null)}
+                    title="Bỏ tìm kiếm"
+                  >
+                    <X size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    className="recruiter-cv-workspace__search-pill-back"
+                    onClick={() => setActiveTab('criteria')}
+                    title="Quay lại tab Tiêu chí"
+                  >
+                    <ArrowLeft size={12} />
+                    <span>Xem tiêu chí</span>
+                  </button>
+                </div>
+              )}
 
               <div className="recruiter-cv-workspace__actions">
                 <button
@@ -562,6 +624,7 @@ export function ApplicationReviewWorkspace({
                     </div>
                   ) : (
                     <iframe
+                      key={`${cvData?.url ?? 'cv'}-${pdfSearchQuery || 'default'}`}
                       className="recruiter-cv-workspace__iframe"
                       onError={() => setHasIframeError(true)}
                       onLoad={() => setIsIframeLoaded(true)}
@@ -624,6 +687,35 @@ export function ApplicationReviewWorkspace({
 
             {!isJobLoading && !jobError && jobData && (
               <div className="recruiter-criteria-workspace__body">
+                {/* Match Score Card (Độ khớp tổng quan CV & JD) */}
+                {matchPercentage !== null && matchAssessment && (
+                  <div className={`recruiter-match-score-card recruiter-match-score-card--${matchAssessment.tone}`}>
+                    <div className="recruiter-match-score-card__dial">
+                      <span className="recruiter-match-score-card__percent">{matchPercentage}%</span>
+                      <span className="recruiter-match-score-card__dial-label">Độ khớp</span>
+                    </div>
+                    <div className="recruiter-match-score-card__body">
+                      <div className="recruiter-match-score-card__top">
+                        <span className={`recruiter-match-score-card__tag recruiter-match-score-card__tag--${matchAssessment.tone}`}>
+                          {matchAssessment.label}
+                        </span>
+                        <span className="recruiter-match-score-card__counter">
+                          <strong>{skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired}</strong> Kỹ năng đáp ứng yêu cầu
+                        </span>
+                      </div>
+                      <div className="recruiter-match-score-card__track">
+                        <div
+                          className={`recruiter-match-score-card__bar recruiter-match-score-card__bar--${matchAssessment.tone}`}
+                          style={{ width: `${matchPercentage}%` }}
+                        />
+                      </div>
+                      <p className="recruiter-match-score-card__subtext">
+                        Hệ thống đã đối soát tự động từ CV và AI1. Nhấn nút <strong>"Soi PDF"</strong> tại bất kỳ kỹ năng hoặc bằng chứng nào để định vị trực tiếp trên tài liệu gốc.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Job Hero Card */}
                 <div className="recruiter-criteria-card recruiter-criteria-card--hero">
                   <div className="recruiter-criteria-card__header-main">
@@ -707,7 +799,11 @@ export function ApplicationReviewWorkspace({
                       <div className="recruiter-criteria-matrix__vs">Kinh nghiệm</div>
                       <div className="recruiter-criteria-matrix__col recruiter-criteria-matrix__col--candidate">
                         <span className="recruiter-criteria-matrix__label">Hồ sơ ứng viên</span>
-                        <strong>{application.experience || 'Chưa cung cấp'}</strong>
+                        <strong>
+                          {application.experience && !application.experience.includes('Chưa')
+                            ? application.experience
+                            : 'Xem chi tiết trong CV'}
+                        </strong>
                       </div>
                     </div>
 
@@ -719,7 +815,11 @@ export function ApplicationReviewWorkspace({
                       <div className="recruiter-criteria-matrix__vs">Mức lương</div>
                       <div className="recruiter-criteria-matrix__col recruiter-criteria-matrix__col--candidate">
                         <span className="recruiter-criteria-matrix__label">Kỳ vọng ứng viên</span>
-                        <strong>{application.expectedSalary || 'Thỏa thuận'}</strong>
+                        <strong>
+                          {application.expectedSalary && !application.expectedSalary.includes('Chưa')
+                            ? application.expectedSalary
+                            : 'Thỏa thuận theo năng lực'}
+                        </strong>
                       </div>
                     </div>
 
@@ -731,7 +831,11 @@ export function ApplicationReviewWorkspace({
                       <div className="recruiter-criteria-matrix__vs">Địa điểm</div>
                       <div className="recruiter-criteria-matrix__col recruiter-criteria-matrix__col--candidate">
                         <span className="recruiter-criteria-matrix__label">Nơi cư trú ứng viên</span>
-                        <strong>{application.candidateLocation || 'Chưa rõ'}</strong>
+                        <strong>
+                          {application.candidateLocation && !application.candidateLocation.includes('Chưa')
+                            ? application.candidateLocation
+                            : (jobData.location ? `Linh hoạt / ${jobData.location}` : 'Xem chi tiết trong CV')}
+                        </strong>
                       </div>
                     </div>
                   </div>
@@ -766,6 +870,20 @@ export function ApplicationReviewWorkspace({
                           <span className="recruiter-criteria-skill-pill__status">
                             {skill.statusLabel}
                           </span>
+                          {skill.isMatched && (
+                            <button
+                              type="button"
+                              className="recruiter-criteria-skill-pill__soi-btn"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleJumpToPdf(skill.name)
+                              }}
+                              title={`Soi "${skill.name}" trên bản PDF gốc`}
+                            >
+                              <Search size={11} />
+                              <span>Soi PDF</span>
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -773,6 +891,19 @@ export function ApplicationReviewWorkspace({
                     <p className="recruiter-criteria-card__empty">Chưa thiết lập danh sách kỹ năng cho tin này.</p>
                   )}
                 </div>
+
+                {/* AI1 Evidence Verification Section */}
+                {effectiveHrReview && (
+                  <div className="recruiter-criteria-card recruiter-criteria-card--ai1-section">
+                    <Ai1EvidenceView
+                      state={{ status: 'loaded', review: effectiveHrReview }}
+                      copy={copy}
+                      isMatching={false}
+                      onRefresh={() => {}}
+                      onJumpToPdf={handleJumpToPdf}
+                    />
+                  </div>
+                )}
 
                 {/* Core Requirements */}
                 <div className="recruiter-criteria-card">

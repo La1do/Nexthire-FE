@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Search } from 'lucide-react'
 import type { HrEvidence, HrReview } from '../../../../types/hr-review.types'
 import type { Ai1Copy } from './ai1Copy'
 import './ai1-evidence-panel.css'
@@ -8,7 +9,13 @@ export type Ai1ViewState =
   | { status: 'error'; kind: 'error' | 'forbidden' | 'invalid' }
   | { status: 'loaded'; review: HrReview | null }
 
-type Props = { state: Ai1ViewState; copy: Ai1Copy; isMatching: boolean; onRefresh: () => void }
+type Props = {
+  state: Ai1ViewState
+  copy: Ai1Copy
+  isMatching: boolean
+  onRefresh: () => void
+  onJumpToPdf?: (searchPhrase: string) => void
+}
 
 const generalCodes = new Set(['RETRIEVAL_IS_NOT_ENTAILMENT', 'PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED'])
 
@@ -126,7 +133,31 @@ function hasEvidence(q: HrReview['requirements'][number]): boolean {
   return q.retrievalStatus === 'CANDIDATE_EVIDENCE' && q.evidence != null && q.evidence.length > 0
 }
 
-function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy: Ai1Copy; requirementText?: string }) {
+function getBestSearchPhrase(hit: HrEvidence, requirementText?: string, matchedKeywords?: string[]): string {
+  if (matchedKeywords && matchedKeywords.length > 0) {
+    return matchedKeywords[0]
+  }
+  if (hit.relevantSpan) {
+    const words = hit.relevantSpan.trim().split(/\s+/).slice(0, 4).join(' ')
+    return words.replace(/[.,;:!?()]/g, '')
+  }
+  if (requirementText && requirementText.length <= 30) {
+    return requirementText.trim().replace(/[.,;:!?()]/g, '')
+  }
+  return hit.text.trim().split(/\s+/).slice(0, 4).join(' ').replace(/[.,;:!?()]/g, '')
+}
+
+function Evidence({
+  items,
+  copy,
+  requirementText,
+  onJumpToPdf,
+}: {
+  items: HrEvidence[]
+  copy: Ai1Copy
+  requirementText?: string
+  onJumpToPdf?: (searchPhrase: string) => void
+}) {
   const [selected, setSelected] = useState(0)
   if (!items || items.length === 0) {
     return <p className="ai1-evidence__no-evidence">{copy.noEvidence}</p>
@@ -162,6 +193,7 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
   const tier = getRelevanceTier(hit.similarityScore)
   const relevanceText = getRelevanceLabel(hit.similarityScore, copy)
   const matchedKeywords = requirementText ? extractMatchingKeywords(hit.text, requirementText) : []
+  const bestSearchPhrase = getBestSearchPhrase(hit, requirementText, matchedKeywords)
 
   return (
     <div className="ai1-evidence__passages">
@@ -192,16 +224,38 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
           <span className="ai1-evidence__source">
             {[...new Set(group.map(item => sourceLabel(item.hit, copy)))].join(' · ')}
           </span>
-          <span className={`ai1-evidence__relevance-pill ai1-evidence__relevance-pill--${tier}`}>
-            <span className="ai1-evidence__relevance-dot" />
-            <span>{relevanceText} · <strong>{hit.similarityScore.toFixed(1)} / 100</strong></span>
-          </span>
+          <div className="ai1-evidence__quote-actions">
+            {onJumpToPdf && (
+              <button
+                type="button"
+                className="ai1-evidence__jump-pdf-btn"
+                onClick={() => onJumpToPdf(bestSearchPhrase)}
+                title="Định vị và bôi vàng câu này trên file PDF gốc"
+              >
+                <Search size={12} />
+                <span>{copy.jumpToPdf}</span>
+              </button>
+            )}
+            <span className={`ai1-evidence__relevance-pill ai1-evidence__relevance-pill--${tier}`}>
+              <span className="ai1-evidence__relevance-dot" />
+              <span>{relevanceText} · <strong>{hit.similarityScore.toFixed(1)} / 100</strong></span>
+            </span>
+          </div>
         </div>
         {matchedKeywords.length > 0 && (
           <div className="ai1-evidence__matched-keywords">
             <span className="ai1-evidence__matched-label">{copy.matchedKeywordsLabel}:</span>
             {matchedKeywords.map(kw => (
-              <span key={kw} className="ai1-evidence__keyword-badge">✓ {kw}</span>
+              <button
+                key={kw}
+                type="button"
+                className={`ai1-evidence__keyword-badge ${onJumpToPdf ? 'ai1-evidence__keyword-badge--interactive' : ''}`}
+                onClick={() => onJumpToPdf?.(kw)}
+                title={onJumpToPdf ? `Bấm để định vị "${kw}" trên file PDF` : undefined}
+              >
+                <span>✓ {kw}</span>
+                {onJumpToPdf && <Search size={10} className="ai1-evidence__keyword-search-icon" />}
+              </button>
             ))}
           </div>
         )}
@@ -254,7 +308,17 @@ function RetrievalState({ status, copy }: { status?: string | null; copy: Ai1Cop
   return <span className={className}>{label}</span>
 }
 
-function Requirement({ requirement, copy, index }: { requirement: HrReview['requirements'][number]; copy: Ai1Copy; index: number }) {
+function Requirement({
+  requirement,
+  copy,
+  index,
+  onJumpToPdf,
+}: {
+  requirement: HrReview['requirements'][number]
+  copy: Ai1Copy
+  index: number
+  onJumpToPdf?: (searchPhrase: string) => void
+}) {
   const part = requirement.components?.length === 1 ? requirement.components[0] : null
   const sameEvidence = (items: HrEvidence[]) => JSON.stringify(items) === JSON.stringify(requirement.evidence)
   const wholeDuplicate = Boolean(part && part.text === requirement.text
@@ -280,7 +344,7 @@ function Requirement({ requirement, copy, index }: { requirement: HrReview['requ
       {requirement.modelSuggestion !== null && <p className="ai1-evidence__proposal">{copy.proposal}: {copy[requirement.modelSuggestion]}</p>}
       {requirement.jointContextRequired && <p className="ai1-evidence__notice">{copy.joint}</p>}
       <Warnings codes={requirement.reasonCodes ?? []} copy={copy} />
-      <Evidence items={requirement.evidence} copy={copy} requirementText={requirement.text} />
+      <Evidence items={requirement.evidence} copy={copy} requirementText={requirement.text} onJumpToPdf={onJumpToPdf} />
       {wholeDuplicate && part && part.importance !== "unknown" && <p className="ai1-evidence__metadata">{copy.importance[part.importance as keyof Ai1Copy["importance"]] ?? copy.importance.unknown}</p>}
       <details className="ai1-evidence__provenance">
         <summary>{copy.technical}</summary>
@@ -318,7 +382,7 @@ function Requirement({ requirement, copy, index }: { requirement: HrReview['requ
               {sameEvidence(compPart.evidence) ? (
                 compPart.evidence.length ? <p className="ai1-evidence__metadata">{copy.sharedEvidence}</p> : null
               ) : (
-                <Evidence items={compPart.evidence} copy={copy} requirementText={compPart.text} />
+                <Evidence items={compPart.evidence} copy={copy} requirementText={compPart.text} onJumpToPdf={onJumpToPdf} />
               )}
               <details className="ai1-evidence__provenance">
                 <summary>{copy.technical}</summary>
@@ -333,7 +397,7 @@ function Requirement({ requirement, copy, index }: { requirement: HrReview['requ
   )
 }
 
-function Review({ review, copy }: { review: HrReview; copy: Ai1Copy }) {
+function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy; onJumpToPdf?: (searchPhrase: string) => void }) {
   const [selected, setSelected] = useState(0)
   const requirement = review.requirements[selected] ?? review.requirements[0]
   const plans: Record<string, string> = {
@@ -434,7 +498,13 @@ function Review({ review, copy }: { review: HrReview; copy: Ai1Copy }) {
                 })}
               </div>
             </nav>
-            <Requirement key={requirement.requirementId} requirement={requirement} index={selected} copy={copy} />
+            <Requirement
+              key={requirement.requirementId}
+              requirement={requirement}
+              index={selected}
+              copy={copy}
+              onJumpToPdf={onJumpToPdf}
+            />
           </div>
         </>
       )}
@@ -455,7 +525,7 @@ function Review({ review, copy }: { review: HrReview; copy: Ai1Copy }) {
   )
 }
 
-export function Ai1EvidenceView({ state, copy, isMatching, onRefresh }: Props) {
+export function Ai1EvidenceView({ state, copy, isMatching, onRefresh, onJumpToPdf }: Props) {
   return (
     <section className="recruiter-application-detail-card ai1-evidence" aria-label={copy.title} aria-busy={state.status === 'loading'}>
       <div className="ai1-evidence__header">
@@ -476,7 +546,12 @@ export function Ai1EvidenceView({ state, copy, isMatching, onRefresh }: Props) {
       ) : state.review === null ? (
         <p role="status">{copy.empty}</p>
       ) : (
-        <Review key={`${state.review.applicationId}:${state.review.resultId}`} review={state.review} copy={copy} />
+        <Review
+          key={`${state.review.applicationId}:${state.review.resultId}`}
+          review={state.review}
+          copy={copy}
+          onJumpToPdf={onJumpToPdf}
+        />
       )}
     </section>
   )

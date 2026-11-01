@@ -283,6 +283,9 @@ const { checkAi1SkillMatch, ApplicationReviewWorkspace } = loadTs('src/pages/Rec
   '../../../services/job.service': { jobService: { getRecruiterJobById: async () => ({}) } },
   '../../../lib/api/apiError': { getApiErrorEnvelope: () => null },
   '../../../types/hr-review.types': { parseHrReviewEnvelope },
+  '../../../i18n/localeContext': { LocaleContext: React.createContext({ locale: 'vi' }) },
+  './ai1/Ai1EvidenceView': { Ai1EvidenceView },
+  './ai1/ai1Copy': { ai1Copy },
 })
 
 test('checkAi1SkillMatch correctly detects AI1 evidence with similarity >= 70 or CV parsed skills', () => {
@@ -394,6 +397,20 @@ test('ApplicationReviewWorkspace syncs skillMatchAnalysis with AI1 evidence and 
   assert.ok(html.includes('Đã tìm thấy trên CV'))
   // Kubernetes not found
   assert.ok(html.includes('Chưa thấy'))
+
+  // Match Score Card renders percentage (67%) and assessment tag ("Khá phù hợp")
+  assert.ok(html.includes('67%'))
+  assert.ok(html.includes('Độ khớp'))
+  assert.ok(html.includes('Khá phù hợp'))
+  assert.ok(html.includes('2/3'))
+
+  // Soi PDF button exists on matched skills
+  assert.ok(html.includes('recruiter-criteria-skill-pill__soi-btn'))
+  assert.ok(html.includes('Soi PDF'))
+
+  // Fallback labels for cross-check avoid alarming raw "Chưa có dữ liệu"
+  assert.ok(html.includes('Xem chi tiết trong CV'))
+  assert.ok(html.includes('Thỏa thuận theo năng lực'))
 })
 
 
