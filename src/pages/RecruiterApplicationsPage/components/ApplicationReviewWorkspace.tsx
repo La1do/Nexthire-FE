@@ -851,21 +851,6 @@ export function ApplicationReviewWorkspace({
                 )
               )}
             </div>
-
-            {/* Bottom helper footnote */}
-            <footer className="recruiter-cv-workspace__footer">
-              <span>Mẹo: Bạn có thể vừa xem CV vừa ghi chú và đưa ra quyết định ở cột đánh giá bên cạnh.</span>
-              {cvData?.url && (
-                <a
-                  className="recruiter-cv-workspace__footer-link"
-                  href={cvData.url}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Gặp sự cố hiển thị? Mở tab mới
-                </a>
-              )}
-            </footer>
           </section>
 
         {/* ======================= TAB 2: JOB CRITERIA ======================= */}

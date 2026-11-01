@@ -247,9 +247,10 @@ export function PdfCvViewer({
   const [numPages, setNumPages] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [scale, setScale] = useState<number>(1.0)
-  const [isFitWidth, setIsFitWidth] = useState<boolean>(true)
+  const [scale, setScale] = useState<number>(1.05)
+  const [zoomMode, setZoomMode] = useState<'fit-width' | 'fit-page' | 'custom'>('fit-width')
   const [pageBaseWidth, setPageBaseWidth] = useState<number>(612)
+  const [pageBaseHeight, setPageBaseHeight] = useState<number>(792)
   const [renderedCount, setRenderedCount] = useState<number>(0)
   const [highlightCount, setHighlightCount] = useState<number>(0)
   const [isHighlighting, setIsHighlighting] = useState<boolean>(false)
@@ -262,31 +263,53 @@ export function PdfCvViewer({
     configurePdfJsWorker()
   }, [])
 
-  const calculateFitScale = useCallback((baseWidth: number) => {
+  // 1. Fit Page: Co vừa cả chiều cao lẫn chiều rộng để hiển thị TRỌN VẸN 1 trang trong khung nhìn
+  const calculateFitPageScale = useCallback((baseWidth: number, baseHeight: number) => {
     const container = viewerContainerRef.current
-    if (!container) return 1.0
+    if (!container) return 0.85
     const containerWidth = container.clientWidth
-    if (!containerWidth || containerWidth < 200) return 1.0
-    // Container width minus safe padding and scrollbar space (36px total)
-    const targetWidth = Math.max(260, containerWidth - 36)
-    const computed = Number((targetWidth / baseWidth).toFixed(2))
-    return Math.min(1.4, Math.max(0.65, computed))
+    const containerHeight = container.clientHeight
+    if (!containerWidth || !containerHeight) return 0.85
+
+    // Safe padding: 36px ngang, 28px dọc
+    const availableWidth = Math.max(240, containerWidth - 36)
+    const availableHeight = Math.max(280, containerHeight - 28)
+
+    const scaleW = availableWidth / baseWidth
+    const scaleH = availableHeight / baseHeight
+
+    // Min giữa scaleW và scaleH để 1 trang hiển thị trọn vẹn mà không bị cắt lề dưới
+    const fitScale = Math.min(scaleW, scaleH)
+    return Number(Math.min(1.4, Math.max(0.45, fitScale)).toFixed(2))
   }, [])
 
-  // Listen for container resize to adjust fit-width scale dynamically
+  // 2. Fit Width: Co vừa chiều rộng khung nhìn (chữ to rõ 12-14px, dễ đọc nhất)
+  const calculateFitWidthScale = useCallback((baseWidth: number) => {
+    const container = viewerContainerRef.current
+    if (!container) return 1.05
+    const containerWidth = container.clientWidth
+    if (!containerWidth || containerWidth < 200) return 1.05
+    const targetWidth = Math.max(260, containerWidth - 36)
+    const computed = Number((targetWidth / baseWidth).toFixed(2))
+    return Math.min(1.45, Math.max(0.75, computed))
+  }, [])
+
+  // Listen for container resize to adjust scale dynamically based on active zoom mode
   useEffect(() => {
     const container = viewerContainerRef.current
-    if (!container || !isFitWidth || !pageBaseWidth) return
+    if (!container || zoomMode === 'custom' || !pageBaseWidth || !pageBaseHeight) return
 
     let timeoutId: any
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0]
-      if (!entry) return
+    const observer = new ResizeObserver(() => {
       clearTimeout(timeoutId)
       timeoutId = setTimeout(() => {
-        const newScale = calculateFitScale(pageBaseWidth)
+        const newScale =
+          zoomMode === 'fit-width'
+            ? calculateFitWidthScale(pageBaseWidth)
+            : calculateFitPageScale(pageBaseWidth, pageBaseHeight)
+
         setScale((prev) => {
-          if (Math.abs(prev - newScale) >= 0.04) {
+          if (Math.abs(prev - newScale) >= 0.03) {
             setRenderedCount(0)
             return newScale
           }
@@ -300,7 +323,7 @@ export function PdfCvViewer({
       clearTimeout(timeoutId)
       observer.disconnect()
     }
-  }, [isFitWidth, pageBaseWidth, calculateFitScale])
+  }, [zoomMode, pageBaseWidth, pageBaseHeight, calculateFitPageScale, calculateFitWidthScale])
 
   // Load PDF Document
   useEffect(() => {
@@ -328,9 +351,14 @@ export function PdfCvViewer({
           const page1 = await doc.getPage(1)
           const baseViewport = page1.getViewport({ scale: 1.0 })
           const baseWidth = baseViewport.width || 612
+          const baseHeight = baseViewport.height || 792
           setPageBaseWidth(baseWidth)
-          const fitScale = calculateFitScale(baseWidth)
-          setScale(fitScale)
+          setPageBaseHeight(baseHeight)
+          const initialScale =
+            zoomMode === 'fit-width'
+              ? calculateFitWidthScale(baseWidth)
+              : calculateFitPageScale(baseWidth, baseHeight)
+          setScale(initialScale)
         } catch {
           // fallback
         }
@@ -351,7 +379,7 @@ export function PdfCvViewer({
         // ignore cancellation
       }
     }
-  }, [url, calculateFitScale])
+  }, [url, zoomMode, calculateFitPageScale, calculateFitWidthScale])
 
   // Apply search highlights and auto-scroll to matching text
   const applyHighlightsAndScroll = useCallback(
@@ -476,51 +504,69 @@ export function PdfCvViewer({
         </div>
 
         <div className="pdf-cv-viewer__toolbar-right">
-          <button
-            type="button"
-            className="pdf-cv-viewer__tool-btn"
-            onClick={() => {
-              setIsFitWidth(false)
-              setRenderedCount(0)
-              setScale((s) => Math.max(0.65, Number((s - 0.12).toFixed(2))))
-            }}
-            title="Thu nhỏ"
-          >
-            <ZoomOut size={14} />
-          </button>
-          <span className="pdf-cv-viewer__zoom-label">{Math.round(scale * 100)}%</span>
-          <button
-            type="button"
-            className="pdf-cv-viewer__tool-btn"
-            onClick={() => {
-              setIsFitWidth(false)
-              setRenderedCount(0)
-              setScale((s) => Math.min(2.0, Number((s + 0.12).toFixed(2))))
-            }}
-            title="Phóng to"
-          >
-            <ZoomIn size={14} />
-          </button>
-          <button
-            type="button"
-            className={`pdf-cv-viewer__tool-btn ${isFitWidth ? 'pdf-cv-viewer__tool-btn--active' : ''}`}
-            onClick={() => {
-              setIsFitWidth(true)
-              setRenderedCount(0)
-              const fit = calculateFitScale(pageBaseWidth)
-              setScale(fit)
-            }}
-            title="Tự động co vừa chiều rộng (Fit to Width)"
-          >
-            <Maximize2 size={13} />
-            <span className="pdf-cv-viewer__tool-btn-text">Vừa trang</span>
-          </button>
+          <div className="pdf-cv-viewer__zoom-controls">
+            <button
+              type="button"
+              className="pdf-cv-viewer__tool-btn"
+              onClick={() => {
+                setZoomMode('custom')
+                setRenderedCount(0)
+                setScale((s) => Math.max(0.45, Number((s - 0.1).toFixed(2))))
+              }}
+              title="Thu nhỏ"
+            >
+              <ZoomOut size={13} />
+            </button>
+            <span className="pdf-cv-viewer__zoom-label">{Math.round(scale * 100)}%</span>
+            <button
+              type="button"
+              className="pdf-cv-viewer__tool-btn"
+              onClick={() => {
+                setZoomMode('custom')
+                setRenderedCount(0)
+                setScale((s) => Math.min(2.0, Number((s + 0.1).toFixed(2))))
+              }}
+              title="Phóng to"
+            >
+              <ZoomIn size={13} />
+            </button>
+          </div>
+
+          <div className="pdf-cv-viewer__segmented">
+            <button
+              type="button"
+              className={`pdf-cv-viewer__segmented-btn ${zoomMode === 'fit-width' ? 'is-active' : ''}`}
+              onClick={() => {
+                setZoomMode('fit-width')
+                setRenderedCount(0)
+                const fitW = calculateFitWidthScale(pageBaseWidth)
+                setScale(fitW)
+              }}
+              title="Vừa chiều ngang màn hình — Chữ to rõ, dễ đọc nhất"
+            >
+              <Maximize2 size={12} />
+              <span>Vừa chiều ngang (Đọc rõ)</span>
+            </button>
+            <button
+              type="button"
+              className={`pdf-cv-viewer__segmented-btn ${zoomMode === 'fit-page' ? 'is-active' : ''}`}
+              onClick={() => {
+                setZoomMode('fit-page')
+                setRenderedCount(0)
+                const fit = calculateFitPageScale(pageBaseWidth, pageBaseHeight)
+                setScale(fit)
+              }}
+              title="Hiển thị bao quát trọn vẹn 1 trang trong khung nhìn"
+            >
+              <span>Toàn trang</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Viewport & Pages Container */}
       <div
-        className={`pdf-cv-viewer__viewport ${!isFitWidth && scale > 1.05 ? 'has-manual-zoom' : ''}`}
+        className={`pdf-cv-viewer__viewport ${zoomMode === 'fit-page' ? 'is-fit-page' : ''} ${zoomMode === 'custom' && scale > 1.05 ? 'has-manual-zoom' : ''}`}
         ref={viewerContainerRef}
       >
         {isLoading && (
