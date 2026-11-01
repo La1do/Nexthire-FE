@@ -32,9 +32,10 @@ function getAliasesForTerm(term: string): string[] {
   const lower = clean.toLowerCase()
   const aliases: string[] = [clean]
 
-  if (lower === 'k8s') aliases.push('kubernetes')
-  if (lower === 'kubernetes') aliases.push('k8s')
-  if (lower === 'postgres' || lower === 'postgresql') {
+  if (lower === 'k8s' || lower === 'kubernetes') {
+    aliases.push('kubernetes', 'k8s')
+  }
+  if (lower === 'postgres' || lower === 'postgresql' || lower === 'psql') {
     aliases.push('postgres', 'postgresql', 'psql')
   }
   if (lower === 'ts' || lower === 'typescript') {
@@ -52,27 +53,52 @@ function getAliasesForTerm(term: string): string[] {
   if (lower === 'py' || lower === 'python') {
     aliases.push('python', 'py')
   }
-  if (lower === 'rest api' || lower === 'rest' || lower === 'crud') {
-    aliases.push('rest api', 'rest apis', 'restful', 'crud apis', 'crud api', 'crud')
+  if (lower === 'rest api' || lower === 'rest' || lower === 'restful') {
+    aliases.push('rest api', 'rest apis', 'restful', 'crud')
   }
   if (lower === 'node' || lower === 'node.js' || lower === 'nodejs') {
     aliases.push('node.js', 'nodejs', 'node')
   }
-  if (lower === 'socket.io' || lower === 'websocket') {
-    aliases.push('socket.io', 'websocket')
+  if (lower === 'socket.io' || lower === 'websocket' || lower === 'socket') {
+    aliases.push('socket.io', 'websocket', 'socket')
   }
   if (lower === 'docker' || lower === 'docker compose') {
     aliases.push('docker', 'docker compose')
   }
   if (lower === 'ci/cd' || lower === 'gitlab ci' || lower === 'github actions') {
-    aliases.push('gitlab ci', 'github actions', 'ci/cd', 'ci')
+    aliases.push('gitlab ci', 'github actions', 'ci/cd')
   }
 
-  // Multi-word breakdown
-  const words = clean.split(/\s+/).filter((w) => w.length >= 3)
-  aliases.push(...words)
+  // Multi-word breakdown: only if term is 2-3 words and not containing common stopwords
+  const STOPWORDS = new Set(['and', 'for', 'with', 'the', 'from', 'in', 'of', 'to', 'cua', 'va', 'cho', 'voi', 'trong'])
+  const words = clean.split(/\s+/).filter((w) => w.length >= 3 && !STOPWORDS.has(w.toLowerCase()))
+  if (words.length > 1 && words.length <= 3) {
+    aliases.push(...words)
+  }
 
   return aliases
+}
+
+function buildTermRegex(terms: string[]): RegExp | null {
+  if (terms.length === 0) return null
+
+  // Sort longest first so e.g. "React 19" or "ReactJS" matches before "React"
+  const sorted = [...terms]
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 2)
+    .sort((a, b) => b.length - a.length)
+
+  const patterns: string[] = []
+  for (const term of sorted) {
+    const escaped = term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\s+/g, '\\s+')
+    // Require word boundaries for alphanumeric tokens to avoid substring collisions (e.g. "ci" inside "proficient")
+    const startBoundary = /^[a-zA-Z0-9]/.test(term) ? '\\b' : ''
+    const endBoundary = /[a-zA-Z0-9]$/.test(term) ? '\\b' : ''
+    patterns.push(`${startBoundary}${escaped}${endBoundary}`)
+  }
+
+  if (patterns.length === 0) return null
+  return new RegExp(`(${patterns.join('|')})`, 'gi')
 }
 
 function extractAllTerms(
@@ -221,7 +247,9 @@ export function PdfCvViewer({
   const [numPages, setNumPages] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [scale, setScale] = useState<number>(1.2)
+  const [scale, setScale] = useState<number>(1.0)
+  const [isFitWidth, setIsFitWidth] = useState<boolean>(true)
+  const [pageBaseWidth, setPageBaseWidth] = useState<number>(612)
   const [renderedCount, setRenderedCount] = useState<number>(0)
   const [highlightCount, setHighlightCount] = useState<number>(0)
   const [isHighlighting, setIsHighlighting] = useState<boolean>(false)
@@ -233,6 +261,46 @@ export function PdfCvViewer({
   useEffect(() => {
     configurePdfJsWorker()
   }, [])
+
+  const calculateFitScale = useCallback((baseWidth: number) => {
+    const container = viewerContainerRef.current
+    if (!container) return 1.0
+    const containerWidth = container.clientWidth
+    if (!containerWidth || containerWidth < 200) return 1.0
+    // Container width minus safe padding and scrollbar space (36px total)
+    const targetWidth = Math.max(260, containerWidth - 36)
+    const computed = Number((targetWidth / baseWidth).toFixed(2))
+    return Math.min(1.4, Math.max(0.65, computed))
+  }, [])
+
+  // Listen for container resize to adjust fit-width scale dynamically
+  useEffect(() => {
+    const container = viewerContainerRef.current
+    if (!container || !isFitWidth || !pageBaseWidth) return
+
+    let timeoutId: any
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (!entry) return
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        const newScale = calculateFitScale(pageBaseWidth)
+        setScale((prev) => {
+          if (Math.abs(prev - newScale) >= 0.04) {
+            setRenderedCount(0)
+            return newScale
+          }
+          return prev
+        })
+      }, 150)
+    })
+
+    observer.observe(container)
+    return () => {
+      clearTimeout(timeoutId)
+      observer.disconnect()
+    }
+  }, [isFitWidth, pageBaseWidth, calculateFitScale])
 
   // Load PDF Document
   useEffect(() => {
@@ -252,10 +320,20 @@ export function PdfCvViewer({
     })
 
     loadingTask.promise
-      .then((doc) => {
+      .then(async (doc) => {
         if (cancelled) return
         setPdfDoc(doc)
         setNumPages(doc.numPages)
+        try {
+          const page1 = await doc.getPage(1)
+          const baseViewport = page1.getViewport({ scale: 1.0 })
+          const baseWidth = baseViewport.width || 612
+          setPageBaseWidth(baseWidth)
+          const fitScale = calculateFitScale(baseWidth)
+          setScale(fitScale)
+        } catch {
+          // fallback
+        }
         setIsLoading(false)
       })
       .catch((err: Error) => {
@@ -273,7 +351,7 @@ export function PdfCvViewer({
         // ignore cancellation
       }
     }
-  }, [url])
+  }, [url, calculateFitScale])
 
   // Apply search highlights and auto-scroll to matching text
   const applyHighlightsAndScroll = useCallback(
@@ -303,17 +381,23 @@ export function PdfCvViewer({
         return
       }
 
-      setIsHighlighting(true)
-      const pattern = terms.map((t) => t.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')
-      const regex = new RegExp(`(${pattern})`, 'gi')
+      const regex = buildTermRegex(terms)
+      if (!regex) {
+        setHighlightCount(0)
+        setIsHighlighting(false)
+        return
+      }
 
+      setIsHighlighting(true)
       const matchingMarks: HTMLElement[] = []
       let focusedMatch: HTMLElement | null = null
       const focusTarget = (focusTerm || query || '').toLowerCase().trim()
 
       for (const span of spans) {
         const text = span.textContent || ''
+        regex.lastIndex = 0
         if (regex.test(text)) {
+          regex.lastIndex = 0
           span.setAttribute('data-raw-text', text)
           span.innerHTML = text.replace(regex, (match) => {
             const isFocused = focusTarget && match.toLowerCase().includes(focusTarget)
@@ -396,8 +480,9 @@ export function PdfCvViewer({
             type="button"
             className="pdf-cv-viewer__tool-btn"
             onClick={() => {
+              setIsFitWidth(false)
               setRenderedCount(0)
-              setScale((s) => Math.max(0.8, Number((s - 0.15).toFixed(2))))
+              setScale((s) => Math.max(0.65, Number((s - 0.12).toFixed(2))))
             }}
             title="Thu nhỏ"
           >
@@ -408,8 +493,9 @@ export function PdfCvViewer({
             type="button"
             className="pdf-cv-viewer__tool-btn"
             onClick={() => {
+              setIsFitWidth(false)
               setRenderedCount(0)
-              setScale((s) => Math.min(2.0, Number((s + 0.15).toFixed(2))))
+              setScale((s) => Math.min(2.0, Number((s + 0.12).toFixed(2))))
             }}
             title="Phóng to"
           >
@@ -417,20 +503,26 @@ export function PdfCvViewer({
           </button>
           <button
             type="button"
-            className="pdf-cv-viewer__tool-btn"
+            className={`pdf-cv-viewer__tool-btn ${isFitWidth ? 'pdf-cv-viewer__tool-btn--active' : ''}`}
             onClick={() => {
+              setIsFitWidth(true)
               setRenderedCount(0)
-              setScale(1.15)
+              const fit = calculateFitScale(pageBaseWidth)
+              setScale(fit)
             }}
-            title="Kích thước chuẩn"
+            title="Tự động co vừa chiều rộng (Fit to Width)"
           >
             <Maximize2 size={13} />
+            <span className="pdf-cv-viewer__tool-btn-text">Vừa trang</span>
           </button>
         </div>
       </div>
 
       {/* Viewport & Pages Container */}
-      <div className="pdf-cv-viewer__viewport" ref={viewerContainerRef}>
+      <div
+        className={`pdf-cv-viewer__viewport ${!isFitWidth && scale > 1.05 ? 'has-manual-zoom' : ''}`}
+        ref={viewerContainerRef}
+      >
         {isLoading && (
           <div className="pdf-cv-viewer__loading">
             <div className="pdf-cv-viewer__spinner" />

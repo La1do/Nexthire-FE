@@ -2045,6 +2045,7 @@
   color: #e5e7eb;
   cursor: pointer;
   display: inline-flex;
+  gap: 0.3rem;
   height: 1.85rem;
   justify-content: center;
   padding: 0 0.45rem;
@@ -2054,6 +2055,18 @@
 .pdf-cv-viewer__tool-btn:hover {
   background: rgba(255, 255, 255, 0.18);
   color: #ffffff;
+}
+
+.pdf-cv-viewer__tool-btn--active {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(96, 165, 250, 0.5);
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+.pdf-cv-viewer__tool-btn-text {
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .pdf-cv-viewer__zoom-label {
@@ -2067,12 +2080,16 @@
 .pdf-cv-viewer__viewport {
   flex: 1;
   overflow-y: auto;
-  overflow-x: auto;
-  padding: 1.25rem 0.75rem;
+  overflow-x: hidden; /* Fully fits width by default without horizontal scroll */
+  padding: 1.25rem 0.5rem;
   position: relative;
   background: #374151;
   display: flex;
   justify-content: center;
+}
+
+.pdf-cv-viewer__viewport.has-manual-zoom {
+  overflow-x: auto; /* Only enable horizontal scroll when user manually zooms in */
 }
 
 .pdf-cv-viewer__pages-list {
@@ -2080,6 +2097,7 @@
   flex-direction: column;
   gap: 1.25rem;
   align-items: center;
+  max-width: 100%;
 }
 
 .pdf-cv-page-wrapper {
@@ -2089,10 +2107,12 @@
   position: relative;
   overflow: hidden;
   user-select: text;
+  max-width: 100%;
 }
 
 .pdf-cv-canvas {
   display: block;
+  max-width: 100%;
 }
 
 /* Text layer text is transparent over canvas; selectable and highlightable */
@@ -2106,28 +2126,31 @@
 }
 
 .pdf-cv-text-layer :is(span, br) {
-  color: transparent;
+  color: transparent !important;
   position: absolute;
   white-space: pre;
   cursor: text;
   transform-origin: 0% 0%;
 }
 
-/* Glowing highlight mark on matching words */
+/* Highlighter pen effect: translucent yellow overlay over the crisp canvas vector text */
 .pdf-cv-highlight {
-  background-color: #fde047 !important;
-  color: #713f12 !important;
-  font-weight: 800 !important;
-  border-radius: 3px;
-  box-shadow: 0 0 0 2px #eab308;
-  padding: 0 2px;
-  transition: all 200ms ease;
+  background-color: rgba(250, 204, 21, 0.42) !important;
+  color: transparent !important;
+  font-weight: inherit !important;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.65);
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline;
+  transition: all 180ms ease;
   z-index: 5;
 }
 
 .pdf-cv-highlight--focused {
-  background-color: #facc15 !important;
-  box-shadow: 0 0 0 3px #ca8a04;
+  background-color: rgba(234, 179, 8, 0.75) !important;
+  color: transparent !important;
+  box-shadow: 0 0 0 2px #b45309, 0 0 8px rgba(234, 179, 8, 0.7);
   animation: cvHighlightPulse 1.8s ease-in-out infinite;
 }
 
