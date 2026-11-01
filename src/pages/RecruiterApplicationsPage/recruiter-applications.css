@@ -1726,9 +1726,8 @@
 }
 
 .recruiter-cv-workspace__evidence-quote-box {
-  background: #ffffff;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-left: 3px solid #10b981;
   border-radius: 8px;
   color: #1e293b;
   font-size: 0.84rem;
