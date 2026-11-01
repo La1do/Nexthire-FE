@@ -1462,6 +1462,10 @@
   overflow: hidden;
 }
 
+.recruiter-review-workspace__panel--hidden {
+  display: none !important;
+}
+
 /* ==========================================================================
    CV Preview Workspace
    ========================================================================== */
@@ -1893,6 +1897,68 @@
   text-decoration: underline;
 }
 
+/* Quick Skills Highlight Chips Bar */
+.recruiter-cv-workspace__skills-bar {
+  align-items: center;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.55rem 1rem;
+}
+
+.recruiter-cv-workspace__skills-bar-label {
+  align-items: center;
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  gap: 0.35rem;
+}
+
+.recruiter-cv-workspace__skills-bar-icon {
+  color: #2563eb;
+}
+
+.recruiter-cv-workspace__skills-bar-chips {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.recruiter-cv-workspace__skill-chip {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  color: #334155;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 0.22rem 0.65rem;
+  transition: all 140ms ease;
+}
+
+.recruiter-cv-workspace__skill-chip:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.recruiter-cv-workspace__skill-chip.is-active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
 /* ==========================================================================
    HTML5 Native PDF CV Viewer with Live DOM Text Highlighting
    ========================================================================== */
@@ -2049,16 +2115,19 @@
 
 /* Glowing highlight mark on matching words */
 .pdf-cv-highlight {
-  background-color: rgba(250, 204, 21, 0.5) !important;
-  border-radius: 2px;
-  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.65);
-  color: transparent !important;
+  background-color: #fde047 !important;
+  color: #713f12 !important;
+  font-weight: 800 !important;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px #eab308;
+  padding: 0 2px;
   transition: all 200ms ease;
+  z-index: 5;
 }
 
 .pdf-cv-highlight--focused {
-  background-color: rgba(250, 204, 21, 0.75) !important;
-  box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.85);
+  background-color: #facc15 !important;
+  box-shadow: 0 0 0 3px #ca8a04;
   animation: cvHighlightPulse 1.8s ease-in-out infinite;
 }
 

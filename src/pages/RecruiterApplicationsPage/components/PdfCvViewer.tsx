@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
-import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist'
+import type { PDFDocumentProxy } from 'pdfjs-dist'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import {
   AlertCircle,
@@ -18,46 +18,83 @@ export type PdfCvViewerProps = {
   url: string
   fileName?: string
   searchQuery?: string | null
+  searchTerms?: string[] | null
+  activeHighlightTerm?: string | null
   snippetText?: string | null
   className?: string
   onFallbackToIframe?: () => void
   onClearSearch?: () => void
 }
 
-function extractSearchTerms(query?: string | null, snippet?: string | null): string[] {
-  const terms: string[] = []
-  if (query?.trim()) {
-    const qClean = query.trim().replace(/[.,;:!?()"']/g, '')
-    if (qClean.length >= 2) {
-      terms.push(qClean)
-      const lower = qClean.toLowerCase()
-      if (lower === 'k8s') terms.push('kubernetes')
-      if (lower === 'kubernetes') terms.push('k8s')
-      if (lower === 'postgres' || lower === 'postgresql') {
-        terms.push('postgres', 'postgresql')
-      }
-      if (lower === 'ts' || lower === 'typescript') {
-        terms.push('typescript', 'ts')
-      }
-      if (lower === 'js' || lower === 'javascript') {
-        terms.push('javascript', 'js')
-      }
-      if (lower === 'react' || lower === 'reactjs') {
-        terms.push('reactjs', 'react')
-      }
-      if (lower === 'golang' || lower === 'go') {
-        terms.push('golang', 'go')
-      }
-      if (lower === 'py' || lower === 'python') {
-        terms.push('python', 'py')
-      }
+function getAliasesForTerm(term: string): string[] {
+  const clean = term.trim().replace(/[.,;:!?()"']/g, '')
+  if (clean.length < 2) return []
+  const lower = clean.toLowerCase()
+  const aliases: string[] = [clean]
 
-      // Add component words if query is multi-word
-      const words = qClean.split(/\s+/).filter((w) => w.length >= 3)
-      terms.push(...words)
+  if (lower === 'k8s') aliases.push('kubernetes')
+  if (lower === 'kubernetes') aliases.push('k8s')
+  if (lower === 'postgres' || lower === 'postgresql') {
+    aliases.push('postgres', 'postgresql', 'psql')
+  }
+  if (lower === 'ts' || lower === 'typescript') {
+    aliases.push('typescript', 'ts')
+  }
+  if (lower === 'js' || lower === 'javascript') {
+    aliases.push('javascript', 'js')
+  }
+  if (lower === 'react' || lower === 'reactjs') {
+    aliases.push('reactjs', 'react', 'react 18', 'react 19')
+  }
+  if (lower === 'golang' || lower === 'go') {
+    aliases.push('golang', 'go')
+  }
+  if (lower === 'py' || lower === 'python') {
+    aliases.push('python', 'py')
+  }
+  if (lower === 'rest api' || lower === 'rest' || lower === 'crud') {
+    aliases.push('rest api', 'rest apis', 'restful', 'crud apis', 'crud api', 'crud')
+  }
+  if (lower === 'node' || lower === 'node.js' || lower === 'nodejs') {
+    aliases.push('node.js', 'nodejs', 'node')
+  }
+  if (lower === 'socket.io' || lower === 'websocket') {
+    aliases.push('socket.io', 'websocket')
+  }
+  if (lower === 'docker' || lower === 'docker compose') {
+    aliases.push('docker', 'docker compose')
+  }
+  if (lower === 'ci/cd' || lower === 'gitlab ci' || lower === 'github actions') {
+    aliases.push('gitlab ci', 'github actions', 'ci/cd', 'ci')
+  }
+
+  // Multi-word breakdown
+  const words = clean.split(/\s+/).filter((w) => w.length >= 3)
+  aliases.push(...words)
+
+  return aliases
+}
+
+function extractAllTerms(
+  query?: string | null,
+  termsList?: string[] | null,
+  snippet?: string | null,
+): string[] {
+  const terms: string[] = []
+
+  // 1. If specific query
+  if (query?.trim()) {
+    terms.push(...getAliasesForTerm(query))
+  } else if (termsList && termsList.length > 0) {
+    // 2. If all terms (e.g. matched skills on CV)
+    for (const item of termsList) {
+      if (item?.trim()) {
+        terms.push(...getAliasesForTerm(item))
+      }
     }
   }
 
+  // 3. From relevant span snippet
   if (snippet?.trim()) {
     const sentences = snippet
       .split(/[.;\n]+/)
@@ -76,10 +113,105 @@ function extractSearchTerms(query?: string | null, snippet?: string | null): str
   return unique.sort((a, b) => b.length - a.length)
 }
 
+type PdfPageItemProps = {
+  doc: PDFDocumentProxy
+  pageNumber: number
+  scale: number
+  onPageRendered: (pageNumber: number, container: HTMLDivElement) => void
+}
+
+function PdfPageItem({ doc, pageNumber, scale, onPageRendered }: PdfPageItemProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    let currentRenderTask: any = null
+
+    async function render() {
+      try {
+        const page = await doc.getPage(pageNumber)
+        if (cancelled) return
+
+        const targetContainer = containerRef.current
+        if (!targetContainer) return
+
+        const viewport = page.getViewport({ scale })
+        targetContainer.style.width = `${Math.floor(viewport.width)}px`
+        targetContainer.style.height = `${Math.floor(viewport.height)}px`
+        targetContainer.innerHTML = ''
+
+        // 1. Canvas vector rendering
+        const canvas = document.createElement('canvas')
+        canvas.className = 'pdf-cv-canvas'
+        canvas.width = Math.floor(viewport.width)
+        canvas.height = Math.floor(viewport.height)
+        targetContainer.appendChild(canvas)
+
+        const canvasContext = canvas.getContext('2d', { alpha: false })
+        if (!canvasContext) return
+
+        const renderTask = page.render({ canvasContext, viewport })
+        currentRenderTask = renderTask as any
+        await renderTask.promise
+        if (cancelled) return
+
+        // 2. Selectable & Searchable DOM Text Layer
+        const textLayerDiv = document.createElement('div')
+        textLayerDiv.className = 'textLayer pdf-cv-text-layer'
+        textLayerDiv.style.width = `${Math.floor(viewport.width)}px`
+        textLayerDiv.style.height = `${Math.floor(viewport.height)}px`
+        textLayerDiv.style.setProperty('--scale-factor', `${scale}`)
+        targetContainer.appendChild(textLayerDiv)
+
+        const textContent = await page.getTextContent()
+        if (cancelled) return
+
+        const textLayer = new pdfjsLib.TextLayer({
+          textContentSource: textContent,
+          container: textLayerDiv,
+          viewport,
+        })
+        await textLayer.render()
+        if (cancelled) return
+
+        onPageRendered(pageNumber, targetContainer)
+      } catch (err: unknown) {
+        if ((err as Error)?.name === 'RenderingCancelledException') {
+          return
+        }
+        console.warn(`Failed to render page ${pageNumber}:`, err)
+      }
+    }
+
+    void render()
+
+    return () => {
+      cancelled = true
+      if (currentRenderTask && typeof (currentRenderTask as any).cancel === 'function') {
+        try {
+          ;(currentRenderTask as any).cancel()
+        } catch {
+          // ignore
+        }
+      }
+    }
+  }, [doc, pageNumber, scale, onPageRendered])
+
+  return (
+    <div
+      ref={containerRef}
+      className="pdf-cv-page-wrapper"
+      data-page-number={pageNumber}
+    />
+  )
+}
+
 export function PdfCvViewer({
   url,
   fileName = 'CV Document',
   searchQuery,
+  searchTerms,
+  activeHighlightTerm,
   snippetText,
   className = '',
   onFallbackToIframe,
@@ -89,13 +221,13 @@ export function PdfCvViewer({
   const [numPages, setNumPages] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [scale, setScale] = useState<number>(1.25)
+  const [scale, setScale] = useState<number>(1.2)
+  const [renderedCount, setRenderedCount] = useState<number>(0)
   const [highlightCount, setHighlightCount] = useState<number>(0)
   const [isHighlighting, setIsHighlighting] = useState<boolean>(false)
 
   const viewerContainerRef = useRef<HTMLDivElement | null>(null)
-  const pageContainerRefs = useRef<Map<number, HTMLDivElement>>(new Map())
-  const renderedPagesRef = useRef<Set<number>>(new Set())
+  const renderedPagesMap = useRef<Map<number, HTMLDivElement>>(new Map())
 
   // Ensure worker is configured on mount
   useEffect(() => {
@@ -111,8 +243,8 @@ export function PdfCvViewer({
     setLoadError(null)
     setPdfDoc(null)
     setNumPages(0)
-    pageContainerRefs.current.clear()
-    renderedPagesRef.current.clear()
+    setRenderedCount(0)
+    renderedPagesMap.current.clear()
 
     const loadingTask = pdfjsLib.getDocument({
       url,
@@ -138,30 +270,33 @@ export function PdfCvViewer({
       try {
         loadingTask.destroy()
       } catch {
-        // ignore cancellation errors
+        // ignore cancellation
       }
     }
   }, [url])
 
   // Apply search highlights and auto-scroll to matching text
   const applyHighlightsAndScroll = useCallback(
-    (query?: string | null, snippet?: string | null) => {
+    (
+      query?: string | null,
+      termsList?: string[] | null,
+      snippet?: string | null,
+      focusTerm?: string | null,
+    ) => {
       if (!viewerContainerRef.current) return
       const container = viewerContainerRef.current
 
       // 1. Clear previous highlights
-      const spans = container.querySelectorAll<HTMLSpanElement>(
-        '.textLayer span[role="presentation"], .textLayer span',
-      )
-
+      const spans = container.querySelectorAll<HTMLSpanElement>('.textLayer span')
       for (const span of spans) {
-        if (span.hasAttribute('data-raw-text')) {
-          span.textContent = span.getAttribute('data-raw-text') || ''
+        const raw = span.getAttribute('data-raw-text')
+        if (raw !== null) {
+          span.textContent = raw
           span.removeAttribute('data-raw-text')
         }
       }
 
-      const terms = extractSearchTerms(query, snippet)
+      const terms = extractAllTerms(query, termsList, snippet)
       if (terms.length === 0) {
         setHighlightCount(0)
         setIsHighlighting(false)
@@ -173,108 +308,58 @@ export function PdfCvViewer({
       const regex = new RegExp(`(${pattern})`, 'gi')
 
       const matchingMarks: HTMLElement[] = []
+      let focusedMatch: HTMLElement | null = null
+      const focusTarget = (focusTerm || query || '').toLowerCase().trim()
 
       for (const span of spans) {
         const text = span.textContent || ''
         if (regex.test(text)) {
           span.setAttribute('data-raw-text', text)
-          span.innerHTML = text.replace(
-            regex,
-            '<mark class="pdf-cv-highlight" data-matched-term="$1">$1</mark>',
-          )
+          span.innerHTML = text.replace(regex, (match) => {
+            const isFocused = focusTarget && match.toLowerCase().includes(focusTarget)
+            return `<mark class="pdf-cv-highlight ${isFocused ? 'pdf-cv-highlight--focused' : ''}" data-matched-term="${match}">${match}</mark>`
+          })
           const marks = span.querySelectorAll<HTMLElement>('.pdf-cv-highlight')
-          matchingMarks.push(...Array.from(marks))
+          for (const m of marks) {
+            matchingMarks.push(m)
+            if (!focusedMatch && focusTarget && m.textContent?.toLowerCase().includes(focusTarget)) {
+              focusedMatch = m
+            }
+          }
         }
       }
 
       setHighlightCount(matchingMarks.length)
 
-      // Auto-scroll to the first match with smooth transition
-      if (matchingMarks.length > 0) {
-        const firstMatch = matchingMarks[0]
-        firstMatch.classList.add('pdf-cv-highlight--focused')
+      // Auto-scroll to the focused match or the first match
+      const targetToScroll = focusedMatch || matchingMarks[0]
+      if (targetToScroll && (query || focusTerm)) {
+        targetToScroll.classList.add('pdf-cv-highlight--focused')
         setTimeout(() => {
-          firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          targetToScroll.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }, 120)
       }
     },
     [],
   )
 
-  // Render individual page
-  const renderPage = useCallback(
-    async (doc: PDFDocumentProxy, pageNumber: number, targetScale: number) => {
-      const pageContainer = pageContainerRefs.current.get(pageNumber)
-      if (!pageContainer) return
-
-      try {
-        const page: PDFPageProxy = await doc.getPage(pageNumber)
-        const viewport = page.getViewport({ scale: targetScale })
-
-        // Configure Page Container Dimensions
-        pageContainer.style.width = `${Math.floor(viewport.width)}px`
-        pageContainer.style.height = `${Math.floor(viewport.height)}px`
-        pageContainer.innerHTML = ''
-
-        // 1. Canvas for high-fidelity vector rendering
-        const canvas = document.createElement('canvas')
-        canvas.className = 'pdf-cv-canvas'
-        canvas.width = Math.floor(viewport.width)
-        canvas.height = Math.floor(viewport.height)
-        pageContainer.appendChild(canvas)
-
-        const canvasContext = canvas.getContext('2d', { alpha: false })
-        if (!canvasContext) return
-
-        await page.render({
-          canvasContext,
-          viewport,
-        }).promise
-
-        // 2. Text Layer for selectable & searchable DOM text
-        const textLayerDiv = document.createElement('div')
-        textLayerDiv.className = 'textLayer pdf-cv-text-layer'
-        textLayerDiv.style.width = `${Math.floor(viewport.width)}px`
-        textLayerDiv.style.height = `${Math.floor(viewport.height)}px`
-        textLayerDiv.style.setProperty('--scale-factor', `${targetScale}`)
-        pageContainer.appendChild(textLayerDiv)
-
-        const textContent = await page.getTextContent()
-        const textLayer = new pdfjsLib.TextLayer({
-          textContentSource: textContent,
-          container: textLayerDiv,
-          viewport,
-        })
-
-        await textLayer.render()
-        renderedPagesRef.current.add(pageNumber)
-
-        // If this is the last page, apply search highlights
-        if (renderedPagesRef.current.size === doc.numPages) {
-          applyHighlightsAndScroll(searchQuery, snippetText)
-        }
-      } catch (err) {
-        console.warn(`Error rendering PDF page ${pageNumber}:`, err)
-      }
+  const handlePageRendered = useCallback(
+    (pageNumber: number, container: HTMLDivElement) => {
+      renderedPagesMap.current.set(pageNumber, container)
+      setRenderedCount((prev) => {
+        const next = prev + 1
+        return next
+      })
     },
-    [applyHighlightsAndScroll, searchQuery, snippetText],
+    [],
   )
 
-  // Render all pages when document or scale changes
+  // Re-apply highlights whenever searchQuery, searchTerms, snippetText or activeHighlightTerm changes
   useEffect(() => {
-    if (!pdfDoc) return
-
-    renderedPagesRef.current.clear()
-    for (let p = 1; p <= pdfDoc.numPages; p++) {
-      void renderPage(pdfDoc, p, scale)
+    if (renderedCount > 0 && renderedCount === numPages) {
+      applyHighlightsAndScroll(searchQuery, searchTerms, snippetText, activeHighlightTerm)
     }
-  }, [pdfDoc, scale, renderPage])
-
-  // When searchQuery or snippetText changes, apply highlights immediately
-  useEffect(() => {
-    if (!pdfDoc || renderedPagesRef.current.size < pdfDoc.numPages) return
-    applyHighlightsAndScroll(searchQuery, snippetText)
-  }, [searchQuery, snippetText, pdfDoc, applyHighlightsAndScroll])
+  }, [searchQuery, searchTerms, snippetText, activeHighlightTerm, renderedCount, numPages, applyHighlightsAndScroll])
 
   return (
     <div className={`pdf-cv-viewer ${className}`}>
@@ -310,7 +395,10 @@ export function PdfCvViewer({
           <button
             type="button"
             className="pdf-cv-viewer__tool-btn"
-            onClick={() => setScale((s) => Math.max(0.8, Number((s - 0.15).toFixed(2))))}
+            onClick={() => {
+              setRenderedCount(0)
+              setScale((s) => Math.max(0.8, Number((s - 0.15).toFixed(2))))
+            }}
             title="Thu nhỏ"
           >
             <ZoomOut size={14} />
@@ -319,7 +407,10 @@ export function PdfCvViewer({
           <button
             type="button"
             className="pdf-cv-viewer__tool-btn"
-            onClick={() => setScale((s) => Math.min(2.0, Number((s + 0.15).toFixed(2))))}
+            onClick={() => {
+              setRenderedCount(0)
+              setScale((s) => Math.min(2.0, Number((s + 0.15).toFixed(2))))
+            }}
             title="Phóng to"
           >
             <ZoomIn size={14} />
@@ -327,8 +418,11 @@ export function PdfCvViewer({
           <button
             type="button"
             className="pdf-cv-viewer__tool-btn"
-            onClick={() => setScale(1.15)}
-            title="Kích thước vừa vặn"
+            onClick={() => {
+              setRenderedCount(0)
+              setScale(1.15)
+            }}
+            title="Kích thước chuẩn"
           >
             <Maximize2 size={13} />
           </button>
@@ -373,20 +467,15 @@ export function PdfCvViewer({
           </div>
         )}
 
-        {!isLoading && !loadError && numPages > 0 && (
+        {!isLoading && !loadError && pdfDoc && numPages > 0 && (
           <div className="pdf-cv-viewer__pages-list">
             {Array.from({ length: numPages }, (_, i) => i + 1).map((pageNum) => (
-              <div
-                key={pageNum}
-                className="pdf-cv-page-wrapper"
-                data-page-number={pageNum}
-                ref={(el) => {
-                  if (el) {
-                    pageContainerRefs.current.set(pageNum, el)
-                  } else {
-                    pageContainerRefs.current.delete(pageNum)
-                  }
-                }}
+              <PdfPageItem
+                key={`${pdfDoc.fingerprints?.[0] || 'doc'}-page-${pageNum}-${scale}`}
+                doc={pdfDoc}
+                pageNumber={pageNum}
+                scale={scale}
+                onPageRendered={handlePageRendered}
               />
             ))}
           </div>

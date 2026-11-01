@@ -253,6 +253,7 @@ export function ApplicationReviewWorkspace({
     }
   })
   const [copiedNotification, setCopiedNotification] = useState<boolean>(false)
+  const [selectedSkillHighlight, setSelectedSkillHighlight] = useState<string | null>(null)
   const localeContext = useContext(LocaleContext)
   const currentLocale = localeContext?.locale ?? 'vi'
   const copy = ai1Copy[currentLocale as keyof typeof ai1Copy] ?? ai1Copy.vi
@@ -268,6 +269,7 @@ export function ApplicationReviewWorkspace({
       .replace(/[.,;:!?()"']/g, '')
 
     setPdfSearchQuery(clean)
+    setSelectedSkillHighlight(clean)
     setActiveSnippet({
       phrase: clean,
       snippetText: typeof target === 'object' ? target.snippetText : undefined,
@@ -485,6 +487,12 @@ export function ApplicationReviewWorkspace({
     }
   }, [jobData?.skills, application.skills, application.matchMatchedSkills, effectiveHrReview])
 
+  const matchedSkills = useMemo(() => {
+    return skillMatchAnalysis.skillsWithMatchStatus
+      .filter((s) => s.isMatched)
+      .map((s) => s.name)
+  }, [skillMatchAnalysis.skillsWithMatchStatus])
+
   const matchPercentage = useMemo(() => {
     if (!skillMatchAnalysis.totalRequired || skillMatchAnalysis.totalRequired === 0) return null
     return Math.round((skillMatchAnalysis.matchedCount / skillMatchAnalysis.totalRequired) * 100)
@@ -539,13 +547,12 @@ export function ApplicationReviewWorkspace({
       {/* Tab Panels */}
       <div className="recruiter-review-workspace__content">
         {/* ======================= TAB 1: CV PREVIEW ======================= */}
-        {activeTab === 'cv' && (
-          <section
-            aria-label="Xem trước CV"
-            className="recruiter-cv-workspace"
-            role="tabpanel"
-          >
-            {/* Action Bar */}
+        <section
+          aria-label="Xem trước CV"
+          className={`recruiter-cv-workspace ${activeTab !== 'cv' ? 'recruiter-review-workspace__panel--hidden' : ''}`}
+          role="tabpanel"
+        >
+          {/* Action Bar */}
             <div className="recruiter-cv-workspace__toolbar">
               <div className="recruiter-cv-workspace__file-meta">
                 <FileText className="recruiter-cv-workspace__file-icon" size={18} />
@@ -638,6 +645,44 @@ export function ApplicationReviewWorkspace({
                 )}
               </div>
             </div>
+
+            {/* Quick Skills Highlight Chips Bar */}
+            {matchedSkills.length > 0 && (
+              <div className="recruiter-cv-workspace__skills-bar">
+                <div className="recruiter-cv-workspace__skills-bar-label">
+                  <Sparkles size={13} className="recruiter-cv-workspace__skills-bar-icon" />
+                  <span>Kỹ năng phát hiện ({matchedSkills.length}):</span>
+                </div>
+                <div className="recruiter-cv-workspace__skills-bar-chips">
+                  <button
+                    type="button"
+                    className={`recruiter-cv-workspace__skill-chip ${!selectedSkillHighlight && !pdfSearchQuery ? 'is-active' : ''}`}
+                    onClick={() => {
+                      setSelectedSkillHighlight(null)
+                      setPdfSearchQuery(null)
+                      setActiveSnippet(null)
+                    }}
+                    title="Bôi vàng tất cả kỹ năng đã tìm thấy trên CV"
+                  >
+                    <span>Tất cả ({matchedSkills.length})</span>
+                  </button>
+                  {matchedSkills.map((skill) => (
+                    <button
+                      key={skill}
+                      type="button"
+                      className={`recruiter-cv-workspace__skill-chip ${selectedSkillHighlight?.toLowerCase() === skill.toLowerCase() ? 'is-active' : ''}`}
+                      onClick={() => {
+                        setSelectedSkillHighlight(skill)
+                        handleJumpToPdf(skill)
+                      }}
+                      title={`Định vị và bôi vàng "${skill}" trên trang CV`}
+                    >
+                      <span>✓ {skill}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Live Evidence Highlight Callout Box (Cách 2: Smart Clipboard & Live Evidence Highlight) */}
             {activeSnippet && (
@@ -793,9 +838,12 @@ export function ApplicationReviewWorkspace({
                     url={cvData.url}
                     fileName={cvData.fileName}
                     searchQuery={pdfSearchQuery}
+                    searchTerms={matchedSkills}
+                    activeHighlightTerm={selectedSkillHighlight}
                     snippetText={activeSnippet?.snippetText}
                     onClearSearch={() => {
                       setPdfSearchQuery(null)
+                      setSelectedSkillHighlight(null)
                       setActiveSnippet(null)
                     }}
                     onFallbackToIframe={() => setUseIframeFallback(true)}
@@ -819,16 +867,14 @@ export function ApplicationReviewWorkspace({
               )}
             </footer>
           </section>
-        )}
 
         {/* ======================= TAB 2: JOB CRITERIA ======================= */}
-        {activeTab === 'criteria' && (
-          <section
-            aria-label="Tiêu chí tin tuyển dụng"
-            className="recruiter-criteria-workspace"
-            role="tabpanel"
-          >
-            {isJobLoading && (
+        <section
+          aria-label="Tiêu chí tin tuyển dụng"
+          className={`recruiter-criteria-workspace ${activeTab !== 'criteria' ? 'recruiter-review-workspace__panel--hidden' : ''}`}
+          role="tabpanel"
+        >
+          {isJobLoading && (
               <div className="recruiter-criteria-workspace__loading">
                 <div className="recruiter-cv-workspace__spinner" />
                 <p>Đang tải thông tin tiêu chí tuyển dụng...</p>
@@ -1167,7 +1213,6 @@ export function ApplicationReviewWorkspace({
               </div>
             )}
           </section>
-        )}
       </div>
     </div>
   )
