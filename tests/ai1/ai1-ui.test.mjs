@@ -220,14 +220,18 @@ test('skill requirement filters out irrelevant passages and highlights exact ski
   const q = review.requirements[0]
   q.text = 'FastAPI'
   q.evidence = [
-    { evidenceId: 'skills/fastapi', source: 'skill', text: 'FastAPI', similarityScore: 98.2, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' },
-    { evidenceId: 'projects/0/technologies/1', source: 'project', text: 'GitLab CI', similarityScore: 96.2, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' },
+    // BE sets EXACT_KEYWORD_MATCH when skill keyword is found in the passage
+    { evidenceId: 'skills/fastapi', source: 'skill', text: 'FastAPI', similarityScore: 98.2,
+      scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY', reasonCodes: ['EXACT_KEYWORD_MATCH'] },
+    // BE sets LEXICAL_ABSENT_PENALTY when keyword is absent → FE filters it out
+    { evidenceId: 'projects/0/technologies/1', source: 'project', text: 'GitLab CI', similarityScore: 43.3,
+      scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY', reasonCodes: ['LEXICAL_ABSENT_PENALTY'] },
   ]
   q.components = null; q.allOf = null
   review.requirements = [q]
 
   const html = render({ status: 'loaded', review: parse(review) })
-  // Passage 2 ('GitLab CI') must be filtered out for single skill requirement 'FastAPI'
+  // Passage 2 ('GitLab CI') must be filtered out — LEXICAL_ABSENT_PENALTY means keyword absent
   assert.ok(html.includes('FastAPI'))
   assert.ok(!html.includes('GitLab CI'))
   // Prominently highlight "✓ Tìm thấy trong mục Kỹ năng"

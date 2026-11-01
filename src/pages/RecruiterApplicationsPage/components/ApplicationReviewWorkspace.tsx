@@ -109,28 +109,6 @@ function parseRequirements(requirementsText?: string | null): string[] {
     .filter((line) => line.length > 0)
 }
 
-function isShortSkillQuery(text: string): boolean {
-  const trimmed = text.trim()
-  if (!trimmed) return false
-  const words = trimmed.split(/\s+/)
-  return words.length <= 4 && trimmed.length <= 40 && !/[.;\n]/.test(trimmed)
-}
-
-function passageRelatesToSkill(passageText: string, reqText: string): boolean {
-  const normPassage = passageText.toLowerCase()
-  const normReq = reqText.trim().toLowerCase()
-  if (normPassage.includes(normReq)) return true
-  const strip = (s: string) => s.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim()
-  const cleanPassage = strip(normPassage)
-  const cleanReq = strip(normReq)
-  if (cleanPassage.includes(cleanReq)) return true
-  const reqWords = cleanReq.split(' ').filter((w) => w.length > 2)
-  if (reqWords.length > 0 && reqWords.some((w) => cleanPassage.includes(w))) {
-    return true
-  }
-  return false
-}
-
 export function checkAi1SkillMatch(
   skillName: string,
   hrReview: HrReview | null | undefined,
@@ -147,93 +125,41 @@ export function checkAi1SkillMatch(
   let matched = false
 
   for (const req of hrReview.requirements) {
-    const reqTextLower = req.text.trim().toLowerCase()
-    const reqTextClean = reqTextLower.replace(/[^a-z0-9+#]/g, '')
-
+    const reqLower = req.text.trim().toLowerCase()
+    const reqClean = reqLower.replace(/[^a-z0-9+#]/g, '')
     const isReqForSkill =
-      reqTextLower === sLower ||
-      reqTextClean === sClean ||
-      (req.requirementId.startsWith('skills/') && (reqTextLower.includes(sLower) || sLower.includes(reqTextLower))) ||
-      (isShortSkillQuery(req.text) && (reqTextLower.includes(sLower) || sLower.includes(reqTextLower)))
+      reqLower === sLower || reqClean === sClean ||
+      (req.requirementId.startsWith('skills/') && (reqLower.includes(sLower) || sLower.includes(reqLower)))
 
-    if (req.evidence) {
-      for (const ev of req.evidence) {
-        const evTextLower = ev.text.trim().toLowerCase()
-        const evTextClean = evTextLower.replace(/[^a-z0-9+#]/g, '')
-        const isExact = evTextLower === sLower || evTextClean === sClean
-
-        if (isReqForSkill) {
-          if (isExact || (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName))) {
-            matched = true
-            bestScore = Math.max(bestScore, ev.similarityScore)
-          }
-        } else {
-          if (isExact) {
-            matched = true
-            bestScore = Math.max(bestScore, ev.similarityScore)
-          } else if (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName)) {
-            matched = true
-            bestScore = Math.max(bestScore, ev.similarityScore)
-          }
-        }
-      }
-    }
-
-    if (req.components) {
-      for (const comp of req.components) {
-        const compTextLower = comp.text.trim().toLowerCase()
-        const compTextClean = compTextLower.replace(/[^a-z0-9+#]/g, '')
-        const isCompForSkill =
-          compTextLower === sLower ||
-          compTextClean === sClean ||
-          (isShortSkillQuery(comp.text) && (compTextLower.includes(sLower) || sLower.includes(compTextLower)))
-
-        if (comp.evidence) {
-          for (const ev of comp.evidence) {
-            const evTextLower = ev.text.trim().toLowerCase()
-            const evTextClean = evTextLower.replace(/[^a-z0-9+#]/g, '')
-            const isExact = evTextLower === sLower || evTextClean === sClean
-
-            if (isCompForSkill || isReqForSkill) {
-              if (isExact || (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName))) {
-                matched = true
-                bestScore = Math.max(bestScore, ev.similarityScore)
-              }
-            } else if (isExact || (ev.similarityScore >= 70 && passageRelatesToSkill(ev.text, skillName))) {
-              matched = true
-              bestScore = Math.max(bestScore, ev.similarityScore)
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Also check all candidate parsed CV skills across all evidence
-  for (const req of hrReview.requirements) {
     const allEvidence = [
       ...(req.evidence || []),
-      ...(req.components?.flatMap((c) => c.evidence || []) || []),
+      ...(req.components?.flatMap(c => c.evidence || []) || []),
     ]
+
     for (const ev of allEvidence) {
+      const codes = ev.reasonCodes ?? []
+      const hasPenalty = codes.includes('LEXICAL_ABSENT_PENALTY')
+
+      // Evidence from skills section: match by text identity only
       const isSkillSource =
-        ev.source.toLowerCase() === 'skill' ||
-        ev.source.toLowerCase() === 'skills' ||
-        ev.evidenceId.startsWith('skills/') ||
+        ev.source.toLowerCase() === 'skill' || ev.source.toLowerCase() === 'skills' ||
         ev.evidenceId.startsWith('skill')
-
       if (isSkillSource && ev.text) {
-        const evSkillLower = ev.text.trim().toLowerCase()
-        const evSkillClean = evSkillLower.replace(/[^a-z0-9+#]/g, '')
-
-        if (
-          evSkillLower === sLower ||
-          evSkillClean === sClean ||
-          evSkillLower.includes(sLower) ||
-          sLower.includes(evSkillLower)
-        ) {
+        const evLower = ev.text.trim().toLowerCase()
+        const evClean = evLower.replace(/[^a-z0-9+#]/g, '')
+        if (evLower === sLower || evClean === sClean || evLower.includes(sLower) || sLower.includes(evLower)) {
           matched = true
           bestScore = Math.max(bestScore, ev.similarityScore || 100)
+          continue
+        }
+      }
+
+      // For skill requirements: trust BE reason codes — EXACT_KEYWORD_MATCH confirms presence,
+      // LEXICAL_ABSENT_PENALTY means keyword absent → do not count.
+      if (isReqForSkill) {
+        if (!hasPenalty && ev.similarityScore >= 70) {
+          matched = true
+          bestScore = Math.max(bestScore, ev.similarityScore)
         }
       }
     }

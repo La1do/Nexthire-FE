@@ -42,45 +42,12 @@ function sourceLabel(hit: HrEvidence, copy: Ai1Copy) {
   return copy.sources[sections[pathSection] ?? 'unknown']
 }
 
-function isShortSkillQuery(text: string): boolean {
-  const trimmed = text.trim()
-  if (!trimmed) return false
-  const words = trimmed.split(/\s+/)
-  return words.length <= 4 && trimmed.length <= 40 && !/[.;\n]/.test(trimmed)
+function isExactSkillMatch(hit: HrEvidence): boolean {
+  return (hit.reasonCodes ?? []).includes('EXACT_KEYWORD_MATCH')
 }
 
-function passageRelatesToSkill(passageText: string, reqText: string): boolean {
-  const normPassage = passageText.toLowerCase()
-  const normReq = reqText.trim().toLowerCase()
-  if (normPassage.includes(normReq)) return true
-  const strip = (s: string) => s.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim()
-  const cleanPassage = strip(normPassage)
-  const cleanReq = strip(normReq)
-  if (cleanPassage.includes(cleanReq)) return true
-  const reqWords = cleanReq.split(' ').filter(w => w.length > 2)
-  if (reqWords.length > 0 && reqWords.some(w => cleanPassage.includes(w))) {
-    return true
-  }
-  return false
-}
-
-function filterEvidenceForRequirement(items: HrEvidence[], reqText: string): HrEvidence[] {
-  if (!items || items.length === 0) return []
-  if (!isShortSkillQuery(reqText)) return items
-  const directMatches = items.filter(item => passageRelatesToSkill(item.text, reqText))
-  return directMatches
-}
-
-function isExactSkillMatch(hit: HrEvidence, reqText: string): boolean {
-  if (hit.similarityScore < 80) return false
-  const cleanHit = hit.text.trim().toLowerCase()
-  const cleanReq = reqText.trim().toLowerCase()
-  return (
-    cleanHit === cleanReq ||
-    cleanHit.startsWith(cleanReq + ' ') ||
-    cleanHit.endsWith(' ' + cleanReq) ||
-    cleanHit.includes(cleanReq)
-  )
+function hasLexicalPenalty(hit: HrEvidence): boolean {
+  return (hit.reasonCodes ?? []).includes('LEXICAL_ABSENT_PENALTY')
 }
 
 function getRelevanceTier(score: number): 'high' | 'medium' | 'low' {
@@ -144,12 +111,7 @@ function extractMatchingKeywords(passageText: string, reqText: string): string[]
 }
 
 function hasEvidence(q: HrReview['requirements'][number]): boolean {
-  if (!q.evidence || q.evidence.length === 0) return false
-  if (q.retrievalStatus === 'NO_EVIDENCE' || q.retrievalStatus === 'INSUFFICIENT_SIGNAL') return false
-  if (isShortSkillQuery(q.text)) {
-    return q.evidence.some(item => passageRelatesToSkill(item.text, q.text))
-  }
-  return true
+  return q.retrievalStatus === 'CANDIDATE_EVIDENCE' && q.evidence != null && q.evidence.length > 0
 }
 
 function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy: Ai1Copy; requirementText?: string }) {
@@ -157,9 +119,11 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
   if (!items || items.length === 0) {
     return <p className="ai1-evidence__no-evidence">{copy.noEvidence}</p>
   }
-  const effectiveItems = requirementText ? filterEvidenceForRequirement(items, requirementText) : items
 
-  if (effectiveItems.length === 0) {
+  // BE already filtered/penalised via gated scoring — show not-found card when
+  // all items carry LEXICAL_ABSENT_PENALTY (i.e. keyword genuinely absent from CV).
+  const visibleItems = items.filter(item => !hasLexicalPenalty(item))
+  if (visibleItems.length === 0) {
     return (
       <div className="ai1-evidence__not-found">
         <div className="ai1-evidence__not-found-badge">
@@ -173,7 +137,7 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
   }
 
   const groups: Array<Array<{ hit: HrEvidence; rank: number }>> = []
-  effectiveItems.forEach((hit, index) => {
+  visibleItems.forEach((hit, index) => {
     const group = groups.find(group => group[0].hit.text === hit.text)
     if (group) group.push({ hit, rank: index + 1 }); else groups.push([{ hit, rank: index + 1 }])
   })
@@ -181,8 +145,8 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
   if (!group) return <p className="ai1-evidence__no-evidence">{copy.noEvidence}</p>
   const hit = group[0].hit
 
-  const topHit = effectiveItems[0]
-  const showSkillMatch = Boolean(requirementText && topHit && isExactSkillMatch(topHit, requirementText))
+  const topHit = visibleItems[0]
+  const showSkillMatch = Boolean(topHit && isExactSkillMatch(topHit))
   const tier = getRelevanceTier(hit.similarityScore)
   const relevanceText = getRelevanceLabel(hit.similarityScore, copy)
   const matchedKeywords = requirementText ? extractMatchingKeywords(hit.text, requirementText) : []
@@ -267,27 +231,6 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
   )
 }
 
-function getEffectiveRetrievalStatus(
-  requirement: HrReview['requirements'][number],
-): string | null | undefined {
-  if (requirement.retrievalStatus === 'CANDIDATE_EVIDENCE' && !hasEvidence(requirement)) {
-    return 'INSUFFICIENT_SIGNAL'
-  }
-  return requirement.retrievalStatus
-}
-
-function getEffectiveComponentStatus(
-  compPart: NonNullable<HrReview['requirements'][number]['components']>[number],
-): string | null | undefined {
-  if (compPart.retrievalStatus === 'CANDIDATE_EVIDENCE') {
-    if (!compPart.evidence || compPart.evidence.length === 0) return 'INSUFFICIENT_SIGNAL'
-    if (isShortSkillQuery(compPart.text) && !compPart.evidence.some(item => passageRelatesToSkill(item.text, compPart.text))) {
-      return 'INSUFFICIENT_SIGNAL'
-    }
-  }
-  return compPart.retrievalStatus
-}
-
 function RetrievalState({ status, copy }: { status?: string | null; copy: Ai1Copy }) {
   const label = status && Object.hasOwn(copy.retrieval, status) ? copy.retrieval[status as keyof Ai1Copy['retrieval']] : copy.pending
   const isFound = status === 'CANDIDATE_EVIDENCE'
@@ -304,7 +247,6 @@ function Requirement({ requirement, copy, index }: { requirement: HrReview['requ
     && part.modelSuggestion === requirement.modelSuggestion && part.retrievalStatus === requirement.retrievalStatus
     && JSON.stringify(part.reasonCodes ?? []) === JSON.stringify(requirement.reasonCodes ?? [])
     && sameEvidence(part.evidence))
-  const effectiveStatus = getEffectiveRetrievalStatus(requirement)
 
   return (
     <article className="ai1-evidence__requirement" aria-label={`${copy.selected} ${index + 1}`}>
@@ -312,7 +254,7 @@ function Requirement({ requirement, copy, index }: { requirement: HrReview['requ
         <p className="ai1-evidence__eyebrow">{copy.selected} · {index + 1}</p>
         <h4>{requirement.text}</h4>
         <div className="ai1-evidence__requirement-badges">
-          <RetrievalState status={effectiveStatus} copy={copy} />
+          <RetrievalState status={requirement.retrievalStatus} copy={copy} />
           {wholeDuplicate && part && part.importance !== "unknown" && (
             <span className="ai1-evidence__importance-badge">
               {copy.importance[part.importance as keyof Ai1Copy["importance"]] ?? copy.importance.unknown}
@@ -355,7 +297,7 @@ function Requirement({ requirement, copy, index }: { requirement: HrReview['requ
             <section className="ai1-evidence__component" key={compPart.componentId}>
               <h5>{compPart.text}</h5>
               <p className="ai1-evidence__metadata">{copy.importance[compPart.importance as keyof Ai1Copy['importance']] ?? copy.importance.unknown}</p>
-              <RetrievalState status={getEffectiveComponentStatus(compPart)} copy={copy} />
+              <RetrievalState status={compPart.retrievalStatus} copy={copy} />
               {compPart.modelSuggestion !== null && <p className="ai1-evidence__proposal">{copy.proposal}: {copy[compPart.modelSuggestion]}</p>}
               <Warnings codes={compPart.reasonCodes ?? []} copy={copy} />
               {sameEvidence(compPart.evidence) ? (
