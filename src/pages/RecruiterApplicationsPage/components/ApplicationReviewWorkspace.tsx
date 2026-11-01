@@ -30,6 +30,7 @@ import type { ApplicationCvDownloadResponse } from '../../../types/application.t
 import { parseHrReviewEnvelope, type HrReview } from '../../../types/hr-review.types'
 import { Ai1EvidenceView, type JumpToPdfPayload } from './ai1/Ai1EvidenceView'
 import { ai1Copy } from './ai1/ai1Copy'
+import { PdfCvViewer } from './PdfCvViewer'
 import type {
   JobExperienceLevel,
   JobType,
@@ -299,6 +300,7 @@ export function ApplicationReviewWorkspace({
   const [cvError, setCvError] = useState<string | null>(null)
   const [isIframeLoaded, setIsIframeLoaded] = useState<boolean>(false)
   const [hasIframeError, setHasIframeError] = useState<boolean>(false)
+  const [useIframeFallback, setUseIframeFallback] = useState<boolean>(false)
 
   // Job Criteria State
   const [jobData, setJobData] = useState<RecruiterJobResponse | null>(initialJob)
@@ -690,10 +692,10 @@ export function ApplicationReviewWorkspace({
 
                 <div className="recruiter-cv-workspace__evidence-guidance">
                   <span className="recruiter-cv-workspace__guidance-badge">
-                    {copiedNotification ? '✓ Đã lưu vào Clipboard' : '📋 Hướng dẫn xem trên PDF'}
+                    ✓ Tự động định vị
                   </span>
                   <span>
-                    Nhấp chuột vào bản PDF bên dưới, bấm <strong>Ctrl + F</strong> rồi <strong>Ctrl + V</strong> để trình duyệt tự cuộn tới đúng dòng trên CV gốc!
+                    Hệ thống đã tự động tìm kiếm, bôi vàng highlight và cuộn trực tiếp tới đoạn bằng chứng trên trang CV bên dưới.
                   </span>
                 </div>
               </div>
@@ -737,54 +739,68 @@ export function ApplicationReviewWorkspace({
                 </div>
               )}
 
-              {!isCvLoading && !cvError && cvEmbedUrl && (
-                <div className="recruiter-cv-workspace__frame-wrapper">
-                  {!isIframeLoaded && !hasIframeError && (
-                    <div className="recruiter-cv-workspace__frame-loading">
-                      <div className="recruiter-cv-workspace__spinner" />
-                      <span>Đang kết xuất tài liệu PDF...</span>
-                    </div>
-                  )}
-
-                  {hasIframeError ? (
-                    <div className="recruiter-cv-workspace__state recruiter-cv-workspace__state--fallback">
-                      <AlertTriangle className="recruiter-cv-workspace__state-icon" size={36} />
-                      <h3>Trình duyệt chưa hỗ trợ hiển thị trực tiếp</h3>
-                      <p>
-                        Tệp tin này có thể bị hạn chế quyền hiển thị trực tiếp trong iframe. Bạn có thể mở trong
-                        tab mới hoặc tải xuống để xem chi tiết.
-                      </p>
-                      <div className="recruiter-cv-workspace__state-actions">
-                        <a
-                          className="recruiter-cv-workspace__action-btn recruiter-cv-workspace__action-btn--primary"
-                          href={cvData?.url}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          <ExternalLink size={15} />
-                          <span>Mở trong tab mới</span>
-                        </a>
-                        <a
-                          className="recruiter-cv-workspace__action-btn"
-                          download={cvData?.fileName}
-                          href={cvData?.url}
-                        >
-                          <Download size={15} />
-                          <span>Tải xuống CV</span>
-                        </a>
+              {!isCvLoading && !cvError && cvData?.url && (
+                useIframeFallback ? (
+                  <div className="recruiter-cv-workspace__frame-wrapper">
+                    {!isIframeLoaded && !hasIframeError && (
+                      <div className="recruiter-cv-workspace__frame-loading">
+                        <div className="recruiter-cv-workspace__spinner" />
+                        <span>Đang kết xuất tài liệu PDF...</span>
                       </div>
-                    </div>
-                  ) : (
-                    <iframe
-                      key={`${cvData?.url ?? 'cv'}-${pdfSearchQuery || 'default'}`}
-                      className="recruiter-cv-workspace__iframe"
-                      onError={() => setHasIframeError(true)}
-                      onLoad={() => setIsIframeLoaded(true)}
-                      src={cvEmbedUrl}
-                      title={`Bản xem trước CV: ${application.candidateName}`}
-                    />
-                  )}
-                </div>
+                    )}
+
+                    {hasIframeError ? (
+                      <div className="recruiter-cv-workspace__state recruiter-cv-workspace__state--fallback">
+                        <AlertTriangle className="recruiter-cv-workspace__state-icon" size={36} />
+                        <h3>Trình duyệt chưa hỗ trợ hiển thị trực tiếp</h3>
+                        <p>
+                          Tệp tin này có thể bị hạn chế quyền hiển thị trực tiếp trong iframe. Bạn có thể mở trong
+                          tab mới hoặc tải xuống để xem chi tiết.
+                        </p>
+                        <div className="recruiter-cv-workspace__state-actions">
+                          <a
+                            className="recruiter-cv-workspace__action-btn recruiter-cv-workspace__action-btn--primary"
+                            href={cvData?.url}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            <ExternalLink size={15} />
+                            <span>Mở trong tab mới</span>
+                          </a>
+                          <a
+                            className="recruiter-cv-workspace__action-btn"
+                            download={cvData?.fileName}
+                            href={cvData?.url}
+                          >
+                            <Download size={15} />
+                            <span>Tải xuống CV</span>
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <iframe
+                        key={`${cvData?.url ?? 'cv'}-${pdfSearchQuery || 'default'}`}
+                        className="recruiter-cv-workspace__iframe"
+                        onError={() => setHasIframeError(true)}
+                        onLoad={() => setIsIframeLoaded(true)}
+                        src={cvEmbedUrl}
+                        title={`Bản xem trước CV: ${application.candidateName}`}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <PdfCvViewer
+                    url={cvData.url}
+                    fileName={cvData.fileName}
+                    searchQuery={pdfSearchQuery}
+                    snippetText={activeSnippet?.snippetText}
+                    onClearSearch={() => {
+                      setPdfSearchQuery(null)
+                      setActiveSnippet(null)
+                    }}
+                    onFallbackToIframe={() => setUseIframeFallback(true)}
+                  />
+                )
               )}
             </div>
 

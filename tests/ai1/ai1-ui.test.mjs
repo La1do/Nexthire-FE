@@ -286,6 +286,7 @@ const { checkAi1SkillMatch, ApplicationReviewWorkspace } = loadTs('src/pages/Rec
   '../../../i18n/localeContext': { LocaleContext: React.createContext({ locale: 'vi' }) },
   './ai1/Ai1EvidenceView': { Ai1EvidenceView },
   './ai1/ai1Copy': { ai1Copy },
+  './PdfCvViewer': { PdfCvViewer: () => React.createElement('div', { className: 'pdf-cv-viewer-mock' }) },
 })
 
 test('checkAi1SkillMatch correctly detects AI1 evidence with similarity >= 70 or CV parsed skills', () => {
@@ -440,9 +441,9 @@ test('ApplicationReviewWorkspace displays live evidence callout with highlighted
   assert.ok(html.includes('React'))
   // Snippet text has highlighted mark
   assert.ok(html.includes('<mark class="ai1-evidence__span-highlight">React</mark>'))
-  // Guidance for PDF
-  assert.ok(html.includes('Ctrl + F'))
-  assert.ok(html.includes('Ctrl + V'))
+  // Guidance for automated PDF highlight
+  assert.ok(html.includes('Tự động định vị'))
+  assert.ok(html.includes('cuộn trực tiếp tới đoạn bằng chứng'))
 })
 
 
