@@ -9,12 +9,28 @@ export type Ai1ViewState =
   | { status: 'error'; kind: 'error' | 'forbidden' | 'invalid' }
   | { status: 'loaded'; review: HrReview | null }
 
+export type JumpToPdfPayload = {
+  phrase: string
+  snippetText?: string
+  source?: string
+}
+
 type Props = {
   state: Ai1ViewState
   copy: Ai1Copy
   isMatching: boolean
   onRefresh: () => void
-  onJumpToPdf?: (searchPhrase: string) => void
+  onJumpToPdf?: (payload: JumpToPdfPayload | string) => void
+}
+
+function emitJumpToPdf(
+  handler: ((payload: JumpToPdfPayload | string) => void) | undefined,
+  phrase: string,
+  snippetText?: string,
+  source?: string,
+) {
+  if (!handler) return
+  handler({ phrase, snippetText, source })
 }
 
 const generalCodes = new Set(['RETRIEVAL_IS_NOT_ENTAILMENT', 'PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED'])
@@ -156,7 +172,7 @@ function Evidence({
   items: HrEvidence[]
   copy: Ai1Copy
   requirementText?: string
-  onJumpToPdf?: (searchPhrase: string) => void
+  onJumpToPdf?: (payload: JumpToPdfPayload | string) => void
 }) {
   const [selected, setSelected] = useState(0)
   if (!items || items.length === 0) {
@@ -194,6 +210,7 @@ function Evidence({
   const relevanceText = getRelevanceLabel(hit.similarityScore, copy)
   const matchedKeywords = requirementText ? extractMatchingKeywords(hit.text, requirementText) : []
   const bestSearchPhrase = getBestSearchPhrase(hit, requirementText, matchedKeywords)
+  const quoteSource = sourceLabel(hit, copy)
 
   return (
     <div className="ai1-evidence__passages">
@@ -219,7 +236,12 @@ function Evidence({
           </button>
         ))}
       </div>
-      <div className="ai1-evidence__quote" key={group[0].rank}>
+      <div
+        className={`ai1-evidence__quote ${onJumpToPdf ? 'ai1-evidence__quote--clickable' : ''}`}
+        key={group[0].rank}
+        onClick={() => emitJumpToPdf(onJumpToPdf, bestSearchPhrase, hit.text, quoteSource)}
+        title={onJumpToPdf ? 'Bấm để đối chiếu và xem highlight trên CV' : undefined}
+      >
         <div className="ai1-evidence__quote-heading">
           <span className="ai1-evidence__source">
             {[...new Set(group.map(item => sourceLabel(item.hit, copy)))].join(' · ')}
@@ -229,7 +251,10 @@ function Evidence({
               <button
                 type="button"
                 className="ai1-evidence__jump-pdf-btn"
-                onClick={() => onJumpToPdf(bestSearchPhrase)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  emitJumpToPdf(onJumpToPdf, bestSearchPhrase, hit.text, quoteSource)
+                }}
                 title="Định vị và bôi vàng câu này trên file PDF gốc"
               >
                 <Search size={12} />
@@ -250,7 +275,10 @@ function Evidence({
                 key={kw}
                 type="button"
                 className={`ai1-evidence__keyword-badge ${onJumpToPdf ? 'ai1-evidence__keyword-badge--interactive' : ''}`}
-                onClick={() => onJumpToPdf?.(kw)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  emitJumpToPdf(onJumpToPdf, kw, hit.text, quoteSource)
+                }}
                 title={onJumpToPdf ? `Bấm để định vị "${kw}" trên file PDF` : undefined}
               >
                 <span>✓ {kw}</span>
@@ -317,7 +345,7 @@ function Requirement({
   requirement: HrReview['requirements'][number]
   copy: Ai1Copy
   index: number
-  onJumpToPdf?: (searchPhrase: string) => void
+  onJumpToPdf?: (payload: JumpToPdfPayload | string) => void
 }) {
   const part = requirement.components?.length === 1 ? requirement.components[0] : null
   const sameEvidence = (items: HrEvidence[]) => JSON.stringify(items) === JSON.stringify(requirement.evidence)
@@ -397,7 +425,7 @@ function Requirement({
   )
 }
 
-function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy; onJumpToPdf?: (searchPhrase: string) => void }) {
+function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy; onJumpToPdf?: (payload: JumpToPdfPayload | string) => void }) {
   const [selected, setSelected] = useState(0)
   const requirement = review.requirements[selected] ?? review.requirements[0]
   const plans: Record<string, string> = {
@@ -486,7 +514,18 @@ function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy
                       type="button"
                       key={q.requirementId}
                       aria-current={selected === i ? 'true' : undefined}
-                      onClick={() => setSelected(i)}
+                      onClick={() => {
+                        setSelected(i)
+                        if (onJumpToPdf) {
+                          const firstHit = q.evidence?.[0]
+                          emitJumpToPdf(
+                            onJumpToPdf,
+                            q.text,
+                            firstHit?.text,
+                            firstHit ? sourceLabel(firstHit, copy) : undefined,
+                          )
+                        }
+                      }}
                       className={`ai1-evidence__nav-btn ${selected === i ? 'ai1-evidence__nav-btn--active' : ''}`}
                     >
                       <span className={`ai1-evidence__number ${itemHasEvidence ? 'ai1-evidence__number--green' : 'ai1-evidence__number--amber'}`}>

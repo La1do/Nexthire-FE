@@ -413,4 +413,36 @@ test('ApplicationReviewWorkspace syncs skillMatchAnalysis with AI1 evidence and 
   assert.ok(html.includes('Thỏa thuận theo năng lực'))
 })
 
+test('ApplicationReviewWorkspace displays live evidence callout with highlighted snippet in CV tab when jumpTarget is provided', () => {
+  const application = {
+    id: 'app-callout-1',
+    jobId: 'job-callout-1',
+    candidateName: 'Test Candidate',
+    skills: ['React'],
+    matchMatchedSkills: ['React'],
+  }
+
+  const html = renderToStaticMarkup(
+    React.createElement(ApplicationReviewWorkspace, {
+      application,
+      initialTab: 'cv',
+      jumpTarget: {
+        phrase: 'React',
+        snippetText: 'Contributed to frontend development using React 18 and TypeScript.',
+        source: 'Dự án',
+      },
+    }),
+  )
+
+  // Renders the callout box
+  assert.ok(html.includes('recruiter-cv-workspace__evidence-callout'))
+  assert.ok(html.includes('Bằng chứng trích xuất từ CV:'))
+  assert.ok(html.includes('React'))
+  // Snippet text has highlighted mark
+  assert.ok(html.includes('<mark class="ai1-evidence__span-highlight">React</mark>'))
+  // Guidance for PDF
+  assert.ok(html.includes('Ctrl + F'))
+  assert.ok(html.includes('Ctrl + V'))
+})
+
 

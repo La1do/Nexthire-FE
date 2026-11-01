@@ -8,6 +8,7 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
+  Copy,
   DollarSign,
   Download,
   ExternalLink,
@@ -27,7 +28,7 @@ import { applicationService } from '../../../services/application.service'
 import { jobService } from '../../../services/job.service'
 import type { ApplicationCvDownloadResponse } from '../../../types/application.types'
 import { parseHrReviewEnvelope, type HrReview } from '../../../types/hr-review.types'
-import { Ai1EvidenceView } from './ai1/Ai1EvidenceView'
+import { Ai1EvidenceView, type JumpToPdfPayload } from './ai1/Ai1EvidenceView'
 import { ai1Copy } from './ai1/ai1Copy'
 import type {
   JobExperienceLevel,
@@ -37,6 +38,8 @@ import type {
 } from '../../../types/job.types'
 import type { RecruiterApplicationItem } from '../types'
 
+export type { JumpToPdfPayload }
+
 export type ApplicationReviewWorkspaceProps = {
   application: RecruiterApplicationItem
   className?: string
@@ -44,6 +47,7 @@ export type ApplicationReviewWorkspaceProps = {
   initialTab?: 'cv' | 'criteria'
   job?: RecruiterJobResponse | null
   onOpenResumeExternal?: () => void
+  jumpTarget?: JumpToPdfPayload | string | null
 }
 
 const EMPLOYMENT_TYPE_LABELS: Record<JobType, string> = {
@@ -177,6 +181,39 @@ export function checkAi1SkillMatch(
   }
 }
 
+function renderHighlightedSnippet(text: string, phrase: string): React.ReactNode {
+  if (!text || !phrase) return text
+  const cleanPhrase = phrase.trim()
+  if (!cleanPhrase) return text
+
+  const terms = cleanPhrase
+    .split(/\s+/)
+    .map((w) => w.trim())
+    .filter((w) => w.length >= 2)
+    .sort((a, b) => b.length - a.length)
+
+  if (terms.length === 0) return text
+  const pattern = terms.map((t) => t.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')
+  const regex = new RegExp(`(${pattern})`, 'gi')
+  const parts = text.split(regex)
+
+  if (parts.length <= 1) return text
+  return (
+    <>
+      {parts.map((part, i) => {
+        const isMatch = terms.some((t) => t.toLowerCase() === part.toLowerCase())
+        return isMatch ? (
+          <mark key={i} className="ai1-evidence__span-highlight">
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      })}
+    </>
+  )
+}
+
 export function ApplicationReviewWorkspace({
   application,
   className = '',
@@ -184,14 +221,43 @@ export function ApplicationReviewWorkspace({
   initialTab = 'cv',
   job: initialJob = null,
   onOpenResumeExternal,
+  jumpTarget,
 }: ApplicationReviewWorkspaceProps) {
   const [activeTab, setActiveTab] = useState<'cv' | 'criteria'>(initialTab)
-  const [pdfSearchQuery, setPdfSearchQuery] = useState<string | null>(null)
+  const [pdfSearchQuery, setPdfSearchQuery] = useState<string | null>(() => {
+    if (!jumpTarget) return null
+    const phrase = typeof jumpTarget === 'string' ? jumpTarget : jumpTarget.phrase
+    if (!phrase?.trim()) return null
+    return phrase
+      .trim()
+      .split(/\s+/)
+      .slice(0, 4)
+      .join(' ')
+      .replace(/[.,;:!?()"']/g, '')
+  })
+  const [activeSnippet, setActiveSnippet] = useState<JumpToPdfPayload | null>(() => {
+    if (!jumpTarget) return null
+    const phrase = typeof jumpTarget === 'string' ? jumpTarget : jumpTarget.phrase
+    if (!phrase?.trim()) return null
+    const clean = phrase
+      .trim()
+      .split(/\s+/)
+      .slice(0, 4)
+      .join(' ')
+      .replace(/[.,;:!?()"']/g, '')
+    return {
+      phrase: clean,
+      snippetText: typeof jumpTarget === 'object' ? jumpTarget.snippetText : undefined,
+      source: typeof jumpTarget === 'object' ? jumpTarget.source : undefined,
+    }
+  })
+  const [copiedNotification, setCopiedNotification] = useState<boolean>(false)
   const localeContext = useContext(LocaleContext)
   const currentLocale = localeContext?.locale ?? 'vi'
   const copy = ai1Copy[currentLocale as keyof typeof ai1Copy] ?? ai1Copy.vi
 
-  const handleJumpToPdf = useCallback((phrase: string) => {
+  const triggerSearchAndCopy = useCallback((target: JumpToPdfPayload | string) => {
+    const phrase = typeof target === 'string' ? target : target.phrase
     if (!phrase?.trim()) return
     const clean = phrase
       .trim()
@@ -199,9 +265,33 @@ export function ApplicationReviewWorkspace({
       .slice(0, 4)
       .join(' ')
       .replace(/[.,;:!?()"']/g, '')
+
     setPdfSearchQuery(clean)
+    setActiveSnippet({
+      phrase: clean,
+      snippetText: typeof target === 'object' ? target.snippetText : undefined,
+      source: typeof target === 'object' ? target.source : undefined,
+    })
     setActiveTab('cv')
+
+    // Automatically copy to clipboard (Cách 2)
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(clean).then(() => {
+        setCopiedNotification(true)
+        setTimeout(() => setCopiedNotification(false), 4000)
+      }).catch(() => {})
+    }
   }, [])
+
+  const handleJumpToPdf = useCallback((target: string | JumpToPdfPayload) => {
+    triggerSearchAndCopy(target)
+  }, [triggerSearchAndCopy])
+
+  useEffect(() => {
+    if (jumpTarget) {
+      triggerSearchAndCopy(jumpTarget)
+    }
+  }, [jumpTarget, triggerSearchAndCopy])
 
   // CV Preview State
   const [cvData, setCvData] = useState<ApplicationCvDownloadResponse | null>(null)
@@ -546,6 +636,68 @@ export function ApplicationReviewWorkspace({
                 )}
               </div>
             </div>
+
+            {/* Live Evidence Highlight Callout Box (Cách 2: Smart Clipboard & Live Evidence Highlight) */}
+            {activeSnippet && (
+              <div className="recruiter-cv-workspace__evidence-callout">
+                <div className="recruiter-cv-workspace__evidence-callout-header">
+                  <div className="recruiter-cv-workspace__evidence-callout-title">
+                    <Sparkles size={14} className="recruiter-cv-workspace__evidence-callout-icon" />
+                    <span>Bằng chứng trích xuất từ CV: <strong>"{activeSnippet.phrase}"</strong></span>
+                    {activeSnippet.source && (
+                      <span className="recruiter-cv-workspace__evidence-source-tag">
+                        {activeSnippet.source}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="recruiter-cv-workspace__evidence-callout-actions">
+                    <button
+                      type="button"
+                      className="recruiter-cv-workspace__copy-btn"
+                      onClick={() => {
+                        if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+                          navigator.clipboard.writeText(activeSnippet.phrase).then(() => {
+                            setCopiedNotification(true)
+                            setTimeout(() => setCopiedNotification(false), 3000)
+                          }).catch(() => {})
+                        }
+                      }}
+                      title="Sao chép lại từ khóa vào clipboard"
+                    >
+                      <Copy size={12} />
+                      <span>{copiedNotification ? 'Đã sao chép!' : 'Copy lại từ khóa'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="recruiter-cv-workspace__evidence-close-btn"
+                      onClick={() => {
+                        setActiveSnippet(null)
+                        setPdfSearchQuery(null)
+                      }}
+                      title="Đóng bảng trích dẫn"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                {activeSnippet.snippetText && (
+                  <blockquote className="recruiter-cv-workspace__evidence-quote-box">
+                    {renderHighlightedSnippet(activeSnippet.snippetText, activeSnippet.phrase)}
+                  </blockquote>
+                )}
+
+                <div className="recruiter-cv-workspace__evidence-guidance">
+                  <span className="recruiter-cv-workspace__guidance-badge">
+                    {copiedNotification ? '✓ Đã lưu vào Clipboard' : '📋 Hướng dẫn xem trên PDF'}
+                  </span>
+                  <span>
+                    Nhấp chuột vào bản PDF bên dưới, bấm <strong>Ctrl + F</strong> rồi <strong>Ctrl + V</strong> để trình duyệt tự cuộn tới đúng dòng trên CV gốc!
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Document Viewer Frame / States */}
             <div className="recruiter-cv-workspace__viewport">

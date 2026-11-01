@@ -16,6 +16,7 @@ import type { RecruiterApplicationItem } from '../types'
 import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecisionValidation'
 import { AiMatchBadge } from './AiMatchBadge'
 import { Ai1EvidencePanel } from './ai1/Ai1EvidencePanel'
+import type { JumpToPdfPayload } from './ai1/Ai1EvidenceView'
 import { ApplicationDecisionForm, type ApplicationDecisionFormHandle } from './ApplicationDecisionForm'
 import { ApplicationKeyboardShortcutsModal } from './ApplicationKeyboardShortcutsModal'
 import { ApplicationReviewWorkspace } from './ApplicationReviewWorkspace'
@@ -119,9 +120,18 @@ export function ApplicationDetailDrawer({
   const [mobileActiveTab, setMobileActiveTab] = useState<'evaluation' | 'workspace'>('evaluation')
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [hrReview, setHrReview] = useState<HrReview | null>(null)
+  const [jumpTarget, setJumpTarget] = useState<JumpToPdfPayload | null>(null)
   const drawerRef = useRef<HTMLElement | null>(null)
   const decisionFormRef = useRef<ApplicationDecisionFormHandle | null>(null)
   const isMatchActionDisabled = isMatching
+
+  const handleJumpToPdf = useCallback((payload: JumpToPdfPayload | string) => {
+    if (typeof payload === 'string') {
+      setJumpTarget({ phrase: payload })
+    } else {
+      setJumpTarget(payload)
+    }
+  }, [])
 
   useEffect(() => {
     setHrReview(null)
@@ -415,6 +425,7 @@ export function ApplicationDetailDrawer({
               <ApplicationReviewWorkspace
                 application={application}
                 hrReview={hrReview}
+                jumpTarget={jumpTarget}
                 onOpenResumeExternal={() => onOpenResume(application)}
               />
             </div>
@@ -510,6 +521,7 @@ export function ApplicationDetailDrawer({
               updatedAt={application.updatedAt}
               isMatching={isMatching}
               onReviewLoaded={setHrReview}
+              onJumpToPdf={handleJumpToPdf}
             />
 
             <section className="recruiter-application-detail-card recruiter-ai-match-panel">

@@ -3,7 +3,7 @@ import { isAxiosError } from 'axios'
 import { useLocale } from '../../../../i18n'
 import { applicationService } from '../../../../services/application.service'
 import { parseHrReviewEnvelope, type HrReview } from '../../../../types/hr-review.types'
-import { Ai1EvidenceView, type Ai1ViewState } from './Ai1EvidenceView'
+import { Ai1EvidenceView, type Ai1ViewState, type JumpToPdfPayload } from './Ai1EvidenceView'
 import { ai1Copy } from './ai1Copy'
 
 type Props = {
@@ -12,9 +12,10 @@ type Props = {
   isMatching: boolean
   updatedAt: string
   onReviewLoaded?: (review: HrReview | null) => void
+  onJumpToPdf?: (payload: JumpToPdfPayload | string) => void
 }
 
-export function Ai1EvidencePanel({ applicationId, jobId, isMatching, updatedAt, onReviewLoaded }: Props) {
+export function Ai1EvidencePanel({ applicationId, jobId, isMatching, updatedAt, onReviewLoaded, onJumpToPdf }: Props) {
   const { locale } = useLocale()
   const [revision, setRevision] = useState(0)
   const identity = `${applicationId}:${jobId}:${updatedAt}:${isMatching}:${revision}`
@@ -51,5 +52,13 @@ export function Ai1EvidencePanel({ applicationId, jobId, isMatching, updatedAt, 
 
   // Key the result as well as cancelling requests: no old CV flash on a fast switch.
   const state: Ai1ViewState = result?.identity === identity ? result.state : { status: 'loading' }
-  return <Ai1EvidenceView state={state} copy={ai1Copy[locale]} isMatching={isMatching} onRefresh={() => setRevision((value) => value + 1)} />
+  return (
+    <Ai1EvidenceView
+      state={state}
+      copy={ai1Copy[locale]}
+      isMatching={isMatching}
+      onRefresh={() => setRevision((value) => value + 1)}
+      onJumpToPdf={onJumpToPdf}
+    />
+  )
 }

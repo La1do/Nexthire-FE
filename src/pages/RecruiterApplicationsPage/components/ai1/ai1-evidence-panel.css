@@ -440,6 +440,14 @@
   background: #ffffff;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
 }
+.ai1-evidence__quote--clickable {
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.ai1-evidence__quote--clickable:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+}
 .ai1-evidence__quote-heading {
   display: flex;
   align-items: center;
