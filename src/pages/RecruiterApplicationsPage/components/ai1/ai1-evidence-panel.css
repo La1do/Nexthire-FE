@@ -479,18 +479,14 @@
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
-.ai1-evidence__keyword-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
+.ai1-evidence__span-highlight {
+  background: #fef9c3;
+  border-radius: 3px;
+  padding: 1px 2px;
+  font-style: inherit;
   font-weight: 600;
-  color: #047857;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  padding: 2px 8px;
-  border-radius: 6px;
 }
+
 
 /* Relevance pill (high / medium / low) */
 .ai1-evidence__relevance-pill {

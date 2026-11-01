@@ -50,6 +50,18 @@ function hasLexicalPenalty(hit: HrEvidence): boolean {
   return (hit.reasonCodes ?? []).includes('LEXICAL_ABSENT_PENALTY')
 }
 
+function highlightSpan(fullText: string, span: string | null | undefined): React.ReactNode {
+  if (!span || !fullText.includes(span)) return fullText
+  const idx = fullText.indexOf(span)
+  return (
+    <>
+      {idx > 0 && fullText.slice(0, idx)}
+      <mark className="ai1-evidence__span-highlight">{span}</mark>
+      {idx + span.length < fullText.length && fullText.slice(idx + span.length)}
+    </>
+  )
+}
+
 function getRelevanceTier(score: number): 'high' | 'medium' | 'low' {
   if (score >= 80) return 'high'
   if (score >= 60) return 'medium'
@@ -197,11 +209,14 @@ function Evidence({ items, copy, requirementText }: { items: HrEvidence[]; copy:
         <Warnings codes={group.flatMap(item => item.hit.reasonCodes ?? [])} copy={copy} />
         {hit.text.length > 650 ? (
           <>
-            <blockquote>{hit.text.slice(0, 650)}…</blockquote>
-            <details className="ai1-evidence__full"><summary>{copy.fullQuote}</summary><blockquote>{hit.text}</blockquote></details>
+            <blockquote>{highlightSpan(hit.text.slice(0, 650), hit.relevantSpan)}…</blockquote>
+            <details className="ai1-evidence__full">
+              <summary>{copy.fullQuote}</summary>
+              <blockquote>{highlightSpan(hit.text, hit.relevantSpan)}</blockquote>
+            </details>
           </>
         ) : (
-          <blockquote>{hit.text}</blockquote>
+          <blockquote>{highlightSpan(hit.text, hit.relevantSpan)}</blockquote>
         )}
         <details className="ai1-evidence__sources" open>
           <summary>{copy.cvSources}</summary>
