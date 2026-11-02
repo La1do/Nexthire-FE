@@ -2,6 +2,7 @@ import { useCvBuilderStore } from '../store/useCvBuilderStore';
 import { LANGUAGE_OPTIONS } from '../../../constants/TemplateCVsections';
 
 const FONTS = [
+  { label: 'Inter (Khuyên dùng)', value: 'Inter, sans-serif' },
   { label: 'Roboto', value: 'Roboto, sans-serif' },
   { label: 'Be Vietnam Pro', value: '"Be Vietnam Pro", sans-serif' },
   { label: 'Open Sans', value: '"Open Sans", sans-serif' },

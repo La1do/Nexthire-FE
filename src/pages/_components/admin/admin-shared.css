@@ -357,7 +357,7 @@
   color: var(--color-text-secondary);
   font: inherit;
   font-size: .8rem;
-  font-weight: 650;
+  font-weight: 600;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
@@ -747,3 +747,22 @@
     display: none;
   }
 }
+
+/* Admin Page Layout Width & Responsive Consistency */
+.admin-page-container,
+.admin-dashboard-page,
+.admin-users-page,
+.admin-companies-page,
+.admin-company-detail-page,
+.admin-jobs-page,
+.admin-cv-templates-page,
+.admin-settings-page,
+.admin-user-detail-page,
+.admin-ai-page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  min-width: 0;
+}
+

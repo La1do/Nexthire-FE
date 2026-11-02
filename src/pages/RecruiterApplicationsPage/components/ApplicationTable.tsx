@@ -14,11 +14,12 @@ type ApplicationTableProps = {
   columns: RecruiterApplicationsTranslations['results']['columns']
   handlers: ApplicationTableHandlers
   matchLabels: RecruiterApplicationsTranslations['match']
+  onSelectApplication?: (application: RecruiterApplicationItem) => void
   statusLabels: RecruiterApplicationsTranslations['statusLabels']
 }
 
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/)
+function getInitials(name?: string | null) {
+  const parts = (name ?? '').trim().split(/\s+/)
   const first = parts[0]?.[0] ?? ''
   const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : ''
   return `${first}${last}`.toUpperCase() || '?'
@@ -59,8 +60,17 @@ export function ApplicationTable({
   columns,
   handlers,
   matchLabels,
+  onSelectApplication,
   statusLabels,
 }: ApplicationTableProps) {
+  const handleRowClick = (application: RecruiterApplicationItem) => {
+    if (onSelectApplication) {
+      onSelectApplication(application)
+    } else {
+      handlers.onView(application)
+    }
+  }
+
   return (
     <div className="recruiter-applications-table-wrap">
       <table className="recruiter-applications-table">
@@ -79,7 +89,11 @@ export function ApplicationTable({
         </thead>
         <tbody>
           {applications.map((application) => (
-            <tr key={application.id}>
+            <tr
+              className="cursor-pointer hover:bg-[var(--color-surface-subtle)] transition-colors"
+              key={application.id}
+              onClick={() => handleRowClick(application)}
+            >
               <td>
                 <div className="recruiter-applications-candidate-cell">
                   <span aria-hidden="true" className="recruiter-applications-avatar">
@@ -108,7 +122,10 @@ export function ApplicationTable({
                 <button
                   aria-label={`${actions.actionView}: ${application.candidateName}`}
                   className="recruiter-applications-icon-button"
-                  onClick={() => handlers.onView(application)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handlers.onView(application)
+                  }}
                   title={actions.actionView}
                   type="button"
                 >
@@ -117,7 +134,10 @@ export function ApplicationTable({
                 <button
                   aria-label={`${actions.actionEmail}: ${application.candidateName}`}
                   className="recruiter-applications-icon-button"
-                  onClick={() => handlers.onEmail(application)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handlers.onEmail(application)
+                  }}
                   title={actions.actionEmail}
                   type="button"
                 >
@@ -126,7 +146,10 @@ export function ApplicationTable({
                 <button
                   aria-label={`${actions.actionDownload}: ${application.candidateName}`}
                   className="recruiter-applications-icon-button"
-                  onClick={() => handlers.onOpenResume(application)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handlers.onOpenResume(application)
+                  }}
                   title={actions.actionDownload}
                   type="button"
                 >

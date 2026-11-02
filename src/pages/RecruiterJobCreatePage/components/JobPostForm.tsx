@@ -7,7 +7,7 @@ import type {
   JobWorkingType,
   PublicCategory,
 } from '../../../types/job.types'
-import { Button, Input } from '../../_components'
+import { Button, Input, SelectField } from '../../_components'
 import { JobPostDateInput } from './JobPostDateInput'
 import { sanitizeUnsignedIntegerInput } from '../utils/jobPostInput'
 import type {
@@ -83,27 +83,21 @@ function SelectInput({ disabled, error, label, onChange, options, value }: Selec
   const errorId = `${generatedId}-error`
 
   return (
-    <label className="job-post-field" htmlFor={generatedId}>
-      <span>{label}</span>
-      <select
-        aria-describedby={error ? errorId : undefined}
-        aria-invalid={Boolean(error)}
-        className="form-control job-post-select"
+    <div className="job-post-field">
+      <SelectField
+        className="job-post-select-field"
         disabled={disabled}
         id={generatedId}
-        onChange={(event) => onChange(event.target.value)}
+        label={label}
+        menuClassName="admin-filter-menu"
+        onChange={onChange}
+        options={options}
         value={value}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      />
       <small aria-hidden={!error} className="job-post-field-error" id={error ? errorId : undefined} role={error ? 'alert' : undefined}>
         {error ?? ' '}
       </small>
-    </label>
+    </div>
   )
 }
 

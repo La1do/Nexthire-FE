@@ -5,7 +5,6 @@
  * contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47)
  * tokens: pass (48) · responsive: pass (34, 49, 50–57) · icons: pass (30)
  */
-@import "../../../tokens.css";
 
 html,
 body {
@@ -25,7 +24,7 @@ body {
 .home-page {
   color: var(--color-home-ink);
   display: grid;
-  font-family: var(--font-home-body);
+  font-family: var(--font-sans);
   gap: var(--space-xl);
   min-width: 0;
 }
@@ -40,7 +39,7 @@ body {
 .home-page h1,
 .home-page h2,
 .home-page h3 {
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-style: normal;
   letter-spacing: 0;
   min-width: 0;
@@ -215,7 +214,7 @@ body {
 
 .home-hero-stats strong {
   color: var(--color-home-on-ink);
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-md);
   line-height: 1;
 }
@@ -257,7 +256,7 @@ body {
   align-items: center;
   color: var(--color-home-ink);
   display: inline-flex;
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-xs);
   font-weight: 700;
   gap: var(--space-xs);
@@ -334,7 +333,7 @@ body {
 }
 
 .home-opportunity-copy strong {
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-sm);
 }
 
@@ -532,7 +531,7 @@ body {
   cursor: pointer;
   display: inline-flex;
   filter: none;
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-weight: 700;
   gap: var(--space-xs);
   justify-content: center;
@@ -711,7 +710,7 @@ body {
 
 .home-employer-card strong {
   color: var(--color-home-ink);
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-base);
 }
 
@@ -1131,7 +1130,7 @@ body {
 
 .home-category-card strong {
   color: var(--color-home-ink);
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-sm);
 }
 
@@ -1288,7 +1287,7 @@ body {
 }
 
 .home-photo-promo-title {
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: 800;
   line-height: 1.1;
@@ -1302,7 +1301,7 @@ body {
   border-radius: var(--radius-home-sm);
   color: var(--color-home-accent-ink);
   display: inline-flex;
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-sm);
   font-weight: 700;
   gap: var(--space-xs);
@@ -1402,7 +1401,7 @@ body {
 
 .home-article-number {
   color: var(--color-home-muted);
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;
   font-weight: 700;
@@ -1544,7 +1543,7 @@ body {
   color: var(--color-home-accent-ink);
   cursor: pointer;
   filter: none;
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-weight: 700;
   min-height: calc(var(--space-xl) + var(--space-lg));
   padding-inline: var(--space-lg);

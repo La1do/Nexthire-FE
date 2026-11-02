@@ -10,6 +10,7 @@ import { ApplicationStats } from './components/ApplicationStats'
 import type { ApplicationFilter, CandidateApplication } from './types'
 import { filterCandidateApplications, getApplicationStats } from './utils/applicationsData'
 import { createCandidateApplicationFromApi } from './utils/applicationApi'
+import './profile-applications.css'
 
 export function ProfileApplicationsPage() {
   const { locale } = useLocale()

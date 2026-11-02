@@ -9,7 +9,7 @@ type AiMatchBadgeProps = {
 export function AiMatchBadge({ application, labels }: AiMatchBadgeProps) {
   if (application.cvParseStatus === 'PARSING') {
     return (
-      <span className="recruiter-ai-match-badge recruiter-ai-match-badge--loading">
+      <span className="recruiter-ai-match-badge recruiter-ai-match-badge--pending">
         {labels.processing}
       </span>
     )

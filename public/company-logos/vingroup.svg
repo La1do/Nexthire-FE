@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Vingroup">
+  <defs>
+    <linearGradient id="vg-grad" x1="0" y1="0" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#b91c1c"/>
+      <stop offset="1" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="url(#vg-grad)"/>
+  <path d="M22 34l26 34 26-34h-10l-16 22-16-22H22z" fill="#ffffff"/>
+  <path d="M30 30l18 24 18-24h-7l-11 15-11-15H30z" fill="#fef08a"/>
+  <circle cx="48" cy="24" r="3.5" fill="#fef08a"/>
+</svg>

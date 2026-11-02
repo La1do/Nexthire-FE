@@ -402,6 +402,7 @@
   background: transparent;
   color: var(--color-text-secondary);
   font: inherit;
+  font-family: var(--font-mono);
   font-size: .7rem;
   cursor: pointer;
 }

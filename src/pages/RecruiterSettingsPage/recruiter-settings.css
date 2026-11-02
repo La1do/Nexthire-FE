@@ -5,7 +5,6 @@
  * contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47)
  * tokens: pass (48) · responsive: pass (34, 49, 50–57) · icons: pass (30)
  */
-@import "../../../tokens.css";
 
 html,
 body {
@@ -29,7 +28,7 @@ body {
   --color-settings-success: oklch(43% 0.12 155);
   color: var(--color-settings-ink);
   display: grid;
-  font-family: var(--font-home-body);
+  font-family: var(--font-sans);
   gap: var(--space-lg);
   min-width: 0;
 }
@@ -39,7 +38,7 @@ body {
 }
 
 .recruiter-settings-page :where(h2, h3) {
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-style: normal;
   letter-spacing: 0;
   min-width: 0;

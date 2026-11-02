@@ -49,12 +49,14 @@ export function RecruiterHomePage() {
     <div className="recruiter-home-page">
       <section className="recruiter-hero">
         <div>
-          <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
           <h2>{content.hero.title}</h2>
           <p>{content.hero.description}</p>
         </div>
         <div className="recruiter-hero__actions">
-          <Button disabled={!isVerified} onClick={() => navigate('/recruiter/jobs/new')}>
+          <Button
+            disabled={!isVerified}
+            onClick={() => navigate('/recruiter/jobs/new', { state: { from: '/recruiter' } })}
+          >
             {content.hero.primaryAction}
           </Button>
           <Button onClick={() => navigate('/recruiter/applications')} variant="secondary">

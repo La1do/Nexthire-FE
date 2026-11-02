@@ -17,6 +17,7 @@ import { ApplicationDetailDrawer } from './components/ApplicationDetailDrawer'
 import { ApplicationFilters } from './components/ApplicationFilters'
 import { ApplicationMobileList } from './components/ApplicationMobileList'
 import { ApplicationTable } from './components/ApplicationTable'
+import { Ai2ReviewOrder } from './components/ai2/Ai2ReviewOrder'
 import type {
   RecruiterApplicationCriteria,
   RecruiterApplicationItem,
@@ -142,10 +143,22 @@ export function RecruiterApplicationsPage() {
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null)
   const matchingSessions = useRef(new Map<string, AbortController>())
   const [matchMessages, setMatchMessages] = useState<Record<string, MatchingMessage>>({})
+
   useEffect(() => {
     const sessions = matchingSessions.current
-    return () => { for (const session of sessions.values()) session.abort(); sessions.clear() }
+    return () => {
+      for (const session of sessions.values()) session.abort()
+      sessions.clear()
+    }
   }, [])
+
+  function matchingMessageFor(id: string) {
+    const key = matchMessages[id]
+    if (!key) return undefined
+    return key === 'started' || key === 'timeout' || key === 'processingAction'
+      ? content.match[key]
+      : matchingCopy[locale][key]
+  }
 
   const dateFormatter = useMemo(
     () =>
@@ -352,15 +365,11 @@ export function RecruiterApplicationsPage() {
     setPage((currentPage) => Math.min(currentPage, totalPages))
   }, [totalPages])
 
-  function matchingMessageFor(id: string) {
-    const key = matchMessages[id]
-    if (!key) return undefined
-    return key === 'started' || key === 'timeout' || key === 'processingAction'
-      ? content.match[key] : matchingCopy[locale][key]
-  }
-
   const pagedApplications = applications
   const hasActiveFilters = isActiveRecruiterApplicationFilters(criteria)
+  const selectedIndex = applications.findIndex((application) => application.id === selectedApplicationId)
+  const hasPrevious = selectedIndex > 0
+  const hasNext = selectedIndex >= 0 && selectedIndex < applications.length - 1
 
   function updateApplicationSearch(nextCriteria: RecruiterApplicationCriteria, applicationId?: string | null) {
     const criteriaChanged = criteria.jobId !== nextCriteria.jobId ||
@@ -445,23 +454,40 @@ export function RecruiterApplicationsPage() {
     if (matchingSessions.current.has(application.id)) return
     const session = new AbortController()
     matchingSessions.current.set(application.id, session)
-    const timer = window.setTimeout(() => session.abort(new DOMException('Matching deadline', 'TimeoutError')), MATCH_POLL_TIMEOUT_MS)
+    const timer = window.setTimeout(
+      () => session.abort(new DOMException('Matching deadline', 'TimeoutError')),
+      MATCH_POLL_TIMEOUT_MS,
+    )
     const publish = (message: MatchingMessage) => {
-      if (!session.signal.aborted) setMatchMessages((current) => ({ ...current, [application.id]: message }))
+      if (!session.signal.aborted) {
+        setMatchMessages((current) => ({ ...current, [application.id]: message }))
+      }
     }
     setMatchMessages((current) => ({ ...current, [application.id]: 'processingAction' }))
     setMatchingApplicationIds((current) => new Set(current).add(application.id))
     try {
       const current = await applicationService.getRecruiterApplication(application.id, session.signal)
       session.signal.throwIfAborted()
-      if (current.id !== application.id || current.jobId !== application.jobId) throw new InvalidMatchingStatusError('Application changed')
-      const identity = { applicationId: current.id, jobId: current.jobId, candidateId: current.candidateId, candidateCvId: current.candidateCvId }
-      const request = validateMatchRequest(await applicationService.runRecruiterApplicationMatch(application.id, session.signal), application.id)
+      if (current.id !== application.id || current.jobId !== application.jobId) {
+        throw new InvalidMatchingStatusError('Application changed')
+      }
+      const identity = {
+        applicationId: current.id,
+        jobId: current.jobId,
+        candidateId: current.candidateId,
+        candidateCvId: current.candidateCvId,
+      }
+      const request = validateMatchRequest(
+        await applicationService.runRecruiterApplicationMatch(application.id, session.signal),
+        application.id,
+      )
       session.signal.throwIfAborted()
       publish(request.id === null ? 'waitingCv' : 'started')
       let latestApplication = current
       const outcome = await pollMatchingStatus({
-        identity, requestId: request.id, signal: session.signal,
+        identity,
+        requestId: request.id,
+        signal: session.signal,
         readApplication: async (signal) => {
           const updated = await applicationService.getRecruiterApplication(application.id, signal)
           validateMatchingIdentity({ ...updated, applicationId: updated.id }, identity)
@@ -476,15 +502,23 @@ export function RecruiterApplicationsPage() {
     } catch (error) {
       if (session.signal.aborted && session.signal.reason?.name !== 'TimeoutError') return
       const status = (error as { response?: { status?: number } } | null)?.response?.status
-      const message: MatchingMessage = session.signal.aborted ? 'timeout' :
-        error instanceof InvalidMatchingStatusError ? 'invalid' :
-          status === 401 || status === 403 || status === 404 ? 'denied' : 'network'
+      const message: MatchingMessage = session.signal.aborted
+        ? 'timeout'
+        : error instanceof InvalidMatchingStatusError
+          ? 'invalid'
+          : status === 401 || status === 403 || status === 404
+            ? 'denied'
+            : 'network'
       setMatchMessages((current) => ({ ...current, [application.id]: message }))
     } finally {
       window.clearTimeout(timer)
       if (matchingSessions.current.get(application.id) === session) {
         matchingSessions.current.delete(application.id)
-        setMatchingApplicationIds((current) => { const next = new Set(current); next.delete(application.id); return next })
+        setMatchingApplicationIds((current) => {
+          const next = new Set(current)
+          next.delete(application.id)
+          return next
+        })
       }
     }
   }
@@ -537,15 +571,7 @@ export function RecruiterApplicationsPage() {
 
   return (
     <div className="recruiter-applications-page">
-      <section className="recruiter-applications-hero">
-        <div>
-          <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
-          <h2>{content.hero.title}</h2>
-          <p>{content.hero.description}</p>
-        </div>
-      </section>
-
-      <section className="recruiter-applications-stats" aria-label={content.stats.title}>
+      <section className="admin-users-stats recruiter-applications-stats" aria-label={content.stats.title}>
         <AdminStatCard delta={content.stats.totalDelta} icon={<ApplicationsIcon />} label={content.stats.totalLabel} tone="blue" value={applicationStats.total} />
         <AdminStatCard delta={content.stats.newDelta} icon={<NewIcon />} label={content.stats.newLabel} tone="coral" value={applicationStats.new} />
         <AdminStatCard delta={content.stats.interviewDelta} icon={<InterviewIcon />} label={content.stats.interviewLabel} tone="amber" value={applicationStats.interview} />
@@ -576,6 +602,10 @@ export function RecruiterApplicationsPage() {
         tabs={content.tabs}
       />
 
+      {import.meta.env.DEV && import.meta.env.VITE_AI2_DEMO_ENABLED === 'true' && criteria.jobId !== 'all' && applications[0]?.jobId === criteria.jobId ? (
+        <Ai2ReviewOrder key={criteria.jobId} applicationId={applications[0].id} jobId={criteria.jobId} locale={locale} onView={openApplicationDetail} />
+      ) : null}
+
       <section className="recruiter-applications-results">
         <header className="recruiter-applications-results__header">
           <p className="recruiter-applications-results__count">
@@ -600,6 +630,7 @@ export function RecruiterApplicationsPage() {
                 onView: (application) => openApplicationDetail(application.id),
               }}
               matchLabels={content.match}
+              onSelectApplication={(application) => openApplicationDetail(application.id)}
               statusLabels={content.statusLabels}
             />
             <ApplicationMobileList
@@ -622,7 +653,12 @@ export function RecruiterApplicationsPage() {
 
       {selectedApplication ? (
         <ApplicationDetailDrawer
+          key={`${selectedApplication.id}:${selectedApplication.jobId}`}
           application={selectedApplication}
+          applications={applications}
+          currentIndex={selectedIndex >= 0 ? selectedIndex + 1 : undefined}
+          hasNext={hasNext}
+          hasPrevious={hasPrevious}
           isMatching={matchingApplicationIds.has(selectedApplication.id)}
           isStatusUpdating={statusUpdatingIds.has(selectedApplication.id)}
           matchingMessage={matchingMessageFor(selectedApplication.id)}
@@ -630,10 +666,22 @@ export function RecruiterApplicationsPage() {
           meta={content.meta}
           onClose={closeApplicationDetail}
           onEmail={(application) => void handleApplicationAction('mailto', application)}
+          onNavigateNext={() => {
+            if (hasNext) {
+              openApplicationDetail(applications[selectedIndex + 1].id)
+            }
+          }}
+          onNavigatePrevious={() => {
+            if (hasPrevious) {
+              openApplicationDetail(applications[selectedIndex - 1].id)
+            }
+          }}
           onOpenResume={(application) => void handleApplicationAction('resume', application)}
           onRunMatch={(application) => void handleRunMatch(application)}
+          onSelectApplication={(app) => openApplicationDetail(app.id)}
           onStatusChange={handleStatusChange}
           statusLabels={content.statusLabels}
+          totalCount={applications.length}
           translations={content.drawer}
         />
       ) : null}

@@ -3,7 +3,10 @@ import { useLocale } from '../../../i18n'
 import { useAsync } from '../../../hooks/useAsync'
 import { getApiErrorCode } from '../../../lib/api/apiError'
 import { jobService } from '../../../services/job.service'
+import { companyService } from '../../../services/company.service'
+import { categoryService } from '../../../services/category.service'
 import type { JobDetailSectionView, JobDetailView, RelatedJobView } from '../types'
+import { SAMPLE_JOB_DETAIL } from '../mock/sampleJob'
 import {
   mapJobDetail,
   mapJobDetailSections,
@@ -43,12 +46,31 @@ export function useJobDetail(id: string): JobDetailData {
     [jobText],
   )
 
-  const jobState = useAsync(() => jobService.getJobById(id), [id])
-  const raw = jobState.data
+  const isDemo = id === 'demo' || !id
+  const jobState = useAsync(
+    () => (isDemo ? Promise.resolve(SAMPLE_JOB_DETAIL) : jobService.getJobById(id)),
+    [id, isDemo],
+  )
+  // Fall back to sample job if in dev and backend is offline
+  const raw = jobState.data ?? (jobState.error && isDemo ? SAMPLE_JOB_DETAIL : null)
+
+  const companyId = raw?.companyId ?? null
+  const companyState = useAsync(
+    () => (companyId ? companyService.getPublicCompany(companyId).catch(() => null) : Promise.resolve(null)),
+    [companyId],
+  )
+
+  const categoriesState = useAsync(
+    () => categoryService.getCategories().catch(() => null),
+    [],
+  )
 
   const job = useMemo<JobDetailView | null>(
-    () => (raw ? mapJobDetail(raw, locale, labels) : null),
-    [raw, locale, labels],
+    () =>
+      raw
+        ? mapJobDetail(raw, locale, labels, companyState.data, categoriesState.data)
+        : null,
+    [raw, locale, labels, companyState.data, categoriesState.data],
   )
 
   const sections = useMemo<ReadonlyArray<JobDetailSectionView>>(
@@ -75,7 +97,8 @@ export function useJobDetail(id: string): JobDetailData {
       .map(mapRelatedJob)
   }, [relatedState.data, id])
 
-  const notFound = Boolean(jobState.error) && NOT_FOUND_CODES.has(getApiErrorCode(jobState.error) ?? '')
+  const notFound =
+    Boolean(jobState.error) && NOT_FOUND_CODES.has(getApiErrorCode(jobState.error) ?? '')
 
   return {
     job,

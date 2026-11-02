@@ -6,8 +6,8 @@ type AdminUserAvatarProps = {
   size?: 'medium' | 'large'
 }
 
-function getInitials(name: string) {
-  const normalizedName = name.trim()
+function getInitials(name?: string | null) {
+  const normalizedName = (name ?? '').trim()
   if (!normalizedName) return '?'
 
   return normalizedName

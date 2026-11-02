@@ -141,7 +141,7 @@ const initialData: CvData = {
 
 const initialSettings: CvSettings = {
   themeColor: '#f25555',
-  fontFamily: 'Roboto, sans-serif',
+  fontFamily: 'Inter, sans-serif',
   fontSize: 'medium',
   lineHeight: 1.5,
   language: 'vi',

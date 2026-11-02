@@ -1,6 +1,7 @@
 import type { ChangeEvent, FormEvent } from 'react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Send } from 'lucide-react'
 import { useToast } from '../../../context'
 import { useAuthGuard } from '../../../hooks/useAuthGuard'
 import type { JobDetailTranslations } from '../../../i18n/types'
@@ -23,6 +24,7 @@ type ApplicationLookupState = 'idle' | 'loading' | 'ready' | 'error'
 
 const COVER_LETTER_MAX = 5000
 const CV_MAX_SIZE_BYTES = 10 * 1024 * 1024
+const MAX_APPLICATION_LOOKUP_PAGES = 3
 const CV_ACCEPT_TYPES =
   '.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 const CV_MIME_TYPES = new Set([
@@ -67,6 +69,12 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
   const modal = content.applyModal
   const dialogRef = useRef<HTMLDialogElement | null>(null)
   const firstFieldRef = useRef<HTMLSelectElement | HTMLInputElement | null>(null)
+  const dialogTitleId = useId()
+  const cvSelectId = useId()
+  const uploadTitleId = useId()
+  const uploadFeedbackId = useId()
+  const coverLetterFieldId = useId()
+  const coverLetterHelperId = useId()
   const [isOpen, setOpen] = useState(false)
   const [profileState, setProfileState] = useState<ProfileLoadState>('idle')
   const [candidateProfile, setCandidateProfile] = useState<CandidateMeResponse | null>(null)
@@ -183,7 +191,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
           matchedApplication = response.data.find((application) => isActiveApplicationForJob(application, job.id)) ?? null
           totalPages = response.meta.totalPages || 1
           page += 1
-        } while (!matchedApplication && page <= totalPages)
+        } while (!matchedApplication && page <= Math.min(totalPages, MAX_APPLICATION_LOOKUP_PAGES))
 
         if (ignore) return
 
@@ -339,7 +347,8 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     return (
       <div className="job-detail-apply-block">
         <Link className="job-detail-apply-cta" to={loginHref}>
-          {content.apply}
+          <Send size={15} className="job-detail-apply-icon" />
+          <span>{content.apply}</span>
         </Link>
         <p className="job-detail-apply-hint">{content.applyLoginHint}</p>
       </div>
@@ -350,7 +359,8 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     return (
       <div className="job-detail-apply-block">
         <button className="job-detail-apply-cta job-detail-apply-cta-disabled" disabled type="button">
-          {content.apply}
+          <Send size={15} className="job-detail-apply-icon" />
+          <span>{content.apply}</span>
         </button>
         <p className="job-detail-apply-hint">{content.candidateOnly}</p>
       </div>
@@ -361,7 +371,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
     return (
       <div className="job-detail-apply-block">
         <Link className="job-detail-apply-cta job-detail-apply-cta-success" to="/profile/applications">
-          {content.applied}
+          <span>{content.applied}</span>
         </Link>
         <p className="job-detail-apply-hint">{content.appliedHint}</p>
       </div>
@@ -373,7 +383,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
       <div className="job-detail-apply-block">
         <button className="job-detail-apply-cta job-detail-apply-cta-disabled" disabled type="button">
           <span aria-hidden="true" className="job-apply-spinner" />
-          {content.apply}
+          <span>{content.apply}</span>
         </button>
         <p className="job-detail-apply-hint">{content.applyStatusLoading}</p>
       </div>
@@ -383,14 +393,15 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
   return (
     <div className="job-detail-apply-block">
       <button className="job-detail-apply-cta" type="button" onClick={openDialog}>
-        {content.apply}
+        <Send size={15} className="job-detail-apply-icon" />
+        <span>{content.apply}</span>
       </button>
       <p className="job-detail-apply-hint">{content.applyHint}</p>
 
       <dialog
         ref={dialogRef}
         className={`job-apply-dialog${submitState === 'success' ? ' is-success' : ''}`}
-        aria-labelledby="job-apply-dialog-title"
+        aria-labelledby={dialogTitleId}
         onCancel={(event) => {
           if (isBusy) {
             event.preventDefault()
@@ -408,7 +419,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
           <header className="job-apply-modal__header">
             <div>
               <span>{modal.kicker}</span>
-              <h2 id="job-apply-dialog-title">{modal.title.replace('{{job}}', job.title)}</h2>
+              <h2 id={dialogTitleId}>{modal.title.replace('{{job}}', job.title)}</h2>
               <p>{modal.description}</p>
             </div>
             <button
@@ -462,14 +473,14 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
                       </div>
                     ) : (
                       <>
-                        <label className="job-apply-field" htmlFor="job-apply-cv">
+                        <label className="job-apply-field" htmlFor={cvSelectId}>
                           <span>{modal.cvLabel}</span>
                           <small>{modal.cvHelper}</small>
                           <select
                             ref={(node) => {
                               firstFieldRef.current = node
                             }}
-                            id="job-apply-cv"
+                            id={cvSelectId}
                             value={selectedCvId}
                             onChange={(event) => {
                               setSelectedCvId(event.target.value)
@@ -499,11 +510,11 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
 
                     <section
                       className={`job-apply-upload is-${uploadVisualState}`}
-                      aria-labelledby="job-apply-upload-title"
+                      aria-labelledby={uploadTitleId}
                       aria-live="polite"
                     >
                       <div className="job-apply-upload__copy">
-                        <strong id="job-apply-upload-title">
+                        <strong id={uploadTitleId}>
                           {hasCv ? modal.uploadAlternativeTitle : modal.uploadFirstTitle}
                         </strong>
                         <p>{hasCv ? modal.uploadAlternativeDescription : modal.uploadFirstDescription}</p>
@@ -525,7 +536,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
                             ref={(node) => {
                               if (!hasCv) firstFieldRef.current = node
                             }}
-                            aria-describedby="job-apply-upload-feedback"
+                            aria-describedby={uploadFeedbackId}
                             aria-invalid={uploadError ? true : undefined}
                             accept={CV_ACCEPT_TYPES}
                             disabled={isBusy}
@@ -533,7 +544,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
                             onChange={(event) => void handleCvUpload(event)}
                           />
                         </label>
-                        <small id="job-apply-upload-feedback" className={uploadFeedbackClassName}>
+                        <small id={uploadFeedbackId} className={uploadFeedbackClassName}>
                           {uploadFeedbackMessage}
                         </small>
                       </div>
@@ -541,13 +552,13 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
 
                     <label
                       className={`job-apply-field${coverLetterTooLong ? ' is-error' : ''}`}
-                      htmlFor="job-apply-cover-letter"
+                      htmlFor={coverLetterFieldId}
                     >
                       <span>{modal.coverLetterLabel}</span>
                       <textarea
-                        aria-describedby="job-apply-cover-letter-helper"
+                        aria-describedby={coverLetterHelperId}
                         aria-invalid={coverLetterTooLong ? true : undefined}
-                        id="job-apply-cover-letter"
+                        id={coverLetterFieldId}
                         maxLength={COVER_LETTER_MAX + 1}
                         placeholder={modal.coverLetterPlaceholder}
                         rows={5}
@@ -558,7 +569,7 @@ export function ApplyJobButton({ content, job }: ApplyJobButtonProps) {
                           if (submitState === 'error') setSubmitState('idle')
                         }}
                       />
-                      <small id="job-apply-cover-letter-helper">
+                      <small id={coverLetterHelperId}>
                         {coverLetterTooLong ? modal.coverLetterTooLong : `${modal.coverLetterHint} · ${coverLetterCount}`}
                       </small>
                     </label>

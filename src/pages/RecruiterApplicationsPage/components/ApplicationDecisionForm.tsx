@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
 import {
@@ -7,6 +7,10 @@ import {
   validateApplicationFeedback,
 } from '../utils/recruiterApplicationDecisionValidation'
 import { ApplicationDecisionConfirmModal } from './ApplicationDecisionConfirmModal'
+
+export type ApplicationDecisionFormHandle = {
+  openDecisionDialog: (status: RecruiterDecisionStatus) => void
+}
 
 type ApplicationDecisionFormProps = {
   application: RecruiterApplicationItem
@@ -22,36 +26,49 @@ type PendingDecision = {
 
 type DecisionValidationError = ReturnType<typeof validateApplicationFeedback>
 
-export function ApplicationDecisionForm({
-  application,
-  isSubmitting,
-  onSubmit,
-  translations,
-}: ApplicationDecisionFormProps) {
-  const [feedback, setFeedback] = useState(application.statusNote ?? '')
-  const [error, setError] = useState<DecisionValidationError>(null)
-  const [pendingDecision, setPendingDecision] = useState<PendingDecision | null>(null)
-  const isDecisionCompleted = ['OFFERED', 'REJECTED', 'CANCELLED'].includes(application.status)
-  const isOffer = application.status === 'OFFERED'
-  const isRejected = application.status === 'REJECTED'
+export const ApplicationDecisionForm = forwardRef<ApplicationDecisionFormHandle, ApplicationDecisionFormProps>(
+  function ApplicationDecisionForm(
+    { application, isSubmitting, onSubmit, translations },
+    ref,
+  ) {
+    const [feedback, setFeedback] = useState(application.statusNote ?? '')
+    const [error, setError] = useState<DecisionValidationError>(null)
+    const [pendingDecision, setPendingDecision] = useState<PendingDecision | null>(null)
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+    const isDecisionCompleted = ['OFFERED', 'REJECTED', 'CANCELLED'].includes(application.status)
+    const isOffer = application.status === 'OFFERED'
+    const isRejected = application.status === 'REJECTED'
 
-  useEffect(() => {
-    setFeedback(application.statusNote ?? '')
-    setError(null)
-    setPendingDecision(null)
-  }, [application.id, application.statusNote])
+    useEffect(() => {
+      setFeedback(application.statusNote ?? '')
+      setError(null)
+      setPendingDecision(null)
+    }, [application.id, application.statusNote])
 
-  function handleDecision(status: RecruiterDecisionStatus) {
-    const validationError = validateApplicationFeedback(status, feedback)
+    const handleDecision = useCallback((status: RecruiterDecisionStatus) => {
+      const validationError = validateApplicationFeedback(status, feedback)
 
-    if (validationError) {
-      setError(validationError)
-      return
-    }
+      if (validationError) {
+        setError(validationError)
+        textareaRef.current?.focus()
+        return
+      }
 
-    setError(null)
-    setPendingDecision({ feedback: feedback.trim(), status })
-  }
+      setError(null)
+      setPendingDecision({ feedback: feedback.trim(), status })
+    }, [feedback])
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        openDecisionDialog: (status: RecruiterDecisionStatus) => {
+          if (!isDecisionCompleted && !isSubmitting) {
+            handleDecision(status)
+          }
+        },
+      }),
+      [handleDecision, isDecisionCompleted, isSubmitting],
+    )
 
   async function confirmDecision() {
     if (!pendingDecision) return
@@ -103,6 +120,7 @@ export function ApplicationDecisionForm({
                 if (error) setError(null)
               }}
               placeholder={translations.feedbackPlaceholder}
+              ref={textareaRef}
               rows={5}
               value={feedback}
             />
@@ -123,6 +141,7 @@ export function ApplicationDecisionForm({
             className="recruiter-application-decision__offer"
             disabled={isSubmitting}
             onClick={() => handleDecision('OFFERED')}
+            title="Duyệt / Đề nghị ứng viên (Phím O)"
             type="button"
           >
             {isSubmitting ? translations.submitting : translations.offerAction}
@@ -131,6 +150,7 @@ export function ApplicationDecisionForm({
             className="recruiter-application-decision__reject"
             disabled={isSubmitting}
             onClick={() => handleDecision('REJECTED')}
+            title="Từ chối ứng viên (Phím R)"
             type="button"
           >
             {isSubmitting ? translations.submitting : translations.rejectAction}
@@ -157,4 +177,4 @@ export function ApplicationDecisionForm({
       ) : null}
     </section>
   )
-}
+})

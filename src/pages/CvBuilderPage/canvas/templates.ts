@@ -33,7 +33,7 @@ const mkText = (
     opacity: 1,
     locked: false,
     hidden: false,
-    fontFamily: 'Roboto, sans-serif',
+    fontFamily: 'Inter, sans-serif',
     fontSize: 14,
     fontWeight: 400,
     italic: false,

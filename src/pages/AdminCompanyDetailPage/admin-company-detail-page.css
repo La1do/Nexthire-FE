@@ -143,7 +143,7 @@
   display: grid;
   gap: 1.25rem;
   padding: clamp(1rem, 3vw, 1.75rem);
-  max-width: 1200px;
+  max-width: 1440px;
   width: 100%;
   margin-inline: auto;
 }
@@ -153,20 +153,22 @@
   animation: admin-panel-enter 420ms var(--motion-ease-out) both;
 }
 
-.admin-company-detail-page {
-  max-width: 1160px;
-}
-
 .admin-company-detail-back {
-  justify-self: start;
+  align-items: center;
   color: var(--color-brand-solid);
-  font-weight: 700;
+  display: inline-flex;
   font-size: 0.9rem;
+  font-weight: 700;
+  gap: 0.45rem;
+  justify-self: start;
+  text-decoration: none;
+  transition:
+    color 160ms var(--motion-ease-standard),
+    transform 160ms var(--motion-ease-standard);
 }
 
-.admin-company-detail-back::before {
-  content: "←";
-  margin-right: 0.35rem;
+.admin-company-detail-back:hover {
+  transform: translateX(-2px);
 }
 
 .admin-company-detail-grid {

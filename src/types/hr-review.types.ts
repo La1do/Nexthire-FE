@@ -5,6 +5,7 @@ const evidence = z.object({
   similarityScore: z.number().min(0).max(100),
   reasonCodes: z.array(z.string()).optional(),
   scoreMeaning: z.literal('COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY'),
+  relevantSpan: z.string().nullable().optional(),
 })
 const suggestion = z.enum(['matched', 'partial', 'not_established_in_provided_evidence']).nullable()
 const component = z.object({

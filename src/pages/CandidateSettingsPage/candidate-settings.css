@@ -4,7 +4,6 @@
  * contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47)
  * responsive: pass (34, 49–57) · tokens: pass (48) · icons: pass (30)
  */
-@import "../../../tokens.css";
 
 html,
 body {
@@ -25,7 +24,7 @@ body {
   --color-accent-ink: var(--color-text-primary);
   color: var(--color-settings-ink);
   display: grid;
-  font-family: var(--font-home-body);
+  font-family: var(--font-sans);
   gap: var(--space-lg);
   margin-inline: auto;
   max-width: 70rem;
@@ -60,7 +59,7 @@ body {
 }
 
 .candidate-settings-section__header h2 {
-  font-family: var(--font-home-display);
+  font-family: var(--font-display);
   font-size: clamp(var(--text-md), 3vw, var(--text-lg));
   font-style: normal;
   letter-spacing: 0;

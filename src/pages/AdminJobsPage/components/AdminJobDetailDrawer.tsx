@@ -1,22 +1,26 @@
 import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import {
+  Archive,
   BriefcaseBusiness,
   Building2,
   CalendarDays,
+  CheckCircle2,
   CircleAlert,
   CircleDollarSign,
   ClipboardList,
   Clock3,
   FileText,
   MapPin,
+  RotateCcw,
   ShieldCheck,
   Sparkles,
   Users,
   X,
+  XCircle,
 } from 'lucide-react'
 import type { AdminJobsTranslations } from '../../../i18n/types'
-import type { AdminJobRow } from '../types'
+import type { AdminJobAction, AdminJobRow } from '../types'
 import { isAdminJobRevision } from '../types'
 import {
   formatAdminJobDate,
@@ -29,6 +33,7 @@ type Props = {
   content: AdminJobsTranslations
   item: AdminJobRow | null
   onClose: () => void
+  onAction?: (action: AdminJobAction, item: AdminJobRow, revision: boolean) => void
 }
 
 type InfoItemProps = {
@@ -85,7 +90,7 @@ function getReasonLabel(reason: string, labels: Record<string, string>) {
   return labels[reason] ?? reason
 }
 
-export function AdminJobDetailDrawer({ content, item, onClose }: Props) {
+export function AdminJobDetailDrawer({ content, item, onClose, onAction }: Props) {
   const drawerRef = useRef<HTMLElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
 
@@ -460,6 +465,81 @@ export function AdminJobDetailDrawer({ content, item, onClose }: Props) {
             </div>
           </section>
         </div>
+
+        {onAction ? (
+          <footer className="admin-job-drawer__footer">
+            <button
+              className="admin-job-drawer__action-btn admin-job-drawer__action-btn--ghost"
+              onClick={onClose}
+              type="button"
+            >
+              {detail.close}
+            </button>
+
+            {['PENDING_REVIEW', 'NEEDS_REVIEW', 'SHOULD_REJECT'].includes(item.status) ? (
+              <>
+                <button
+                  className="admin-job-drawer__action-btn admin-job-drawer__action-btn--reject"
+                  onClick={() => onAction('reject', item, isAdminJobRevision(item))}
+                  type="button"
+                >
+                  <XCircle size={16} />
+                  <span>{content.actions.reject}</span>
+                </button>
+                <button
+                  className="admin-job-drawer__action-btn admin-job-drawer__action-btn--approve"
+                  onClick={() => onAction('approve', item, isAdminJobRevision(item))}
+                  type="button"
+                >
+                  <CheckCircle2 size={16} />
+                  <span>{content.actions.approve}</span>
+                </button>
+              </>
+            ) : null}
+
+            {!isAdminJobRevision(item) && item.status === 'PUBLISHED' ? (
+              <>
+                <button
+                  className="admin-job-drawer__action-btn admin-job-drawer__action-btn--warning"
+                  onClick={() => onAction('unpublish', item, false)}
+                  type="button"
+                >
+                  <Archive size={16} />
+                  <span>{content.actions.unpublish}</span>
+                </button>
+                <button
+                  className="admin-job-drawer__action-btn admin-job-drawer__action-btn--danger"
+                  onClick={() => onAction('close', item, false)}
+                  type="button"
+                >
+                  <XCircle size={16} />
+                  <span>{content.actions.close}</span>
+                </button>
+              </>
+            ) : null}
+
+            {!isAdminJobRevision(item) && item.status === 'UNPUBLISHED' ? (
+              <>
+                <button
+                  className="admin-job-drawer__action-btn admin-job-drawer__action-btn--approve"
+                  onClick={() => onAction('republish', item, false)}
+                  type="button"
+                >
+                  <RotateCcw size={16} />
+                  <span>{content.actions.republish}</span>
+                </button>
+                <button
+                  className="admin-job-drawer__action-btn admin-job-drawer__action-btn--danger"
+                  onClick={() => onAction('close', item, false)}
+                  type="button"
+                >
+                  <XCircle size={16} />
+                  <span>{content.actions.close}</span>
+                </button>
+              </>
+            ) : null}
+          </footer>
+        ) : null}
       </aside>
     </div>
   )

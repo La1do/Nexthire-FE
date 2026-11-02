@@ -567,12 +567,8 @@ export function RecruiterCompanyPage() {
           </Link>
         </aside>
       ) : null}
-      <header className="recruiter-company-hero">
-        <div className="recruiter-company-hero__copy">
-          <span>{content.hero.kicker}</span>
-          <h1>{content.pageTitle}</h1>
-          <p>{content.pageSubtitle}</p>
-        </div>
+      <header className="recruiter-company-header-bar">
+        <p className="recruiter-page-subtitle">{content.pageSubtitle}</p>
         <div className="recruiter-company-hero__meta" aria-label={content.hero.companyLabel}>
           <div className="recruiter-company-logo" aria-hidden="true">
             {logo ? <img alt="" src={logo} /> : <span>{getCompanyInitials(company.name)}</span>}

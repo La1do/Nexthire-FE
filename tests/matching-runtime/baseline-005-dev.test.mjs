@@ -78,7 +78,14 @@ const { AiMatchBadge } = load('src/pages/RecruiterApplicationsPage/components/Ai
 const { ApplicationTable } = load('src/pages/RecruiterApplicationsPage/components/ApplicationTable.tsx', { './AiMatchBadge': { AiMatchBadge } })
 const { ApplicationMobileList } = load('src/pages/RecruiterApplicationsPage/components/ApplicationMobileList.tsx', { './AiMatchBadge': { AiMatchBadge } })
 const stub = () => null
-const drawer = load('src/pages/RecruiterApplicationsPage/components/ApplicationDetailDrawer.tsx', { './ai1/Ai1EvidencePanel': { Ai1EvidencePanel: () => React.createElement('div', {}, 'AI1 evidence retained') }, './AiMatchBadge': { AiMatchBadge }, './ApplicationDecisionForm': { ApplicationDecisionForm: stub } })
+const drawer = load('src/pages/RecruiterApplicationsPage/components/ApplicationDetailDrawer.tsx', {
+  './ai1/Ai1EvidencePanel': { Ai1EvidencePanel: () => React.createElement('div', {}, 'AI1 evidence retained') },
+  './ai2/Ai2DemoPanel': { Ai2DemoPanel: stub },
+  './AiMatchBadge': { AiMatchBadge },
+  './ApplicationDecisionForm': { ApplicationDecisionForm: stub },
+  './ApplicationKeyboardShortcutsModal': { ApplicationKeyboardShortcutsModal: stub },
+  './ApplicationReviewWorkspace': { ApplicationReviewWorkspace: stub },
+})
 const candidates = load('src/pages/RecruiterCandidatesPage/index.tsx', {
   'react-router-dom': { Link: ({ to, ...props }) => React.createElement('a', { href: to, ...props }) }, '../../i18n': {}, '../../lib/api/apiError': {}, '../../services/application.service': {}, '../_components': {}, '../_components/admin/AdminPagination': {}, '../_components/admin/AdminStatCard': {},
 }, '\nexport { CandidateCard, CandidateDrawer }')

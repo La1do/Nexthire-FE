@@ -134,3 +134,12 @@ export function splitJobCount(value: number, locale: string, suffix: string) {
     suffix,
   }
 }
+
+export function isJobApproved(status: JobStatus): boolean {
+  return status === 'PUBLISHED' || status === 'UNPUBLISHED' || status === 'CLOSED' || status === 'EXPIRED'
+}
+
+export function canJobHaveApplications(status: JobStatus, applicationCount?: number | null): boolean {
+  return isJobApproved(status) || Boolean(applicationCount && applicationCount > 0)
+}
+

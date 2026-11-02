@@ -37,7 +37,7 @@
 .admin-user-detail-item + .admin-user-detail-item { border-top: 1px solid var(--color-border-subtle); }
 .admin-user-detail-item__icon { align-items: center; background: var(--color-surface-muted); border-radius: 8px; color: var(--color-text-secondary); display: inline-flex; height: 1.75rem; justify-content: center; }
 .admin-user-detail-item dt { color: var(--color-text-muted); font-size: 0.75rem; }
-.admin-user-detail-item dd { color: var(--color-text-primary); font-size: 0.9rem; font-weight: 650; margin: 0.2rem 0 0; overflow-wrap: anywhere; }
+.admin-user-detail-item dd { color: var(--color-text-primary); font-size: 0.9rem; font-weight: 600; margin: 0.2rem 0 0; overflow-wrap: anywhere; }
 .admin-user-detail-item.is-muted dd { color: var(--color-text-secondary); font-weight: 500; }
 .admin-user-detail-section--timeline .admin-user-detail-section__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .admin-user-detail-section--timeline .admin-user-detail-item:nth-child(2) { border-top: 0; }

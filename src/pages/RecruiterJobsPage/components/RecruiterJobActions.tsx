@@ -1,7 +1,7 @@
 import { useLocale } from '../../../i18n'
 import { planCopy } from './requirement-plan/planCopy'
 import { Button } from '../../_components'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { RecruiterJobsTranslations } from '../../../i18n/types'
 import type { RecruiterJobResponse } from '../../../types/job.types'
 import type { RecruiterJobAction, RecruiterJobActionState } from '../types'
@@ -39,6 +39,7 @@ export function RecruiterJobActions({
   translations,
 }: RecruiterJobActionsProps) {
   const { locale } = useLocale()
+  const location = useLocation()
   const actions = getAvailableJobActions(job)
 
   const canEdit = Boolean(editHref) && (job.status === 'DRAFT' || job.status === 'PUBLISHED')
@@ -52,6 +53,7 @@ export function RecruiterJobActions({
         <Link
           className="recruiter-job-edit-link recruiter-job-action"
           onClick={(event) => event.stopPropagation()}
+          state={{ from: location.pathname }}
           to={editHref}
         >
           {translations.actions.edit}

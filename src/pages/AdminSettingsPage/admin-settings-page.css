@@ -17,11 +17,11 @@
 .admin-settings-summary dl div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: .75rem; padding: .7rem 0; border-bottom: 1px solid var(--color-border-subtle); }
 .admin-settings-summary dl div:last-child { border-bottom: 0; }
 .admin-settings-summary dt { color: var(--color-text-muted); font-size: .72rem; }
-.admin-settings-summary dd { overflow: hidden; margin: 0; color: var(--color-text-secondary); font-size: .76rem; font-weight: 650; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.admin-settings-summary dd { overflow: hidden; margin: 0; color: var(--color-text-secondary); font-size: .76rem; font-weight: 600; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
 
 .admin-settings-form, .admin-settings-password-form { display: grid; gap: 1.15rem; padding: 1.25rem; }
 .admin-settings-form__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-.admin-settings-form label { display: grid; align-content: start; gap: .42rem; color: var(--color-text-secondary); font-size: .78rem; font-weight: 650; }
+.admin-settings-form label { display: grid; align-content: start; gap: .42rem; color: var(--color-text-secondary); font-size: .78rem; font-weight: 600; }
 .admin-settings-form input { width: 100%; min-height: 46px; padding: .65rem .8rem; border: 1px solid var(--color-border-default); border-radius: 8px; background: var(--color-surface-card); color: var(--color-text-primary); font: inherit; outline: none; }
 .admin-settings-form input:focus { border-color: var(--color-brand-solid); box-shadow: 0 0 0 3px var(--color-brand-soft); }
 .admin-settings-form input[readonly] { background: var(--color-surface-muted); color: var(--color-text-muted); cursor: not-allowed; }

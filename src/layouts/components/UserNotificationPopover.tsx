@@ -3,16 +3,104 @@ import { useNavigate } from 'react-router-dom'
 import { useNotifications } from '../../hooks/useNotifications'
 import type { UserNotificationTranslations } from '../../i18n/types'
 import type { NotificationItem } from '../../types/notification.types'
+import { pickTone } from '../../pages/_utils/jobFormat'
+
+function isBrokenDemoCdnUrl(src: string): boolean {
+  try {
+    const url = new URL(src, window.location.origin)
+    return url.hostname === 'cdn.nexhire.vn' && url.pathname.startsWith('/demo/')
+  } catch {
+    return false
+  }
+}
+
+function getKnownCompanyLogo(name?: string | null): string | null {
+  if (!name) return null
+  const normalized = name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .trim()
+
+  if (normalized.includes('vingroup') || normalized.includes('vinhomes')) {
+    return '/company-logos/vingroup.svg'
+  }
+  if (normalized.includes('vinfast')) {
+    return '/company-logos/vinfast.svg'
+  }
+  if (normalized.includes('fpt')) {
+    return '/company-logos/fpt-software.svg'
+  }
+  if (normalized.includes('vng') || normalized.includes('zalo')) {
+    return '/company-logos/vng.svg'
+  }
+  if (normalized.includes('grab')) {
+    return '/company-logos/grab.svg'
+  }
+  if (normalized.includes('shopee')) {
+    return '/company-logos/shopee.svg'
+  }
+  if (normalized.includes('tiki')) {
+    return '/company-logos/tiki.svg'
+  }
+  if (normalized.includes('momo')) {
+    return '/company-logos/momo.svg'
+  }
+  if (normalized.includes('nexhire')) {
+    return '/company-logos/nexhire-tech.svg'
+  }
+  if (normalized.includes('appforge')) {
+    return '/company-logos/appforge.svg'
+  }
+  if (normalized.includes('brightlabs')) {
+    return '/company-logos/brightlabs.svg'
+  }
+  if (normalized.includes('cloudify')) {
+    return '/company-logos/cloudify-vn.svg'
+  }
+  if (normalized.includes('north star') || normalized.includes('northstar')) {
+    return '/company-logos/north-star.svg'
+  }
+  if (normalized.includes('luma')) {
+    return '/company-logos/luma-studio.svg'
+  }
+
+  return null
+}
 
 function getNotificationAvatarUrl(item: NotificationItem): string | null {
-  if (item.senderLogoUrl?.trim()) {
-    return item.senderLogoUrl
+  if (item.senderLogoUrl?.trim() && !isBrokenDemoCdnUrl(item.senderLogoUrl)) {
+    return item.senderLogoUrl.trim()
   }
+
   const data = item.data as Record<string, unknown> | null | undefined
-  const dataLogo = data?.companyLogoUrl
-  if (typeof dataLogo === 'string' && dataLogo.trim()) {
-    return dataLogo
+  const candidates = [
+    data?.companyLogoUrl,
+    data?.logoUrl,
+    data?.logo,
+    data?.companyLogo,
+    data?.candidateAvatarUrl,
+    data?.avatarUrl,
+    data?.senderLogo,
+    data?.senderLogoUrl,
+  ]
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim() && !isBrokenDemoCdnUrl(candidate)) {
+      return candidate.trim()
+    }
   }
+
+  const companyName = (typeof data?.companyName === 'string' ? data.companyName : '') || item.senderName || ''
+  const knownLogo =
+    getKnownCompanyLogo(companyName) ||
+    getKnownCompanyLogo(item.title) ||
+    getKnownCompanyLogo(item.body)
+
+  if (knownLogo) {
+    return knownLogo
+  }
+
   return null
 }
 
@@ -94,18 +182,47 @@ function getInitialsLabel(value: string) {
 }
 
 function NotificationCardAvatar({ item, label }: { item: NotificationItem; label: string }) {
-  const url = getNotificationAvatarUrl(item)
+  const directUrl = getNotificationAvatarUrl(item)
+  const knownLogo =
+    getKnownCompanyLogo(label) ||
+    getKnownCompanyLogo(item.title) ||
+    getKnownCompanyLogo(item.body)
+  const [useKnownFallback, setUseKnownFallback] = useState(false)
   const [failed, setFailed] = useState(false)
-  const showImage = Boolean(url) && !failed
+
+  const activeUrl = !useKnownFallback && directUrl ? directUrl : knownLogo
 
   useEffect(() => {
+    setUseKnownFallback(false)
     setFailed(false)
-  }, [url])
+  }, [directUrl, knownLogo])
+
+  const handleImageError = () => {
+    if (!useKnownFallback && knownLogo && directUrl !== knownLogo) {
+      setUseKnownFallback(true)
+    } else {
+      setFailed(true)
+    }
+  }
+
+  const showImage = Boolean(activeUrl) && !failed
+  const data = item.data as Record<string, unknown> | null | undefined
+  const seed = (typeof data?.companyId === 'string' ? data.companyId : '') || label
+  const tone = pickTone(seed)
 
   return (
-    <span aria-hidden="true" className="user-notification-card__avatar">
-      {showImage ? (
-        <img alt="" onError={() => setFailed(true)} src={url ?? ''} />
+    <span
+      aria-hidden="true"
+      className={`user-notification-card__avatar user-notification-card__avatar--${tone}`}
+    >
+      {showImage && activeUrl ? (
+        <img
+          alt={label}
+          decoding="async"
+          loading="lazy"
+          onError={handleImageError}
+          src={activeUrl}
+        />
       ) : (
         <span>{getInitialsLabel(label)}</span>
       )}

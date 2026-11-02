@@ -55,6 +55,14 @@ export const applicationService = {
     const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/matching-status`, { signal })
     return response.data
   },
+  async getRecruiterApplicationAi2Demo(id: string, signal?: AbortSignal): Promise<unknown> {
+    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/ai2-demo`, { signal })
+    return response.data
+  },
+  async getRecruiterApplicationAi2Pool(id: string, signal?: AbortSignal): Promise<unknown> {
+    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/ai2-pool`, { signal })
+    return response.data
+  },
   async getRecruiterApplicationHrReview(id: string, signal?: AbortSignal): Promise<unknown> {
     const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/hr-review`, { signal })
     return response.data
@@ -65,7 +73,9 @@ export const applicationService = {
   },
   async runRecruiterApplicationMatch(id: string, signal?: AbortSignal) {
     const response = await apiClient.post<Envelope<RecruiterApplicationMatchResponse>>(
-      `/recruiter/applications/${id}/match`, undefined, { signal },
+      `/recruiter/applications/${id}/match`,
+      undefined,
+      { signal },
     )
     return response.data.data
   },

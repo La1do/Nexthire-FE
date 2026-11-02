@@ -100,7 +100,7 @@
 .admin-cv-templates-field > span {
   color: var(--color-text-secondary);
   font-size: .8rem;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .admin-cv-templates-field input,
@@ -243,7 +243,7 @@
 .admin-cv-template-thumbnail-preview span {
   color: var(--color-text-muted);
   font-size: .82rem;
-  font-weight: 650;
+  font-weight: 600;
   padding-left: .2rem;
 }
 
@@ -290,7 +290,7 @@
 .admin-cv-templates-archive-note strong {
   color: var(--color-text-primary);
   font-size: .82rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .admin-cv-templates-archive-note span {
@@ -314,7 +314,7 @@
 .admin-cv-templates-table-head p {
   color: var(--color-text-secondary);
   font-size: .85rem;
-  font-weight: 650;
+  font-weight: 600;
   margin: 0;
 }
 
@@ -574,7 +574,7 @@
 .admin-cv-template-locale-grid label span {
   color: var(--color-text-secondary);
   font-size: .78rem;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .admin-cv-template-form-grid label small {
@@ -646,7 +646,7 @@
 }
 
 .admin-cv-template-json {
-  font-family: ui-monospace, SFMono-Regular, SF Mono, Consolas, monospace;
+  font-family: var(--font-mono);
   min-height: 320px;
   resize: vertical;
   width: 100%;

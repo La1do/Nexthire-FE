@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { PropsWithChildren } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Menu, X } from 'lucide-react'
 import {
   getAuthUserDisplayName,
   useAuth,
@@ -194,6 +195,7 @@ export function MainLayout({ children }: PropsWithChildren) {
   const toast = useToast()
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const [isMobileNavOpen, setMobileNavOpen] = useState(false)
   const showCandidateNotifications = user?.role === 'CANDIDATE'
   const showCandidateNavigation = !user || user.role === 'CANDIDATE'
   const brandHref = getBrandHref(user)
@@ -219,6 +221,23 @@ export function MainLayout({ children }: PropsWithChildren) {
       current: pathname === '/career-guide',
     },
   ]
+
+  useEffect(() => {
+    setMobileNavOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    if (!isMobileNavOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileNavOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isMobileNavOpen])
 
   const handleLogout = () => {
     void logout().then(() => {
@@ -278,9 +297,114 @@ export function MainLayout({ children }: PropsWithChildren) {
                 </a>
               </>
             )}
+            <button
+              aria-controls="main-mobile-drawer"
+              aria-expanded={isMobileNavOpen}
+              aria-label={isMobileNavOpen ? 'Close navigation' : 'Open navigation'}
+              className="main-mobile-toggle lg:hidden"
+              onClick={() => setMobileNavOpen((current) => !current)}
+              type="button"
+            >
+              {isMobileNavOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
         </div>
       </header>
+
+      {isMobileNavOpen ? (
+        <div
+          aria-modal="true"
+          className="main-mobile-drawer-backdrop"
+          id="main-mobile-drawer"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setMobileNavOpen(false)
+            }
+          }}
+          role="dialog"
+        >
+          <aside className="main-mobile-drawer">
+            <div className="main-mobile-drawer__header">
+              <a className="main-brand" href={brandHref} onClick={() => setMobileNavOpen(false)}>
+                <BrandMark compact label={common.brandName} />
+              </a>
+              <button
+                aria-label="Close navigation"
+                className="main-mobile-drawer__close"
+                onClick={() => setMobileNavOpen(false)}
+                type="button"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <nav aria-label="Mobile navigation" className="main-mobile-drawer__nav">
+              {navigationItems.map((item) => (
+                <NavLink
+                  className={({ isActive }) =>
+                    ['main-mobile-drawer__link', isActive || item.current ? 'is-active' : '']
+                      .filter(Boolean)
+                      .join(' ')
+                  }
+                  key={item.href}
+                  onClick={() => setMobileNavOpen(false)}
+                  to={item.href}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+
+            <div className="main-mobile-drawer__actions">
+              {isAuthenticated && user ? (
+                <>
+                  <a
+                    className="main-mobile-drawer__action-btn main-mobile-drawer__action-btn--login"
+                    href={getProfileHref(user.role)}
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    {common.authUser.profile}
+                  </a>
+                  <button
+                    className="main-mobile-drawer__action-btn main-mobile-drawer__action-btn--logout"
+                    onClick={() => {
+                      setMobileNavOpen(false)
+                      handleLogout()
+                    }}
+                    type="button"
+                  >
+                    {common.authUser.logout}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <a
+                    className="main-mobile-drawer__action-btn main-mobile-drawer__action-btn--employer"
+                    href="/recruiter/login"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    {common.navigation.employerCta}
+                  </a>
+                  <a
+                    className="main-mobile-drawer__action-btn main-mobile-drawer__action-btn--login"
+                    href="/login"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    {common.navigation.login}
+                  </a>
+                  <a
+                    className="main-mobile-drawer__action-btn main-mobile-drawer__action-btn--register"
+                    href="/register"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    {common.navigation.register}
+                  </a>
+                </>
+              )}
+            </div>
+          </aside>
+        </div>
+      ) : null}
 
       <main className="main-container py-10 md:py-16">{children}</main>
 

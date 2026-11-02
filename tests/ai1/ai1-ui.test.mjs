@@ -106,7 +106,7 @@ test('no-evidence and empty-requirements do not imply rejection', () => {
 
 test('new copy preserves Unicode, source semantics and plan-unavailable evidence', () => {
   assert.equal(ai1Copy.vi.navigation, 'Yêu cầu JD')
-  assert.equal(ai1Copy.vi.sources.profile, 'Giới thiệu')
+  assert.equal(ai1Copy.vi.sources.profile, 'Giới thiệu bản thân')
   assert.equal(ai1Copy.ja.navigation, '求人要件')
   for (const locale of ['vi', 'en', 'ja']) for (const value of Object.values(ai1Copy[locale].sources)) assert.ok(!value.includes('?') && !value.includes('\ufffd'))
   for (const [source, evidenceId, expected] of [['project','uuid-opaque/technologies/2',ai1Copy.vi.sources.technology], ['unknown','opaque',ai1Copy.vi.sources.unknown]]) {
@@ -214,3 +214,249 @@ test('same passages are referenced without repeating quotes; distinct evidence a
   assert.ok(!html.includes(ai1Copy.vi.sharedEvidence))
   assert.ok(html.includes(ai1Copy.vi.noEvidence))
 })
+
+test('skill requirement filters out irrelevant passages and highlights exact skill match in skills section', () => {
+  const review = ready()
+  const q = review.requirements[0]
+  q.text = 'FastAPI'
+  q.evidence = [
+    // BE sets EXACT_KEYWORD_MATCH when skill keyword is found in the passage
+    { evidenceId: 'skills/fastapi', source: 'skill', text: 'FastAPI', similarityScore: 98.2,
+      scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY', reasonCodes: ['EXACT_KEYWORD_MATCH'] },
+    // BE sets LEXICAL_ABSENT_PENALTY when keyword is absent → FE filters it out
+    { evidenceId: 'projects/0/technologies/1', source: 'project', text: 'GitLab CI', similarityScore: 43.3,
+      scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY', reasonCodes: ['LEXICAL_ABSENT_PENALTY'] },
+  ]
+  q.components = null; q.allOf = null
+  review.requirements = [q]
+
+  const html = render({ status: 'loaded', review: parse(review) })
+  // Passage 2 ('GitLab CI') must be filtered out — LEXICAL_ABSENT_PENALTY means keyword absent
+  assert.ok(html.includes('FastAPI'))
+  assert.ok(!html.includes('GitLab CI'))
+  // Prominently highlight "✓ Tìm thấy trong mục Kỹ năng"
+  assert.ok(html.includes(ai1Copy.vi.foundInSkills))
+})
+
+test('overview header shows intuitive summary pills and badges, avoiding confusing unprepared tags', () => {
+  const review = ready()
+  review.planStatus = 'UNPREPARED'
+  const html = render({ status: 'loaded', review: parse(review) })
+  // Displays summary pill e.g. "tiêu chí đối soát" and evidence count
+  assert.ok(html.includes(ai1Copy.vi.criteriaReview))
+  assert.ok(html.includes(ai1Copy.vi.hasEvidenceCount))
+  // Raw tag "Cấu trúc JD: Chưa thiết lập" is not shown in the overview header
+  const overviewHtml = html.match(/<div class="ai1-evidence__overview">(.*?)<\/div>/s)?.[1]
+  assert.ok(overviewHtml)
+  assert.ok(!overviewHtml.includes(ai1Copy.vi.unprepared))
+  assert.ok(overviewHtml.includes(ai1Copy.vi.criteriaReview))
+})
+
+test('left navigation categorizes into has-evidence and need-review, right side shows relevance pill', () => {
+  const review = ready()
+  const q1 = structuredClone(review.requirements[0])
+  q1.requirementId = 'req-1'
+  q1.text = 'PostgreSQL'
+  q1.evidence = [{ evidenceId: 'skills/0', source: 'skill', text: 'PostgreSQL', similarityScore: 88.0, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' }]
+
+  const q2 = structuredClone(review.requirements[0])
+  q2.requirementId = 'req-2'
+  q2.text = 'Kubernetes'
+  q2.retrievalStatus = 'NO_EVIDENCE'
+  q2.evidence = []
+
+  review.requirements = [q1, q2]
+  const html = render({ status: 'loaded', review: parse(review) })
+
+  // Left navigation has both categories
+  assert.ok(html.includes(ai1Copy.vi.hasEvidenceGroup))
+  assert.ok(html.includes(ai1Copy.vi.needReviewGroup))
+  // Right side relevance pill
+  assert.ok(html.includes(ai1Copy.vi.relevanceHigh))
+  assert.ok(html.includes('88.0 / 100'))
+  // Debug / Provenance collapsed at bottom
+  assert.ok(html.includes(ai1Copy.vi.technical))
+})
+
+const { findSkillOccurrence, createLatestRequestGuard, ApplicationReviewWorkspace } = loadTs('src/pages/RecruiterApplicationsPage/components/ApplicationReviewWorkspace.tsx', {
+  '../../../services/application.service': { applicationService: { getRecruiterApplicationCv: async () => ({}), getRecruiterApplicationHrReview: async () => ({}) } },
+  '../../../services/job.service': { jobService: { getRecruiterJobById: async () => ({}) } },
+  '../../../lib/api/apiError': { getApiErrorEnvelope: () => null },
+  '../../../types/hr-review.types': { parseHrReviewEnvelope },
+  '../../../i18n/localeContext': { LocaleContext: React.createContext({ locale: 'vi' }) },
+  './ai1/Ai1EvidenceView': { Ai1EvidenceView },
+  './ai1/ai1Copy': { ai1Copy },
+  './PdfCvViewer': { PdfCvViewer: () => React.createElement('div', { className: 'pdf-cv-viewer-mock' }) },
+})
+
+test('source occurrence ignores similarity and does not infer a verified skill', () => {
+  const review = ready()
+  const qFastApi = structuredClone(review.requirements[0])
+  qFastApi.requirementId = 'skills/0'
+  qFastApi.text = 'FastAPI'
+  qFastApi.evidence = [
+    { evidenceId: 'experiences/0', source: 'experience', text: 'Built APIs with FastAPI', similarityScore: 100.0, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' },
+  ]
+  qFastApi.components = null
+  qFastApi.allOf = null
+  qFastApi.componentAnalysis = 'NOT_PERFORMED'
+
+  const qReact = structuredClone(review.requirements[0])
+  qReact.requirementId = 'skills/1'
+  qReact.text = 'React'
+  qReact.evidence = [
+    { evidenceId: 'skills/react', source: 'skill', text: 'React', similarityScore: 92.5, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' },
+  ]
+  qReact.components = null
+  qReact.allOf = null
+  qReact.componentAnalysis = 'NOT_PERFORMED'
+
+  const qDocker = structuredClone(review.requirements[0])
+  qDocker.requirementId = 'skills/2'
+  qDocker.text = 'Docker'
+  qDocker.evidence = [
+    { evidenceId: 'experiences/1', source: 'experience', text: 'Basic container knowledge', similarityScore: 55.0, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' },
+  ]
+  qDocker.components = null
+  qDocker.allOf = null
+  qDocker.componentAnalysis = 'NOT_PERFORMED'
+
+  review.requirements = [qFastApi, qReact, qDocker]
+  const parsed = parse(review)
+
+  assert.equal(findSkillOccurrence('FastAPI', parsed), false) // even similarity 100 is not presence
+  assert.equal(findSkillOccurrence('React', parsed), true) // exact literal skills-source occurrence only
+  assert.equal(findSkillOccurrence('Docker', parsed), false)
+  assert.equal(findSkillOccurrence('Ruby on Rails', parsed), false)
+  parsed.requirements[1].evidence[0].similarityScore = 0
+  assert.equal(findSkillOccurrence('React', parsed), true) // zero is never upgraded to 100
+  assert.equal(findSkillOccurrence('React Native', parsed), false)
+  parsed.requirements[1].evidence[0].reasonCodes = ['LEXICAL_ABSENT_PENALTY']
+  assert.equal(findSkillOccurrence('React', parsed), false)
+})
+
+test('workspace keeps PDF search but never converts retrieval or legacy skills into fit claims', () => {
+  const review = ready()
+  const qFastApi = structuredClone(review.requirements[0])
+  qFastApi.requirementId = 'skills/0'
+  qFastApi.text = 'FastAPI'
+  qFastApi.evidence = [
+    { evidenceId: 'experiences/0', source: 'experience', text: 'Built REST APIs with FastAPI', similarityScore: 100.0, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' },
+  ]
+  qFastApi.components = null
+  qFastApi.allOf = null
+  qFastApi.componentAnalysis = 'NOT_PERFORMED'
+
+  const qReact = structuredClone(review.requirements[0])
+  qReact.requirementId = 'skills/1'
+  qReact.text = 'React'
+  qReact.evidence = [
+    { evidenceId: 'skills/react', source: 'skill', text: 'React', similarityScore: 100.0, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' },
+  ]
+  qReact.components = null
+  qReact.allOf = null
+  qReact.componentAnalysis = 'NOT_PERFORMED'
+
+  review.requirements = [qFastApi, qReact]
+  const parsedReview = parse(review)
+
+  const application = {
+    id: 'app-sync-1',
+    jobId: 'job-sync-1',
+    candidateName: 'Test Candidate',
+    skills: [], // empty application.skills!
+    matchMatchedSkills: [],
+  }
+
+  const job = {
+    id: 'job-sync-1',
+    title: 'Senior Backend Engineer',
+    skills: ['FastAPI', 'React', 'Kubernetes'],
+    requirements: 'Requirements text',
+    description: 'Job description',
+  }
+
+  const html = renderToStaticMarkup(
+    React.createElement(ApplicationReviewWorkspace, {
+      application,
+      job,
+      hrReview: parsedReview,
+      initialTab: 'criteria',
+    }),
+  )
+
+  assert.ok(html.includes('Từ khóa để đối chiếu (3)'))
+  assert.ok(html.includes('Có từ khóa trong nguồn'))
+  assert.ok(html.includes('Cần đối chiếu'))
+  for (const unsafe of ['67%', 'Khá phù hợp', 'Rất phù hợp', 'Đã tìm thấy trên CV', 'Kỹ năng đáp ứng yêu cầu', 'Độ khớp AI1:', 'recruiter-match-score-card']) assert.ok(!html.includes(unsafe), unsafe)
+  assert.ok(html.includes('recruiter-criteria-skill-pill__soi-btn'))
+  assert.ok(html.includes('Tìm trên PDF'))
+  const legacyHtml = renderToStaticMarkup(React.createElement(ApplicationReviewWorkspace, {
+    application: { ...application, matchMatchedSkills: ['Kubernetes'] }, job, hrReview: null, initialTab: 'criteria',
+  }))
+  assert.ok(!legacyHtml.includes('Có từ khóa trong nguồn'))
+  assert.ok(!legacyHtml.includes('67%'))
+
+  // Fallback labels for cross-check avoid alarming raw "Chưa có dữ liệu"
+  assert.ok(html.includes('Xem chi tiết trong CV'))
+  assert.ok(html.includes('Thỏa thuận theo năng lực'))
+})
+
+test('latest resource requests ignore stale async success, errors and finally after navigation/retry/unmount', async () => {
+  const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b }); return { promise, resolve, reject } }
+  for (const resource of ['cv', 'job']) {
+    const guard = createLatestRequestGuard()
+    const state = { data: null, error: null, loading: false }
+    const read = async request => {
+      const current = guard.start(); state.loading = true
+      try { const data = await request.promise; if (current()) state.data = data }
+      catch { if (current()) state.error = 'failed' }
+      finally { if (current()) state.loading = false }
+    }
+    const a = deferred(), b = deferred()
+    const first = read(a), second = read(b)
+    b.resolve(`${resource}-B`); await second
+    a.resolve(`${resource}-A`); await first
+    assert.equal(state.data, `${resource}-B`)
+    const retryA = deferred(), retryB = deferred()
+    const old = read(retryA), latest = read(retryB)
+    retryA.reject(new Error('old')); await old
+    assert.equal(state.loading, true); assert.equal(state.error, null)
+    guard.invalidate(); retryB.resolve('unmounted'); await latest
+    assert.equal(state.data, `${resource}-B`)
+  }
+})
+
+test('ApplicationReviewWorkspace displays live evidence callout with highlighted snippet in CV tab when jumpTarget is provided', () => {
+  const application = {
+    id: 'app-callout-1',
+    jobId: 'job-callout-1',
+    candidateName: 'Test Candidate',
+    skills: ['React'],
+    matchMatchedSkills: ['React'],
+  }
+
+  const html = renderToStaticMarkup(
+    React.createElement(ApplicationReviewWorkspace, {
+      application,
+      initialTab: 'cv',
+      jumpTarget: {
+        phrase: 'React',
+        snippetText: 'Contributed to frontend development using React 18 and TypeScript.',
+        source: 'Dự án',
+      },
+    }),
+  )
+
+  // Renders the callout box
+  assert.ok(html.includes('recruiter-cv-workspace__evidence-callout'))
+  assert.ok(html.includes('Bằng chứng trích xuất từ CV:'))
+  assert.ok(html.includes('React'))
+  // Snippet text has highlighted mark
+  assert.ok(html.includes('<mark class="ai1-evidence__span-highlight">React</mark>'))
+  // Guidance for automated PDF highlight
+  assert.ok(html.includes('Tự động định vị'))
+  assert.ok(html.includes('cuộn trực tiếp tới đoạn bằng chứng'))
+})
+
+

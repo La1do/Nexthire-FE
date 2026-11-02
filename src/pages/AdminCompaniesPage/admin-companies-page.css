@@ -84,7 +84,7 @@
   display: grid;
   gap: 1.25rem;
   padding: clamp(1rem, 3vw, 1.75rem);
-  max-width: 1200px;
+  max-width: 1440px;
   width: 100%;
   margin-inline: auto;
 }

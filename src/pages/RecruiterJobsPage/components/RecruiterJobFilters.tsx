@@ -1,4 +1,5 @@
-import { Button, Input, SelectField } from '../../_components'
+import { Search, RotateCcw } from 'lucide-react'
+import { SelectField } from '../../_components'
 import type { RecruiterJobsTranslations } from '../../../i18n/types'
 import type { RecruiterJobsFilters } from '../types'
 import { JOB_SORT_OPTIONS } from '../utils/recruiterJobsData'
@@ -27,33 +28,53 @@ export function RecruiterJobFilters({
     value,
   }))
 
+  const hasActiveFilters = Boolean(searchInput.trim() || filters.sort !== 'latest')
+
   return (
     <form
-      className="recruiter-job-filters"
+      className="admin-users-filters recruiter-job-filters"
       onSubmit={(event) => {
         event.preventDefault()
         onApplySearch(searchInput)
       }}
     >
-      <Input
-        label={translations.filters.searchLabel}
-        onChange={(event) => onSearchInputChange(event.target.value)}
-        placeholder={translations.filters.searchPlaceholder}
-        type="search"
-        value={searchInput}
-      />
+      <div className="admin-filter admin-filter--query">
+        <span className="admin-filter__label">{translations.filters.searchLabel}</span>
+        <div className="admin-moderation-search-control">
+          <span aria-hidden="true" className="admin-filter__icon">
+            <Search size={16} />
+          </span>
+          <input
+            className="admin-filter__input"
+            onChange={(event) => onSearchInputChange(event.target.value)}
+            placeholder={translations.filters.searchPlaceholder}
+            type="search"
+            value={searchInput}
+          />
+        </div>
+      </div>
       <SelectField
-        className="recruiter-job-filter-select"
+        className="admin-filter admin-filter--select recruiter-job-filter-select"
         label={translations.filters.sortLabel}
+        menuClassName="admin-filter-menu"
         onChange={(value) => onSortChange(value as RecruiterJobsFilters['sort'])}
         options={sortOptions}
         value={filters.sort}
       />
-      <div className="recruiter-job-filters__actions">
-        <Button type="submit">{translations.filters.apply}</Button>
-        <Button onClick={onClear} type="button" variant="secondary">
-          {translations.filters.clear}
-        </Button>
+      <div className="admin-filter-actions">
+        <button className="admin-filter__apply" type="submit">
+          {translations.filters.apply}
+        </button>
+        {hasActiveFilters ? (
+          <button
+            className="admin-filter__clear"
+            onClick={onClear}
+            type="button"
+          >
+            <RotateCcw size={14} />
+            <span>{translations.filters.clear}</span>
+          </button>
+        ) : null}
       </div>
     </form>
   )
