@@ -1,2 +1,12 @@
 .recruiter-application-detail-drawer.recruiter-application-detail-drawer--hr-review { width: min(70rem, 100vw); }
 .recruiter-application-detail-drawer__body { align-content: start; }
+
+@media (max-width: 560px) {
+  .recruiter-application-detail-drawer .recruiter-application-detail-drawer__header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .recruiter-application-detail-drawer__header-actions {
+    justify-content: flex-start;
+  }
+}

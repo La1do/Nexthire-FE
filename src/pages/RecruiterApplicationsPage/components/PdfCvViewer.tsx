@@ -337,13 +337,24 @@ export function PdfCvViewer({
     setRenderedCount(0)
     renderedPagesMap.current.clear()
 
-    const loadingTask = pdfjsLib.getDocument({
-      url,
-      withCredentials: false,
-    })
+    const controller = new AbortController()
+    let loadingTask: ReturnType<typeof pdfjsLib.getDocument> | undefined
 
-    loadingTask.promise
+    // Buffer the signed URL before starting the worker. PDF.js 4.10 can emit an
+    // unhandled worker rejection when destroyed during an incomplete URL stream.
+    // same-origin matches PDF.js withCredentials:false (no cross-origin cookies).
+    const loadDocument = async () => {
+      const response = await fetch(url, { signal: controller.signal, credentials: 'same-origin' })
+      if (!response.ok) throw new Error(`Unable to load PDF (HTTP ${response.status})`)
+      const data = new Uint8Array(await response.arrayBuffer())
+      if (cancelled) return null
+      loadingTask = pdfjsLib.getDocument({ data })
+      return loadingTask.promise
+    }
+
+    loadDocument()
       .then(async (doc) => {
+        if (!doc) return
         if (cancelled) return
         setPdfDoc(doc)
         setNumPages(doc.numPages)
@@ -373,11 +384,12 @@ export function PdfCvViewer({
 
     return () => {
       cancelled = true
-      try {
-        loadingTask.destroy()
-      } catch {
-        // ignore cancellation
-      }
+      controller.abort()
+      // destroy() is asynchronous; preserve unexpected cleanup failures rather
+      // than leaving its rejection unobserved or suppressing global errors.
+      void loadingTask?.destroy().catch((error: unknown) => {
+        console.warn('PDF.js document cleanup failed:', error)
+      })
     }
   }, [url, zoomMode, calculateFitPageScale, calculateFitWidthScale])
 
