@@ -47,17 +47,27 @@ export const applicationService = {
     const response = await apiClient.get<Envelope<RecruiterCandidateDetailResponse>>(`/recruiter/candidates/${id}`)
     return response.data.data
   },
-  async getRecruiterApplication(id: string) {
-    const response = await apiClient.get<Envelope<ApplicationResponse>>(`/recruiter/applications/${id}`)
+  async getRecruiterApplication(id: string, signal?: AbortSignal) {
+    const response = await apiClient.get<Envelope<ApplicationResponse>>(`/recruiter/applications/${id}`, { signal })
     return response.data.data
+  },
+  async getRecruiterApplicationMatchingStatus(id: string, signal?: AbortSignal): Promise<unknown> {
+    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/matching-status`, { signal })
+    return response.data
+  },
+  async getRecruiterApplicationHrReview(id: string, signal?: AbortSignal): Promise<unknown> {
+    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/hr-review`, { signal })
+    return response.data
   },
   async getRecruiterApplicationCv(id: string) {
     const response = await apiClient.get<Envelope<ApplicationCvDownloadResponse>>(`/recruiter/applications/${id}/cv`)
     return response.data.data
   },
-  async runRecruiterApplicationMatch(id: string) {
+  async runRecruiterApplicationMatch(id: string, signal?: AbortSignal) {
     const response = await apiClient.post<Envelope<RecruiterApplicationMatchResponse>>(
       `/recruiter/applications/${id}/match`,
+      undefined,
+      { signal },
     )
     return response.data.data
   },

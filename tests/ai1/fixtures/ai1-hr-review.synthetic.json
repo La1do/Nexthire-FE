@@ -1,0 +1,940 @@
+[
+  {
+    "scenario": "UNPREPARED_SQL_ONLY",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "aa86db05-2fd0-493a-80de-8903f1a8de30",
+      "applicationId": "16a91be7-61b1-408d-ae84-63dafb75f037",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "05bc5fcd-b449-46ae-87f5-f576259abb2c",
+      "candidateCvId": "41dc7c19-9729-41e0-9656-dfd64ba3f71d",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "UNPREPARED",
+      "planContentSha256": null,
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "4221e18429db8cd125633dc549a32106a84882fc9195df8feb808ab070d3d69b",
+      "candidateSnapshotSha256": "bd333d8bff9ec380af415ba077cc6bb1085f3944a97dddd5e8129dab3381ce43",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "CANDIDATE_EVIDENCE",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": null,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Data developer Synthetic analytics lab Built PostgreSQL tables and optimized SQL queries for reporting dashboards. Maintained data quality checks and monthly business reports.",
+              "similarityScore": 81.94884061813354,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "PostgreSQL",
+              "similarityScore": 79.9495667219162,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "SQL reporting and dashboard development.",
+              "similarityScore": 78.61608266830444,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "NOT_PERFORMED",
+          "allOf": null,
+          "components": null
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "DRAFT_SQL_ONLY",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "a02beda0-e3f6-41df-85e6-a408ea628c11",
+      "applicationId": "858ec5d4-fc62-421a-876f-a7bdd986d2ab",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "05bc5fcd-b449-46ae-87f5-f576259abb2c",
+      "candidateCvId": "41dc7c19-9729-41e0-9656-dfd64ba3f71d",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "DRAFT",
+      "planContentSha256": null,
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "4221e18429db8cd125633dc549a32106a84882fc9195df8feb808ab070d3d69b",
+      "candidateSnapshotSha256": "bd333d8bff9ec380af415ba077cc6bb1085f3944a97dddd5e8129dab3381ce43",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "CANDIDATE_EVIDENCE",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": null,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Data developer Synthetic analytics lab Built PostgreSQL tables and optimized SQL queries for reporting dashboards. Maintained data quality checks and monthly business reports.",
+              "similarityScore": 81.94884061813354,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "PostgreSQL",
+              "similarityScore": 79.9495667219162,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "SQL reporting and dashboard development.",
+              "similarityScore": 78.61608266830444,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "NOT_PERFORMED",
+          "allOf": null,
+          "components": null
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "CONFIRMED_POSTGRES_AWS",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "536e46d1-0db3-4101-b9c5-9ae01b9db43e",
+      "applicationId": "72b63099-e5e0-4535-a5c5-3c461b754df3",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "e8922596-67c4-46e6-9cb3-40f2d31b4bb2",
+      "candidateCvId": "b854e9b5-3415-4c64-9712-e00863bf964c",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "HR_CONFIRMED",
+      "planContentSha256": "a8bd66443b3672d27a228261264d1931cb6535317466e0b1f534d7299c062268",
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "4221e18429db8cd125633dc549a32106a84882fc9195df8feb808ab070d3d69b",
+      "candidateSnapshotSha256": "37714ce30bbb89686c94c49844a736d09bb6eb3ecb1a63fbf8d06207f7e65fe4",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "CANDIDATE_EVIDENCE",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": false,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "Backend developer operating PostgreSQL and AWS services.",
+              "similarityScore": 91.11528396606445,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Backend engineer Synthetic platform lab Administered PostgreSQL databases, tuned SQL queries and maintained backup restores. Deployed Node.js services on AWS ECS and configured service health checks.",
+              "similarityScore": 84.71822440624237,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "PostgreSQL",
+              "similarityScore": 79.9495667219162,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "FIXED_PLAN_RETRIEVAL",
+          "allOf": [
+            [
+              "database"
+            ],
+            [
+              "aws"
+            ]
+          ],
+          "components": [
+            {
+              "componentId": "database",
+              "text": "Administer PostgreSQL databases.",
+              "importance": "core",
+              "modelSuggestion": null,
+              "retrievalStatus": "CANDIDATE_EVIDENCE",
+              "reasonCodes": [
+                "RETRIEVAL_IS_NOT_ENTAILMENT",
+                "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+              ],
+              "verifiedSupport": false,
+              "evidence": [
+                {
+                  "evidenceId": "skills/0",
+                  "source": "skill",
+                  "text": "PostgreSQL",
+                  "similarityScore": 93.05457770824432,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "profile/summary",
+                  "source": "profile",
+                  "text": "Backend developer operating PostgreSQL and AWS services.",
+                  "similarityScore": 79.8772394657135,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "experiences/0",
+                  "source": "experience",
+                  "text": "Backend engineer Synthetic platform lab Administered PostgreSQL databases, tuned SQL queries and maintained backup restores. Deployed Node.js services on AWS ECS and configured service health checks.",
+                  "similarityScore": 79.64075207710266,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                }
+              ]
+            },
+            {
+              "componentId": "aws",
+              "text": "Deploy services on AWS.",
+              "importance": "core",
+              "modelSuggestion": null,
+              "retrievalStatus": "CANDIDATE_EVIDENCE",
+              "reasonCodes": [
+                "RETRIEVAL_IS_NOT_ENTAILMENT",
+                "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+              ],
+              "verifiedSupport": false,
+              "evidence": [
+                {
+                  "evidenceId": "profile/summary",
+                  "source": "profile",
+                  "text": "Backend developer operating PostgreSQL and AWS services.",
+                  "similarityScore": 81.84614777565002,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "skills/1",
+                  "source": "skill",
+                  "text": "AWS",
+                  "similarityScore": 78.85518670082092,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "experiences/0",
+                  "source": "experience",
+                  "text": "Backend engineer Synthetic platform lab Administered PostgreSQL databases, tuned SQL queries and maintained backup restores. Deployed Node.js services on AWS ECS and configured service health checks.",
+                  "similarityScore": 75.05099773406982,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "CONFIRMED_SQL_ONLY",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "10baf23d-fd93-4827-b767-08c7d1729d45",
+      "applicationId": "25d2704a-fe4d-45d5-88e1-db6bf3d420e9",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "05bc5fcd-b449-46ae-87f5-f576259abb2c",
+      "candidateCvId": "41dc7c19-9729-41e0-9656-dfd64ba3f71d",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "HR_CONFIRMED",
+      "planContentSha256": "a8bd66443b3672d27a228261264d1931cb6535317466e0b1f534d7299c062268",
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "4221e18429db8cd125633dc549a32106a84882fc9195df8feb808ab070d3d69b",
+      "candidateSnapshotSha256": "bd333d8bff9ec380af415ba077cc6bb1085f3944a97dddd5e8129dab3381ce43",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "CANDIDATE_EVIDENCE",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": false,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Data developer Synthetic analytics lab Built PostgreSQL tables and optimized SQL queries for reporting dashboards. Maintained data quality checks and monthly business reports.",
+              "similarityScore": 81.94884061813354,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "PostgreSQL",
+              "similarityScore": 79.9495667219162,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "SQL reporting and dashboard development.",
+              "similarityScore": 78.61608266830444,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "FIXED_PLAN_RETRIEVAL",
+          "allOf": [
+            [
+              "database"
+            ],
+            [
+              "aws"
+            ]
+          ],
+          "components": [
+            {
+              "componentId": "database",
+              "text": "Administer PostgreSQL databases.",
+              "importance": "core",
+              "modelSuggestion": null,
+              "retrievalStatus": "CANDIDATE_EVIDENCE",
+              "reasonCodes": [
+                "RETRIEVAL_IS_NOT_ENTAILMENT",
+                "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+              ],
+              "verifiedSupport": false,
+              "evidence": [
+                {
+                  "evidenceId": "skills/0",
+                  "source": "skill",
+                  "text": "PostgreSQL",
+                  "similarityScore": 93.05457770824432,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "experiences/0",
+                  "source": "experience",
+                  "text": "Data developer Synthetic analytics lab Built PostgreSQL tables and optimized SQL queries for reporting dashboards. Maintained data quality checks and monthly business reports.",
+                  "similarityScore": 89.63916897773743,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "profile/summary",
+                  "source": "profile",
+                  "text": "SQL reporting and dashboard development.",
+                  "similarityScore": 85.49296259880066,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                }
+              ]
+            },
+            {
+              "componentId": "aws",
+              "text": "Deploy services on AWS.",
+              "importance": "core",
+              "modelSuggestion": null,
+              "retrievalStatus": "INSUFFICIENT_SIGNAL",
+              "reasonCodes": [
+                "RETRIEVAL_IS_NOT_ENTAILMENT",
+                "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+              ],
+              "verifiedSupport": false,
+              "evidence": [
+                {
+                  "evidenceId": "profile/summary",
+                  "source": "profile",
+                  "text": "SQL reporting and dashboard development.",
+                  "similarityScore": 63.27713131904602,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "profile/headline",
+                  "source": "profile",
+                  "text": "Reporting developer",
+                  "similarityScore": 62.52892315387726,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "experiences/0",
+                  "source": "experience",
+                  "text": "Data developer Synthetic analytics lab Built PostgreSQL tables and optimized SQL queries for reporting dashboards. Maintained data quality checks and monthly business reports.",
+                  "similarityScore": 61.023956537246704,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "CONFIRMED_ACCOUNTING",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "b44d5787-484b-4617-bc56-1a66d3cecbec",
+      "applicationId": "997a111e-dfc7-48aa-a484-61ee402272d6",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "b8a911fb-bc72-4a59-a1fe-5dbd0fc0a724",
+      "candidateCvId": "3b5580af-0bec-4ad8-8656-1d395655f9e6",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "HR_CONFIRMED",
+      "planContentSha256": "a8bd66443b3672d27a228261264d1931cb6535317466e0b1f534d7299c062268",
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "4221e18429db8cd125633dc549a32106a84882fc9195df8feb808ab070d3d69b",
+      "candidateSnapshotSha256": "5712f93499b2a9693e4b512668a39f1354288a11d00f926c1176fe4658ad5d57",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "INSUFFICIENT_SIGNAL",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": false,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Accountant Synthetic finance lab Processed vendor invoices, reconciled bank statements and prepared monthly expense reports in Excel.",
+              "similarityScore": 64.19543623924255,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "Accounts payable, invoices and bank reconciliation.",
+              "similarityScore": 61.408697068691254,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "Excel",
+              "similarityScore": 60.98986193537712,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "FIXED_PLAN_RETRIEVAL",
+          "allOf": [
+            [
+              "database"
+            ],
+            [
+              "aws"
+            ]
+          ],
+          "components": [
+            {
+              "componentId": "database",
+              "text": "Administer PostgreSQL databases.",
+              "importance": "core",
+              "modelSuggestion": null,
+              "retrievalStatus": "CANDIDATE_EVIDENCE",
+              "reasonCodes": [
+                "RETRIEVAL_IS_NOT_ENTAILMENT",
+                "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+              ],
+              "verifiedSupport": false,
+              "evidence": [
+                {
+                  "evidenceId": "experiences/0",
+                  "source": "experience",
+                  "text": "Accountant Synthetic finance lab Processed vendor invoices, reconciled bank statements and prepared monthly expense reports in Excel.",
+                  "similarityScore": 70.68945467472076,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "skills/0",
+                  "source": "skill",
+                  "text": "Excel",
+                  "similarityScore": 67.4174040555954,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "profile/summary",
+                  "source": "profile",
+                  "text": "Accounts payable, invoices and bank reconciliation.",
+                  "similarityScore": 63.57890069484711,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                }
+              ]
+            },
+            {
+              "componentId": "aws",
+              "text": "Deploy services on AWS.",
+              "importance": "core",
+              "modelSuggestion": null,
+              "retrievalStatus": "INSUFFICIENT_SIGNAL",
+              "reasonCodes": [
+                "RETRIEVAL_IS_NOT_ENTAILMENT",
+                "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+              ],
+              "verifiedSupport": false,
+              "evidence": [
+                {
+                  "evidenceId": "profile/summary",
+                  "source": "profile",
+                  "text": "Accounts payable, invoices and bank reconciliation.",
+                  "similarityScore": 56.66773542761803,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "skills/0",
+                  "source": "skill",
+                  "text": "Excel",
+                  "similarityScore": 55.09325973689556,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                },
+                {
+                  "evidenceId": "profile/headline",
+                  "source": "profile",
+                  "text": "Accountant",
+                  "similarityScore": 54.18467931449413,
+                  "reasonCodes": [],
+                  "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "STALE_AFTER_JD_CHANGE",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "1374a7cd-5f6d-482c-b826-8bd41326486b",
+      "applicationId": "6e5b4274-e03f-4944-993e-af7170e4dd40",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "e8922596-67c4-46e6-9cb3-40f2d31b4bb2",
+      "candidateCvId": "b854e9b5-3415-4c64-9712-e00863bf964c",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "STALE",
+      "planContentSha256": null,
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "5701dce08c375641dda2d605878edb1144dd4e5262690f38ee2893ffa2945eff",
+      "candidateSnapshotSha256": "37714ce30bbb89686c94c49844a736d09bb6eb3ecb1a63fbf8d06207f7e65fe4",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "CANDIDATE_EVIDENCE",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": null,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "Backend developer operating PostgreSQL and AWS services.",
+              "similarityScore": 91.11528396606445,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Backend engineer Synthetic platform lab Administered PostgreSQL databases, tuned SQL queries and maintained backup restores. Deployed Node.js services on AWS ECS and configured service health checks.",
+              "similarityScore": 84.71822440624237,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "PostgreSQL",
+              "similarityScore": 79.9495667219162,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "NOT_PERFORMED",
+          "allOf": null,
+          "components": null
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "M1_BAD_PIN",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "2f7b2c05-7e8f-4627-b062-e74b4b925000",
+      "applicationId": "fd258977-66e6-475e-a77e-af3616b8a974",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "05bc5fcd-b449-46ae-87f5-f576259abb2c",
+      "candidateCvId": "41dc7c19-9729-41e0-9656-dfd64ba3f71d",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "UNAVAILABLE",
+      "reason": "AI1_BACKEND_UNAVAILABLE",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": null,
+      "planContentSha256": null,
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": null,
+      "candidateSnapshotSha256": null,
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": null,
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "M1_RESTORED_PIN",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "909e73b0-d5da-4377-8f69-6fe0776af3ad",
+      "applicationId": "44edca57-d136-456f-92f4-1ba7d5a277e9",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "05bc5fcd-b449-46ae-87f5-f576259abb2c",
+      "candidateCvId": "41dc7c19-9729-41e0-9656-dfd64ba3f71d",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "STALE",
+      "planContentSha256": null,
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "5701dce08c375641dda2d605878edb1144dd4e5262690f38ee2893ffa2945eff",
+      "candidateSnapshotSha256": "bd333d8bff9ec380af415ba077cc6bb1085f3944a97dddd5e8129dab3381ce43",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "CANDIDATE_EVIDENCE",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": null,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Data developer Synthetic analytics lab Built PostgreSQL tables and optimized SQL queries for reporting dashboards. Maintained data quality checks and monthly business reports.",
+              "similarityScore": 81.94884061813354,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "PostgreSQL",
+              "similarityScore": 79.9495667219162,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "SQL reporting and dashboard development.",
+              "similarityScore": 78.61608266830444,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "NOT_PERFORMED",
+          "allOf": null,
+          "components": null
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "M1_DISABLED",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "620e87c4-3b26-4ea3-8bab-1038f54b3bf5",
+      "applicationId": "59caac13-4289-4b51-b639-1330129a1593",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "05bc5fcd-b449-46ae-87f5-f576259abb2c",
+      "candidateCvId": "41dc7c19-9729-41e0-9656-dfd64ba3f71d",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "NOT_PERFORMED",
+      "reason": "NO_SEPARATE_HR_ASSESSMENT",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": null,
+      "planContentSha256": null,
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": null,
+      "candidateSnapshotSha256": null,
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": null,
+      "verifierModelVersion": null,
+      "assessmentSource": null,
+      "retrievalWarnings": [],
+      "requirements": [],
+      "baselineDiagnostics": null
+    }
+  },
+  {
+    "scenario": "M1_REENABLED",
+    "review": {
+      "schemaVersion": "hr-review-v1",
+      "resultId": "608172fb-ead5-40fb-831f-009f76e6fea1",
+      "applicationId": "371dee90-b9d6-4b6e-9402-e15a35b5734f",
+      "jobId": "79a5c5a0-0f14-44d3-ad29-31fd2700b3e3",
+      "candidateId": "05bc5fcd-b449-46ae-87f5-f576259abb2c",
+      "candidateCvId": "41dc7c19-9729-41e0-9656-dfd64ba3f71d",
+      "executionStatus": "SUCCEEDED",
+      "assessmentStatus": "PENDING_REVIEW",
+      "reason": "AI1_EVIDENCE_REQUIRES_HR_REVIEW",
+      "scope": "RETRIEVED_EVIDENCE_ONLY",
+      "decisionAuthority": "HR",
+      "candidateSupportVerified": false,
+      "automaticallyReject": false,
+      "isTrainingLabel": false,
+      "overallFitScore": null,
+      "hiringDecision": null,
+      "rankingPosition": null,
+      "planStatus": "STALE",
+      "planContentSha256": null,
+      "planStateScope": "AT_MATCHING_TIME",
+      "currentPlanRevalidated": false,
+      "jobSnapshotSha256": "5701dce08c375641dda2d605878edb1144dd4e5262690f38ee2893ffa2945eff",
+      "candidateSnapshotSha256": "bd333d8bff9ec380af415ba077cc6bb1085f3944a97dddd5e8129dab3381ce43",
+      "syntheticTestOnly": null,
+      "retrievalModelVersion": "ai1-shadow:ranking-retention:871aeef8a305",
+      "verifierModelVersion": null,
+      "assessmentSource": "M1_RETRIEVAL",
+      "retrievalWarnings": [],
+      "requirements": [
+        {
+          "requirementId": "requirements/0",
+          "text": "Administer PostgreSQL databases and deploy services on AWS.",
+          "modelSuggestion": null,
+          "retrievalStatus": "CANDIDATE_EVIDENCE",
+          "reasonCodes": [
+            "RETRIEVAL_IS_NOT_ENTAILMENT",
+            "PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED"
+          ],
+          "jointContextRequired": null,
+          "verifiedSupport": false,
+          "evidence": [
+            {
+              "evidenceId": "experiences/0",
+              "source": "experience",
+              "text": "Data developer Synthetic analytics lab Built PostgreSQL tables and optimized SQL queries for reporting dashboards. Maintained data quality checks and monthly business reports.",
+              "similarityScore": 81.94884061813354,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "skills/0",
+              "source": "skill",
+              "text": "PostgreSQL",
+              "similarityScore": 79.9495667219162,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            },
+            {
+              "evidenceId": "profile/summary",
+              "source": "profile",
+              "text": "SQL reporting and dashboard development.",
+              "similarityScore": 78.61608266830444,
+              "reasonCodes": [],
+              "scoreMeaning": "COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY"
+            }
+          ],
+          "componentAnalysis": "NOT_PERFORMED",
+          "allOf": null,
+          "components": null
+        }
+      ],
+      "baselineDiagnostics": null
+    }
+  }
+]

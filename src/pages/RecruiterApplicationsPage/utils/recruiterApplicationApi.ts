@@ -39,8 +39,8 @@ export function createRecruiterApplicationFromApi(
   const submittedAtOrder = Number.isNaN(Date.parse(application.submittedAt))
     ? 0
     : Date.parse(application.submittedAt)
-  const matchMatchedSkills = application.matchMatchedSkills ?? []
-  const matchMissingSkills = application.matchMissingSkills ?? []
+  const matchMatchedSkills: string[] = []
+  const matchMissingSkills: string[] = []
 
   return {
     candidateEmail: application.candidateEmail,
@@ -57,17 +57,17 @@ export function createRecruiterApplicationFromApi(
     id: application.id,
     jobId: application.jobId,
     jobTitle: application.jobTitle,
-    matchDecision: application.matchDecision ?? null,
-    matchLevel: application.matchLevel ?? null,
+    matchDecision: null,
+    matchLevel: null,
     matchMatchedSkills,
     matchMissingSkills,
-    matchNextActions: application.matchNextActions ?? [],
-    matchPriority: application.matchPriority ?? null,
-    matchRecommendation: application.matchRecommendation ?? null,
-    matchRiskFlags: application.matchRiskFlags ?? [],
-    matchScore: application.matchScore,
-    matchSummary: application.matchSummary ?? null,
-    skills: matchMatchedSkills.length > 0 ? matchMatchedSkills : matchMissingSkills,
+    matchNextActions: [],
+    matchPriority: null,
+    matchRecommendation: null,
+    matchRiskFlags: [],
+    matchScore: null,
+    matchSummary: null,
+    skills: [],
     status: application.status,
     statusNote: application.statusNote,
     submittedAt: formatDate(application.submittedAt),

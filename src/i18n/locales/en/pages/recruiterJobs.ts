@@ -113,7 +113,7 @@ export const recruiterJobs: RecruiterJobsTranslations = {
     ruleLabels: { LOW_DESCRIPTION_LENGTH: 'Job description is too short', MISSING_OR_WEAK_REQUIREMENTS: 'Job requirements are missing or too vague', CLIENT_SITE_SCOPE: 'Client-site scope', MULTI_LEVEL_PATTERN: 'Potential multi-level marketing pattern', MISSING_COMPENSATION: 'Compensation information is missing' },
     noModeration: 'No moderation data yet.',
     publicLinkUnavailable: 'Public link is available only after the job is published.',
-    applicationsDescription: 'Ranked candidates for this job, sorted by match score.',
+    applicationsDescription: 'Recent applications for this job, newest first.',
     noApplications: 'No applications have been submitted for this job yet.',
     reviewMessage: 'Review message',
     reviewStatus: 'Status',

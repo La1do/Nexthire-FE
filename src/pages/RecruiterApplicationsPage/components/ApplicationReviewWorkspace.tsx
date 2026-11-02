@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import {
   AlertCircle,
   AlertTriangle,
+  ArrowLeft,
   Briefcase,
   Building2,
   Calendar,
   CheckCircle2,
   Clock,
+  Copy,
   DollarSign,
   Download,
   ExternalLink,
@@ -14,14 +16,21 @@ import {
   ListChecks,
   MapPin,
   RefreshCw,
+  Search,
   Sparkles,
   UserCheck,
+  X,
   XCircle,
 } from 'lucide-react'
+import { LocaleContext } from '../../../i18n/localeContext'
 import { getApiErrorEnvelope } from '../../../lib/api/apiError'
 import { applicationService } from '../../../services/application.service'
 import { jobService } from '../../../services/job.service'
 import type { ApplicationCvDownloadResponse } from '../../../types/application.types'
+import { parseHrReviewEnvelope, type HrReview } from '../../../types/hr-review.types'
+import { Ai1EvidenceView, type JumpToPdfPayload } from './ai1/Ai1EvidenceView'
+import { ai1Copy } from './ai1/ai1Copy'
+import { PdfCvViewer } from './PdfCvViewer'
 import type {
   JobExperienceLevel,
   JobType,
@@ -30,12 +39,16 @@ import type {
 } from '../../../types/job.types'
 import type { RecruiterApplicationItem } from '../types'
 
+export type { JumpToPdfPayload }
+
 export type ApplicationReviewWorkspaceProps = {
   application: RecruiterApplicationItem
   className?: string
+  hrReview?: HrReview | null
   initialTab?: 'cv' | 'criteria'
   job?: RecruiterJobResponse | null
   onOpenResumeExternal?: () => void
+  jumpTarget?: JumpToPdfPayload | string | null
 }
 
 const EMPLOYMENT_TYPE_LABELS: Record<JobType, string> = {
@@ -107,14 +120,181 @@ function parseRequirements(requirementsText?: string | null): string[] {
     .filter((line) => line.length > 0)
 }
 
+export function checkAi1SkillMatch(
+  skillName: string,
+  hrReview: HrReview | null | undefined,
+): { isMatched: boolean; score?: number } {
+  if (!hrReview?.requirements || hrReview.requirements.length === 0) {
+    return { isMatched: false }
+  }
+
+  const sLower = skillName.trim().toLowerCase()
+  const sClean = sLower.replace(/[^a-z0-9+#]/g, '')
+  if (!sClean) return { isMatched: false }
+
+  let bestScore = 0
+  let matched = false
+
+  for (const req of hrReview.requirements) {
+    const reqLower = req.text.trim().toLowerCase()
+    const reqClean = reqLower.replace(/[^a-z0-9+#]/g, '')
+    const isReqForSkill =
+      reqLower === sLower || reqClean === sClean ||
+      (req.requirementId.startsWith('skills/') && (reqLower.includes(sLower) || sLower.includes(reqLower)))
+
+    const allEvidence = [
+      ...(req.evidence || []),
+      ...(req.components?.flatMap(c => c.evidence || []) || []),
+    ]
+
+    for (const ev of allEvidence) {
+      const codes = ev.reasonCodes ?? []
+      const hasPenalty = codes.includes('LEXICAL_ABSENT_PENALTY')
+
+      // Evidence from skills section: match by text identity only
+      const isSkillSource =
+        ev.source.toLowerCase() === 'skill' || ev.source.toLowerCase() === 'skills' ||
+        ev.evidenceId.startsWith('skill')
+      if (isSkillSource && ev.text) {
+        const evLower = ev.text.trim().toLowerCase()
+        const evClean = evLower.replace(/[^a-z0-9+#]/g, '')
+        if (evLower === sLower || evClean === sClean || evLower.includes(sLower) || sLower.includes(evLower)) {
+          matched = true
+          bestScore = Math.max(bestScore, ev.similarityScore || 100)
+          continue
+        }
+      }
+
+      // For skill requirements: trust BE reason codes — EXACT_KEYWORD_MATCH confirms presence,
+      // LEXICAL_ABSENT_PENALTY means keyword absent → do not count.
+      if (isReqForSkill) {
+        if (!hasPenalty && ev.similarityScore >= 70) {
+          matched = true
+          bestScore = Math.max(bestScore, ev.similarityScore)
+        }
+      }
+    }
+  }
+
+  return {
+    isMatched: matched,
+    score: matched ? (bestScore > 0 ? bestScore : 100) : undefined,
+  }
+}
+
+function renderHighlightedSnippet(text: string, phrase: string): React.ReactNode {
+  if (!text || !phrase) return text
+  const cleanPhrase = phrase.trim()
+  if (!cleanPhrase) return text
+
+  const terms = cleanPhrase
+    .split(/\s+/)
+    .map((w) => w.trim())
+    .filter((w) => w.length >= 2)
+    .sort((a, b) => b.length - a.length)
+
+  if (terms.length === 0) return text
+  const pattern = terms.map((t) => t.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')
+  const regex = new RegExp(`(${pattern})`, 'gi')
+  const parts = text.split(regex)
+
+  if (parts.length <= 1) return text
+  return (
+    <>
+      {parts.map((part, i) => {
+        const isMatch = terms.some((t) => t.toLowerCase() === part.toLowerCase())
+        return isMatch ? (
+          <mark key={i} className="ai1-evidence__span-highlight">
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      })}
+    </>
+  )
+}
+
 export function ApplicationReviewWorkspace({
   application,
   className = '',
+  hrReview: propHrReview,
   initialTab = 'cv',
   job: initialJob = null,
   onOpenResumeExternal,
+  jumpTarget,
 }: ApplicationReviewWorkspaceProps) {
   const [activeTab, setActiveTab] = useState<'cv' | 'criteria'>(initialTab)
+  const [pdfSearchQuery, setPdfSearchQuery] = useState<string | null>(() => {
+    if (!jumpTarget) return null
+    const phrase = typeof jumpTarget === 'string' ? jumpTarget : jumpTarget.phrase
+    if (!phrase?.trim()) return null
+    return phrase
+      .trim()
+      .split(/\s+/)
+      .slice(0, 4)
+      .join(' ')
+      .replace(/[.,;:!?()"']/g, '')
+  })
+  const [activeSnippet, setActiveSnippet] = useState<JumpToPdfPayload | null>(() => {
+    if (!jumpTarget) return null
+    const phrase = typeof jumpTarget === 'string' ? jumpTarget : jumpTarget.phrase
+    if (!phrase?.trim()) return null
+    const clean = phrase
+      .trim()
+      .split(/\s+/)
+      .slice(0, 4)
+      .join(' ')
+      .replace(/[.,;:!?()"']/g, '')
+    return {
+      phrase: clean,
+      snippetText: typeof jumpTarget === 'object' ? jumpTarget.snippetText : undefined,
+      source: typeof jumpTarget === 'object' ? jumpTarget.source : undefined,
+    }
+  })
+  const [copiedNotification, setCopiedNotification] = useState<boolean>(false)
+  const [selectedSkillHighlight, setSelectedSkillHighlight] = useState<string | null>(null)
+  const localeContext = useContext(LocaleContext)
+  const currentLocale = localeContext?.locale ?? 'vi'
+  const copy = ai1Copy[currentLocale as keyof typeof ai1Copy] ?? ai1Copy.vi
+
+  const triggerSearchAndCopy = useCallback((target: JumpToPdfPayload | string) => {
+    const phrase = typeof target === 'string' ? target : target.phrase
+    if (!phrase?.trim()) return
+    const clean = phrase
+      .trim()
+      .split(/\s+/)
+      .slice(0, 4)
+      .join(' ')
+      .replace(/[.,;:!?()"']/g, '')
+
+    setPdfSearchQuery(clean)
+    setSelectedSkillHighlight(clean)
+    setActiveSnippet({
+      phrase: clean,
+      snippetText: typeof target === 'object' ? target.snippetText : undefined,
+      source: typeof target === 'object' ? target.source : undefined,
+    })
+    setActiveTab('cv')
+
+    // Automatically copy to clipboard (Cách 2)
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(clean).then(() => {
+        setCopiedNotification(true)
+        setTimeout(() => setCopiedNotification(false), 4000)
+      }).catch(() => {})
+    }
+  }, [])
+
+  const handleJumpToPdf = useCallback((target: string | JumpToPdfPayload) => {
+    triggerSearchAndCopy(target)
+  }, [triggerSearchAndCopy])
+
+  useEffect(() => {
+    if (jumpTarget) {
+      triggerSearchAndCopy(jumpTarget)
+    }
+  }, [jumpTarget, triggerSearchAndCopy])
 
   // CV Preview State
   const [cvData, setCvData] = useState<ApplicationCvDownloadResponse | null>(null)
@@ -122,11 +302,46 @@ export function ApplicationReviewWorkspace({
   const [cvError, setCvError] = useState<string | null>(null)
   const [isIframeLoaded, setIsIframeLoaded] = useState<boolean>(false)
   const [hasIframeError, setHasIframeError] = useState<boolean>(false)
+  const [useIframeFallback, setUseIframeFallback] = useState<boolean>(false)
 
   // Job Criteria State
   const [jobData, setJobData] = useState<RecruiterJobResponse | null>(initialJob)
   const [isJobLoading, setIsJobLoading] = useState<boolean>(!initialJob && Boolean(application.jobId))
   const [jobError, setJobError] = useState<string | null>(null)
+
+  // Fallback to fetch hrReview if not passed down as prop
+  const [internalHrReview, setInternalHrReview] = useState<HrReview | null>(null)
+
+  useEffect(() => {
+    if (propHrReview !== undefined) {
+      return
+    }
+
+    let active = true
+    const controller = new AbortController()
+
+    applicationService
+      .getRecruiterApplicationHrReview(application.id, controller.signal)
+      .then((payload) => {
+        if (!active) return
+        try {
+          const parsed = parseHrReviewEnvelope(payload, application.id, application.jobId)
+          setInternalHrReview(parsed)
+        } catch {
+          setInternalHrReview(null)
+        }
+      })
+      .catch(() => {
+        if (active) setInternalHrReview(null)
+      })
+
+    return () => {
+      active = false
+      controller.abort()
+    }
+  }, [application.id, application.jobId, propHrReview])
+
+  const effectiveHrReview = propHrReview !== undefined ? propHrReview : internalHrReview
 
   // Fetch CV data when application changes
   const fetchCv = useCallback(async (appId: string) => {
@@ -196,11 +411,15 @@ export function ApplicationReviewWorkspace({
       cvData.fileName?.toLowerCase().endsWith('.pdf') ||
       cvData.url.toLowerCase().includes('.pdf')
 
-    if (isPdf && !cvData.url.includes('#')) {
-      return `${cvData.url}#toolbar=1&navpanes=0&view=FitH`
+    if (isPdf) {
+      const baseUrl = cvData.url.split('#')[0]
+      if (pdfSearchQuery) {
+        return `${baseUrl}#search="${encodeURIComponent(pdfSearchQuery)}"`
+      }
+      return `${baseUrl}#toolbar=1&navpanes=0&view=FitH`
     }
     return cvData.url
-  }, [cvData])
+  }, [cvData, pdfSearchQuery])
 
   // Parse job requirements into list items
   const parsedRequirements = useMemo(() => {
@@ -213,7 +432,13 @@ export function ApplicationReviewWorkspace({
       return {
         matchedCount: 0,
         totalRequired: 0,
-        skillsWithMatchStatus: [] as Array<{ name: string; isMatched: boolean }>,
+        skillsWithMatchStatus: [] as Array<{
+          name: string
+          isMatched: boolean
+          statusLabel: string
+          score?: number
+          isAiMatched?: boolean
+        }>,
       }
     }
 
@@ -226,14 +451,30 @@ export function ApplicationReviewWorkspace({
 
     const skillsWithMatchStatus = jobData.skills.map((skill) => {
       const skillLower = skill.trim().toLowerCase()
-      const isMatched =
+      const aiMatch = checkAi1SkillMatch(skill, effectiveHrReview)
+
+      const isProfileMatched =
         candidateSkillsLower.has(skillLower) ||
         matchSkillsLower.has(skillLower) ||
-        application.skills.some((s) => s.toLowerCase().includes(skillLower) || skillLower.includes(s.toLowerCase()))
+        application.skills.some((s) => {
+          const sLow = s.toLowerCase()
+          return sLow.includes(skillLower) || skillLower.includes(sLow)
+        })
+
+      const isMatched = aiMatch.isMatched || isProfileMatched
+      let statusLabel = 'Chưa thấy'
+      if (aiMatch.isMatched) {
+        statusLabel = 'Đã tìm thấy trên CV'
+      } else if (isProfileMatched) {
+        statusLabel = 'Khớp hồ sơ'
+      }
 
       return {
         name: skill,
         isMatched,
+        statusLabel,
+        score: aiMatch.score,
+        isAiMatched: aiMatch.isMatched,
       }
     })
 
@@ -244,7 +485,25 @@ export function ApplicationReviewWorkspace({
       totalRequired: jobData.skills.length,
       skillsWithMatchStatus,
     }
-  }, [jobData?.skills, application.skills, application.matchMatchedSkills])
+  }, [jobData?.skills, application.skills, application.matchMatchedSkills, effectiveHrReview])
+
+  const matchedSkills = useMemo(() => {
+    return skillMatchAnalysis.skillsWithMatchStatus
+      .filter((s) => s.isMatched)
+      .map((s) => s.name)
+  }, [skillMatchAnalysis.skillsWithMatchStatus])
+
+  const matchPercentage = useMemo(() => {
+    if (!skillMatchAnalysis.totalRequired || skillMatchAnalysis.totalRequired === 0) return null
+    return Math.round((skillMatchAnalysis.matchedCount / skillMatchAnalysis.totalRequired) * 100)
+  }, [skillMatchAnalysis.matchedCount, skillMatchAnalysis.totalRequired])
+
+  const matchAssessment = useMemo(() => {
+    if (matchPercentage === null) return null
+    if (matchPercentage >= 80) return { label: 'Rất phù hợp', tone: 'high' }
+    if (matchPercentage >= 60) return { label: 'Khá phù hợp', tone: 'medium' }
+    return { label: 'Cần xem xét kỹ', tone: 'low' }
+  }, [matchPercentage])
 
   return (
     <div className={`recruiter-review-workspace ${className}`}>
@@ -279,7 +538,7 @@ export function ApplicationReviewWorkspace({
                   : ''
               }`}
             >
-              {skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired} Kỹ năng
+              {skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired} Khớp {matchPercentage !== null ? `(${matchPercentage}%)` : ''}
             </span>
           )}
         </button>
@@ -288,13 +547,12 @@ export function ApplicationReviewWorkspace({
       {/* Tab Panels */}
       <div className="recruiter-review-workspace__content">
         {/* ======================= TAB 1: CV PREVIEW ======================= */}
-        {activeTab === 'cv' && (
-          <section
-            aria-label="Xem trước CV"
-            className="recruiter-cv-workspace"
-            role="tabpanel"
-          >
-            {/* Action Bar */}
+        <section
+          aria-label="Xem trước CV"
+          className={`recruiter-cv-workspace ${activeTab !== 'cv' ? 'recruiter-review-workspace__panel--hidden' : ''}`}
+          role="tabpanel"
+        >
+          {/* Action Bar */}
             <div className="recruiter-cv-workspace__toolbar">
               <div className="recruiter-cv-workspace__file-meta">
                 <FileText className="recruiter-cv-workspace__file-icon" size={18} />
@@ -312,6 +570,30 @@ export function ApplicationReviewWorkspace({
                   </div>
                 </div>
               </div>
+
+              {pdfSearchQuery && (
+                <div className="recruiter-cv-workspace__search-pill">
+                  <Search size={13} className="recruiter-cv-workspace__search-pill-icon" />
+                  <span>Đang soi trên PDF: <strong>"{pdfSearchQuery}"</strong></span>
+                  <button
+                    type="button"
+                    className="recruiter-cv-workspace__search-pill-clear"
+                    onClick={() => setPdfSearchQuery(null)}
+                    title="Bỏ tìm kiếm"
+                  >
+                    <X size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    className="recruiter-cv-workspace__search-pill-back"
+                    onClick={() => setActiveTab('criteria')}
+                    title="Quay lại tab Tiêu chí"
+                  >
+                    <ArrowLeft size={12} />
+                    <span>Xem tiêu chí</span>
+                  </button>
+                </div>
+              )}
 
               <div className="recruiter-cv-workspace__actions">
                 <button
@@ -364,6 +646,106 @@ export function ApplicationReviewWorkspace({
               </div>
             </div>
 
+            {/* Quick Skills Highlight Chips Bar */}
+            {matchedSkills.length > 0 && (
+              <div className="recruiter-cv-workspace__skills-bar">
+                <div className="recruiter-cv-workspace__skills-bar-label">
+                  <Sparkles size={13} className="recruiter-cv-workspace__skills-bar-icon" />
+                  <span>Kỹ năng phát hiện ({matchedSkills.length}):</span>
+                </div>
+                <div className="recruiter-cv-workspace__skills-bar-chips">
+                  <button
+                    type="button"
+                    className={`recruiter-cv-workspace__skill-chip ${!selectedSkillHighlight && !pdfSearchQuery ? 'is-active' : ''}`}
+                    onClick={() => {
+                      setSelectedSkillHighlight(null)
+                      setPdfSearchQuery(null)
+                      setActiveSnippet(null)
+                    }}
+                    title="Bôi vàng tất cả kỹ năng đã tìm thấy trên CV"
+                  >
+                    <span>Tất cả ({matchedSkills.length})</span>
+                  </button>
+                  {matchedSkills.map((skill) => (
+                    <button
+                      key={skill}
+                      type="button"
+                      className={`recruiter-cv-workspace__skill-chip ${selectedSkillHighlight?.toLowerCase() === skill.toLowerCase() ? 'is-active' : ''}`}
+                      onClick={() => {
+                        setSelectedSkillHighlight(skill)
+                        handleJumpToPdf(skill)
+                      }}
+                      title={`Định vị và bôi vàng "${skill}" trên trang CV`}
+                    >
+                      <span>✓ {skill}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Live Evidence Highlight Callout Box (Cách 2: Smart Clipboard & Live Evidence Highlight) */}
+            {activeSnippet && (
+              <div className="recruiter-cv-workspace__evidence-callout">
+                <div className="recruiter-cv-workspace__evidence-callout-header">
+                  <div className="recruiter-cv-workspace__evidence-callout-title">
+                    <Sparkles size={14} className="recruiter-cv-workspace__evidence-callout-icon" />
+                    <span>Bằng chứng trích xuất từ CV: <strong>"{activeSnippet.phrase}"</strong></span>
+                    {activeSnippet.source && (
+                      <span className="recruiter-cv-workspace__evidence-source-tag">
+                        {activeSnippet.source}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="recruiter-cv-workspace__evidence-callout-actions">
+                    <button
+                      type="button"
+                      className="recruiter-cv-workspace__copy-btn"
+                      onClick={() => {
+                        if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+                          navigator.clipboard.writeText(activeSnippet.phrase).then(() => {
+                            setCopiedNotification(true)
+                            setTimeout(() => setCopiedNotification(false), 3000)
+                          }).catch(() => {})
+                        }
+                      }}
+                      title="Sao chép lại từ khóa vào clipboard"
+                    >
+                      <Copy size={12} />
+                      <span>{copiedNotification ? 'Đã sao chép!' : 'Copy lại từ khóa'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="recruiter-cv-workspace__evidence-close-btn"
+                      onClick={() => {
+                        setActiveSnippet(null)
+                        setPdfSearchQuery(null)
+                      }}
+                      title="Đóng bảng trích dẫn"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                {activeSnippet.snippetText && (
+                  <blockquote className="recruiter-cv-workspace__evidence-quote-box">
+                    {renderHighlightedSnippet(activeSnippet.snippetText, activeSnippet.phrase)}
+                  </blockquote>
+                )}
+
+                <div className="recruiter-cv-workspace__evidence-guidance">
+                  <span className="recruiter-cv-workspace__guidance-badge">
+                    ✓ Tự động định vị
+                  </span>
+                  <span>
+                    Hệ thống đã tự động tìm kiếm, bôi vàng highlight và cuộn trực tiếp tới đoạn bằng chứng trên trang CV bên dưới.
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Document Viewer Frame / States */}
             <div className="recruiter-cv-workspace__viewport">
               {isCvLoading && (
@@ -402,81 +784,82 @@ export function ApplicationReviewWorkspace({
                 </div>
               )}
 
-              {!isCvLoading && !cvError && cvEmbedUrl && (
-                <div className="recruiter-cv-workspace__frame-wrapper">
-                  {!isIframeLoaded && !hasIframeError && (
-                    <div className="recruiter-cv-workspace__frame-loading">
-                      <div className="recruiter-cv-workspace__spinner" />
-                      <span>Đang kết xuất tài liệu PDF...</span>
-                    </div>
-                  )}
-
-                  {hasIframeError ? (
-                    <div className="recruiter-cv-workspace__state recruiter-cv-workspace__state--fallback">
-                      <AlertTriangle className="recruiter-cv-workspace__state-icon" size={36} />
-                      <h3>Trình duyệt chưa hỗ trợ hiển thị trực tiếp</h3>
-                      <p>
-                        Tệp tin này có thể bị hạn chế quyền hiển thị trực tiếp trong iframe. Bạn có thể mở trong
-                        tab mới hoặc tải xuống để xem chi tiết.
-                      </p>
-                      <div className="recruiter-cv-workspace__state-actions">
-                        <a
-                          className="recruiter-cv-workspace__action-btn recruiter-cv-workspace__action-btn--primary"
-                          href={cvData?.url}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          <ExternalLink size={15} />
-                          <span>Mở trong tab mới</span>
-                        </a>
-                        <a
-                          className="recruiter-cv-workspace__action-btn"
-                          download={cvData?.fileName}
-                          href={cvData?.url}
-                        >
-                          <Download size={15} />
-                          <span>Tải xuống CV</span>
-                        </a>
+              {!isCvLoading && !cvError && cvData?.url && (
+                useIframeFallback ? (
+                  <div className="recruiter-cv-workspace__frame-wrapper">
+                    {!isIframeLoaded && !hasIframeError && (
+                      <div className="recruiter-cv-workspace__frame-loading">
+                        <div className="recruiter-cv-workspace__spinner" />
+                        <span>Đang kết xuất tài liệu PDF...</span>
                       </div>
-                    </div>
-                  ) : (
-                    <iframe
-                      className="recruiter-cv-workspace__iframe"
-                      onError={() => setHasIframeError(true)}
-                      onLoad={() => setIsIframeLoaded(true)}
-                      src={cvEmbedUrl}
-                      title={`Bản xem trước CV: ${application.candidateName}`}
-                    />
-                  )}
-                </div>
+                    )}
+
+                    {hasIframeError ? (
+                      <div className="recruiter-cv-workspace__state recruiter-cv-workspace__state--fallback">
+                        <AlertTriangle className="recruiter-cv-workspace__state-icon" size={36} />
+                        <h3>Trình duyệt chưa hỗ trợ hiển thị trực tiếp</h3>
+                        <p>
+                          Tệp tin này có thể bị hạn chế quyền hiển thị trực tiếp trong iframe. Bạn có thể mở trong
+                          tab mới hoặc tải xuống để xem chi tiết.
+                        </p>
+                        <div className="recruiter-cv-workspace__state-actions">
+                          <a
+                            className="recruiter-cv-workspace__action-btn recruiter-cv-workspace__action-btn--primary"
+                            href={cvData?.url}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            <ExternalLink size={15} />
+                            <span>Mở trong tab mới</span>
+                          </a>
+                          <a
+                            className="recruiter-cv-workspace__action-btn"
+                            download={cvData?.fileName}
+                            href={cvData?.url}
+                          >
+                            <Download size={15} />
+                            <span>Tải xuống CV</span>
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <iframe
+                        key={`${cvData?.url ?? 'cv'}-${pdfSearchQuery || 'default'}`}
+                        className="recruiter-cv-workspace__iframe"
+                        onError={() => setHasIframeError(true)}
+                        onLoad={() => setIsIframeLoaded(true)}
+                        src={cvEmbedUrl}
+                        title={`Bản xem trước CV: ${application.candidateName}`}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <PdfCvViewer
+                    url={cvData.url}
+                    fileName={cvData.fileName}
+                    searchQuery={pdfSearchQuery}
+                    searchTerms={matchedSkills}
+                    activeHighlightTerm={selectedSkillHighlight}
+                    snippetText={activeSnippet?.snippetText}
+                    onClearSearch={() => {
+                      setPdfSearchQuery(null)
+                      setSelectedSkillHighlight(null)
+                      setActiveSnippet(null)
+                    }}
+                    onFallbackToIframe={() => setUseIframeFallback(true)}
+                  />
+                )
               )}
             </div>
-
-            {/* Bottom helper footnote */}
-            <footer className="recruiter-cv-workspace__footer">
-              <span>Mẹo: Bạn có thể vừa xem CV vừa ghi chú và đưa ra quyết định ở cột đánh giá bên cạnh.</span>
-              {cvData?.url && (
-                <a
-                  className="recruiter-cv-workspace__footer-link"
-                  href={cvData.url}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Gặp sự cố hiển thị? Mở tab mới
-                </a>
-              )}
-            </footer>
           </section>
-        )}
 
         {/* ======================= TAB 2: JOB CRITERIA ======================= */}
-        {activeTab === 'criteria' && (
-          <section
-            aria-label="Tiêu chí tin tuyển dụng"
-            className="recruiter-criteria-workspace"
-            role="tabpanel"
-          >
-            {isJobLoading && (
+        <section
+          aria-label="Tiêu chí tin tuyển dụng"
+          className={`recruiter-criteria-workspace ${activeTab !== 'criteria' ? 'recruiter-review-workspace__panel--hidden' : ''}`}
+          role="tabpanel"
+        >
+          {isJobLoading && (
               <div className="recruiter-criteria-workspace__loading">
                 <div className="recruiter-cv-workspace__spinner" />
                 <p>Đang tải thông tin tiêu chí tuyển dụng...</p>
@@ -503,6 +886,35 @@ export function ApplicationReviewWorkspace({
 
             {!isJobLoading && !jobError && jobData && (
               <div className="recruiter-criteria-workspace__body">
+                {/* Match Score Card (Độ khớp tổng quan CV & JD) */}
+                {matchPercentage !== null && matchAssessment && (
+                  <div className={`recruiter-match-score-card recruiter-match-score-card--${matchAssessment.tone}`}>
+                    <div className="recruiter-match-score-card__dial">
+                      <span className="recruiter-match-score-card__percent">{matchPercentage}%</span>
+                      <span className="recruiter-match-score-card__dial-label">Độ khớp</span>
+                    </div>
+                    <div className="recruiter-match-score-card__body">
+                      <div className="recruiter-match-score-card__top">
+                        <span className={`recruiter-match-score-card__tag recruiter-match-score-card__tag--${matchAssessment.tone}`}>
+                          {matchAssessment.label}
+                        </span>
+                        <span className="recruiter-match-score-card__counter">
+                          <strong>{skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired}</strong> Kỹ năng đáp ứng yêu cầu
+                        </span>
+                      </div>
+                      <div className="recruiter-match-score-card__track">
+                        <div
+                          className={`recruiter-match-score-card__bar recruiter-match-score-card__bar--${matchAssessment.tone}`}
+                          style={{ width: `${matchPercentage}%` }}
+                        />
+                      </div>
+                      <p className="recruiter-match-score-card__subtext">
+                        Hệ thống đã đối soát tự động từ CV và AI1. Nhấn nút <strong>"Soi PDF"</strong> tại bất kỳ kỹ năng hoặc bằng chứng nào để định vị trực tiếp trên tài liệu gốc.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Job Hero Card */}
                 <div className="recruiter-criteria-card recruiter-criteria-card--hero">
                   <div className="recruiter-criteria-card__header-main">
@@ -586,7 +998,11 @@ export function ApplicationReviewWorkspace({
                       <div className="recruiter-criteria-matrix__vs">Kinh nghiệm</div>
                       <div className="recruiter-criteria-matrix__col recruiter-criteria-matrix__col--candidate">
                         <span className="recruiter-criteria-matrix__label">Hồ sơ ứng viên</span>
-                        <strong>{application.experience || 'Chưa cung cấp'}</strong>
+                        <strong>
+                          {application.experience && !application.experience.includes('Chưa')
+                            ? application.experience
+                            : 'Xem chi tiết trong CV'}
+                        </strong>
                       </div>
                     </div>
 
@@ -598,7 +1014,11 @@ export function ApplicationReviewWorkspace({
                       <div className="recruiter-criteria-matrix__vs">Mức lương</div>
                       <div className="recruiter-criteria-matrix__col recruiter-criteria-matrix__col--candidate">
                         <span className="recruiter-criteria-matrix__label">Kỳ vọng ứng viên</span>
-                        <strong>{application.expectedSalary || 'Thỏa thuận'}</strong>
+                        <strong>
+                          {application.expectedSalary && !application.expectedSalary.includes('Chưa')
+                            ? application.expectedSalary
+                            : 'Thỏa thuận theo năng lực'}
+                        </strong>
                       </div>
                     </div>
 
@@ -610,7 +1030,11 @@ export function ApplicationReviewWorkspace({
                       <div className="recruiter-criteria-matrix__vs">Địa điểm</div>
                       <div className="recruiter-criteria-matrix__col recruiter-criteria-matrix__col--candidate">
                         <span className="recruiter-criteria-matrix__label">Nơi cư trú ứng viên</span>
-                        <strong>{application.candidateLocation || 'Chưa rõ'}</strong>
+                        <strong>
+                          {application.candidateLocation && !application.candidateLocation.includes('Chưa')
+                            ? application.candidateLocation
+                            : (jobData.location ? `Linh hoạt / ${jobData.location}` : 'Xem chi tiết trong CV')}
+                        </strong>
                       </div>
                     </div>
                   </div>
@@ -622,7 +1046,7 @@ export function ApplicationReviewWorkspace({
                     <CheckCircle2 className="recruiter-criteria-card__icon recruiter-criteria-card__icon--success" size={18} />
                     <div>
                       <h4>Kỹ năng mong muốn ({skillMatchAnalysis.matchedCount}/{skillMatchAnalysis.totalRequired} khớp)</h4>
-                      <p>Danh sách kỹ năng cần đối chiếu trực tiếp trên CV</p>
+                      <p>Danh sách kỹ năng đối chiếu từ CV ứng viên và đánh giá AI1</p>
                     </div>
                   </div>
 
@@ -634,6 +1058,7 @@ export function ApplicationReviewWorkspace({
                             skill.isMatched ? 'is-matched' : 'is-unmatched'
                           }`}
                           key={skill.name}
+                          title={skill.score ? `Độ khớp AI1: ${Math.round(skill.score)}%` : undefined}
                         >
                           {skill.isMatched ? (
                             <CheckCircle2 className="recruiter-criteria-skill-pill__icon" size={14} />
@@ -642,8 +1067,22 @@ export function ApplicationReviewWorkspace({
                           )}
                           <span className="recruiter-criteria-skill-pill__name">{skill.name}</span>
                           <span className="recruiter-criteria-skill-pill__status">
-                            {skill.isMatched ? 'Khớp hồ sơ' : 'Chưa thấy'}
+                            {skill.statusLabel}
                           </span>
+                          {skill.isMatched && (
+                            <button
+                              type="button"
+                              className="recruiter-criteria-skill-pill__soi-btn"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleJumpToPdf(skill.name)
+                              }}
+                              title={`Soi "${skill.name}" trên bản PDF gốc`}
+                            >
+                              <Search size={11} />
+                              <span>Soi PDF</span>
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -651,6 +1090,19 @@ export function ApplicationReviewWorkspace({
                     <p className="recruiter-criteria-card__empty">Chưa thiết lập danh sách kỹ năng cho tin này.</p>
                   )}
                 </div>
+
+                {/* AI1 Evidence Verification Section */}
+                {effectiveHrReview && (
+                  <div className="recruiter-criteria-card recruiter-criteria-card--ai1-section">
+                    <Ai1EvidenceView
+                      state={{ status: 'loaded', review: effectiveHrReview }}
+                      copy={copy}
+                      isMatching={false}
+                      onRefresh={() => {}}
+                      onJumpToPdf={handleJumpToPdf}
+                    />
+                  </div>
+                )}
 
                 {/* Core Requirements */}
                 <div className="recruiter-criteria-card">
@@ -746,7 +1198,6 @@ export function ApplicationReviewWorkspace({
               </div>
             )}
           </section>
-        )}
       </div>
     </div>
   )
