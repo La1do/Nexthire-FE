@@ -67,6 +67,14 @@ body {
   opacity: 0.55;
 }
 
+.recruiter-company-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
 .recruiter-company-hero {
   align-items: end;
   display: grid;

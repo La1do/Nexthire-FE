@@ -113,6 +113,7 @@ export function ApplicationFilters({
         <SelectField
           className="recruiter-applications-filter recruiter-applications-filter--select"
           label={content.jobLabel}
+          menuClassName="admin-filter-menu"
           onChange={onJobChange}
           options={[
             { label: content.jobAll, value: 'all' },
@@ -124,6 +125,7 @@ export function ApplicationFilters({
         <SelectField
           className="recruiter-applications-filter recruiter-applications-filter--select"
           label={content.sortLabel}
+          menuClassName="admin-filter-menu"
           onChange={handleSortChange}
           options={[
             { label: content.sortOptions.newest, value: 'newest' },

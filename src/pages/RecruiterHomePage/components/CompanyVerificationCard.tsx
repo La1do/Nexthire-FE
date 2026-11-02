@@ -36,7 +36,6 @@ export function CompanyVerificationCard({
   return (
     <section className={`recruiter-verification-card is-${statusClass}`}>
       <div className="recruiter-verification-card__main">
-        <p className="recruiter-eyebrow">{translations.eyebrow}</p>
         <div className="recruiter-verification-card__identity">
           {company.logo ? (
             <img alt={`${companyName} logo`} src={company.logo} />

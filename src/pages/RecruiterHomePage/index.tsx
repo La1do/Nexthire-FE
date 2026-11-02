@@ -49,7 +49,6 @@ export function RecruiterHomePage() {
     <div className="recruiter-home-page">
       <section className="recruiter-hero">
         <div>
-          <p className="recruiter-eyebrow">{content.hero.eyebrow}</p>
           <h2>{content.hero.title}</h2>
           <p>{content.hero.description}</p>
         </div>

@@ -10,6 +10,34 @@ export type JobLogoView = {
   tone: LogoTone
 }
 
+export type JobCompanyInfo = {
+  id: string
+  name: string
+  logoUrl?: string | null
+  scale?: string | null
+  address?: string | null
+  industry?: string | null
+}
+
+export type JobDetailOverviewData = {
+  requirements: string[]
+  benefits: string[]
+  benefitsRow2?: string[]
+  specialties: string[]
+}
+
+export type JobDetailHighlightBox = {
+  iconType: 'knowledge' | 'requiredSkill' | 'preferredSkill' | 'benefit'
+  label: string
+  value: string
+}
+
+export type JobDetailLocationTime = {
+  workLocation: string
+  workHours: string[]
+  applyNote: string
+}
+
 export type JobDetailView = {
   id: string
   companyId: string
@@ -24,10 +52,25 @@ export type JobDetailView = {
   tags: ReadonlyArray<string>
   verified: boolean
   logo: JobLogoView
+  // TopCV styling enhancements
+  experienceLevelLabel?: string
+  categoryName?: string
+  overview?: JobDetailOverviewData
+  candidateNote?: string
+  candidateHighlights?: JobDetailHighlightBox[]
+  supplementalBenefits?: string[]
+  locationTime?: JobDetailLocationTime
+  companyInfo?: JobCompanyInfo
+  levelLabel?: string
+  educationLabel?: string
+  employmentTypeLabel?: string
 }
+
+export type JobDetailSectionKey = 'description' | 'requirements' | 'benefits' | 'location_time'
 
 // One rendered content block (description / requirements / benefits).
 export type JobDetailSectionView = {
+  key?: JobDetailSectionKey
   title: string
   body: string
 }
@@ -39,4 +82,5 @@ export type RelatedJobView = {
   title: string
   location: string
   logo: JobLogoView
+  salary?: string
 }

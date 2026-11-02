@@ -98,7 +98,8 @@
   padding-left: 2.35rem;
 }.recruiter-applications-filter__icon{
   align-items: center;
-  bottom: 0.72rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--color-text-muted);
   display: inline-flex;
   height: 1.1rem;
