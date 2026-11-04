@@ -17,7 +17,7 @@ import { ApplicationDetailDrawer } from './components/ApplicationDetailDrawer'
 import { ApplicationFilters } from './components/ApplicationFilters'
 import { ApplicationMobileList } from './components/ApplicationMobileList'
 import { ApplicationTable } from './components/ApplicationTable'
-import { Ai2ReviewOrder } from './components/ai2/Ai2ReviewOrder'
+import { Ai2ReviewOrder, type Ai2TableOrder } from './components/ai2/Ai2ReviewOrder'
 import type {
   RecruiterApplicationCriteria,
   RecruiterApplicationItem,
@@ -143,6 +143,21 @@ export function RecruiterApplicationsPage() {
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null)
   const matchingSessions = useRef(new Map<string, AbortController>())
   const [matchMessages, setMatchMessages] = useState<Record<string, MatchingMessage>>({})
+  const [ai2Order, setAi2Order] = useState<(Ai2TableOrder & { scope: string }) | null>(null)
+  const [ai2Revision, setAi2Revision] = useState(0)
+  const listRequest = useRef(0)
+  const ai2Scope = JSON.stringify([criteria.jobId, criteria.query, criteria.status, criteria.sort, ai2Revision])
+  const ai2Enabled = import.meta.env.DEV && import.meta.env.VITE_AI2_DEMO_ENABLED === 'true'
+  const ai2Disabled = criteria.jobId === 'all' || !!criteria.query.trim() || criteria.status !== 'all' || matchingApplicationIds.size > 0 || statusUpdatingIds.size > 0
+  const activeAi2Order = ai2Enabled && !ai2Disabled && ai2Order?.scope === ai2Scope ? ai2Order : null
+  const resetAi2Order = useCallback(() => setAi2Order(null), [])
+  useEffect(() => { setAi2Order(null) }, [ai2Scope, ai2Disabled])
+
+
+  function invalidateAi2Order() {
+    setAi2Order(null)
+    setAi2Revision(value => value + 1)
+  }
 
   useEffect(() => {
     const sessions = matchingSessions.current
@@ -203,6 +218,7 @@ export function RecruiterApplicationsPage() {
 
   const loadApplications = useCallback(
     async ({ silent = false }: { silent?: boolean } = {}) => {
+      const requestId = ++listRequest.current
       if (!silent) {
         setLoading(true)
         setLoadError(undefined)
@@ -217,11 +233,13 @@ export function RecruiterApplicationsPage() {
           search: criteria.query.trim() || undefined,
           status: criteria.status === 'all' ? undefined : criteria.status,
         })
+        if (requestId !== listRequest.current) return
         const nextApplications = response.data.map(mapApplication)
 
         setApplications(nextApplications)
         setApplicationMeta(response.meta)
       } catch (error) {
+        if (requestId !== listRequest.current) return
         const errorMessage = getApiErrorEnvelope(error)?.error.message ?? content.states.errorDescription
 
         if (silent) {
@@ -231,7 +249,7 @@ export function RecruiterApplicationsPage() {
 
         setLoadError(errorMessage)
       } finally {
-        if (!silent) {
+        if (!silent && requestId === listRequest.current) {
           setLoading(false)
         }
       }
@@ -291,15 +309,22 @@ export function RecruiterApplicationsPage() {
       ...jobOptions,
     ]
   }, [content.filters.selectedJobFallback, criteria.jobId, jobOptions])
-  const totalPages = Math.max(1, applicationMeta.totalPages)
+  const orderedApplications = useMemo(
+    () => activeAi2Order ? activeAi2Order.applications.map(mapApplication) : applications,
+    [activeAi2Order, applications, mapApplication],
+  )
+  const resultTotal = activeAi2Order ? orderedApplications.length : applicationMeta.total
+  const totalPages = activeAi2Order ? Math.max(1, Math.ceil(resultTotal / PAGE_SIZE)) : Math.max(1, applicationMeta.totalPages)
   const selectedApplication = useMemo(
-    () => applications.find((application) => application.id === selectedApplicationId) ?? null,
-    [applications, selectedApplicationId],
+    () => orderedApplications.find((application) => application.id === selectedApplicationId) ?? null,
+    [orderedApplications, selectedApplicationId],
   )
 
   useEffect(() => {
+    if (activeAi2Order) return
     void loadApplications()
-  }, [loadApplications])
+    return () => { listRequest.current += 1 }
+  }, [loadApplications, activeAi2Order])
 
   useEffect(() => {
     void loadApplicationStats()
@@ -365,11 +390,11 @@ export function RecruiterApplicationsPage() {
     setPage((currentPage) => Math.min(currentPage, totalPages))
   }, [totalPages])
 
-  const pagedApplications = applications
+  const pagedApplications = activeAi2Order ? orderedApplications.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : applications
   const hasActiveFilters = isActiveRecruiterApplicationFilters(criteria)
-  const selectedIndex = applications.findIndex((application) => application.id === selectedApplicationId)
+  const selectedIndex = orderedApplications.findIndex((application) => application.id === selectedApplicationId)
   const hasPrevious = selectedIndex > 0
-  const hasNext = selectedIndex >= 0 && selectedIndex < applications.length - 1
+  const hasNext = selectedIndex >= 0 && selectedIndex < orderedApplications.length - 1
 
   function updateApplicationSearch(nextCriteria: RecruiterApplicationCriteria, applicationId?: string | null) {
     const criteriaChanged = criteria.jobId !== nextCriteria.jobId ||
@@ -378,6 +403,7 @@ export function RecruiterApplicationsPage() {
       criteria.status !== nextCriteria.status
 
     if (criteriaChanged) {
+      invalidateAi2Order()
       setPage(1)
     }
 
@@ -452,6 +478,7 @@ export function RecruiterApplicationsPage() {
 
   async function handleRunMatch(application: RecruiterApplicationItem) {
     if (matchingSessions.current.has(application.id)) return
+    invalidateAi2Order()
     const session = new AbortController()
     matchingSessions.current.set(application.id, session)
     const timer = window.setTimeout(
@@ -524,6 +551,7 @@ export function RecruiterApplicationsPage() {
   }
 
   async function handleStatusChange(applicationId: string, status: RecruiterDecisionStatus, feedback: string) {
+    invalidateAi2Order()
     setStatusUpdatingIds((currentIds) => new Set(currentIds).add(applicationId))
 
     try {
@@ -602,14 +630,17 @@ export function RecruiterApplicationsPage() {
         tabs={content.tabs}
       />
 
-      {import.meta.env.DEV && import.meta.env.VITE_AI2_DEMO_ENABLED === 'true' && criteria.jobId !== 'all' && applications[0]?.jobId === criteria.jobId ? (
-        <Ai2ReviewOrder key={criteria.jobId} applicationId={applications[0].id} jobId={criteria.jobId} locale={locale} onView={openApplicationDetail} />
+      {ai2Enabled && criteria.jobId !== 'all' ? (
+        <Ai2ReviewOrder key={`${ai2Scope}:${ai2Disabled}`} applicationId={applications.find(app => app.jobId === criteria.jobId && (app.status === 'SUBMITTED' || app.status === 'OFFERED'))?.id ?? ''}
+          jobId={criteria.jobId} locale={locale} applied={!!activeAi2Order} disabled={ai2Disabled || isLoading || !applications.some(app => app.jobId === criteria.jobId && (app.status === 'SUBMITTED' || app.status === 'OFFERED'))}
+          onApply={(order) => { listRequest.current += 1; setLoading(false); setLoadError(undefined); setAi2Order({ ...order, scope: ai2Scope }); setPage(1) }}
+          onReset={resetAi2Order} />
       ) : null}
 
       <section className="recruiter-applications-results">
         <header className="recruiter-applications-results__header">
           <p className="recruiter-applications-results__count">
-            {content.results.countLabel.replace('{{count}}', String(applicationMeta.total))}
+            {content.results.countLabel.replace('{{count}}', String(resultTotal))}
           </p>
         </header>
 
@@ -655,7 +686,7 @@ export function RecruiterApplicationsPage() {
         <ApplicationDetailDrawer
           key={`${selectedApplication.id}:${selectedApplication.jobId}`}
           application={selectedApplication}
-          applications={applications}
+          applications={orderedApplications}
           currentIndex={selectedIndex >= 0 ? selectedIndex + 1 : undefined}
           hasNext={hasNext}
           hasPrevious={hasPrevious}
@@ -668,12 +699,12 @@ export function RecruiterApplicationsPage() {
           onEmail={(application) => void handleApplicationAction('mailto', application)}
           onNavigateNext={() => {
             if (hasNext) {
-              openApplicationDetail(applications[selectedIndex + 1].id)
+              openApplicationDetail(orderedApplications[selectedIndex + 1].id)
             }
           }}
           onNavigatePrevious={() => {
             if (hasPrevious) {
-              openApplicationDetail(applications[selectedIndex - 1].id)
+              openApplicationDetail(orderedApplications[selectedIndex - 1].id)
             }
           }}
           onOpenResume={(application) => void handleApplicationAction('resume', application)}
@@ -681,7 +712,7 @@ export function RecruiterApplicationsPage() {
           onSelectApplication={(app) => openApplicationDetail(app.id)}
           onStatusChange={handleStatusChange}
           statusLabels={content.statusLabels}
-          totalCount={applications.length}
+          totalCount={orderedApplications.length}
           translations={content.drawer}
         />
       ) : null}
