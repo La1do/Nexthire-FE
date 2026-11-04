@@ -4,12 +4,14 @@ import { AxiosError } from 'axios'
 import { LocaleProvider } from '../../src/i18n/LocaleProvider'
 import { apiClient } from '../../src/lib/api'
 import { Ai1EvidencePanel } from '../../src/pages/RecruiterApplicationsPage/components/ai1/Ai1EvidencePanel'
+import { Ai2DemoPanel } from '../../src/pages/RecruiterApplicationsPage/components/ai2/Ai2DemoPanel'
+import { Ai2DemoView } from '../../src/pages/RecruiterApplicationsPage/components/ai2/Ai2DemoView'
 import fixtures from './fixtures/ai1-hr-review.synthetic.json'
 import '../../src/styles/index.css'
 import '../../src/pages/RecruiterApplicationsPage/recruiter-applications.css'
 import '../../src/pages/RecruiterApplicationsPage/components/application-detail-drawer.css'
 
-type Mode = 'ready' | 'null' | 'unavailable' | 'disabled' | 'invalid' | 'forbidden' | 'error' | 'slow' | 'warning' | 'overview' | 'plan'
+type Mode = 'ready' | 'null' | 'unavailable' | 'disabled' | 'invalid' | 'forbidden' | 'error' | 'slow' | 'warning' | 'overview' | 'plan' | 'span' | 'span-invalid' | 'span-null' | 'span-malformed' | 'span-long'
 let mode: Mode = 'ready'
 let delay = 0
 const calls: Array<{ url: string | undefined; method: string | undefined }> = []
@@ -39,6 +41,16 @@ apiClient.defaults.adapter = (config) => new Promise((resolve, reject) => {
       return q
     })
   }
+  if (capturedMode.startsWith('span')) {
+    const q = review.requirements[0]
+    const text = capturedMode === 'span-long'
+      ? 'Synthetic context. '.repeat(45) + 'No AWS experience. Full ending.'
+      : 'Synthetic context before. No AWS experience. Synthetic context after.'
+    const relevantSpan = capturedMode === 'span-invalid' ? 'aws experience'
+      : capturedMode === 'span-null' ? null : capturedMode === 'span-malformed' ? 42 : 'AWS experience'
+    q.evidence = [{ ...q.evidence[0], text, relevantSpan } as typeof q.evidence[number]]
+    q.components = null; q.allOf = null; review.requirements = [q]
+  }
   if (capturedMode === 'plan') review.planStatus = 'UNAVAILABLE'
   if (capturedMode === 'invalid') review.applicationId = 'foreign'
   if (capturedMode === 'warning') {
@@ -58,12 +70,18 @@ export function Harness() {
   const [id, setId] = useState('synthetic-a')
   const [revision, setRevision] = useState(0)
   const [matching, setMatching] = useState(false)
+  const [ai2Scenario, setAi2Scenario] = useState<'off' | 'withheld' | null>(null)
   Object.assign(window, { ai1Harness: {
     set(next: Mode, nextId = id) { mode = next; delay = 0; setId(nextId); setRevision((n) => n + 1) },
     matching(value: boolean) { setMatching(value) }, calls,
+    ai2(scenario: 'off' | 'withheld' | null) { setAi2Scenario(scenario) },
   } })
   return <LocaleProvider><main className="recruiter-application-detail-drawer recruiter-application-detail-drawer--hr-review" style={{ position: 'static', marginLeft: 'auto', height: '100dvh' }}><header className="recruiter-application-detail-drawer__header"><div><p className="recruiter-eyebrow">NexHire · Synthetic review</p><h2>Hồ sơ minh họa</h2><p>Frontend review · no personal data</p></div></header><div className="recruiter-application-detail-drawer__body">
     <Ai1EvidencePanel applicationId={id} jobId="synthetic-job" updatedAt={String(revision)} isMatching={matching} />
+    {ai2Scenario === 'off' ? <div data-ai2-off><Ai2DemoPanel applicationId={id} jobId="synthetic-job" updatedAt={String(revision)} isMatching={false} /></div> : null}
+    {ai2Scenario === 'withheld' ? <div data-ai2-withheld><Ai2DemoView locale="en" loading={false} failed={false}
+      value={{ status: 'READY', score: 98.5, resultId: 'synthetic-ai2', referenceDate: '2026-10-18', modelVersion: 'synthetic' }}
+      pool={{ status: 'UNAVAILABLE', count: 3, rank: null, reason: 'CONTENT_QUALITY_NOT_VALIDATED' }} /></div> : null}
   </div></main></LocaleProvider>
 }
 createRoot(document.getElementById('root')!).render(<Harness />)

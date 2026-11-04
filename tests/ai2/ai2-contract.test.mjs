@@ -61,6 +61,28 @@ test('reject foreign identities, unsafe semantics and malformed metadata', () =>
     assert.throws(() => parse(wrap({ ...ready(), ...mutation }), 'a', 'j'))
   }
 })
+test('content-quality withholding never invents rank, fit percentage or support', () => {
+  for (const locale of ['vi', 'en', 'ja']) {
+    const html = renderToStaticMarkup(React.createElement(viewExports.Ai2DemoView, {
+      locale, loading: false, failed: false, value: parse(wrap({ ...ready(), score: 98.5 }), 'a', 'j'),
+      pool: { status: 'UNAVAILABLE', count: 3, rank: null, reason: 'CONTENT_QUALITY_NOT_VALIDATED' },
+    }))
+    const visible = html.replace(/<details>[\s\S]*?<\/details>/g, '')
+    assert.ok(!visible.includes('98.5') && !visible.includes('%'))
+    assert.ok(!visible.includes('Suggested review position') && !visible.includes('Gợi ý xem thứ') && !visible.includes('確認順序：'))
+    assert.ok(html.includes('98.5000') && !html.includes('<details open'))
+    assert.ok(visible.includes(locale === 'vi' ? 'Chất lượng đánh giá nội dung chưa được xác nhận' : locale === 'ja' ? '内容評価の品質が未確認' : 'Content assessment quality is not validated'))
+  }
+})
+
+test('AI2 stays development-only, explicitly opt-in, and binds ready pool to the current score result', () => {
+  const panel = readFileSync(new URL('../../src/pages/RecruiterApplicationsPage/components/ai2/Ai2DemoPanel.tsx', import.meta.url), 'utf8')
+  assert.ok(panel.includes("import.meta.env.DEV && import.meta.env.VITE_AI2_DEMO_ENABLED === 'true'"))
+  assert.ok(panel.includes('if (!enabled || isMatching) return'))
+  assert.ok(panel.includes('if (!enabled) return null'))
+  assert.ok(panel.includes("value.status !== 'READY' || pool.resultId !== value.resultId"))
+})
+
 test('allowlist excludes arbitrary downstream content', () => {
   assert.equal(parse(wrap({ ...ready(), privateSource: 'secret' }), 'a', 'j').privateSource, undefined)
 })

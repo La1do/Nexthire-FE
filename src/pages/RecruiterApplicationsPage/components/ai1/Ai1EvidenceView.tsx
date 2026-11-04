@@ -78,7 +78,7 @@ function hasLexicalPenalty(hit: HrEvidence): boolean {
 }
 
 function highlightSpan(fullText: string, span: string | null | undefined): React.ReactNode {
-  if (!span || !fullText.includes(span)) return fullText
+  if (!span?.trim() || !fullText.includes(span)) return fullText
   const idx = fullText.indexOf(span)
   return (
     <>

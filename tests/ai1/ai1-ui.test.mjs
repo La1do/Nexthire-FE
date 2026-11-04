@@ -500,6 +500,53 @@ base systems`, 'Distributed database systems'), 1)
   assert.equal(count('Architected another system with independent services.', 'Architected a monorepo microservices system with independent NestJS services and schema-per-service database design.'), 0)
   assert.equal(count('<img src=x onerror=alert(1)>', '<img src=x onerror=alert(1)>'), 1)
 })
+test('optional relevantSpan highlights an exact substring without changing evidence or support semantics', () => {
+  const review = ready(); const q = review.requirements[0]
+  const text = 'Context before. No AWS experience. Context after. <script>unsafe()</script>'
+  q.evidence = [{ ...q.evidence[0], text, relevantSpan: 'AWS experience', similarityScore: 100 }]
+  q.components = null; q.allOf = null; review.requirements = [q]
+  const parsed = parse(review)
+  assert.equal(parsed.requirements[0].evidence[0].text, text)
+  assert.equal(parsed.requirements[0].evidence[0].similarityScore, 100)
+  assert.equal(parsed.candidateSupportVerified, false)
+  assert.equal(parsed.requirements[0].verifiedSupport, false)
+  assert.equal(parsed.requirements[0].modelSuggestion, null)
+  for (const locale of ['vi', 'en', 'ja']) {
+    const html = render({ status: 'loaded', review: parsed }, locale)
+    assert.ok(html.includes('Context before. No <mark class="ai1-evidence__span-highlight">AWS experience</mark>. Context after. &lt;script&gt;unsafe()&lt;/script&gt;'))
+    assert.ok(html.includes(ai1Copy[locale].pending) && html.includes(ai1Copy[locale].originNote))
+    assert.ok(html.includes('100.0 / 100') && !html.includes('100%'))
+  }
+})
+
+test('missing, null, empty, malformed or non-exact spans gracefully leave the full quote unhighlighted', () => {
+  const text = 'No AWS experience. Café\nSQL Server — full context.'
+  for (const span of [undefined, null, '', ' ', '\n', 42, {}, ['AWS'], 'aws', 'Café', 'SQL  Server', 'No AWS experience. Invented text']) {
+    const review = ready(); const q = review.requirements[0]
+    q.evidence = [{ ...q.evidence[0], text }]
+    if (span !== undefined) q.evidence[0].relevantSpan = span
+    q.components = null; q.allOf = null; review.requirements = [q]
+    const parsed = parse(review)
+    assert.equal(parsed.requirements[0].evidence[0].relevantSpan, null)
+    const html = render({ status: 'loaded', review: parsed })
+    assert.ok(!html.includes('<mark class="ai1-evidence__span-highlight">'))
+    assert.ok(html.includes(`<blockquote>${text}</blockquote>`))
+  }
+})
+
+test('component spans and long-passage disclosures retain full context and escaped exact text', () => {
+  const review = ready(); const q = review.requirements[0]
+  const span = '<img src=x onerror=unsafe()>'
+  const text = 'Context. '.repeat(80) + span + ' No experience claimed. Full ending.'
+  q.evidence = []
+  q.components = [{ ...q.components[0], text: 'Scoped criterion', evidence: [{ ...ready().requirements[0].evidence[0], text, relevantSpan: span }] }]
+  q.allOf = [[q.components[0].componentId]]; review.requirements = [q]
+  const html = render({ status: 'loaded', review: parse(review) })
+  assert.ok(html.includes('<details class="ai1-evidence__full">'))
+  assert.ok(html.includes('<mark class="ai1-evidence__span-highlight">&lt;img src=x onerror=unsafe()&gt;</mark> No experience claimed. Full ending.'))
+  assert.ok(!html.includes('<img') && html.includes('Context. '.repeat(80)))
+})
+
 test('PDF query is full returned span/quote, never requirement keyword or prefix', () => {
   const hit = { text: 'Built relational systems using MSSQL (SQL Server) over multiple years.', relevantSpan: 'MSSQL (SQL Server)' }
   assert.equal(getBestSearchPhrase(hit), 'MSSQL (SQL Server)')

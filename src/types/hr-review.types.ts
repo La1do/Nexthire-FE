@@ -5,8 +5,14 @@ const evidence = z.object({
   similarityScore: z.number().min(0).max(100),
   reasonCodes: z.array(z.string()).optional(),
   scoreMeaning: z.literal('COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY'),
-  relevantSpan: z.string().nullable().optional(),
-})
+  relevantSpan: z.unknown().optional(),
+}).transform((hit) => ({
+  ...hit,
+  // Optional display metadata must not invalidate otherwise usable evidence.
+  // Only a literal substring of this passage is eligible; never fuzzy-match it.
+  relevantSpan: typeof hit.relevantSpan === 'string' && hit.relevantSpan.trim()
+    && hit.text.includes(hit.relevantSpan) ? hit.relevantSpan : null,
+}))
 const suggestion = z.enum(['matched', 'partial', 'not_established_in_provided_evidence']).nullable()
 const component = z.object({
   componentId: z.string(), text: z.string(), importance: z.string(),

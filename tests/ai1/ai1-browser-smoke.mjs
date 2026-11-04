@@ -25,6 +25,7 @@ async function cdp(method, params = {}) {
 }
 async function evaluate(expression) {
   const response = await cdp('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })
+    .catch(error => { throw new Error(`Browser evaluation failed: ${expression}`, { cause: error }) })
   assert.ok(!response.exceptionDetails, JSON.stringify(response.exceptionDetails))
   return response.result.value
 }
@@ -38,7 +39,7 @@ async function wait(expression) {
 let checks = 0
 function passed() { checks++ }
 try {
-  server = await createServer({ server: { host: '127.0.0.1', port: 0 }, plugins: [{
+  server = await createServer({ define: { 'import.meta.env.VITE_AI2_DEMO_ENABLED': JSON.stringify('false') }, server: { host: '127.0.0.1', port: 0 }, plugins: [{
     name: 'ai1-test-html', configureServer(server) {
       server.middlewares.use('/__ai1-ui-test__', async (_req, res) => {
         res.setHeader('Content-Type', 'text/html')
@@ -105,6 +106,22 @@ try {
   await evaluate("window.ai1Harness.matching(false); window.ai1Harness.set('plan')")
   await wait("document.body.innerText.includes('Không tải được cấu trúc JD; vẫn xem bằng chứng')")
   assert.ok(await evaluate("document.querySelector('blockquote') !== null")); passed()
+  await evaluate("window.ai1Harness.set('span')")
+  await wait("document.querySelector('blockquote mark')?.textContent === 'AWS experience'")
+  assert.equal(await evaluate("document.querySelector('blockquote').textContent"), 'Synthetic context before. No AWS experience. Synthetic context after.')
+  assert.ok(await evaluate("document.body.innerText.includes('HR chưa xác nhận') && document.body.innerText.includes('tô sáng và similarity không xác nhận đáp ứng')")); passed()
+  for (const mode of ['span-invalid', 'span-null', 'span-malformed']) {
+    const before = await evaluate('window.ai1Harness.calls.length')
+    await evaluate(`window.ai1Harness.set('${mode}')`)
+    await wait(`window.ai1Harness.calls.length === ${before + 1} && document.querySelector('[aria-busy]').getAttribute('aria-busy') === 'false' && document.querySelector('blockquote') && !document.querySelector('blockquote mark')`)
+    assert.equal(await evaluate("document.querySelector('blockquote mark') === null"), true)
+    assert.equal(await evaluate("document.querySelector('blockquote').textContent"), 'Synthetic context before. No AWS experience. Synthetic context after.'); passed()
+  }
+  await evaluate("window.ai1Harness.set('span-long')")
+  await wait("document.querySelector('.ai1-evidence__full blockquote mark')?.textContent === 'AWS experience'")
+  assert.equal(await evaluate("document.querySelector('.ai1-evidence__quote > blockquote mark') === null"), true)
+  await evaluate("document.querySelector('.ai1-evidence__full summary').click()")
+  assert.ok(await evaluate("document.querySelector('.ai1-evidence__full').open && document.querySelector('.ai1-evidence__full blockquote').textContent.endsWith('No AWS experience. Full ending.')")); passed()
   await evaluate("window.ai1Harness.set('overview')")
   await wait("document.querySelectorAll('.ai1-evidence__navigation button').length === 10")
   await cdp('Emulation.setDeviceMetricsOverride', { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false })
@@ -167,6 +184,20 @@ try {
   await evaluate("document.querySelector('.recruiter-application-detail-drawer__body').scrollTop = 290")
   screenshots.push(await screenshot('ai1-ux-002-mobile-evidence.png')); passed()
   console.log(JSON.stringify({desktop, screenshots}, null, 2))
+  const beforeAi2 = await evaluate('window.ai1Harness.calls.length')
+  await evaluate("window.ai1Harness.ai2('off')")
+  await wait("document.querySelector('[data-ai2-off]') !== null")
+  await sleep(150)
+  assert.equal(await evaluate('window.ai1Harness.calls.length'), beforeAi2)
+  assert.equal(await evaluate("document.querySelector('[data-ai2-off]').textContent"), ''); passed()
+  await evaluate("window.ai1Harness.ai2('withheld')")
+  await wait("document.querySelector('[data-ai2-withheld]')?.innerText.includes('Content assessment quality is not validated')")
+  assert.ok(await evaluate(`(() => {
+    const panel = document.querySelector('[data-ai2-withheld]');
+    const visible = panel.innerText;
+    return !visible.includes('Suggested review position') && !visible.includes('98.5') && !visible.includes('%') && !panel.querySelector('details').open && visible.includes('HR must verify');
+  })()`)); passed()
+  await evaluate('window.ai1Harness.ai2(null)')
   assert.deepEqual(failures, [])
   assert.ok(requests.every((url) => url.startsWith(origin) || url.startsWith('data:')), 'Unexpected external page request')
   passed()
