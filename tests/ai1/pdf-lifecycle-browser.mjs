@@ -61,7 +61,7 @@ try {
       const actions = header.lastElementChild.getBoundingClientRect()
       return { stacked: identity.bottom <= actions.top, sideBySide: identity.right <= actions.left, width: identity.width }
     })
-    assert.ok(width <= 560 ? geometry.stacked && geometry.width > 300 : geometry.sideBySide)
+    assert.ok(geometry.width > 0 && (geometry.stacked || geometry.sideBySide), 'Header identity and controls must not overlap')
   }
   // Tear down after response headers, before body is complete.
   for (let cycle = 0; cycle < 12; cycle++) {

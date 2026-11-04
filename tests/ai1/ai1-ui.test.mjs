@@ -455,8 +455,54 @@ test('ApplicationReviewWorkspace displays live evidence callout with highlighted
   // Snippet text has highlighted mark
   assert.ok(html.includes('<mark class="ai1-evidence__span-highlight">React</mark>'))
   // Guidance for automated PDF highlight
-  assert.ok(html.includes('Tự động định vị'))
-  assert.ok(html.includes('cuộn trực tiếp tới đoạn bằng chứng'))
+  assert.ok(html.includes('Tìm nguyên văn trên PDF'))
+  assert.ok(html.includes('Kết quả tìm và highlight'))
 })
 
 
+
+const { findPdfTextMatches, findPartialPdfQuote, findPdfLexicalRegions } = loadTs('src/pages/RecruiterApplicationsPage/components/pdfTextSearch.ts')
+test('lexical regions derive terms from arbitrary passages, not a technology list', () => {
+  for (const [text, query] of [
+    ['Managed warehouse inventory reconciliation and coordinated supplier deliveries.', 'Supplier coordination, warehouse inventory, reconciliation workflows.'],
+    ['Studied marine biodiversity and coastal habitat restoration.', 'Coastal habitat restoration with biodiversity studies in marine environments.'],
+    ['Đối soát chứng từ kế toán và tổng hợp báo cáo doanh thu.', 'Báo cáo doanh thu, chứng từ và đối soát kế toán.'],
+  ]) {
+    assert.ok(findPdfLexicalRegions(text, query).length > 0)
+  }
+  assert.equal(findPdfLexicalRegions('Objective design system experience skills', 'system design experience skills').length, 0)
+  assert.equal(findPdfLexicalRegions('inventory ' + 'unrelated '.repeat(60) + 'supplier ' + 'unrelated '.repeat(60) + 'reconciliation', 'inventory supplier reconciliation').length, 0)
+  assert.equal(findPdfLexicalRegions('wholesale inventories', 'sale inventory reconciliation').length, 0)
+})
+test('partial PDF location requires majority coverage in ordered substantial runs', () => {
+  const quote = 'Backend Developer with practical experience building maintainable APIs and real-time systems. Focused on system design, database management, and writing clean, scalable code for real-world software architecture.'
+  const text = quote.replace('Focused on system design', 'Focused on continuously improving knowledge in system design')
+  const matches = findPartialPdfQuote(text, quote)
+  assert.ok(matches.length >= 2)
+  assert.ok(matches.every(match => !text.slice(match.start, match.end).includes('continuously improving')))
+  assert.equal(findPartialPdfQuote('Objective: system design and database management.', quote).length, 0)
+  assert.equal(findPartialPdfQuote('database management system design', 'system design').length, 0)
+})
+const { getBestSearchPhrase } = loadTs('src/pages/RecruiterApplicationsPage/components/ai1/Ai1EvidenceView.tsx')
+test('PDF exact quote normalization keeps specificity, Unicode and all occurrences', () => {
+  const count = (text, quote) => findPdfTextMatches(text, quote).length
+  assert.equal(count('Objective design. MSSQL (SQL Server)', 'MSSQL (SQL Server)'), 1)
+  assert.equal(count('Objective design.', 'relational database design'), 0)
+  assert.equal(count('MSSQL (SQL Server) MSSQL (SQL Server)', 'MSSQL (SQL Server)'), 2)
+  assert.equal(count(`Distributed data-
+base systems`, 'Distributed database systems'), 1)
+  assert.equal(count(`SQL
+ Server`, 'SQL Server'), 1)
+  assert.equal(count('Café ﬁle “SQL”', 'Café file "SQL"'), 1)
+  assert.equal(count('cafe', 'café'), 0)
+  assert.equal(count('redesign', 'design'), 0)
+  assert.equal(count('Architected a mono repo micro-services system with independent NestJSservices and schema-per-service database design.', 'Architected a monorepo microservices system with independent NestJS services and schema-per-service database design.'), 1)
+  assert.equal(count('Architected another system with independent services.', 'Architected a monorepo microservices system with independent NestJS services and schema-per-service database design.'), 0)
+  assert.equal(count('<img src=x onerror=alert(1)>', '<img src=x onerror=alert(1)>'), 1)
+})
+test('PDF query is full returned span/quote, never requirement keyword or prefix', () => {
+  const hit = { text: 'Built relational systems using MSSQL (SQL Server) over multiple years.', relevantSpan: 'MSSQL (SQL Server)' }
+  assert.equal(getBestSearchPhrase(hit), 'MSSQL (SQL Server)')
+  assert.equal(getBestSearchPhrase({ ...hit, relevantSpan: 'missing quote' }), hit.text)
+  assert.equal(getBestSearchPhrase({ ...hit, relevantSpan: null }), hit.text)
+})

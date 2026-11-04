@@ -4,131 +4,74 @@ export type JobContentBlock =
   | { type: 'list'; items: string[] }
   | { type: 'paragraph'; text: string }
 
-/**
- * Splits a sentence containing a list separated by commas, semicolons,
- * or conjunctions (e.g. "A, B, and C.") into individual items.
- */
-function splitCommaList(text: string): string[] {
-  let str = text.trim()
-  if (str.endsWith('.')) {
-    str = str.slice(0, -1).trim()
-  }
-
-  // Check for conjunctions like ", and ", ", & ", ", và ", ", cùng " or at least 2 commas
-  const hasConjunction = /,\s*(?:and|&|và|cùng)\s+/i.test(str)
-  const commas = str.match(/,\s+/g) || []
-
-  if (hasConjunction || commas.length >= 2) {
-    // Replace conjunctions and commas with a delimiter
-    const normalized = str
-      .replace(/,\s*(?:and|&|và|cùng)\s+/gi, '|||')
-      .replace(/,\s+/g, '|||')
-
-    const parts = normalized
-      .split('|||')
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0)
-
-    if (parts.length > 1) {
-      return parts.map((part) => {
-        // Capitalize the first letter if not already
-        return part.charAt(0).toUpperCase() + part.slice(1)
-      })
-    }
-  }
-
-  // Check for semicolons ";"
-  if (str.includes(';')) {
-    const parts = str
-      .split(/;\s*/)
-      .map((s) => s.trim())
-      .filter(Boolean)
-
-    if (parts.length > 1) {
-      return parts.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    }
-  }
-
-  return [text]
+function decodeEntities(text: string): string {
+  const named: Record<string, string> = { nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" }
+  return text.replace(/&(#x[\da-f]+|#\d+|nbsp|amp|lt|gt|quot|apos);/gi, (entity, code: string) => {
+    if (!code.startsWith('#')) return named[code.toLowerCase()] ?? entity
+    const point = code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : parseInt(code.slice(1), 10)
+    return point > 0 && point <= 0x10ffff && !(point >= 0xd800 && point <= 0xdfff) ? String.fromCodePoint(point) : entity
+  })
 }
 
-/**
- * Parses free-form job description, requirements, or benefits text into structured blocks
- * supporting lead paragraphs, subheadings, and bullet point lists.
- * Ensures every duty, qualification, and perk renders with a bullet marker.
- * Automatically splits comma-separated item lists into individual bullet lines.
- */
+// Respect author-supplied paragraphs and list markers. Punctuation inside a
+// sentence is content, never a signal to invent additional responsibilities.
 export function parseJobContent(body: string | null | undefined): JobContentBlock[] {
-  if (!body || !body.trim()) {
-    return []
-  }
-
-  // 1. If HTML tags are present (from rich text editor e.g. <p>, <li>, <br>)
-  let normalized = body
-  if (/<[a-z][\s\S]*>/i.test(normalized)) {
-    normalized = normalized
-      .replace(/<li[^>]*>/gi, '\n• ')
-      .replace(/<\/li>/gi, '')
-      .replace(/<\/(p|div|h[1-6])>/gi, '\n')
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<[^>]+>/g, '')
-  }
-
-  // 2. Decode standard HTML entities if present (&nbsp;, &amp;, etc.)
-  normalized = normalized
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-
-  // 3. Split into lines
-  const rawLines = normalized
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-
-  if (rawLines.length === 0) {
-    return []
-  }
-
+  if (!body?.trim()) return []
   const blocks: JobContentBlock[] = []
-  let currentList: string[] = []
-
-  function flushList() {
-    if (currentList.length > 0) {
-      blocks.push({ type: 'list', items: [...currentList] })
-      currentList = []
-    }
+  const append = (type: 'paragraph' | 'subheading' | 'lead' | 'list', value: string) => {
+    const text = value.trim()
+    if (!text) return
+    const previous = blocks.at(-1)
+    if (type === 'list') {
+      if (previous?.type === 'list') previous.items.push(text)
+      else blocks.push({ type: 'list', items: [text] })
+    } else blocks.push({ type, text })
   }
 
-  for (let i = 0; i < rawLines.length; i++) {
-    const line = rawLines[i]
-
-    // Heading/lead check: short title ending with colon (e.g. "Trách nhiệm chính:", "Mô tả công việc:")
-    if (line.endsWith(':') && line.length <= 120) {
-      flushList()
-      blocks.push({ type: 'lead', text: line })
-      continue
+  if (/<\/?(?:p|div|ul|ol|li|br|h[1-6])\b[^>]*>/i.test(body)) {
+    let buffer = ''
+    let inListItem = false
+    let inHeading = false
+    const flush = () => {
+      append(inListItem ? 'list' : inHeading ? 'subheading' : 'paragraph', decodeEntities(buffer))
+      buffer = ''
     }
-
-    // Strip leading bullet markers ("- ", "• ", "* ", "1. ", "+ ", etc.)
-    const cleanItem = line
-      .replace(/^[\s•*+⁃–—-]*(\d+[.)])?\s*/, '')
-      .trim()
-
-    if (cleanItem) {
-      const splitItems = splitCommaList(cleanItem)
-      currentList.push(...splitItems)
+    // Render only text through React, not HTML. Ignore non-content elements.
+    const content = body.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, '')
+    for (const token of content.split(/(<[^>]+>)/g)) {
+      if (!token.startsWith('<')) { buffer += token; continue }
+      const tag = token.match(/^<\s*(\/?)\s*([a-z][\w-]*)\b/i)
+      if (!tag) { buffer += token; continue }
+      const closing = Boolean(tag[1])
+      const name = tag[2].toLowerCase()
+      if (name === 'li') {
+        flush()
+        inListItem = !closing
+      } else if (/^h[1-6]$/.test(name)) {
+        flush()
+        inHeading = !closing
+      } else if (name === 'br') {
+        if (inListItem) buffer += '\n'
+        else flush()
+      } else if (['p', 'div', 'ul', 'ol'].includes(name)) {
+        if (inListItem) {
+          if (closing && buffer && !buffer.endsWith('\n')) buffer += '\n'
+        } else flush()
+      }
     }
+    flush()
+    return blocks
   }
 
-  flushList()
-
-  // Fallback: If blocks is empty, ensure list block with original lines
-  if (blocks.length === 0 && rawLines.length > 0) {
-    return [{ type: 'list', items: rawLines }]
+  for (const line of body.split(/\r?\n/)) {
+    const text = line.trim()
+    if (!text) continue
+    const bullet = text.match(/^(?:[•*+⁃–—-]\s+|\d+[.)]\s+)(.+)$/u)
+    if (bullet) append('list', bullet[1])
+    else {
+      const isHeading = text.length <= 100 && !/[,;.!?]/u.test(text) && /\p{L}/u.test(text) && text === text.toLocaleUpperCase() && text !== text.toLocaleLowerCase()
+      append(isHeading ? 'subheading' : text.endsWith(':') && text.length <= 120 ? 'lead' : 'paragraph', text)
+    }
   }
-
   return blocks
 }

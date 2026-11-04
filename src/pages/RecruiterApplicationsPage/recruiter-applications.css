@@ -1477,6 +1477,30 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  overflow: hidden;
+}
+
+.recruiter-cv-workspace__document-details {
+  flex: 0 0 auto;
+  max-height: 30%;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.recruiter-cv-workspace__document-details:not([open]) > :not(summary) {
+  display: none;
+}
+
+.recruiter-cv-workspace__document-details:not([open]) {
+  max-height: none;
+  height: auto;
+}
+
+.recruiter-cv-workspace__document-details > summary {
+  cursor: pointer;
+  padding: 0.65rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .recruiter-cv-workspace__toolbar {
@@ -1549,6 +1573,14 @@
   font-weight: 600;
   gap: 0.45rem;
   padding: 0.25rem 0.65rem;
+}
+
+.recruiter-cv-workspace__search-pill > span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .recruiter-cv-workspace__search-pill-icon {
@@ -1636,10 +1668,9 @@
   border: 1px solid #a7f3d0;
   border-radius: 12px;
   box-shadow: 0 3px 10px rgba(16, 185, 129, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  margin: 0.65rem 0.85rem 0.35rem;
+  flex-shrink: 0;
+  max-height: none;
+  margin: 0.4rem 0.85rem;
   padding: 0.8rem 1rem;
   animation: cvSnippetSlideDown 200ms ease;
 }
@@ -1653,6 +1684,17 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.recruiter-cv-workspace__evidence-callout > summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.recruiter-cv-workspace__evidence-callout[open] > summary {
+  margin-bottom: 0.6rem;
 }
 
 .recruiter-cv-workspace__evidence-callout-header {
@@ -1767,7 +1809,7 @@
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.22);
   display: flex;
   flex: 1;
-  min-height: 480px;
+  min-height: 0;
   overflow: hidden;
   position: relative;
 }
@@ -1973,6 +2015,7 @@
 }
 
 .pdf-cv-viewer__toolbar {
+  flex-shrink: 0;
   align-items: center;
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
@@ -2114,8 +2157,65 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
+.pdf-cv-viewer__search-results {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  background: var(--color-surface-card);
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  max-height: 7rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+
+.pdf-cv-viewer__search-indicator > span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .pdf-cv-viewer__search-indicator strong {
+    display: none;
+  }
+
+  .pdf-cv-viewer__toolbar {
+    gap: 0.35rem;
+    padding: 0.35rem;
+  }
+
+  .pdf-cv-viewer__segmented {
+    display: none;
+  }
+
+  .pdf-cv-viewer__toolbar-left,
+  .pdf-cv-viewer__toolbar-right {
+    min-width: 0;
+    gap: 0.25rem;
+  }
+}
+
+.pdf-cv-viewer__search-results form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.pdf-cv-viewer__search-results input {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .pdf-cv-viewer__viewport {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden; /* Fully fits width by default without horizontal scroll */
   padding: 1.25rem 0.85rem;
@@ -2138,10 +2238,11 @@
   flex-direction: column;
   gap: 1.5rem;
   align-items: center;
-  max-width: 100%;
+  flex-shrink: 0;
 }
 
 .pdf-cv-page-wrapper {
+  flex-shrink: 0;
   background: #ffffff;
   border-radius: 6px;
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.06);
@@ -2149,12 +2250,10 @@
   position: relative;
   overflow: hidden;
   user-select: text;
-  max-width: 100%;
 }
 
 .pdf-cv-canvas {
   display: block;
-  max-width: 100%;
 }
 
 /* Text layer text is transparent over canvas; selectable and highlightable */
@@ -2176,6 +2275,14 @@
 }
 
 /* Highlighter pen effect: translucent yellow overlay over the crisp canvas vector text */
+.pdf-cv-context-region {
+  position: absolute;
+  background: rgba(250, 204, 21, 0.13);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 2px;
+}
+
 .pdf-cv-highlight {
   background-color: rgba(250, 204, 21, 0.42) !important;
   color: transparent !important;

@@ -13,6 +13,9 @@ export type JumpToPdfPayload = {
   phrase: string
   snippetText?: string
   source?: string
+  sourceSection?: string
+  pageNumber?: number | null
+  occurrence?: number | null
 }
 
 type Props = {
@@ -28,9 +31,10 @@ function emitJumpToPdf(
   phrase: string,
   snippetText?: string,
   source?: string,
+  sourceSection?: string,
 ) {
   if (!handler) return
-  handler({ phrase, snippetText, source })
+  handler({ phrase, snippetText, source, sourceSection })
 }
 
 const generalCodes = new Set(['RETRIEVAL_IS_NOT_ENTAILMENT', 'PAIR_THRESHOLD_NOT_RETRIEVAL_CALIBRATED'])
@@ -149,18 +153,12 @@ function hasEvidence(q: HrReview['requirements'][number]): boolean {
   return q.retrievalStatus === 'CANDIDATE_EVIDENCE' && q.evidence != null && q.evidence.length > 0
 }
 
-function getBestSearchPhrase(hit: HrEvidence, requirementText?: string, matchedKeywords?: string[]): string {
-  if (matchedKeywords && matchedKeywords.length > 0) {
-    return matchedKeywords[0]
-  }
-  if (hit.relevantSpan) {
-    const words = hit.relevantSpan.trim().split(/\s+/).slice(0, 4).join(' ')
-    return words.replace(/[.,;:!?()]/g, '')
-  }
-  if (requirementText && requirementText.length <= 30) {
-    return requirementText.trim().replace(/[.,;:!?()]/g, '')
-  }
-  return hit.text.trim().split(/\s+/).slice(0, 4).join(' ').replace(/[.,;:!?()]/g, '')
+export function getBestSearchPhrase(hit: HrEvidence): string {
+  // A span is usable only when it is literally part of the returned passage.
+  // Never substitute requirement words or a four-word prefix for the quote.
+  return hit.relevantSpan?.trim() && hit.text.includes(hit.relevantSpan)
+    ? hit.relevantSpan.trim()
+    : hit.text.trim()
 }
 
 function Evidence({
@@ -209,7 +207,7 @@ function Evidence({
   const tier = getRelevanceTier(hit.similarityScore)
   const relevanceText = getRelevanceLabel(hit.similarityScore, copy)
   const matchedKeywords = requirementText ? extractMatchingKeywords(hit.text, requirementText) : []
-  const bestSearchPhrase = getBestSearchPhrase(hit, requirementText, matchedKeywords)
+  const bestSearchPhrase = getBestSearchPhrase(hit)
   const quoteSource = sourceLabel(hit, copy)
 
   return (
@@ -237,10 +235,8 @@ function Evidence({
         ))}
       </div>
       <div
-        className={`ai1-evidence__quote ${onJumpToPdf ? 'ai1-evidence__quote--clickable' : ''}`}
+        className="ai1-evidence__quote"
         key={group[0].rank}
-        onClick={() => emitJumpToPdf(onJumpToPdf, bestSearchPhrase, hit.text, quoteSource)}
-        title={onJumpToPdf ? 'Bấm để đối chiếu và xem highlight trên CV' : undefined}
       >
         <div className="ai1-evidence__quote-heading">
           <span className="ai1-evidence__source">
@@ -253,7 +249,7 @@ function Evidence({
                 className="ai1-evidence__jump-pdf-btn"
                 onClick={(e) => {
                   e.stopPropagation()
-                  emitJumpToPdf(onJumpToPdf, bestSearchPhrase, hit.text, quoteSource)
+                  emitJumpToPdf(onJumpToPdf, bestSearchPhrase, hit.text, quoteSource, hit.source)
                 }}
                 title="Định vị và bôi vàng câu này trên file PDF gốc"
               >
@@ -271,19 +267,7 @@ function Evidence({
           <div className="ai1-evidence__matched-keywords">
             <span className="ai1-evidence__matched-label">{copy.matchedKeywordsLabel}:</span>
             {matchedKeywords.map(kw => (
-              <button
-                key={kw}
-                type="button"
-                className={`ai1-evidence__keyword-badge ${onJumpToPdf ? 'ai1-evidence__keyword-badge--interactive' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  emitJumpToPdf(onJumpToPdf, kw, hit.text, quoteSource)
-                }}
-                title={onJumpToPdf ? `Bấm để định vị "${kw}" trên file PDF` : undefined}
-              >
-                <span>✓ {kw}</span>
-                {onJumpToPdf && <Search size={10} className="ai1-evidence__keyword-search-icon" />}
-              </button>
+              <span key={kw} className="ai1-evidence__keyword-badge">{kw}</span>
             ))}
           </div>
         )}
@@ -514,18 +498,7 @@ function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy
                       type="button"
                       key={q.requirementId}
                       aria-current={selected === i ? 'true' : undefined}
-                      onClick={() => {
-                        setSelected(i)
-                        if (onJumpToPdf) {
-                          const firstHit = q.evidence?.[0]
-                          emitJumpToPdf(
-                            onJumpToPdf,
-                            q.text,
-                            firstHit?.text,
-                            firstHit ? sourceLabel(firstHit, copy) : undefined,
-                          )
-                        }
-                      }}
+                      onClick={() => setSelected(i)}
                       className={`ai1-evidence__nav-btn ${selected === i ? 'ai1-evidence__nav-btn--active' : ''}`}
                     >
                       <span className={`ai1-evidence__number ${itemHasEvidence ? 'ai1-evidence__number--green' : 'ai1-evidence__number--amber'}`}>

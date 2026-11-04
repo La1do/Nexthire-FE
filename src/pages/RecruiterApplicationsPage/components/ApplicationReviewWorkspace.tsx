@@ -145,11 +145,7 @@ function renderHighlightedSnippet(text: string, phrase: string): React.ReactNode
   const cleanPhrase = phrase.trim()
   if (!cleanPhrase) return text
 
-  const terms = cleanPhrase
-    .split(/\s+/)
-    .map((w) => w.trim())
-    .filter((w) => w.length >= 2)
-    .sort((a, b) => b.length - a.length)
+  const terms = [cleanPhrase]
 
   if (terms.length === 0) return text
   const pattern = terms.map((t) => t.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')
@@ -187,33 +183,13 @@ function ReviewWorkspaceContent({
   jumpTarget,
 }: ApplicationReviewWorkspaceProps) {
   const [activeTab, setActiveTab] = useState<'cv' | 'criteria'>(initialTab)
-  const [pdfSearchQuery, setPdfSearchQuery] = useState<string | null>(() => {
-    if (!jumpTarget) return null
-    const phrase = typeof jumpTarget === 'string' ? jumpTarget : jumpTarget.phrase
-    if (!phrase?.trim()) return null
-    return phrase
-      .trim()
-      .split(/\s+/)
-      .slice(0, 4)
-      .join(' ')
-      .replace(/[.,;:!?()"']/g, '')
-  })
-  const [activeSnippet, setActiveSnippet] = useState<JumpToPdfPayload | null>(() => {
-    if (!jumpTarget) return null
-    const phrase = typeof jumpTarget === 'string' ? jumpTarget : jumpTarget.phrase
-    if (!phrase?.trim()) return null
-    const clean = phrase
-      .trim()
-      .split(/\s+/)
-      .slice(0, 4)
-      .join(' ')
-      .replace(/[.,;:!?()"']/g, '')
-    return {
-      phrase: clean,
-      snippetText: typeof jumpTarget === 'object' ? jumpTarget.snippetText : undefined,
-      source: typeof jumpTarget === 'object' ? jumpTarget.source : undefined,
-    }
-  })
+  const [pdfSearchQuery, setPdfSearchQuery] = useState<string | null>(() =>
+    (typeof jumpTarget === 'string' ? jumpTarget : jumpTarget?.phrase)?.trim() || null,
+  )
+  const [activeSnippet, setActiveSnippet] = useState<JumpToPdfPayload | null>(() =>
+    typeof jumpTarget === 'string' ? { phrase: jumpTarget } : jumpTarget ?? null,
+  )
+  const [searchRequestId, setSearchRequestId] = useState(0)
   const [copiedNotification, setCopiedNotification] = useState<boolean>(false)
   const [selectedSkillHighlight, setSelectedSkillHighlight] = useState<string | null>(null)
   const localeContext = useContext(LocaleContext)
@@ -223,20 +199,11 @@ function ReviewWorkspaceContent({
   const triggerSearchAndCopy = useCallback((target: JumpToPdfPayload | string) => {
     const phrase = typeof target === 'string' ? target : target.phrase
     if (!phrase?.trim()) return
-    const clean = phrase
-      .trim()
-      .split(/\s+/)
-      .slice(0, 4)
-      .join(' ')
-      .replace(/[.,;:!?()"']/g, '')
-
+    const clean = phrase.trim()
     setPdfSearchQuery(clean)
     setSelectedSkillHighlight(clean)
-    setActiveSnippet({
-      phrase: clean,
-      snippetText: typeof target === 'object' ? target.snippetText : undefined,
-      source: typeof target === 'object' ? target.source : undefined,
-    })
+    setSearchRequestId(id => id + 1)
+    setActiveSnippet(typeof target === 'object' ? { ...target, phrase: clean } : { phrase: clean })
     setActiveTab('cv')
 
     // Automatically copy to clipboard (Cách 2)
@@ -451,6 +418,8 @@ function ReviewWorkspaceContent({
           className={`recruiter-cv-workspace ${activeTab !== 'cv' ? 'recruiter-review-workspace__panel--hidden' : ''}`}
           role="tabpanel"
         >
+          <details className="recruiter-cv-workspace__document-details">
+            <summary>Tệp CV, trích dẫn và công cụ đối chiếu</summary>
           {/* Action Bar */}
             <div className="recruiter-cv-workspace__toolbar">
               <div className="recruiter-cv-workspace__file-meta">
@@ -585,7 +554,8 @@ function ReviewWorkspaceContent({
 
             {/* Live Evidence Highlight Callout Box (Cách 2: Smart Clipboard & Live Evidence Highlight) */}
             {activeSnippet && (
-              <div className="recruiter-cv-workspace__evidence-callout">
+              <details className="recruiter-cv-workspace__evidence-callout">
+                <summary>Đoạn đang đối chiếu · Xem toàn bộ trích dẫn và nguồn</summary>
                 <div className="recruiter-cv-workspace__evidence-callout-header">
                   <div className="recruiter-cv-workspace__evidence-callout-title">
                     <Sparkles size={14} className="recruiter-cv-workspace__evidence-callout-icon" />
@@ -636,15 +606,16 @@ function ReviewWorkspaceContent({
 
                 <div className="recruiter-cv-workspace__evidence-guidance">
                   <span className="recruiter-cv-workspace__guidance-badge">
-                    ✓ Tự động định vị
+                    Tìm nguyên văn trên PDF
                   </span>
                   <span>
-                    Hệ thống đã tự động tìm kiếm, bôi vàng highlight và cuộn trực tiếp tới đoạn bằng chứng trên trang CV bên dưới.
+                    Kết quả tìm và highlight được hiển thị trong khung PDF bên dưới. Không tìm thấy nguyên văn không có nghĩa ứng viên thiếu năng lực.
                   </span>
                 </div>
-              </div>
+              </details>
             )}
 
+          </details>
             {/* Document Viewer Frame / States */}
             <div className="recruiter-cv-workspace__viewport">
               {isCvLoading && (
@@ -737,6 +708,10 @@ function ReviewWorkspaceContent({
                     url={cvData.url}
                     fileName={cvData.fileName}
                     searchQuery={pdfSearchQuery}
+                    searchRequestId={searchRequestId}
+                    sourceSection={activeSnippet?.sourceSection}
+                    pageHint={activeSnippet?.pageNumber}
+                    occurrenceHint={activeSnippet?.occurrence}
                     searchTerms={searchSkills}
                     activeHighlightTerm={selectedSkillHighlight}
                     snippetText={activeSnippet?.snippetText}

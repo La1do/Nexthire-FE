@@ -118,7 +118,8 @@ export function ApplicationDetailDrawer({
   translations,
 }: ApplicationDetailDrawerProps) {
   const [isExpanded, setIsExpanded] = useState(true)
-  const [mobileActiveTab, setMobileActiveTab] = useState<'evaluation' | 'workspace'>('evaluation')
+  const [mobileActiveTab, setMobileActiveTab] = useState<'evaluation' | 'workspace'>('workspace')
+  const [reviewTab, setReviewTab] = useState<'evidence' | 'decision' | 'profile'>('evidence')
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [hrReview, setHrReview] = useState<HrReview | null>(null)
   const [jumpTarget, setJumpTarget] = useState<JumpToPdfPayload | null>(null)
@@ -127,6 +128,8 @@ export function ApplicationDetailDrawer({
   const isMatchActionDisabled = isMatching
 
   const handleJumpToPdf = useCallback((payload: JumpToPdfPayload | string) => {
+    setIsExpanded(true)
+    setMobileActiveTab('workspace')
     if (typeof payload === 'string') {
       setJumpTarget({ phrase: payload })
     } else {
@@ -136,6 +139,8 @@ export function ApplicationDetailDrawer({
 
   useEffect(() => {
     setHrReview(null)
+    setJumpTarget(null)
+    setReviewTab('evidence')
   }, [application.id])
 
   const candidateCvSkills = useMemo(() => {
@@ -225,6 +230,8 @@ export function ApplicationDetailDrawer({
     firstFocusable?.focus()
 
     function handleKeyDown(event: KeyboardEvent) {
+      // Nested confirmation owns Escape, navigation and focus while open.
+      if (drawerRef.current?.querySelector('.recruiter-application-confirm-modal')) return
       const target = event.target as HTMLElement | null
       const isTyping =
         target &&
@@ -272,6 +279,8 @@ export function ApplicationDetailDrawer({
 
       if (event.key === 'o' || event.key === 'O') {
         event.preventDefault()
+        setReviewTab('decision')
+        setMobileActiveTab('evaluation')
         onDecision?.('OFFERED')
         decisionFormRef.current?.openDecisionDialog('OFFERED')
         return
@@ -279,6 +288,8 @@ export function ApplicationDetailDrawer({
 
       if (event.key === 'r' || event.key === 'R') {
         event.preventDefault()
+        setReviewTab('decision')
+        setMobileActiveTab('evaluation')
         onDecision?.('REJECTED')
         decisionFormRef.current?.openDecisionDialog('REJECTED')
         return
@@ -438,6 +449,43 @@ export function ApplicationDetailDrawer({
               isExpanded && mobileActiveTab !== 'evaluation' ? 'is-hidden-mobile' : ''
             }`}
           >
+            <nav className="recruiter-review-tabs" aria-label="Công cụ xét duyệt">
+              {([['evidence', 'Đối chiếu AI1'], ['decision', 'Đánh giá & quyết định'], ['profile', 'Thông tin hồ sơ']] as const).map(([tab, label]) => (
+                <button key={tab} type="button" aria-pressed={reviewTab === tab} onClick={() => setReviewTab(tab)}>{label}</button>
+              ))}
+            </nav>
+            <div className="recruiter-review-tab-content" hidden={reviewTab !== 'evidence'}>
+            <Ai1EvidencePanel
+              key={application.id}
+              applicationId={application.id}
+              jobId={application.jobId}
+              updatedAt={application.updatedAt}
+              isMatching={isMatching}
+              onReviewLoaded={setHrReview}
+              onJumpToPdf={handleJumpToPdf}
+            />
+
+            </div>
+            <div className="recruiter-review-tab-content" hidden={reviewTab !== 'decision'}>
+            <Ai2DemoPanel
+              key={`ai2:${application.id}`}
+              applicationId={application.id}
+              jobId={application.jobId}
+              updatedAt={application.updatedAt}
+              isMatching={isMatching}
+            />
+
+            <section className="recruiter-application-detail-card">
+              <ApplicationDecisionForm
+                application={application}
+                isSubmitting={isStatusUpdating}
+                onSubmit={(status, feedback) => onStatusChange(application.id, status, feedback)}
+                ref={decisionFormRef}
+                translations={translations.decision}
+              />
+            </section>
+            </div>
+            <div className="recruiter-review-tab-content" hidden={reviewTab !== 'profile'}>
             <section className="recruiter-application-detail-card recruiter-application-detail-card--identity">
               <div className="recruiter-application-detail-card__candidate">
                 <span aria-hidden="true" className="recruiter-applications-avatar">
@@ -505,33 +553,11 @@ export function ApplicationDetailDrawer({
               </dl>
             </section>
 
-            <section className="recruiter-application-detail-card">
-              <ApplicationDecisionForm
-                application={application}
-                isSubmitting={isStatusUpdating}
-                onSubmit={(status, feedback) => onStatusChange(application.id, status, feedback)}
-                ref={decisionFormRef}
-                translations={translations.decision}
-              />
-            </section>
 
-            <Ai2DemoPanel
-              key={`ai2:${application.id}`}
-              applicationId={application.id}
-              jobId={application.jobId}
-              updatedAt={application.updatedAt}
-              isMatching={isMatching}
-            />
 
-            <Ai1EvidencePanel
-              key={application.id}
-              applicationId={application.id}
-              jobId={application.jobId}
-              updatedAt={application.updatedAt}
-              isMatching={isMatching}
-              onReviewLoaded={setHrReview}
-              onJumpToPdf={handleJumpToPdf}
-            />
+
+
+
 
             <section className="recruiter-application-detail-card recruiter-ai-match-panel">
               {matchingMessage ? <p role="status">{matchingMessage}</p> : null}
@@ -609,6 +635,7 @@ export function ApplicationDetailDrawer({
                 ))}
               </ol>
             </section>
+            </div>
           </div>
         </div>
 

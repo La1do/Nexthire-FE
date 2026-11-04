@@ -77,6 +77,7 @@ try {
   async function run(mode, expected) {
     await evaluate(`window.baselineHarness.set(${JSON.stringify(mode)})`)
     await wait(`!!${button}`)
+    await evaluate("document.querySelectorAll('.recruiter-review-tabs button')[2]?.click()")
     await evaluate(`${button}.click()`)
     await wait(`(${message}).includes(${JSON.stringify(expected)})`)
     await wait(`!${button}.disabled`)
@@ -103,10 +104,10 @@ try {
   await run('parse-failed', 'CV parsing failed')
   await run('parse-wait', 'Automatic checks stopped')
   // Real language switch keeps lifecycle copy and hides all legacy fields.
-  await evaluate("window.baselineHarness.locale('vi')")
-  await wait("document.body.innerText.includes('Đối chiếu bằng chứng CV')"); await wait(`(${message}).includes('Đã dừng kiểm tra tự động')`); await noLegacy(); passed()
+  await evaluate("window.baselineHarness.locale('vi'); document.querySelectorAll('.recruiter-review-tabs button')[2]?.click()")
+  await wait("document.body.textContent.includes('Đối chiếu bằng chứng CV')"); await wait(`(${message}).includes('Đã dừng kiểm tra tự động')`); await noLegacy(); passed()
   await evaluate("window.baselineHarness.locale('ja')")
-  await wait("document.body.innerText.includes('CVの根拠確認')"); await wait(`(${message}).includes('自動確認を終了')`); await noLegacy(); passed()
+  await wait("document.body.textContent.includes('CVの根拠確認')"); await wait(`(${message}).includes('自動確認を終了')`); await noLegacy(); passed()
   await cdp('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: false })
   assert.ok(await evaluate('document.documentElement.scrollWidth <= 375')); passed()
   const shot = await cdp('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })

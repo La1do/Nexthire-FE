@@ -12,6 +12,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
+import { highlightPdfQuote, scopePdfSections } from './pdfTextSearch'
 import { configurePdfJsWorker } from './pdfWorkerHelper'
 
 export type PdfCvViewerProps = {
@@ -21,122 +22,13 @@ export type PdfCvViewerProps = {
   searchTerms?: string[] | null
   activeHighlightTerm?: string | null
   snippetText?: string | null
+  searchRequestId?: number
+  sourceSection?: string
+  pageHint?: number | null
+  occurrenceHint?: number | null
   className?: string
   onFallbackToIframe?: () => void
   onClearSearch?: () => void
-}
-
-function getAliasesForTerm(term: string): string[] {
-  const clean = term.trim().replace(/[.,;:!?()"']/g, '')
-  if (clean.length < 2) return []
-  const lower = clean.toLowerCase()
-  const aliases: string[] = [clean]
-
-  if (lower === 'k8s' || lower === 'kubernetes') {
-    aliases.push('kubernetes', 'k8s')
-  }
-  if (lower === 'postgres' || lower === 'postgresql' || lower === 'psql') {
-    aliases.push('postgres', 'postgresql', 'psql')
-  }
-  if (lower === 'ts' || lower === 'typescript') {
-    aliases.push('typescript', 'ts')
-  }
-  if (lower === 'js' || lower === 'javascript') {
-    aliases.push('javascript', 'js')
-  }
-  if (lower === 'react' || lower === 'reactjs') {
-    aliases.push('reactjs', 'react', 'react 18', 'react 19')
-  }
-  if (lower === 'golang' || lower === 'go') {
-    aliases.push('golang', 'go')
-  }
-  if (lower === 'py' || lower === 'python') {
-    aliases.push('python', 'py')
-  }
-  if (lower === 'rest api' || lower === 'rest' || lower === 'restful') {
-    aliases.push('rest api', 'rest apis', 'restful', 'crud')
-  }
-  if (lower === 'node' || lower === 'node.js' || lower === 'nodejs') {
-    aliases.push('node.js', 'nodejs', 'node')
-  }
-  if (lower === 'socket.io' || lower === 'websocket' || lower === 'socket') {
-    aliases.push('socket.io', 'websocket', 'socket')
-  }
-  if (lower === 'docker' || lower === 'docker compose') {
-    aliases.push('docker', 'docker compose')
-  }
-  if (lower === 'ci/cd' || lower === 'gitlab ci' || lower === 'github actions') {
-    aliases.push('gitlab ci', 'github actions', 'ci/cd')
-  }
-
-  // Multi-word breakdown: only if term is 2-3 words and not containing common stopwords
-  const STOPWORDS = new Set(['and', 'for', 'with', 'the', 'from', 'in', 'of', 'to', 'cua', 'va', 'cho', 'voi', 'trong'])
-  const words = clean.split(/\s+/).filter((w) => w.length >= 3 && !STOPWORDS.has(w.toLowerCase()))
-  if (words.length > 1 && words.length <= 3) {
-    aliases.push(...words)
-  }
-
-  return aliases
-}
-
-function buildTermRegex(terms: string[]): RegExp | null {
-  if (terms.length === 0) return null
-
-  // Sort longest first so e.g. "React 19" or "ReactJS" matches before "React"
-  const sorted = [...terms]
-    .map((t) => t.trim())
-    .filter((t) => t.length >= 2)
-    .sort((a, b) => b.length - a.length)
-
-  const patterns: string[] = []
-  for (const term of sorted) {
-    const escaped = term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\s+/g, '\\s+')
-    // Require word boundaries for alphanumeric tokens to avoid substring collisions (e.g. "ci" inside "proficient")
-    const startBoundary = /^[a-zA-Z0-9]/.test(term) ? '\\b' : ''
-    const endBoundary = /[a-zA-Z0-9]$/.test(term) ? '\\b' : ''
-    patterns.push(`${startBoundary}${escaped}${endBoundary}`)
-  }
-
-  if (patterns.length === 0) return null
-  return new RegExp(`(${patterns.join('|')})`, 'gi')
-}
-
-function extractAllTerms(
-  query?: string | null,
-  termsList?: string[] | null,
-  snippet?: string | null,
-): string[] {
-  const terms: string[] = []
-
-  // 1. If specific query
-  if (query?.trim()) {
-    terms.push(...getAliasesForTerm(query))
-  } else if (termsList && termsList.length > 0) {
-    // 2. If all terms (e.g. matched skills on CV)
-    for (const item of termsList) {
-      if (item?.trim()) {
-        terms.push(...getAliasesForTerm(item))
-      }
-    }
-  }
-
-  // 3. From relevant span snippet
-  if (snippet?.trim()) {
-    const sentences = snippet
-      .split(/[.;\n]+/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 8)
-
-    for (const s of sentences.slice(0, 2)) {
-      const sWords = s.split(/\s+/).slice(0, 5).join(' ').replace(/[.,;:!?()"']/g, '')
-      if (sWords.length >= 6) {
-        terms.push(sWords)
-      }
-    }
-  }
-
-  const unique = Array.from(new Set(terms.filter((t) => t.length >= 2)))
-  return unique.sort((a, b) => b.length - a.length)
 }
 
 type PdfPageItemProps = {
@@ -239,6 +131,10 @@ export function PdfCvViewer({
   searchTerms,
   activeHighlightTerm,
   snippetText,
+  searchRequestId = 0,
+  sourceSection,
+  pageHint,
+  occurrenceHint,
   className = '',
   onFallbackToIframe,
   onClearSearch,
@@ -253,10 +149,18 @@ export function PdfCvViewer({
   const [pageBaseHeight, setPageBaseHeight] = useState<number>(792)
   const [renderedCount, setRenderedCount] = useState<number>(0)
   const [highlightCount, setHighlightCount] = useState<number>(0)
+  const [isPartialMatch, setIsPartialMatch] = useState(false)
+  const [isLexicalMatch, setIsLexicalMatch] = useState(false)
+  const [sourceScopeFound, setSourceScopeFound] = useState(true)
   const [isHighlighting, setIsHighlighting] = useState<boolean>(false)
 
   const viewerContainerRef = useRef<HTMLDivElement | null>(null)
   const renderedPagesMap = useRef<Map<number, HTMLDivElement>>(new Map())
+  const matchesRef = useRef<HTMLElement[][]>([])
+  const [activeOccurrence, setActiveOccurrence] = useState(0)
+  const navigatedRequest = useRef<string | null>(null)
+  const zoomModeRef = useRef(zoomMode)
+  zoomModeRef.current = zoomMode
 
   // Ensure worker is configured on mount
   useEffect(() => {
@@ -291,7 +195,7 @@ export function PdfCvViewer({
     if (!containerWidth || containerWidth < 200) return 1.05
     const targetWidth = Math.max(260, containerWidth - 36)
     const computed = Number((targetWidth / baseWidth).toFixed(2))
-    return Math.min(1.45, Math.max(0.75, computed))
+    return Math.min(1.45, Math.max(0.25, computed))
   }, [])
 
   // Listen for container resize to adjust scale dynamically based on active zoom mode
@@ -310,7 +214,6 @@ export function PdfCvViewer({
 
         setScale((prev) => {
           if (Math.abs(prev - newScale) >= 0.03) {
-            setRenderedCount(0)
             return newScale
           }
           return prev
@@ -360,6 +263,7 @@ export function PdfCvViewer({
         setNumPages(doc.numPages)
         try {
           const page1 = await doc.getPage(1)
+          if (cancelled) return
           const baseViewport = page1.getViewport({ scale: 1.0 })
           const baseWidth = baseViewport.width || 612
           const baseHeight = baseViewport.height || 792
@@ -391,99 +295,91 @@ export function PdfCvViewer({
         console.warn('PDF.js document cleanup failed:', error)
       })
     }
-  }, [url, zoomMode, calculateFitPageScale, calculateFitWidthScale])
+  }, [url, calculateFitPageScale, calculateFitWidthScale])
 
-  // Apply search highlights and auto-scroll to matching text
-  const applyHighlightsAndScroll = useCallback(
-    (
-      query?: string | null,
-      termsList?: string[] | null,
-      snippet?: string | null,
-      focusTerm?: string | null,
-    ) => {
-      if (!viewerContainerRef.current) return
-      const container = viewerContainerRef.current
+  // Content keys, not array identities: parents may allocate searchTerms on every render.
+  // Evidence is searched as a complete quote; skills are never a fallback for it.
+  const evidenceQuote = (searchQuery || activeHighlightTerm || snippetText || '').trim()
+  const evidenceKey = JSON.stringify([url, evidenceQuote, searchRequestId, pageHint, occurrenceHint, sourceSection])
+  const [manualSearch, setManualSearch] = useState<{ evidenceKey: string; query: string; id: number } | null>(null)
+  const manual = manualSearch?.evidenceKey === evidenceKey ? manualSearch : null
+  const quote = manual?.query ?? evidenceQuote
+  const requestKey = JSON.stringify([evidenceKey, manual?.id])
+  const effectivePageHint = manual ? null : pageHint
+  const effectiveOccurrenceHint = manual ? null : occurrenceHint
+  const scrollToOccurrence = useCallback((index: number) => {
+    const container = viewerContainerRef.current
+    const marks = matchesRef.current[index]
+    if (!container || !marks?.[0]) return
+    container.querySelectorAll('.pdf-cv-highlight--focused').forEach(mark => mark.classList.remove('pdf-cv-highlight--focused'))
+    marks.forEach(mark => mark.classList.add('pdf-cv-highlight--focused'))
+    const target = marks[0].getBoundingClientRect()
+    const bounds = container.getBoundingClientRect()
+    // Only move the PDF viewport, never the drawer or document scroll ancestors.
+    container.scrollTo({ top: container.scrollTop + target.top - bounds.top - container.clientHeight / 2, behavior: 'auto' })
+    setActiveOccurrence(index)
+  }, [])
 
-      // 1. Clear previous highlights
-      const spans = container.querySelectorAll<HTMLSpanElement>('.textLayer span')
-      for (const span of spans) {
-        const raw = span.getAttribute('data-raw-text')
-        if (raw !== null) {
-          span.textContent = raw
-          span.removeAttribute('data-raw-text')
-        }
-      }
-
-      const terms = extractAllTerms(query, termsList, snippet)
-      if (terms.length === 0) {
-        setHighlightCount(0)
-        setIsHighlighting(false)
-        return
-      }
-
-      const regex = buildTermRegex(terms)
-      if (!regex) {
-        setHighlightCount(0)
-        setIsHighlighting(false)
-        return
-      }
-
-      setIsHighlighting(true)
-      const matchingMarks: HTMLElement[] = []
-      let focusedMatch: HTMLElement | null = null
-      const focusTarget = (focusTerm || query || '').toLowerCase().trim()
-
-      for (const span of spans) {
-        const text = span.textContent || ''
-        regex.lastIndex = 0
-        if (regex.test(text)) {
-          regex.lastIndex = 0
-          span.setAttribute('data-raw-text', text)
-          span.innerHTML = text.replace(regex, (match) => {
-            const isFocused = focusTarget && match.toLowerCase().includes(focusTarget)
-            return `<mark class="pdf-cv-highlight ${isFocused ? 'pdf-cv-highlight--focused' : ''}" data-matched-term="${match}">${match}</mark>`
-          })
-          const marks = span.querySelectorAll<HTMLElement>('.pdf-cv-highlight')
-          for (const m of marks) {
-            matchingMarks.push(m)
-            if (!focusedMatch && focusTarget && m.textContent?.toLowerCase().includes(focusTarget)) {
-              focusedMatch = m
-            }
-          }
-        }
-      }
-
-      setHighlightCount(matchingMarks.length)
-
-      // Auto-scroll to the focused match or the first match
-      const targetToScroll = focusedMatch || matchingMarks[0]
-      if (targetToScroll && (query || focusTerm)) {
-        targetToScroll.classList.add('pdf-cv-highlight--focused')
-        setTimeout(() => {
-          targetToScroll.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }, 120)
-      }
-    },
-    [],
-  )
-
-  const handlePageRendered = useCallback(
-    (pageNumber: number, container: HTMLDivElement) => {
-      renderedPagesMap.current.set(pageNumber, container)
-      setRenderedCount((prev) => {
-        const next = prev + 1
-        return next
-      })
-    },
-    [],
-  )
-
-  // Re-apply highlights whenever searchQuery, searchTerms, snippetText or activeHighlightTerm changes
   useEffect(() => {
-    if (renderedCount > 0 && renderedCount === numPages) {
-      applyHighlightsAndScroll(searchQuery, searchTerms, snippetText, activeHighlightTerm)
+    renderedPagesMap.current.clear()
+    setRenderedCount(0)
+  }, [scale, pdfDoc])
+
+  const handlePageRendered = useCallback((pageNumber: number, container: HTMLDivElement) => {
+    renderedPagesMap.current.set(pageNumber, container)
+    setRenderedCount(renderedPagesMap.current.size)
+  }, [])
+
+  useEffect(() => {
+    if (!pdfDoc || isLoading || !numPages || renderedCount !== numPages) return
+    const layers = [...renderedPagesMap.current].sort(([a], [b]) => a - b)
+      .flatMap(([, page]) => { const layer = page.querySelector<HTMLElement>('.textLayer'); return layer ? [layer] : [] })
+    const scoped = scopePdfSections(layers, manual ? undefined : sourceSection)
+    setSourceScopeFound(scoped)
+    const matches: HTMLElement[][] = []
+    for (const [number, page] of [...renderedPagesMap.current].sort(([a], [b]) => a - b)) {
+      const layer = page.querySelector<HTMLElement>('.textLayer')
+      if (!layer) continue
+      const found = highlightPdfQuote(layer, scoped ? quote : '')
+      // A supplied page is a constraint, not a suggestion to silently ignore.
+      if (effectivePageHint == null || number === effectivePageHint) matches.push(...found)
+      else layer.querySelectorAll('mark').forEach(mark => mark.replaceWith(...mark.childNodes))
     }
-  }, [searchQuery, searchTerms, snippetText, activeHighlightTerm, renderedCount, numPages, applyHighlightsAndScroll])
+    // Prefer exact occurrences anywhere in the constrained document. Only if
+    // none exist, locate substantial ordered parts of the quote on each page.
+    let partial = false
+    let lexical = false
+    if (!matches.length && !manual && scoped) {
+      for (const [number, page] of [...renderedPagesMap.current].sort(([a], [b]) => a - b)) {
+        if (effectivePageHint != null && number !== effectivePageHint) continue
+        const layer = page.querySelector<HTMLElement>('.textLayer')
+        if (!layer) continue
+        const found = highlightPdfQuote(layer, quote, true)
+        if (layer.dataset.matchKind === 'partial') { matches.push(...found); partial = true }
+        else if (layer.dataset.matchKind === 'lexical') { matches.push(...found); lexical = true }
+      }
+    }
+    setIsPartialMatch(partial)
+    setIsLexicalMatch(lexical)
+    matchesRef.current = matches
+    setHighlightCount(matches.length)
+    setIsHighlighting(Boolean(quote))
+    const index = effectiveOccurrenceHint != null ? effectiveOccurrenceHint - 1 : 0
+    if (matches[index]?.length && navigatedRequest.current !== requestKey) {
+      navigatedRequest.current = requestKey
+      scrollToOccurrence(index)
+    } else if (!matches[index]?.length) {
+      navigatedRequest.current = requestKey
+    } else {
+      // Restore focus styling after zoom without pulling the reader's scroll.
+      const restoredIndex = Math.min(activeOccurrence, matches.length - 1)
+      matches[restoredIndex]?.forEach(mark => mark.classList.add('pdf-cv-highlight--focused'))
+    }
+  }, [pdfDoc, isLoading, quote, requestKey, effectivePageHint, effectiveOccurrenceHint, sourceSection, manual, renderedCount, numPages, scale, activeOccurrence, scrollToOccurrence])
+
+  // Retain legacy skill props without expanding a quote into aliases/common words.
+  void searchTerms
+
 
   return (
     <div className={`pdf-cv-viewer ${className}`}>
@@ -494,18 +390,21 @@ export function PdfCvViewer({
             {numPages > 0 ? `${numPages} trang` : 'Đang tải...'}
           </span>
 
-          {searchQuery && isHighlighting && (
+          {quote && isHighlighting && (
             <div className="pdf-cv-viewer__search-indicator">
               <Search size={12} className="pdf-cv-viewer__search-indicator-icon" />
               <span>
-                Đang soi: <strong>"{searchQuery}"</strong> ({highlightCount} vị trí bôi vàng)
+                {manual ? 'Tìm thủ công (không xác nhận bằng chứng)' : isLexicalMatch ? 'Vùng có từ/cụm trùng' : isPartialMatch ? 'Khớp một phần đoạn trích' : 'Tìm nguyên văn'}: <strong title={quote}>"{quote.length > 65 ? `${quote.slice(0, 65)}…` : quote}"</strong> ({highlightCount} {isLexicalMatch ? 'vùng gợi ý đối chiếu' : isPartialMatch ? 'vị trí khớp một phần' : 'đoạn trùng nguyên văn'})
               </span>
               <button
                 type="button"
                 className="pdf-cv-viewer__clear-search-btn"
                 onClick={() => {
                   onClearSearch?.()
-                  applyHighlightsAndScroll(null, null)
+                  setManualSearch(null)
+                  viewerContainerRef.current?.querySelectorAll('.pdf-cv-context-region').forEach(region => region.remove())
+                  matchesRef.current.flat().forEach(mark => mark.replaceWith(...mark.childNodes))
+                  setIsHighlighting(false)
                 }}
                 title="Bỏ bôi vàng"
               >
@@ -522,7 +421,6 @@ export function PdfCvViewer({
               className="pdf-cv-viewer__tool-btn"
               onClick={() => {
                 setZoomMode('custom')
-                setRenderedCount(0)
                 setScale((s) => Math.max(0.45, Number((s - 0.1).toFixed(2))))
               }}
               title="Thu nhỏ"
@@ -535,7 +433,6 @@ export function PdfCvViewer({
               className="pdf-cv-viewer__tool-btn"
               onClick={() => {
                 setZoomMode('custom')
-                setRenderedCount(0)
                 setScale((s) => Math.min(2.0, Number((s + 0.1).toFixed(2))))
               }}
               title="Phóng to"
@@ -550,7 +447,6 @@ export function PdfCvViewer({
               className={`pdf-cv-viewer__segmented-btn ${zoomMode === 'fit-width' ? 'is-active' : ''}`}
               onClick={() => {
                 setZoomMode('fit-width')
-                setRenderedCount(0)
                 const fitW = calculateFitWidthScale(pageBaseWidth)
                 setScale(fitW)
               }}
@@ -564,7 +460,6 @@ export function PdfCvViewer({
               className={`pdf-cv-viewer__segmented-btn ${zoomMode === 'fit-page' ? 'is-active' : ''}`}
               onClick={() => {
                 setZoomMode('fit-page')
-                setRenderedCount(0)
                 const fit = calculateFitPageScale(pageBaseWidth, pageBaseHeight)
                 setScale(fit)
               }}
@@ -576,9 +471,38 @@ export function PdfCvViewer({
         </div>
       </div>
 
+      {isHighlighting && (
+        <div className="pdf-cv-viewer__search-results" role="status">
+          {isLexicalMatch && <span>Từ trùng tô đậm; nền nhạt là ngữ cảnh trong PDF khi xác định được khối. Chỉ hỗ trợ định vị, không xác nhận nội dung tương đương hay đáp ứng.</span>}
+          {isPartialMatch && !isLexicalMatch && <span>Chỉ tô các cụm có trong PDF; nội dung khác đoạn trích. HR cần đọc đối chiếu, chưa xác minh đáp ứng.</span>}
+          {highlightCount === 0 || (effectiveOccurrenceHint != null && effectiveOccurrenceHint > highlightCount) ? (
+            <span>{!sourceScopeFound ? 'Chưa nhận diện được mục nguồn trên PDF. Không tô sang mục khác; hãy đối chiếu nguồn hoặc tìm thủ công trên toàn CV.' : sourceSection && !manual ? 'Chưa tìm thấy đoạn trong mục nguồn đã chọn. Không mở rộng sang mục khác; có thể tìm thủ công trên toàn CV.' : 'Không tìm thấy nguyên văn. Chưa định vị được đoạn trích trên PDF; hãy đối chiếu nguồn hoặc tìm thủ công.'}</span>
+          ) : <>
+            <button type="button" onClick={() => scrollToOccurrence(Math.min(activeOccurrence, highlightCount - 1))}>Quay lại bằng chứng</button>
+            {highlightCount > 1 && <>
+              <button type="button" onClick={() => scrollToOccurrence((activeOccurrence + highlightCount - 1) % highlightCount)}>Vị trí trước</button>
+              <span>{activeOccurrence + 1} / {highlightCount} vị trí — chọn để đối chiếu</span>
+              <button type="button" onClick={() => scrollToOccurrence((activeOccurrence + 1) % highlightCount)}>Vị trí sau</button>
+            </>}
+          </>}
+          <details className="pdf-cv-viewer__manual-search">
+            <summary>Tìm thủ công trong PDF</summary>
+          <form onSubmit={event => {
+            event.preventDefault()
+            const input = event.currentTarget.elements.namedItem('query') as HTMLInputElement
+            const manual = input.value.trim()
+            if (!manual) return
+            setManualSearch(previous => ({ evidenceKey, query: manual, id: (previous?.id ?? 0) + 1 }))
+          }}>
+            <input name="query" aria-label="Tìm thủ công trong PDF" placeholder="Nhập nguyên văn để tìm thủ công" />
+            <button type="submit">Tìm thủ công</button>
+          </form>
+          </details>
+        </div>
+      )}
       {/* Viewport & Pages Container */}
       <div
-        className={`pdf-cv-viewer__viewport ${zoomMode === 'fit-page' ? 'is-fit-page' : ''} ${zoomMode === 'custom' && scale > 1.05 ? 'has-manual-zoom' : ''}`}
+        className={`pdf-cv-viewer__viewport ${zoomMode === 'fit-page' ? 'is-fit-page' : ''} ${zoomMode === 'custom' ? 'has-manual-zoom' : ''}`}
         ref={viewerContainerRef}
       >
         {isLoading && (
