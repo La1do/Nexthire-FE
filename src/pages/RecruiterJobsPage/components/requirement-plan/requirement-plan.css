@@ -1,5 +1,10 @@
 .jd-plan { margin-block: 24px; padding: clamp(16px, 3vw, 28px); color: var(--color-text-primary); min-width: 0; scroll-margin-top: 24px; }
 .jd-plan p { line-height: 1.6; }
+.jd-plan__sources { display: grid; gap: 14px; min-width: 0; }
+.jd-plan__sources article { min-width: 0; overflow-wrap: anywhere; }
+.jd-plan__sources blockquote { margin: 10px 0; padding-left: 12px; border-left: 3px solid #cbd5e1; }
+.jd-plan__sources label { display: block; margin-block: 10px; }
+.jd-plan__sources textarea { min-height: 72px; }
 .jd-plan__header, .jd-plan__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .jd-plan__header h2 { margin: 4px 0 12px; font-size: 24px; }
 .jd-plan__eyebrow { color: var(--color-text-secondary); font-size: 13px; margin: 0; }

@@ -23,6 +23,32 @@ const row = () => ({ requirement_id: 'requirements/0', original_text: 'Use SQL a
 ], all_of: [['sql'], ['aws', 'azure']], joint_context_required: false })
 function inspection() { return { status: 'DRAFT', current_job_snapshot_sha256: 'a'.repeat(64), content_sha256: 'b'.repeat(64), publishing_blocked: false, candidate_support_verified: false, matching_mode: 'unverified', plan: { schema_version: 'jd-fixed-requirements-v1', job_id: 'synthetic-job', job_snapshot_sha256: 'a'.repeat(64), revision: 1, requirements: [row()], approval: null } } }
 const issues = value => types.validatePlanEdits([value], [row()])
+function v2Inspection() {
+  const v = inspection(); v.plan.schema_version = 'jd-source-query-v2'; delete v.plan.requirements
+  v.plan.sources = [
+    { source_id: 'v2/requirements/0', source_field: 'requirements', original_text: 'Requirements:', suggested_role: 'heading', selected: false, components: [] },
+    { source_id: 'v2/requirements/1', source_field: 'requirements', original_text: 'Use SQL.', suggested_role: 'query', selected: true, components: [{ id: 'whole', query: 'Use SQL.', source_quote: 'Use SQL.', importance: 'unknown' }] },
+  ]; return v
+}
+test('v2 parser preserves sources, supports selected quotes and rejects tampering', () => {
+  const v = v2Inspection(); const parsed = types.parsePlanInspection(v, 'synthetic-job')
+  assert.equal(parsed.plan.sources.length, 2); assert.equal(parsed.plan.requirements.length, 0)
+  const original = structuredClone(v.plan.sources)
+  assert.equal(types.validateSourceEdits(v.plan.sources, original).length, 0)
+  v.plan.sources[1].components[0].query = 'Invented'
+  assert.throws(() => types.parsePlanInspection(v, 'synthetic-job'))
+  assert.ok(types.validateSourceEdits([...original].reverse(), original).includes('source'))
+  for (const selected of ['true', 1, null]) {
+    const bad = v2Inspection(); bad.plan.sources[0].selected = selected
+    assert.throws(() => types.parsePlanInspection(bad, 'synthetic-job'))
+  }
+})
+test('v2 source editor shows retained headings and source-exact query fields safely', () => {
+  const { SourceQueryEditor } = load('src/pages/RecruiterJobsPage/components/requirement-plan/SourceQueryEditor.tsx')
+  const html = renderToStaticMarkup(React.createElement(SourceQueryEditor, { rows: v2Inspection().plan.sources, vi: true, readOnly: false, onChange() {} }))
+  assert.ok(html.includes('Requirements:')); assert.ok(html.includes('Use SQL.'))
+  assert.ok(html.includes('Dùng tìm bằng chứng')); assert.ok(html.includes('Trích dẫn truy hồi'))
+})
 test('SQL AND (AWS OR Azure) is valid; original source/order preserved', () => {
   assert.equal(issues(row()).length, 0)
   const second = { ...row(), requirement_id: 'skills/0', original_text: 'SQL' }

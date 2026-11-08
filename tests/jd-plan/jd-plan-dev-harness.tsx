@@ -18,6 +18,16 @@ const hash = () => revision.toString(16).padStart(64, '0')
 function blank(): PlanInspection { return { status: 'UNPREPARED', current_job_snapshot_sha256: 'a'.repeat(64), content_sha256: null, plan: null, publishing_blocked: false, candidate_support_verified: false, matching_mode: 'unverified' } }
 function draft(id: string) {
   revision++
+  if (new URLSearchParams(location.search).has('v2')) return {
+    ...blank(), query_budget: { status: new URLSearchParams(location.search).has('long') ? 'TOO_LONG' : 'READY', limit: 256, issues: new URLSearchParams(location.search).has('long') ? [{ source_id: 'v2/requirements/1', component_id: 'whole', tokens: 300, code: 'QUERY_TOKEN_LIMIT_EXCEEDED' }] : [] }, status: 'DRAFT', content_sha256: hash(), plan: {
+      schema_version: 'jd-source-query-v2', job_id: id, job_snapshot_sha256: 'a'.repeat(64), revision, requirements: [],
+      sources: [
+        { source_id: 'v2/requirements/0', source_field: 'requirements', original_text: 'Requirements:', suggested_role: 'heading', selected: false, components: [] },
+        { source_id: 'v2/requirements/1', source_field: 'requirements', original_text: 'Use SQL and Docker.', suggested_role: 'query', selected: true, components: [{ id: 'whole', query: 'Use SQL and Docker.', source_quote: 'Use SQL and Docker.', importance: 'unknown' }] },
+        { source_id: 'v2/benefits/0', source_field: 'benefits', original_text: 'Insurance', suggested_role: 'query', selected: false, components: [] },
+      ], approval: null,
+    },
+  } as PlanInspection
   return { ...blank(), status: 'DRAFT', content_sha256: hash(), plan: { schema_version: 'jd-fixed-requirements-v1', job_id: id, job_snapshot_sha256: 'a'.repeat(64), revision, requirements: structuredClone(rows.length ? rows : [{ requirement_id: 'requirements/0', original_text: source, components: [{ id: 'whole', query: source, source_quote: source, importance: 'unknown' }], all_of: [['whole']], joint_context_required: false }]), approval: null } } as PlanInspection
 }
 apiClient.defaults.adapter = config => new Promise((resolve, reject) => {
@@ -34,7 +44,11 @@ apiClient.defaults.adapter = config => new Promise((resolve, reject) => {
     else if (mode === 'conflict' && config.method !== 'get') { status = 409; p = draft(id); plans.set(id, p); mode = 'ready' }
     else if (url.endsWith('/history')) data = { revisions: [], events: [] }
     else if (url.endsWith('/drafts')) { p = draft(id); plans.set(id, p) }
-    else if (config.method === 'patch') { rows = body.requirements; p = draft(id); plans.set(id, p) }
+    else if (config.method === 'patch') {
+      if (body.sources) { p = draft(id); p.plan!.sources = body.sources }
+      else { rows = body.requirements; p = draft(id) }
+      plans.set(id, p)
+    }
     else if (url.endsWith('/confirm')) {
       p = structuredClone(p); p.status = 'HR_CONFIRMED'; p.plan!.approval = { origin: 'authenticated_hr', reviewer_id: 'synthetic-hr', authorization_event_id: 'synthetic-event', job_id: id, content_sha256: p.content_sha256!, approved_at: '2026-10-25T00:00:00Z' }; plans.set(id, p)
     }

@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocale } from '../../../../i18n'
 import { requirementPlanService as api } from '../../../../services/requirement-plan.service'
 import type { PlanHistory, PlanInspection, PlannedRequirement } from '../../../../types/requirement-plan.types'
-import { samePlanSources, validatePlanEdits } from '../../../../types/requirement-plan.types'
+import type { SourceSelection } from '../../../../types/requirement-plan.types'
+import { SourceQueryEditor } from './SourceQueryEditor'
+import { samePlanSources, validatePlanEdits, validateSourceEdits } from '../../../../types/requirement-plan.types'
 import { planCopy } from './planCopy'
 import { RequirementEditor } from './RequirementEditor'
 import { usePlanNavigationGuard } from './usePlanNavigationGuard'
@@ -15,6 +17,10 @@ export function RequirementPlanPanel({ jobId }: { jobId: string }) {
   const { locale } = useLocale()
   const copy = planCopy[locale]
   const [inspection, setInspection] = useState<PlanInspection | null>(null)
+  const [sources, setSources] = useState<SourceSelection[]>([])
+  const [originalSources, setOriginalSources] = useState<SourceSelection[]>([])
+  const [sourceRecovery, setSourceRecovery] = useState<SourceSelection[]>([])
+  const v2 = inspection?.plan?.schema_version === 'jd-source-query-v2'
   const [rows, setRows] = useState<PlannedRequirement[]>([])
   const [original, setOriginal] = useState<PlannedRequirement[]>([])
   const [recovery, setRecovery] = useState<PlannedRequirement[]>([])
@@ -32,13 +38,16 @@ export function RequirementPlanPanel({ jobId }: { jobId: string }) {
   const active = useRef(false)
   const request = useRef<AbortController | null>(null)
   const historyRequest = useRef<AbortController | null>(null)
-  const dirty = JSON.stringify(rows) !== JSON.stringify(original)
-  const issues = validatePlanEdits(rows, original)
+  const dirty = v2 ? JSON.stringify(sources) !== JSON.stringify(originalSources) : JSON.stringify(rows) !== JSON.stringify(original)
+  const issues = v2 ? validateSourceEdits(sources, originalSources) as ReturnType<typeof validatePlanEdits> : validatePlanEdits(rows, original)
   const blocked = busy || Boolean(error) || conflict || inspection?.status === 'STALE'
   const canEdit = inspection?.status === 'DRAFT' || inspection?.status === 'HR_CONFIRMED'
+  const budgetBlocked = Boolean(v2 && inspection?.query_budget?.status !== 'READY')
 
   function install(next: PlanInspection) {
     setInspection(next)
+    setSources(structuredClone(next.plan?.sources ?? []))
+    setOriginalSources(structuredClone(next.plan?.sources ?? []))
     const source = structuredClone(next.plan?.requirements ?? [])
     setRows(source); setOriginal(structuredClone(source))
     setEditing(next.status === 'DRAFT'); setReviewed(false); setConflict(false)
@@ -55,15 +64,18 @@ export function RequirementPlanPanel({ jobId }: { jobId: string }) {
     }).finally(() => { if (active.current && !controller.signal.aborted) setBusy(false) })
     return () => { active.current = false; controller.abort(); request.current?.abort(); historyRequest.current?.abort() }
   }, [jobId])
-  usePlanNavigationGuard(dirty || stagedDirty || recovery.length > 0, copy.leave)
+  usePlanNavigationGuard(dirty || stagedDirty || recovery.length > 0 || sourceRecovery.length > 0, copy.leave)
 
   async function run(action: 'reload' | 'discard' | 'draft' | 'save' | 'confirm') {
     if (busy || (action !== 'reload' && action !== 'discard' && (error || (conflict && action !== 'draft')))) return
     if (action === 'discard' && !window.confirm(copy.leave)) return
     if (action === 'draft' && !['UNPREPARED', 'STALE', 'ASSISTANT_REVIEWED'].includes(inspection?.status ?? '')) return
-    if (action === 'draft' && dirty) setRecovery(structuredClone(rows))
+    if (action === 'draft' && dirty) {
+      if (v2) setSourceRecovery(structuredClone(sources))
+      else setRecovery(structuredClone(rows))
+    }
     if (action === 'save' && (stagedDirty || !editing || !canEdit || !dirty || issues.length || !inspection?.content_sha256)) return
-    if (action === 'confirm' && (stagedDirty || inspection?.status !== 'DRAFT' || dirty || !reviewed || issues.length || !inspection.content_sha256)) return
+    if (action === 'confirm' && (budgetBlocked || stagedDirty || inspection?.status !== 'DRAFT' || dirty || !reviewed || issues.length || !inspection.content_sha256)) return
     const controller = new AbortController()
     request.current?.abort(); request.current = controller
     const alive = () => active.current && !controller.signal.aborted
@@ -71,11 +83,11 @@ export function RequirementPlanPanel({ jobId }: { jobId: string }) {
     try {
       const next = (action === 'reload' || action === 'discard') ? await api.inspect(jobId, controller.signal)
         : action === 'draft' ? await api.draft(jobId, inspection?.plan?.revision ?? 0, controller.signal)
-        : action === 'save' ? await api.save(jobId, inspection!.content_sha256!, rows, controller.signal)
+        : action === 'save' ? (v2 ? await api.saveSources(jobId, inspection!.content_sha256!, sources, controller.signal) : await api.save(jobId, inspection!.content_sha256!, rows, controller.signal))
         : await api.confirm(jobId, inspection!.content_sha256!, controller.signal)
       if (!alive()) return
       if (action === 'reload' && dirty) { setInspection(next); setConflict(true) }
-      else { install(next); if (action === 'discard') setRecovery([]) }
+      else { install(next); if (action === 'discard') { setRecovery([]); setSourceRecovery([]) } }
       if (action === 'save' || action === 'confirm') setMessage(action === 'save' ? 'saved' : 'confirmed')
       // History is a separate read and must not display a previous revision's log.
       setHistory(null); setHistoryOpen(false); historyRequest.current?.abort(); setHistoryBusy(false)
@@ -96,7 +108,7 @@ export function RequirementPlanPanel({ jobId }: { jobId: string }) {
     catch { if (active.current && !controller.signal.aborted) setHistoryError(true) }
     finally { if (active.current && !controller.signal.aborted) setHistoryBusy(false) }
   }
-  const sourceCompatible = Boolean(inspection?.plan && samePlanSources(rows, inspection.plan.requirements))
+  const sourceCompatible = Boolean(!v2 && inspection?.plan && samePlanSources(rows, inspection.plan.requirements))
   const readOnly = !editing || blocked || !canEdit
   return <section className="jd-plan recruiter-panel" id="requirement-plan" aria-labelledby="jd-plan-title" aria-busy={busy}>
     <header className="jd-plan__header"><div><p className="jd-plan__eyebrow">{copy.intro}</p><h2 id="jd-plan-title">{copy.title}</h2></div>
@@ -108,20 +120,30 @@ export function RequirementPlanPanel({ jobId }: { jobId: string }) {
     {error && <div role="alert" className="jd-plan__notice"><p>{copy[error]}</p><button type="button" disabled={busy} onClick={() => void run('reload')}>{copy.retry}</button></div>}
     {inspection?.status === 'STALE' && <p className="jd-plan__notice" role="status">{copy.stale}</p>}
     {conflict && <div className="jd-plan__notice" role="alert"><p>{copy.conflict}</p>
-      {inspection?.plan && <details><summary>{copy.latest}</summary>{inspection.plan.requirements.map(r => <div key={r.requirement_id}><blockquote>{r.original_text}</blockquote>{r.components.map(c => <p key={c.id}>{c.query} — {c.source_quote}</p>)}<p>{copy.all}</p>{r.all_of.map((g, i) => <p key={i}>{copy.group} {i + 1}: {g.map(id => r.components.find(c => c.id === id)?.query).join(' / ')}</p>)}</div>)}</details>}
+      {inspection?.plan && <details><summary>{copy.latest}</summary>{v2 && <SourceQueryEditor rows={inspection.plan.sources ?? []} readOnly vi={locale === 'vi'} onChange={() => {}} />}{inspection.plan.requirements.map(r => <div key={r.requirement_id}><blockquote>{r.original_text}</blockquote>{r.components.map(c => <p key={c.id}>{c.query} — {c.source_quote}</p>)}<p>{copy.all}</p>{r.all_of.map((g, i) => <p key={i}>{copy.group} {i + 1}: {g.map(id => r.components.find(c => c.id === id)?.query).join(' / ')}</p>)}</div>)}</details>}
       {sourceCompatible && canEdit && <button type="button" disabled={busy || Boolean(error)} onClick={() => { setOriginal(structuredClone(inspection!.plan!.requirements)); setEditing(true); setConflict(false); setReviewed(false) }}>{copy.rebase}</button>}
     </div>}
     {message && <p role="status" className="jd-plan__success">{copy[message]}</p>}
     {dirty && <p role="status" className="jd-plan__notice">{copy.unsaved}</p>}
     {editing && !readOnly && issues.length > 0 && <ul className="jd-plan__validation" aria-live="polite">{issues.map(issue => <li key={issue}>{copy.errors[issue]}</li>)}</ul>}
     <div className="jd-plan__actions">
-      {(editing || conflict || recovery.length > 0) && <button type="button" disabled={busy} onClick={() => void run('discard')}>{copy.discard}</button>}
+      {(editing || conflict || recovery.length > 0 || sourceRecovery.length > 0) && <button type="button" disabled={busy} onClick={() => void run('discard')}>{copy.discard}</button>}
       {inspection && ['UNPREPARED', 'STALE', 'ASSISTANT_REVIEWED'].includes(inspection.status) && <button type="button" disabled={busy || Boolean(error)} onClick={() => void run('draft')}>{copy.draft}</button>}
       {inspection?.status === 'HR_CONFIRMED' && !editing && !conflict && <button type="button" disabled={blocked} onClick={() => { setEditing(true); setReviewed(false); setMessage(null) }}>{copy.edit}</button>}
       {editing && canEdit && <button type="button" disabled={blocked || stagedDirty || !dirty || issues.length > 0} onClick={() => void run('save')}>{copy.save}</button>}
     </div>
+    {v2 && budgetBlocked && <div role="alert" className="jd-plan__notice">
+      <p>{inspection?.query_budget?.status === 'TOO_LONG'
+        ? (locale === 'vi' ? 'Có trích dẫn vượt 256 token. Hãy chia thành các trích dẫn ngắn hơn từ nguồn, lưu rồi xác nhận. Nội dung JD gốc không bị thay đổi.' : 'Some quotes exceed 256 tokens. Split them into shorter exact source quotes, save, then confirm. Original JD text is retained.')
+        : (locale === 'vi' ? 'Chưa kiểm tra được độ dài token. Có thể lưu bản nháp; hãy tải lại khi tokenizer đã sẵn sàng trước khi xác nhận.' : 'Token validation unavailable. You can save a draft; reload when the tokenizer is ready before confirming.')}</p>
+      {inspection?.query_budget?.issues.map(issue => <p key={`${issue.source_id}/${issue.component_id}`}>
+        {sources.find(s => s.source_id === issue.source_id)?.original_text.slice(0, 120)} — {issue.component_id}: {issue.tokens}/{inspection.query_budget!.limit} tokens
+      </p>)}
+    </div>}
+    {v2 && <SourceQueryEditor rows={sources} readOnly={readOnly} vi={locale === 'vi'} onChange={next => { setSources(next); setReviewed(false); setMessage(null) }} />}
     {rows.length > 0 && <RequirementEditor onStagedChange={setStagedDirty} rows={rows} readOnly={readOnly} copy={copy} onChange={next => { setRows(next); setReviewed(false); setMessage(null) }} />}
-    {inspection?.status === 'DRAFT' && !conflict && <div className="jd-plan__confirm"><label className="jd-plan__check"><input type="checkbox" checked={reviewed} disabled={blocked || stagedDirty || dirty || issues.length > 0} onChange={e => setReviewed(e.target.checked)} /><span>{copy.review}</span></label><button type="button" disabled={blocked || stagedDirty || dirty || !reviewed || issues.length > 0} onClick={() => void run('confirm')}>{copy.confirm}</button></div>}
+    {inspection?.status === 'DRAFT' && !conflict && <div className="jd-plan__confirm"><label className="jd-plan__check"><input type="checkbox" checked={reviewed} disabled={blocked || stagedDirty || dirty || issues.length > 0} onChange={e => setReviewed(e.target.checked)} /><span>{copy.review}</span></label><button type="button" disabled={budgetBlocked || blocked || stagedDirty || dirty || !reviewed || issues.length > 0} onClick={() => void run('confirm')}>{copy.confirm}</button></div>}
+    {sourceRecovery.length > 0 && <details><summary>{copy.retained}</summary><SourceQueryEditor rows={sourceRecovery} readOnly vi={locale === 'vi'} onChange={() => {}} /></details>}
     {recovery.length > 0 && <details><summary>{copy.retained}</summary>{recovery.map(r => <div key={r.requirement_id}><blockquote>{r.original_text}</blockquote>{r.components.map(c => <p key={c.id}>{c.query} — {c.source_quote} · {copy.importance[c.importance]}</p>)}{r.all_of.map((g, i) => <p key={i}>{copy.group} {i + 1}: {g.map(id => r.components.find(c => c.id === id)?.query).join(' / ')}</p>)}</div>)}</details>}
     {inspection && <details className="jd-plan__technical"><summary>{copy.technical}</summary><p>{inspection.plan?.job_id}</p><p>{inspection.content_sha256}</p>{rows.map(r => <p key={r.requirement_id}>{r.requirement_id}: {r.components.map(c => c.id).join(', ')}</p>)}</details>}
     <div className="jd-plan__history"><button type="button" disabled={busy || historyBusy || error === 'denied'} onClick={() => void showHistory()}>{copy.history}</button>

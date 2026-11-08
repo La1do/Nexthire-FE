@@ -10,12 +10,17 @@ export const requirementPlanService = {
     return parsePlanInspection(r.data.data, id)
   },
   async draft(id: string, expectedLatestRevision: number, signal?: AbortSignal) {
-    const r = await apiClient.post<Envelope<unknown>>(`${base(id)}/drafts`, { expectedLatestRevision }, { signal })
+    const r = await apiClient.post<Envelope<unknown>>(`${base(id)}/drafts`, { expectedLatestRevision, schemaVersion: 'jd-source-query-v2' }, { signal })
     if (r.data.success !== true) throw new Error('Invalid plan envelope')
     return parsePlanInspection(r.data.data, id)
   },
   async save(id: string, expectedContentSha256: string, requirements: PlannedRequirement[], signal?: AbortSignal) {
     const r = await apiClient.patch<Envelope<unknown>>(base(id), { expectedContentSha256, requirements }, { signal })
+    if (r.data.success !== true) throw new Error('Invalid plan envelope')
+    return parsePlanInspection(r.data.data, id)
+  },
+  async saveSources(id: string, expectedContentSha256: string, sources: import('../types/requirement-plan.types').SourceSelection[], signal?: AbortSignal) {
+    const r = await apiClient.patch<Envelope<unknown>>(base(id), { expectedContentSha256, sources }, { signal })
     if (r.data.success !== true) throw new Error('Invalid plan envelope')
     return parsePlanInspection(r.data.data, id)
   },
