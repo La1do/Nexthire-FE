@@ -85,6 +85,8 @@ const drawer = load('src/pages/RecruiterApplicationsPage/components/ApplicationD
   './ApplicationDecisionForm': { ApplicationDecisionForm: stub },
   './ApplicationKeyboardShortcutsModal': { ApplicationKeyboardShortcutsModal: stub },
   './ApplicationReviewWorkspace': { ApplicationReviewWorkspace: stub },
+  './HrReviewNotebook': { HrReviewNotebook: stub },
+  './JobSourceReference': { JobSourceReference: stub },
 })
 const candidates = load('src/pages/RecruiterCandidatesPage/index.tsx', {
   'react-router-dom': { Link: ({ to, ...props }) => React.createElement('a', { href: to, ...props }) }, '../../i18n': {}, '../../lib/api/apiError': {}, '../../services/application.service': {}, '../_components': {}, '../_components/admin/AdminPagination': {}, '../_components/admin/AdminStatCard': {},

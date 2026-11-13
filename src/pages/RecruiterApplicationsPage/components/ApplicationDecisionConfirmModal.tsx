@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import type { RecruiterApplicationsTranslations } from '../../../i18n/types'
 import type { RecruiterApplicationItem } from '../types'
 import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecisionValidation'
@@ -6,6 +7,8 @@ import type { RecruiterDecisionStatus } from '../utils/recruiterApplicationDecis
 type ApplicationDecisionConfirmModalProps = {
   application: RecruiterApplicationItem
   feedback: string
+  onFeedbackChange?: (value: string) => void
+  feedbackError?: string | null
   isSubmitting: boolean
   onCancel: () => void
   onConfirm: () => Promise<void>
@@ -33,6 +36,8 @@ function RejectIcon() {
 export function ApplicationDecisionConfirmModal({
   application,
   feedback,
+  onFeedbackChange,
+  feedbackError,
   isSubmitting,
   onCancel,
   onConfirm,
@@ -42,6 +47,9 @@ export function ApplicationDecisionConfirmModal({
   const modalRef = useRef<HTMLDivElement | null>(null)
   const previousActiveElementRef = useRef<HTMLElement | null>(null)
   const isSubmittingRef = useRef(isSubmitting)
+  const cancelRef = useRef(onCancel)
+  cancelRef.current = onCancel
+  const feedbackRef = useRef(onFeedbackChange)
   const titleId = useId()
   const descriptionId = useId()
   const isOffer = status === 'OFFERED'
@@ -54,17 +62,19 @@ export function ApplicationDecisionConfirmModal({
     document.body.style.overflow = 'hidden'
 
     const firstFocusable = modalRef.current?.querySelector<HTMLElement>(
-      'button:not(:disabled), [href], input:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+      feedbackRef.current ? 'textarea:not(:disabled)' : 'button:not(:disabled)',
     )
     firstFocusable?.focus()
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape' && !isSubmittingRef.current) {
-        event.stopPropagation()
-        onCancel()
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        cancelRef.current()
         return
       }
 
+      event.stopImmediatePropagation()
       if (event.key !== 'Tab') return
 
       const focusableElements = Array.from(
@@ -87,14 +97,14 @@ export function ApplicationDecisionConfirmModal({
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown, true)
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('keydown', handleKeyDown, true)
       document.body.style.overflow = originalOverflow
       previousActiveElementRef.current?.focus()
     }
-  }, [onCancel])
+  }, [])
 
   const title = isOffer
     ? translations.offerTitle
@@ -111,7 +121,7 @@ export function ApplicationDecisionConfirmModal({
     .replace('{{candidate}}', application.candidateName)
     .replace('{{job}}', application.jobTitle)
 
-  return (
+  return createPortal(
     <div
       className="recruiter-application-confirm-backdrop"
       onMouseDown={() => {
@@ -150,7 +160,7 @@ export function ApplicationDecisionConfirmModal({
           <p id={descriptionId}>{description}</p>
         </div>
 
-        {feedback ? (
+        {onFeedbackChange ? <label className="recruiter-application-decision__field"><span>{translations.feedbackLabel}{!isOffer && ' *'}</span><textarea autoFocus rows={4} maxLength={2000} disabled={isSubmitting} value={feedback} onChange={e => onFeedbackChange(e.target.value)} aria-invalid={!!feedbackError} placeholder={isOffer ? 'Ghi bước tiếp theo hoặc phản hồi cho ứng viên (không bắt buộc)…' : 'Nhập lý do từ chối, ít nhất 10 ký tự…'} /><span role={feedbackError ? 'alert' : undefined} className="recruiter-application-decision__error">{feedbackError}</span><small>{feedback.length}/2000</small></label> : feedback ? (
           <div className="recruiter-application-confirm-modal__feedback">
             <span>{translations.feedbackLabel}</span>
             <p>{feedback}</p>
@@ -173,6 +183,6 @@ export function ApplicationDecisionConfirmModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>, document.body,
   )
 }

@@ -287,6 +287,7 @@ const { findSkillOccurrence, createLatestRequestGuard, ApplicationReviewWorkspac
   './ai1/Ai1EvidenceView': { Ai1EvidenceView },
   './ai1/ai1Copy': { ai1Copy },
   './PdfCvViewer': { PdfCvViewer: () => React.createElement('div', { className: 'pdf-cv-viewer-mock' }) },
+  './HrReviewNotebook': { HrReviewNotebook: () => null },
 })
 
 test('source occurrence ignores similarity and does not infer a verified skill', () => {

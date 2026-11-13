@@ -131,7 +131,7 @@ try {
     const nav = document.querySelector('.ai1-evidence__navigation').getBoundingClientRect();
     const detail = document.querySelector('.ai1-evidence__requirement').getBoundingClientRect();
     const quote = document.querySelector('blockquote').getBoundingClientRect();
-    return {width: drawer.width, height: drawer.height, navWidth: nav.width, detailWidth: detail.width, sideBySide: nav.right <= detail.left + 1, quoteTop: quote.top, quoteBottom: quote.bottom, active: document.querySelectorAll('.ai1-evidence__requirement').length, bodyHeight: document.querySelector('.recruiter-application-detail-drawer__body').scrollHeight, innerScrollers: [...document.querySelectorAll('.ai1-evidence *')].filter(el => ['auto','scroll'].includes(getComputedStyle(el).overflowY)).length};
+    return {width: drawer.width, height: drawer.height, navWidth: nav.width, detailWidth: detail.width, sideBySide: nav.right <= detail.left + 1, quoteTop: quote.top, quoteBottom: quote.bottom, active: document.querySelectorAll('.ai1-evidence__requirement').length, bodyHeight: document.querySelector('.recruiter-application-detail-drawer__body').scrollHeight, innerScrollers: [...document.querySelectorAll('.ai1-evidence *')].filter(el => el.getClientRects().length && ['auto','scroll'].includes(getComputedStyle(el).overflowY)).length};
   })()`)
   assert.equal(desktop.width, 1120); assert.equal(desktop.height, 900)
   assert.ok(desktop.sideBySide && desktop.detailWidth > desktop.navWidth)
@@ -176,8 +176,8 @@ try {
   await sleep(150)
   assert.ok(await evaluate('document.documentElement.scrollWidth <= 375'), 'Mobile content overflows horizontally')
   assert.equal(await evaluate("document.querySelector('.recruiter-application-detail-drawer').getBoundingClientRect().width"), 375)
-  assert.ok(await evaluate("getComputedStyle(document.querySelector('.ai1-evidence__navigation')).display === 'none' && document.querySelector('select').options.length === 10"))
-  await evaluate("const s = document.querySelector('select'); s.value = '9'; s.dispatchEvent(new Event('change', {bubbles:true}))")
+  assert.ok(await evaluate("getComputedStyle(document.querySelector('.ai1-evidence__navigation')).display === 'none' && document.querySelectorAll('.ai1-evidence__requirement-options button').length === 10"))
+  await evaluate("document.querySelector('.ai1-evidence__requirement-picker summary').click(); document.querySelectorAll('.ai1-evidence__requirement-options button')[9].click()")
   await wait("document.querySelector('.ai1-evidence__requirement h4').textContent === 'Triển khai dịch vụ trên AWS'")
   assert.ok(await evaluate("document.querySelector('blockquote').textContent.startsWith('SYNTHETIC QUOTE 10.')"))
   screenshots.push(await screenshot('ai1-ux-002-mobile.png'))

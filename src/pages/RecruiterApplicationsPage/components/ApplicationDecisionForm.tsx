@@ -17,6 +17,7 @@ type ApplicationDecisionFormProps = {
   isSubmitting: boolean
   onSubmit: (status: RecruiterDecisionStatus, feedback: string) => Promise<boolean>
   translations: RecruiterApplicationsTranslations['drawer']['decision']
+  compact?: boolean
 }
 
 type PendingDecision = {
@@ -28,7 +29,7 @@ type DecisionValidationError = ReturnType<typeof validateApplicationFeedback>
 
 export const ApplicationDecisionForm = forwardRef<ApplicationDecisionFormHandle, ApplicationDecisionFormProps>(
   function ApplicationDecisionForm(
-    { application, isSubmitting, onSubmit, translations },
+    { application, isSubmitting, onSubmit, translations, compact = false },
     ref,
   ) {
     const [feedback, setFeedback] = useState(application.statusNote ?? '')
@@ -38,6 +39,8 @@ export const ApplicationDecisionForm = forwardRef<ApplicationDecisionFormHandle,
     const isDecisionCompleted = ['OFFERED', 'REJECTED', 'CANCELLED'].includes(application.status)
     const isOffer = application.status === 'OFFERED'
     const isRejected = application.status === 'REJECTED'
+    const errorMessage = error === 'rejectionRequired' ? translations.rejectionRequiredError
+      : error === 'maxLength' ? translations.maxLengthError.replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH)) : null
 
     useEffect(() => {
       setFeedback(application.statusNote ?? '')
@@ -46,6 +49,11 @@ export const ApplicationDecisionForm = forwardRef<ApplicationDecisionFormHandle,
     }, [application.id, application.statusNote])
 
     const handleDecision = useCallback((status: RecruiterDecisionStatus) => {
+      if (compact) {
+        const proceed = () => { setError(null); setPendingDecision({ status, feedback }) }
+        if (window.dispatchEvent(new CustomEvent('hr-workspace-before-leave', { cancelable: true, detail: { proceed } }))) proceed()
+        return
+      }
       const validationError = validateApplicationFeedback(status, feedback)
 
       if (validationError) {
@@ -56,7 +64,7 @@ export const ApplicationDecisionForm = forwardRef<ApplicationDecisionFormHandle,
 
       setError(null)
       setPendingDecision({ feedback: feedback.trim(), status })
-    }, [feedback])
+    }, [feedback, compact])
 
     useImperativeHandle(
       ref,
@@ -71,13 +79,20 @@ export const ApplicationDecisionForm = forwardRef<ApplicationDecisionFormHandle,
     )
 
   async function confirmDecision() {
-    if (!pendingDecision) return
+    if (!pendingDecision || isSubmitting) return
+    const validationError = validateApplicationFeedback(pendingDecision.status, pendingDecision.feedback)
+    if (validationError) { setError(validationError); return }
 
     const succeeded = await onSubmit(pendingDecision.status, pendingDecision.feedback)
     if (succeeded) {
       setPendingDecision(null)
     }
   }
+
+  if (compact) return <div className="recruiter-header-decision">
+    {!isDecisionCompleted ? <><button type="button" className="recruiter-header-decision__offer" disabled={isSubmitting} onClick={() => handleDecision('OFFERED')}>{translations.offerAction}</button><button type="button" className="recruiter-header-decision__reject" disabled={isSubmitting} onClick={() => handleDecision('REJECTED')}>{translations.rejectAction}</button></> : <span role="status">{isOffer ? translations.offeredResultTitle : isRejected ? translations.rejectedResultTitle : translations.readOnlyDescription}</span>}
+    {pendingDecision && <ApplicationDecisionConfirmModal application={application} feedback={pendingDecision.feedback} onFeedbackChange={value => { setPendingDecision(current => current ? { ...current, feedback: value } : null); setError(null) }} feedbackError={errorMessage} isSubmitting={isSubmitting} onCancel={() => { setPendingDecision(null); setError(null) }} onConfirm={confirmDecision} status={pendingDecision.status} translations={translations.confirmModal} />}
+  </div>
 
   return (
     <section className="recruiter-application-decision" aria-labelledby="recruiter-application-decision-title">
@@ -128,7 +143,7 @@ export const ApplicationDecisionForm = forwardRef<ApplicationDecisionFormHandle,
 
           <div className="recruiter-application-decision__meta">
             <span className={error ? 'recruiter-application-decision__error' : undefined} role={error ? 'alert' : undefined}>
-              {error ?? translations.feedbackHint}
+              {errorMessage ?? translations.feedbackHint}
             </span>
             <span>{translations.characterCount.replace('{{count}}', String(feedback.length)).replace('{{max}}', String(APPLICATION_FEEDBACK_MAX_LENGTH))}</span>
           </div>

@@ -411,6 +411,7 @@ function Requirement({
 
 function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy; onJumpToPdf?: (payload: JumpToPdfPayload | string) => void }) {
   const [selected, setSelected] = useState(0)
+  const [requirementSearch, setRequirementSearch] = useState('')
   const requirement = review.requirements[selected] ?? review.requirements[0]
   const plans: Record<string, string> = {
     UNPREPARED: copy.unprepared,
@@ -465,16 +466,13 @@ function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy
         <p>{copy.noRequirements}</p>
       ) : (
         <>
-          <label className="ai1-evidence__mobile-select">
-            {copy.navigation} ({review.requirements.length})
-            <select value={selected} onChange={event => setSelected(Number(event.target.value))}>
-              {review.requirements.map((q, i) => (
-                <option key={q.requirementId} value={i}>
-                  {i + 1}. {q.text}
-                </option>
-              ))}
-            </select>
-          </label>
+          <details className="ai1-evidence__requirement-picker">
+            <summary>{selected + 1}/{review.requirements.length} · {requirement.text}</summary>
+            <label>{copy.navigation}<input type="search" aria-label={copy.navigation} value={requirementSearch} onChange={e => setRequirementSearch(e.target.value)} /></label>
+            <div className="ai1-evidence__requirement-options">
+              {review.requirements.map((q, i) => q.text.toLocaleLowerCase().includes(requirementSearch.toLocaleLowerCase()) && <button key={q.requirementId} type="button" aria-pressed={selected === i} onClick={e => { setSelected(i); e.currentTarget.closest('details')?.removeAttribute('open') }}><span>{i + 1}.</span> {q.text}</button>)}
+            </div>
+          </details>
           <div className="ai1-evidence__workspace">
             <nav className="ai1-evidence__navigation" aria-label={copy.navigation}>
               <div className="ai1-evidence__nav-header">

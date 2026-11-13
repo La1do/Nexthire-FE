@@ -1,5 +1,7 @@
 .recruiter-application-detail-drawer.recruiter-application-detail-drawer--hr-review { width: min(70rem, 100vw); }
 .recruiter-application-detail-drawer__body { align-content: start; }
+.recruiter-header-decision{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}.recruiter-header-decision button{padding:.65rem .9rem;border-radius:.5rem;font-weight:700;font-size:.85rem}.recruiter-header-decision__offer{background:var(--color-brand-solid,#ef4444);color:#fff}.recruiter-header-decision__reject{border:1px solid var(--color-brand-solid,#ef4444);color:var(--color-brand-solid,#ef4444)}.recruiter-header-decision button:disabled{opacity:.5;cursor:not-allowed}.recruiter-header-decision>span{font-size:.85rem;font-weight:600}.recruiter-application-confirm-backdrop{z-index:2100}.recruiter-application-confirm-modal .recruiter-application-decision__field{text-align:left;margin:1rem 0}.recruiter-application-confirm-modal textarea{width:100%}
+@media(max-width:640px){.recruiter-header-decision{width:100%;order:10}.recruiter-header-decision>button{flex:1}.recruiter-application-detail-drawer__header-actions{flex-wrap:wrap}}
 
 .recruiter-application-detail-drawer--hr-review .recruiter-application-detail-drawer__header {
   padding: 1rem 1.25rem;
@@ -53,6 +55,29 @@
 }
 
 .recruiter-review-tab-content[hidden] { display: none; }
+.ai1-evidence__requirement-picker{margin:.75rem 0;border:1px solid var(--color-border-subtle);border-radius:.6rem;min-width:0}.ai1-evidence__requirement-picker summary{padding:.75rem;cursor:pointer;font-weight:600;overflow-wrap:anywhere;font-size:.85rem}.ai1-evidence__requirement-picker label{display:block;padding:.5rem .75rem;font-size:.8rem}.ai1-evidence__requirement-picker input{display:block;width:100%;border:1px solid var(--color-border-subtle);border-radius:.4rem;padding:.5rem;background:var(--color-surface-card);color:inherit}.ai1-evidence__requirement-options{max-height:18rem;overflow:auto;overscroll-behavior:contain}.ai1-evidence__requirement-options button{display:block;text-align:left;white-space:normal;overflow-wrap:anywhere;width:100%;padding:.7rem;border-top:1px solid var(--color-border-subtle);font-size:.85rem}.ai1-evidence__requirement-options button[aria-pressed=true]{background:var(--color-brand-soft);color:var(--color-brand-solid)}
+@media(min-width:1080px){.ai1-evidence__requirement-picker{display:none}.recruiter-application-detail-pane--evaluation .ai1-evidence__requirement-picker{display:block}}
+.ai1-evidence__mobile-select{display:none!important}
+
+.recruiter-application-detail-pane--evaluation .ai1-evidence__requirement-picker{display:block}
+
+.recruiter-jd-source{border:1px solid var(--color-border-subtle);border-radius:.65rem;background:var(--color-surface-card);flex-shrink:0}.recruiter-jd-source summary{padding:.7rem .85rem;cursor:pointer;font-size:.85rem;font-weight:600}.recruiter-jd-source__body{max-height:22rem;overflow-y:auto;overscroll-behavior:contain;padding:0 .85rem .85rem;font-size:.875rem;line-height:1.65;overflow-wrap:anywhere}.recruiter-jd-source__body h3,.recruiter-jd-source__body h4,.recruiter-jd-source__body h5{font-weight:700;margin:.75rem 0 .35rem}.recruiter-jd-source__body ul{list-style:disc;padding-left:1.2rem}.recruiter-jd-source__body li{margin:.4rem 0}.recruiter-jd-source__notice{color:var(--color-text-secondary);font-size:.75rem}
+
+/* Keep the tools usable while the right column scrolls, without shrinking forms. */
+.recruiter-application-detail-pane--evaluation > .recruiter-review-tabs,
+.recruiter-application-detail-pane--evaluation > .recruiter-review-tab-content {
+  flex-shrink: 0;
+}
+.recruiter-application-detail-pane--evaluation > .recruiter-review-tabs {
+  z-index: 20;
+}
+.recruiter-application-detail-pane--evaluation .hr-notebook {
+  min-width: 0;
+}
+.recruiter-application-detail-pane--evaluation .hr-notebook footer {
+  position: static;
+}
+
 
 @media (min-width: 1080px) {
   .recruiter-application-detail-drawer.recruiter-application-detail-drawer--hr-review.is-expanded {
@@ -61,7 +86,7 @@
   }
 
   .recruiter-application-detail-drawer--hr-review .recruiter-application-detail-drawer__body--split {
-    grid-template-columns: minmax(0, 1fr) minmax(380px, 30%);
+    grid-template-columns: minmax(0, 1.35fr) minmax(420px, 1fr);
     grid-template-rows: minmax(0, 1fr);
     gap: 1rem;
     padding: 0.85rem;
@@ -77,6 +102,13 @@
     min-height: 0;
     min-width: 0;
     padding-right: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .recruiter-application-detail-drawer--hr-review .recruiter-application-detail-pane--workspace {
+    min-height: 0;
+    overflow: hidden;
   }
 
   .recruiter-application-detail-pane--evaluation .ai1-evidence__workspace {

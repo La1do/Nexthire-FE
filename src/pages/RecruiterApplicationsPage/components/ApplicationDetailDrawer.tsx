@@ -21,6 +21,9 @@ import type { JumpToPdfPayload } from './ai1/Ai1EvidenceView'
 import { ApplicationDecisionForm, type ApplicationDecisionFormHandle } from './ApplicationDecisionForm'
 import { ApplicationKeyboardShortcutsModal } from './ApplicationKeyboardShortcutsModal'
 import { ApplicationReviewWorkspace } from './ApplicationReviewWorkspace'
+import { HrReviewNotebook } from './HrReviewNotebook'
+import { JobSourceReference } from './JobSourceReference'
+import './hr-review-notebook.css'
 
 type ApplicationDetailDrawerProps = {
   application: RecruiterApplicationItem
@@ -104,7 +107,7 @@ export function ApplicationDetailDrawer({
   matchingMessage,
   matchLabels,
   meta,
-  onClose,
+  onClose: closeDrawer,
   onDecision,
   onEmail,
   onNavigateNext,
@@ -117,11 +120,22 @@ export function ApplicationDetailDrawer({
   totalCount,
   translations,
 }: ApplicationDetailDrawerProps) {
+  const canLeaveReview = useCallback((proceed: () => void) => {
+    if (window.dispatchEvent(new CustomEvent('hr-workspace-before-leave', { cancelable: true, detail: { proceed } }))) proceed()
+    else { setReviewTab('interview'); setMobileActiveTab('evaluation') }
+  }, [])
+  const onClose = useCallback(() => canLeaveReview(closeDrawer), [canLeaveReview, closeDrawer])
   const [isExpanded, setIsExpanded] = useState(true)
   const [mobileActiveTab, setMobileActiveTab] = useState<'evaluation' | 'workspace'>('workspace')
-  const [reviewTab, setReviewTab] = useState<'evidence' | 'decision' | 'profile'>('evidence')
+  const [reviewTab, setReviewTab] = useState<'evidence' | 'interview' | 'profile'>('evidence')
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [hrReview, setHrReview] = useState<HrReview | null>(null)
+  const [reviewAvailable, setReviewAvailable] = useState(false)
+  useEffect(() => {
+    const reveal = () => { setReviewTab('interview'); setMobileActiveTab('evaluation') }
+    window.addEventListener('hr-workspace-reveal', reveal)
+    return () => window.removeEventListener('hr-workspace-reveal', reveal)
+  }, [])
   const [jumpTarget, setJumpTarget] = useState<JumpToPdfPayload | null>(null)
   const drawerRef = useRef<HTMLElement | null>(null)
   const decisionFormRef = useRef<ApplicationDecisionFormHandle | null>(null)
@@ -199,7 +213,7 @@ export function ApplicationDetailDrawer({
     return false
   }, [hasNext, derivedIndex, derivedTotal])
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(() => canLeaveReview(() => {
     if (onNavigateNext) {
       onNavigateNext()
       return
@@ -209,9 +223,9 @@ export function ApplicationDetailDrawer({
         onSelectApplication(applications[derivedIndex])
       }
     }
-  }, [onNavigateNext, applications, onSelectApplication, derivedIndex, derivedTotal])
+  }), [canLeaveReview, onNavigateNext, applications, onSelectApplication, derivedIndex, derivedTotal])
 
-  const handlePrevious = useCallback(() => {
+  const handlePrevious = useCallback(() => canLeaveReview(() => {
     if (onNavigatePrevious) {
       onNavigatePrevious()
       return
@@ -221,7 +235,7 @@ export function ApplicationDetailDrawer({
         onSelectApplication(applications[derivedIndex - 2])
       }
     }
-  }, [onNavigatePrevious, applications, onSelectApplication, derivedIndex])
+  }), [canLeaveReview, onNavigatePrevious, applications, onSelectApplication, derivedIndex])
 
   useEffect(() => {
     const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
@@ -279,8 +293,6 @@ export function ApplicationDetailDrawer({
 
       if (event.key === 'o' || event.key === 'O') {
         event.preventDefault()
-        setReviewTab('decision')
-        setMobileActiveTab('evaluation')
         onDecision?.('OFFERED')
         decisionFormRef.current?.openDecisionDialog('OFFERED')
         return
@@ -288,8 +300,6 @@ export function ApplicationDetailDrawer({
 
       if (event.key === 'r' || event.key === 'R') {
         event.preventDefault()
-        setReviewTab('decision')
-        setMobileActiveTab('evaluation')
         onDecision?.('REJECTED')
         decisionFormRef.current?.openDecisionDialog('REJECTED')
         return
@@ -329,6 +339,7 @@ export function ApplicationDetailDrawer({
             <p>{application.candidateHeadline}</p>
           </div>
           <div className="recruiter-application-detail-drawer__header-actions">
+            <ApplicationDecisionForm compact application={application} isSubmitting={isStatusUpdating} onSubmit={(status, feedback) => onStatusChange(application.id, status, feedback)} ref={decisionFormRef} translations={translations.decision} />
             <button
               aria-label={isExpanded ? 'Thu gọn workspace' : 'Mở rộng workspace kép'}
               className={`recruiter-drawer-header-btn ${isExpanded ? 'is-active' : ''}`}
@@ -450,10 +461,11 @@ export function ApplicationDetailDrawer({
             }`}
           >
             <nav className="recruiter-review-tabs" aria-label="Công cụ xét duyệt">
-              {([['evidence', 'Đối chiếu AI1'], ['decision', 'Đánh giá & quyết định'], ['profile', 'Thông tin hồ sơ']] as const).map(([tab, label]) => (
+              {([['evidence', 'Yêu cầu JD'], ['interview', 'Phỏng vấn'], ['profile', 'Hồ sơ']] as const).map(([tab, label]) => (
                 <button key={tab} type="button" aria-pressed={reviewTab === tab} onClick={() => setReviewTab(tab)}>{label}</button>
               ))}
             </nav>
+            <div hidden={reviewTab !== 'evidence' && reviewTab !== 'interview'}><JobSourceReference key={application.jobId} jobId={application.jobId} /></div>
             <div className="recruiter-review-tab-content" hidden={reviewTab !== 'evidence'}>
             <Ai1EvidencePanel
               key={application.id}
@@ -461,31 +473,22 @@ export function ApplicationDetailDrawer({
               jobId={application.jobId}
               updatedAt={application.updatedAt}
               isMatching={isMatching}
-              onReviewLoaded={setHrReview}
+              onReviewLoaded={review => {
+                const available = review?.assessmentStatus === 'PENDING_REVIEW'
+                setReviewAvailable(available)
+                if (available) setHrReview(review)
+              }}
               onJumpToPdf={handleJumpToPdf}
             />
 
             </div>
-            <div className="recruiter-review-tab-content" hidden={reviewTab !== 'decision'}>
-            <Ai2DemoPanel
-              key={`ai2:${application.id}`}
-              applicationId={application.id}
-              jobId={application.jobId}
-              updatedAt={application.updatedAt}
-              isMatching={isMatching}
-            />
-
-            <section className="recruiter-application-detail-card">
-              <ApplicationDecisionForm
-                application={application}
-                isSubmitting={isStatusUpdating}
-                onSubmit={(status, feedback) => onStatusChange(application.id, status, feedback)}
-                ref={decisionFormRef}
-                translations={translations.decision}
-              />
-            </section>
+            <div className="recruiter-review-tab-content" hidden={reviewTab !== 'interview'}>
+              {hrReview?.assessmentStatus === 'PENDING_REVIEW' ? (
+                <HrReviewNotebook key={application.id} applicationId={application.id} candidateName={application.candidateName} jobTitle={application.jobTitle} review={hrReview} reviewAvailable={reviewAvailable && !isMatching} onLocate={handleJumpToPdf} />
+              ) : <p className="ai1-evidence__notice">Phiếu theo yêu cầu JD sẽ sẵn sàng khi có kết quả đối chiếu. Bạn vẫn có thể xem CV và yêu cầu tuyển dụng.</p>}
             </div>
             <div className="recruiter-review-tab-content" hidden={reviewTab !== 'profile'}>
+            <details><summary>Gợi ý thứ tự xem hồ sơ · thử nghiệm</summary><Ai2DemoPanel key={`ai2:${application.id}`} applicationId={application.id} jobId={application.jobId} updatedAt={application.updatedAt} isMatching={isMatching} /></details>
             <section className="recruiter-application-detail-card recruiter-application-detail-card--identity">
               <div className="recruiter-application-detail-card__candidate">
                 <span aria-hidden="true" className="recruiter-applications-avatar">

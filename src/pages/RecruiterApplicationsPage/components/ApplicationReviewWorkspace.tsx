@@ -206,13 +206,7 @@ function ReviewWorkspaceContent({
     setActiveSnippet(typeof target === 'object' ? { ...target, phrase: clean } : { phrase: clean })
     setActiveTab('cv')
 
-    // Automatically copy to clipboard (Cách 2)
-    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(clean).then(() => {
-        setCopiedNotification(true)
-        setTimeout(() => setCopiedNotification(false), 4000)
-      }).catch(() => {})
-    }
+    // PDF search must not overwrite HR's clipboard; copying is an explicit action.
   }, [])
 
   const handleJumpToPdf = useCallback((target: string | JumpToPdfPayload) => {
