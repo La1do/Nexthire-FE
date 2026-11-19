@@ -1,3 +1,4 @@
+import { AdminSkillDictionaryPage } from '../../pages/AdminSkillDictionaryPage'
 import { Navigate } from 'react-router-dom'
 import { AdminLayout } from '../../layouts/AdminLayout'
 import { AdminAiManagementPage } from '../../pages/AdminAiManagementPage'
@@ -427,6 +428,13 @@ export function getRoutes({ common, pages }: Translations): AppRoute[] {
       path: '/admin/jobs',
       label: pages.adminJobs.routeLabel,
       element: <AdminJobsPage />,
+      layout: AdminLayout,
+      access: adminAccess,
+    },
+    {
+      path: '/admin/skill-dictionary',
+      label: 'Từ điển kỹ năng',
+      element: <AdminSkillDictionaryPage />,
       layout: AdminLayout,
       access: adminAccess,
     },
