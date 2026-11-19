@@ -1,4 +1,6 @@
-export type Ai2Pool = { status: 'READY' | 'DISABLED' | 'UNAVAILABLE'; count: number; rank: number | null; resultId?: string; reason?: string }
+import { AI2_DEMO_MODEL, ai2UnavailableReason, parseAi2SourceMetadata, validAi2ReferenceDate, type Ai2SourceMetadata } from './ai2-demo.types'
+
+export type Ai2Pool = Ai2SourceMetadata & { modelVersion?: string; referenceDate?: string; jobSnapshotSha256?: string; status: 'READY' | 'DISABLED' | 'UNAVAILABLE'; count: number; rank: number | null; resultId?: string; reason?: string }
 
 export function parseAi2Pool(payload: unknown, applicationId: string, jobId: string): Ai2Pool {
   const envelope = payload as { success?: unknown; data?: Record<string, unknown> }
@@ -7,12 +9,13 @@ export function parseAi2Pool(payload: unknown, applicationId: string, jobId: str
     data.experimental !== true || data.automaticallyReject !== false || data.hiringDecision !== null ||
     !Array.isArray(data.items) || !Number.isInteger(data.requestedCount) ||
     (data.requestedCount as number) < 1 || (data.requestedCount as number) > 50) throw new Error('Invalid pool')
+  const metadata = parseAi2SourceMetadata(data)
   if (data.status === 'DISABLED' || data.status === 'UNAVAILABLE') {
     if (data.items.length || data.comparedCount !== 0) throw new Error('Partial pool forbidden')
-    return { status: data.status, count: data.requestedCount as number, rank: null, reason: typeof data.reason === 'string' ? data.reason : undefined }
+    return { ...metadata, status: data.status, count: data.requestedCount as number, rank: null, reason: ai2UnavailableReason(data.reason, 'en') ? data.reason as string : undefined }
   }
-  if (data.status !== 'READY' || data.jobId !== jobId || data.items.length !== data.requestedCount ||
-    data.comparedCount !== data.requestedCount || data.items.length < 2) throw new Error('Invalid ready pool')
+  if (metadata.currentCvRevalidated !== true || metadata.sourceFreshness !== 'CURRENT_CV_REVALIDATED_AT_CHECK_TIME' || data.status !== 'READY' || data.jobId !== jobId || data.items.length !== data.requestedCount ||
+    data.comparedCount !== data.requestedCount || data.items.length < 2 || data.modelVersion !== AI2_DEMO_MODEL || typeof data.jobSnapshotSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(data.jobSnapshotSha256) || !validAi2ReferenceDate(data.referenceDate)) throw new Error('Invalid ready pool')
   const seen = new Set<string>()
   let previous = 0, rank: number | null = null, resultId: string | undefined
   data.items.forEach((row: { applicationId?: unknown; rankingPosition?: unknown; resultId?: unknown }, index: number) => {
@@ -23,5 +26,5 @@ export function parseAi2Pool(payload: unknown, applicationId: string, jobId: str
     if (typeof row.resultId !== 'string' || !row.resultId) throw new Error('Invalid result binding')
     if (row.applicationId === applicationId) { rank = row.rankingPosition; resultId = row.resultId }
   })
-  return { status: 'READY', count: data.items.length, rank, resultId }
+  return { ...metadata, status: 'READY', count: data.items.length, rank, resultId, modelVersion: data.modelVersion as string, referenceDate: data.referenceDate as string, jobSnapshotSha256: data.jobSnapshotSha256 as string }
 }

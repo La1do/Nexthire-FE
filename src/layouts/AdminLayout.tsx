@@ -43,6 +43,8 @@ export function AdminLayout({ children }: PropsWithChildren) {
     ? pages.adminDashboard.pageTitle
     : currentPath.startsWith('/admin/ai-management')
       ? pages.adminAiManagement.pageTitle
+    : currentPath.startsWith('/admin/skill-dictionary')
+      ? 'Từ điển kỹ năng'
     : currentPath.startsWith('/admin/jobs')
       ? pages.adminJobs.pageTitle
     : currentPath.startsWith('/admin/job-moderation-policies')
@@ -135,6 +137,7 @@ export function AdminLayout({ children }: PropsWithChildren) {
           </Link>
 
           <nav aria-label="Admin sections" className="admin-sidebar__nav">
+            <NavLink className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`} onClick={() => setSidebarOpen(false)} tabIndex={isSidebarHidden ? -1 : undefined} to="/admin/skill-dictionary">Từ điển kỹ năng</NavLink>
             <NavLink
               className={({ isActive }) => `admin-sidebar__link${isActive ? ' is-active' : ''}`}
               onClick={() => setSidebarOpen(false)}

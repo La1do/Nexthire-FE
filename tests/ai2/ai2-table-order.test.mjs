@@ -7,10 +7,17 @@ import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const root = new URL('../../', import.meta.url)
 const compile = path => ts.transpileModule(readFileSync(new URL(path, root), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText
+const demo = {}
+vm.runInNewContext(compile('src/types/ai2-demo.types.ts'), { exports: demo })
 const parser = {}
-vm.runInNewContext(compile('src/types/ai2-pool.types.ts'), { exports: parser })
+vm.runInNewContext(compile('src/types/ai2-pool.types.ts'), {
+  exports: parser,
+  require: id => id === './ai2-demo.types' ? demo : require(id),
+})
 const apps = Array.from({ length: 8 }, (_, i) => ({ id: `app-${i}`, jobId: 'job', candidateId: `c-${i}`, candidateCvId: `cv-${i}`, status: 'SUBMITTED', submittedAt: `2026-10-${String(20 - i).padStart(2, '0')}T00:00:00Z` }))
 const pool = () => ({ success: true, data: { schemaVersion: 'ai2-demo-pool-v1', experimental: true, automaticallyReject: false, hiringDecision: null, jobId: 'job', status: 'READY', requestedCount: 8, comparedCount: 8,
+  sourceFreshness: 'CURRENT_CV_REVALIDATED_AT_CHECK_TIME', currentCvRevalidated: true, sourceCheckedAt: '2026-10-18T10:00:00Z',
+  modelVersion: demo.AI2_DEMO_MODEL, jobSnapshotSha256: 'a'.repeat(64), referenceDate: '2026-10-18',
   items: apps.slice().reverse().map((app, index) => ({ applicationId: app.id, candidateId: app.candidateId, candidateCvId: app.candidateCvId, resultId: `r-${app.id}`, rankingPosition: index < 2 ? 1 : index + 1 })) } })
 function mount(overrides = {}) {
   const applied = [], resets = [], calls = [], cleanup = []
@@ -28,6 +35,7 @@ function mount(overrides = {}) {
       if (id === 'react') return { useState: value => [value, () => {}], useRef: value => ({ current: value }), useEffect: effect => cleanup.push(effect()) }
       if (id.endsWith('application.service')) return { applicationService: service }
       if (id.endsWith('ai2-pool.types')) return parser
+      if (id.endsWith('ai2-demo.types')) return demo
       if (id.endsWith('.css')) return {}
       return require(id)
     },
@@ -64,6 +72,34 @@ test('reset and unmount prevent a late READY request from applying', async () =>
     assert.equal(mounted.applied.length, 0)
     mounted.unmount()
   }
+})
+test('reset aborts an in-flight application list read', async () => {
+  let signal
+  let release
+  const mounted = mount({ getRecruiterApplications: (_params, readSignal) => new Promise(resolve => {
+    signal = readSignal
+    release = resolve
+  }) })
+  mounted.apply(); await tick()
+  assert.equal(signal.aborted, false)
+  mounted.reset()
+  assert.equal(signal.aborted, true)
+  release({ data: apps, meta: { total: 8, totalPages: 1, page: 1, limit: 100 } })
+  await tick()
+  assert.equal(mounted.applied.length, 0)
+  mounted.unmount()
+})
+test('a newer check time with the same source bindings still applies', async () => {
+  let calls = 0
+  const mounted = mount({ async getRecruiterApplicationAi2Pool() {
+    const value = pool()
+    if (++calls > 1) value.data.sourceCheckedAt = '2026-10-18T10:00:01Z'
+    return value
+  } })
+  mounted.apply(); await tick()
+  assert.equal(calls, 2)
+  assert.equal(mounted.applied.length, 1)
+  mounted.unmount()
 })
 test('changed second pool check clears the order', async () => {
   let calls = 0

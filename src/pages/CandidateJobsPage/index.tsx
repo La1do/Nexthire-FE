@@ -1,3 +1,4 @@
+import { CandidateJobRecommendations } from './components/CandidateJobRecommendations'
 import { useMemo, useState } from 'react'
 import { useToast } from '../../context'
 import { useLocale, useTranslations } from '../../i18n'
@@ -72,6 +73,7 @@ export function CandidateJobsPage() {
   if (state.isLoading) {
     return (
       <div className="candidate-jobs-page">
+        <CandidateJobRecommendations key="cv-job-recommendations" />
         <section className="candidate-jobs-state">
           <p>{content.states.loading}</p>
         </section>
@@ -82,6 +84,7 @@ export function CandidateJobsPage() {
   if (state.error) {
     return (
       <div className="candidate-jobs-page">
+        <CandidateJobRecommendations key="cv-job-recommendations" />
         <section className="candidate-jobs-state">
           <h2>{content.states.errorTitle}</h2>
           <p>{state.error || content.states.errorDescription}</p>
@@ -94,6 +97,7 @@ export function CandidateJobsPage() {
   return (
     <div className="candidate-jobs-page">
       <CandidateJobsHero content={content} stats={state.stats} />
+      <CandidateJobRecommendations key="cv-job-recommendations" />
 
       {state.actionError ? <p className="candidate-jobs-action-error">{state.actionError}</p> : null}
 

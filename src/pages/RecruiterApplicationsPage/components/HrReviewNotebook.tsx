@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import type { AxiosRequestConfig } from 'axios'
+import { AuthContext } from '../../../context/authContextValue'
+import { HrSupportFeedback, supportJudgmentSchema, supportTarget, readinessSchema, type SupportAction, type SupportReadiness } from './HrSupportFeedback'
 import { z } from 'zod'
 import { apiClient } from '../../../lib/api'
 import type { HrReview } from '../../../types/hr-review.types'
@@ -6,9 +9,22 @@ import { InterviewConfirmDialog } from './InterviewConfirmDialog'
 import { usePlanNavigationGuard } from '../../RecruiterJobsPage/components/requirement-plan/usePlanNavigationGuard'
 import type { JumpToPdfPayload } from './ai1/Ai1EvidenceView'
 
-const rowSchema = z.object({ requirementId: z.string(), status: z.enum(['UNREVIEWED', 'REVIEWED', 'CLARIFY', 'NOT_FOUND']), note: z.string(), evidenceIds: z.array(z.string()) })
+const rowSchema = z.object({ requirementId: z.string(), status: z.enum(['UNREVIEWED', 'REVIEWED', 'CLARIFY', 'NOT_FOUND']), note: z.string(), evidenceIds: z.array(z.string()), supportJudgment: supportJudgmentSchema.optional() })
 const questionSchema = z.object({ id: z.string(), requirementId: z.string().nullable().optional(), question: z.string(), answer: z.string(), note: z.string() })
-const documentSchema = z.object({ sourceRequirements: z.array(z.object({ requirementId: z.string(), text: z.string(), evidence: z.array(z.object({ evidenceId: z.string(), text: z.string(), source: z.string() })) })), applicationId: z.string(), revision: z.number().int(), resultId: z.string(), jobSnapshotSha256: z.string(), candidateSnapshotSha256: z.string(), requirements: z.array(rowSchema), questions: z.array(questionSchema), interviewStatus: z.enum(['DRAFT', 'COMPLETED']), reviewerId: z.string(), updatedAt: z.string() })
+const documentSchema = z.object({ sourceRequirements: z.array(z.object({ requirementId: z.string(), text: z.string(), evidence: z.array(z.object({ evidenceId: z.string(), text: z.string(), source: z.string() })) })), applicationId: z.string(), revision: z.number().int(), resultId: z.string(), jobSnapshotSha256: z.string(), candidateSnapshotSha256: z.string(), requirements: z.array(rowSchema), questions: z.array(questionSchema), interviewStatus: z.enum(['DRAFT', 'COMPLETED']), reviewerId: z.string(), updatedAt: z.string() }).superRefine((doc, context) => {
+  for (const row of doc.requirements) {
+    const judgment = row.supportJudgment
+    if (!judgment) continue
+    const binding = judgment.binding
+    if (binding.resultId !== doc.resultId || binding.jobSnapshotSha256 !== doc.jobSnapshotSha256 || binding.candidateSnapshotSha256 !== doc.candidateSnapshotSha256 || judgment.submission.submittedRevision > doc.revision || !doc.sourceRequirements.some(source => source.requirementId === row.requirementId && judgment.evidenceIds.every(id => source.evidence.some(hit => hit.evidenceId === id)))) {
+      context.addIssue({ code: 'custom', message: 'Feedback does not belong to the saved workspace' })
+    }
+    const decision = judgment.workflow.review
+    if (judgment.workflow.state === 'REVIEWED' && (!decision || decision.decision !== 'APPROVE' || decision.reviewedRevision !== doc.revision || decision.reviewedBy === judgment.submission.submittedBy || decision.submittedRevision !== judgment.submission.submittedRevision || decision.submittedContentSha256 !== judgment.submission.contentSha256 || judgment.uncertain || judgment.label === 'INSUFFICIENT_CONTEXT')) {
+      context.addIssue({ code: 'custom', message: 'Feedback approval does not belong to this revision' })
+    }
+  }
+})
 const envelopeSchema = z.object({ success: z.literal(true), data: z.object({ schemaVersion: z.literal('hr-workspace-v1'), document: documentSchema.nullable(), stale: z.boolean(), freshnessUnavailable: z.boolean().optional(), bindingScope: z.literal('LATEST_MATCHING_RESULT'), isTrainingLabel: z.literal(false), hiringDecision: z.null() }) })
 type Row = z.infer<typeof rowSchema>
 type Question = z.infer<typeof questionSchema>
@@ -19,6 +35,15 @@ const templates = [
 ] as const
 
 export function HrReviewNotebook({ applicationId, review, onLocate, reviewAvailable = true, candidateName = 'Chưa có tên ứng viên', jobTitle = 'Chưa có tên vị trí' }: { applicationId: string; review: HrReview; onLocate: (target: JumpToPdfPayload) => void; reviewAvailable?: boolean; candidateName?: string; jobTitle?: string }) {
+  const auth = useContext(AuthContext)
+  const userId = auth?.isHydratingUser ? undefined : auth?.user?.id
+  const identity = `${userId ?? ''}:${auth?.user?.companyId ?? ''}:${auth?.user?.role ?? ''}:${applicationId}`
+  const [loadedIdentity, setLoadedIdentity] = useState(identity)
+  const [feedbackEpoch, setFeedbackEpoch] = useState(0)
+  const [supportDirty, setSupportDirty] = useState(false)
+  const [readiness, setReadiness] = useState<SupportReadiness | null>(null)
+  const [writeConflict, setWriteConflict] = useState(false)
+  const mutationLock = useRef(false)
   const [rows, setRows] = useState<Row[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
   const [revision, setRevision] = useState(0)
@@ -40,24 +65,32 @@ export function HrReviewNotebook({ applicationId, review, onLocate, reviewAvaila
   const generation = useRef(0)
   const editVersion = useRef(0)
   const dirtyRef = useRef(dirty)
-  dirtyRef.current = dirty
+  dirtyRef.current = dirty || supportDirty
   const binding = `${review.resultId}:${review.jobSnapshotSha256}:${review.candidateSnapshotSha256}`
   const previousBinding = useRef(binding)
+  const previousIdentity = useRef(identity)
+  const scope = `${identity}:${binding}`
+  const liveScope = useRef(scope)
+  liveScope.current = scope
   useEffect(() => {
+    const run = ++generation.current
+    const identityChanged = previousIdentity.current !== identity
+    previousIdentity.current = identity
     const bindingChanged = previousBinding.current !== binding
     previousBinding.current = binding
-    setSaving(false)
-    if (bindingChanged && dirtyRef.current) {
+    mutationLock.current = false; setSaving(false); setReadiness(null)
+    if (identityChanged) { setRows([]); setQuestions([]); setOldSources([]); setDirty(false); setSupportDirty(false); setConfirmation(null); setPickerOpen(false); setRequirementSearch('') }
+    setLoadedIdentity(identity)
+    if (!identityChanged && bindingChanged && dirtyRef.current) {
       setLoading(false)
       setStale(true)
       setError('Kết quả đối chiếu đã thay đổi. Bản nháp được giữ nguyên; bạn có thể in hoặc sao chép trước khi tạo phiếu mới.')
-      return
+      return () => { generation.current++ }
     }
-    const run = ++generation.current
-    setLoading(true); setLoaded(false); setError(''); setDirty(false)
+    setLoading(true); setLoaded(false); setError(''); setDirty(false); setSupportDirty(false); setWriteConflict(false)
     apiClient.get(`/recruiter/applications/${applicationId}/review-workspace`).then(response => {
       const data = envelopeSchema.parse(response.data).data
-      if (generation.current !== run) return
+      if (generation.current !== run || liveScope.current !== scope) return
       if (data.document && data.document.applicationId !== applicationId) throw new Error('Wrong application')
       const doc = data.document
       const outdated = data.stale || !!doc && (doc.resultId !== review.resultId || doc.jobSnapshotSha256 !== review.jobSnapshotSha256 || doc.candidateSnapshotSha256 !== review.candidateSnapshotSha256)
@@ -65,11 +98,11 @@ export function HrReviewNotebook({ applicationId, review, onLocate, reviewAvaila
       setStatus(doc?.interviewStatus ?? 'DRAFT'); setSavedAt(doc?.updatedAt ?? ''); setStale(outdated)
       setFreshnessUnavailable(data.freshnessUnavailable === true)
       setOldSources(doc?.sourceRequirements ?? structuredClone(review.requirements)); setLoaded(true)
-    }).catch(() => { if (generation.current === run) setError('Không tải được phiếu phỏng vấn. Thử lại; không ghi đè dữ liệu đã lưu.') })
-      .finally(() => { if (generation.current === run) setLoading(false) })
+    }).catch(() => { if (generation.current === run && liveScope.current === scope) setError('Không tải được phiếu phỏng vấn. Thử lại; không ghi đè dữ liệu đã lưu.') })
+      .finally(() => { if (generation.current === run && liveScope.current === scope) setLoading(false) })
     return () => { generation.current = run + 1 }
-  }, [applicationId, review.resultId, review.jobSnapshotSha256, review.candidateSnapshotSha256, binding, attempt])
-  usePlanNavigationGuard(dirty, 'Phiếu có nội dung chưa lưu. Rời đi và bỏ thay đổi?')
+  }, [applicationId, review.resultId, review.jobSnapshotSha256, review.candidateSnapshotSha256, binding, attempt, identity, scope])
+  usePlanNavigationGuard(dirty || supportDirty || saving, 'Phiếu có nội dung chưa lưu. Rời đi và bỏ thay đổi?')
   function printSheet() {
     const popup = window.open('', '_blank', 'width=900,height=700')
     if (!popup) { setError('Trình duyệt chặn cửa sổ in. Cho phép popup để in phiếu.'); return }
@@ -84,7 +117,7 @@ export function HrReviewNotebook({ applicationId, review, onLocate, reviewAvaila
   }
   useEffect(() => {
     const guard = (event: Event) => {
-      if (dirty) {
+      if (dirty || supportDirty || saving) {
         event.preventDefault()
         window.dispatchEvent(new Event('hr-workspace-reveal'))
         const proceed = (event as CustomEvent<{ proceed?: () => void }>).detail?.proceed
@@ -93,46 +126,76 @@ export function HrReviewNotebook({ applicationId, review, onLocate, reviewAvaila
     }
     window.addEventListener('hr-workspace-before-leave', guard)
     return () => window.removeEventListener('hr-workspace-before-leave', guard)
-  }, [dirty])
+  }, [dirty, supportDirty, saving])
   function changed() { editVersion.current++; setDirty(true); setError('') }
   function updateQuestion(id: string, update: Partial<Question>) { setQuestions(current => current.map(q => q.id === id ? { ...q, ...update } : q)); changed() }
   async function save() {
-    if (saving || stale || freshnessUnavailable || !reviewAvailable || !loaded || loading) return
+    if (mutationLock.current || supportDirty || writeConflict || stale || freshnessUnavailable || !reviewAvailable || !loaded || loading || loadedIdentity !== identity || !userId) return
     if (questions.some(q => !q.question.trim())) { setError('Hãy nhập nội dung cho các câu hỏi còn trống hoặc xóa câu không sử dụng.'); return }
     if (status === 'COMPLETED' && (!questions.length || questions.some(q => !q.answer.trim()))) { setError('Để hoàn tất phiếu, hãy ghi câu trả lời cho từng câu hỏi. Bạn vẫn có thể lưu bản nháp.'); return }
     const run = generation.current, edits = editVersion.current
-    setSaving(true); setError('')
+    mutationLock.current = true; setSaving(true); setError(''); setReadiness(null)
     try {
       const response = await apiClient.post(`/recruiter/applications/${applicationId}/review-workspace`, {
         expectedRevision: revision, resultId: review.resultId, jobSnapshotSha256: review.jobSnapshotSha256,
-        candidateSnapshotSha256: review.candidateSnapshotSha256, requirements: rows, questions, interviewStatus: status,
-      })
+        candidateSnapshotSha256: review.candidateSnapshotSha256, requirements: rows.map(({ requirementId, status, note, evidenceIds }) => ({ requirementId, status, note, evidenceIds })), questions, interviewStatus: status,
+      }, { _retry: true } as AxiosRequestConfig)
       const data = envelopeSchema.parse(response.data).data
-      if (generation.current !== run) return
-      if (!data.document || data.document.applicationId !== applicationId || data.document.resultId !== review.resultId) throw new Error('Wrong saved binding')
-      setRevision(data.document.revision); setSavedAt(data.document.updatedAt)
+      if (generation.current !== run || liveScope.current !== scope) return
+      if (!data.document || data.document.applicationId !== applicationId || data.document.resultId !== review.resultId || data.document.jobSnapshotSha256 !== review.jobSnapshotSha256 || data.document.candidateSnapshotSha256 !== review.candidateSnapshotSha256 || data.document.revision !== revision + 1 || data.stale || data.freshnessUnavailable) throw new Error('Wrong saved binding')
+      setRevision(data.document.revision); setSavedAt(data.document.updatedAt); setRows(data.document.requirements)
       if (editVersion.current === edits) setDirty(false)
     } catch (cause: unknown) {
-      if (generation.current !== run) return
+      if (generation.current !== run || liveScope.current !== scope) return
       const code = (cause as { response?: { status?: number } }).response?.status
-      setError(code === 409 ? 'Dữ liệu đã thay đổi hoặc người khác vừa lưu. Nội dung của bạn vẫn ở đây; sao chép trước khi tải lại.' : 'Không lưu được. Kiểm tra câu hỏi/câu trả lời và thử lại; nội dung chưa bị xóa.')
-    } finally { if (generation.current === run) setSaving(false) }
+      setWriteConflict(true)
+      setError(code === 409 ? 'Dữ liệu đã thay đổi hoặc người khác vừa lưu. Nội dung của bạn vẫn ở đây; sao chép trước khi tải lại.' : 'Chưa xác nhận được kết quả lưu. Nội dung vẫn ở đây; tải lại trước khi tiếp tục.')
+    } finally { if (generation.current === run && liveScope.current === scope) { mutationLock.current = false; setSaving(false) } }
+  }
+  async function supportAction(action: SupportAction) {
+    if (mutationLock.current || dirty || writeConflict || stale || freshnessUnavailable || !reviewAvailable || !loaded || loading || loadedIdentity !== identity || !userId) return
+    const run = generation.current
+    mutationLock.current = true; setSaving(true); setError(''); setReadiness(null)
+    try {
+      const body = action.route === 'support-judgments' ? {
+        expectedRevision: revision, resultId: review.resultId, jobSnapshotSha256: review.jobSnapshotSha256,
+        candidateSnapshotSha256: review.candidateSnapshotSha256, targetVersion: supportTarget,
+        judgments: action.judgments.map(({ requirementId, label, evidenceIds, rationale, uncertain }) => ({ requirementId, label, evidenceIds, rationale, uncertain })),
+      } : action.route === 'support-review' ? { expectedRevision: revision, decision: action.decision, reason: action.reason } : { expectedRevision: revision, optIn: true }
+      const response = await apiClient.post(`/recruiter/applications/${applicationId}/review-workspace/${action.route}`, body, { _retry: true } as AxiosRequestConfig)
+      if (generation.current !== run || liveScope.current !== scope) return
+      if (action.route === 'support-export-readiness') {
+        const data = readinessSchema.parse(response.data).data
+        if (data.workspaceRevision !== revision) throw new Error('Wrong readiness revision')
+        setReadiness(data)
+      } else {
+        const data = envelopeSchema.parse(response.data).data
+        const doc = data.document
+        if (!doc || doc.applicationId !== applicationId || doc.resultId !== review.resultId || doc.jobSnapshotSha256 !== review.jobSnapshotSha256 || doc.candidateSnapshotSha256 !== review.candidateSnapshotSha256 || doc.revision !== revision + 1 || data.stale || data.freshnessUnavailable) throw new Error('Wrong feedback binding')
+        setRevision(doc.revision); setRows(doc.requirements); setQuestions(doc.questions); setStatus(doc.interviewStatus); setSavedAt(doc.updatedAt); setOldSources(doc.sourceRequirements); setSupportDirty(false)
+      }
+    } catch (cause: unknown) {
+      if (generation.current !== run || liveScope.current !== scope) return
+      const code = (cause as { response?: { status?: number } }).response?.status
+      setWriteConflict(true)
+      setError(code === 409 ? 'Dữ liệu đã thay đổi hoặc người khác vừa lưu. Bản nháp vẫn ở đây; sao chép trước khi tải lại.' : code === 403 ? 'Bạn chưa có quyền thực hiện hoặc cần một HR khác xem lại. Tải lại trước khi tiếp tục.' : 'Không xác nhận được kết quả lưu hoặc kiểm tra. Bản nháp vẫn ở đây; tải lại trước khi tiếp tục.')
+    } finally { if (generation.current === run && liveScope.current === scope) { mutationLock.current = false; setSaving(false) } }
   }
   function addQuestion(requirementId?: string, text?: string) {
     if (questions.length >= 30) return
     setQuestions(current => [...current, { id: crypto.randomUUID(), requirementId: requirementId ?? null,
       question: text ?? '', answer: '', note: '' }]); changed()
   }
-  if (loading) return <p role="status">Đang tải phiếu phỏng vấn…</p>
-  const blocked = stale || freshnessUnavailable || !reviewAvailable || !loaded
+  if (loading || loadedIdentity !== identity || !userId) return <p role="status">Đang tải phiếu phỏng vấn…</p>
+  const blocked = stale || freshnessUnavailable || !reviewAvailable || !loaded || writeConflict || !userId
   return <section className="hr-notebook" aria-label="Phiếu phỏng vấn">
     <header><h3>Chuẩn bị phỏng vấn</h3><p>Đọc CV bên cạnh, ghi nhanh điều cần hỏi. Không cần đánh giá từng yêu cầu.</p></header>
     {(freshnessUnavailable || !reviewAvailable) && <p role="alert">Chưa xác minh được độ mới của kết quả đối chiếu. Nội dung được giữ để đọc/in; tạm khóa chỉnh sửa và lưu.</p>}
-    {error && <div role="alert">{error} <button type="button" onClick={() => { if (!dirty) setAttempt(v => v + 1); else confirmAction('Tải lại sẽ bỏ nội dung chưa lưu. Tiếp tục?', () => setAttempt(v => v + 1)) }}>Tải lại bản đã lưu</button></div>}
-    {stale && <div role="alert"><p>Phiếu thuộc kết quả đối chiếu cũ. Nội dung vẫn được giữ để tham khảo.</p><button type="button" onClick={() => { confirmAction('Tạo phiếu cho kết quả mới? Bản cũ vẫn được giữ trong lịch sử.', () => { setRows([]); setQuestions([]); setStatus('DRAFT'); setOldSources(structuredClone(review.requirements)); setSaving(false); setStale(false); changed() }) }}>Tạo phiếu cho kết quả mới</button></div>}
-    <div className="hr-notebook__savebar"><span role="status">{saving ? 'Đang lưu…' : dirty ? 'Có thay đổi chưa lưu' : savedAt ? `Đã lưu lúc ${new Date(savedAt).toLocaleString('vi-VN')}` : 'Chưa có bản lưu'}</span><div><button type="button" disabled={saving || blocked || !dirty} onClick={() => void save()}>Lưu phiếu</button><button type="button" disabled={!loaded} onClick={printSheet}>In / lưu PDF</button></div></div>
+    {error && <div role="alert">{error} <button type="button" onClick={() => { if (!dirty && !supportDirty) setAttempt(v => v + 1); else confirmAction('Tải lại sẽ bỏ nội dung chưa lưu. Tiếp tục?', () => setAttempt(v => v + 1)) }}>Tải lại bản đã lưu</button></div>}
+    {stale && <div role="alert"><p>Phiếu thuộc kết quả đối chiếu cũ. Nội dung vẫn được giữ để tham khảo.</p><button type="button" onClick={() => { confirmAction('Tạo phiếu cho kết quả mới? Bản cũ vẫn được giữ trong lịch sử.', () => { setRows([]); setQuestions([]); setStatus('DRAFT'); setOldSources(structuredClone(review.requirements)); setSaving(false); setStale(false); setReadiness(null); setSupportDirty(false); setFeedbackEpoch(value => value + 1); changed() }) }}>Tạo phiếu cho kết quả mới</button></div>}
+    <div className="hr-notebook__savebar"><span role="status">{saving ? 'Đang lưu…' : dirty || supportDirty ? 'Có thay đổi chưa lưu' : savedAt ? `Đã lưu lúc ${new Date(savedAt).toLocaleString('vi-VN')}` : 'Chưa có bản lưu'}</span><div><button type="button" disabled={saving || blocked || supportDirty || !dirty} onClick={() => void save()}>Lưu phiếu</button><button type="button" disabled={!loaded} onClick={printSheet}>In / lưu PDF</button></div></div>
     {confirmation && <InterviewConfirmDialog message={confirmation.message} onCancel={() => setConfirmation(null)} onConfirm={() => { const action = confirmation.action; setConfirmation(null); action() }} />}
-    <fieldset disabled={blocked || saving} className="hr-notebook__fields">
+    <fieldset disabled={blocked || saving || supportDirty} className="hr-notebook__fields">
       <legend className="sr-only">Soạn câu hỏi phỏng vấn</legend>
       <div className="hr-notebook__templates"><strong>Thêm nhanh từ mẫu</strong><div>{templates.map(([label, text]) => <button key={label} type="button" disabled={questions.length >= 30} onClick={() => addQuestion(undefined, text)}>+ {label}</button>)}</div>
         <button type="button" aria-expanded={pickerOpen} onClick={() => setPickerOpen(value => !value)}>Hỏi theo yêu cầu JD {pickerOpen ? '−' : '+'}</button>
@@ -159,6 +222,7 @@ export function HrReviewNotebook({ applicationId, review, onLocate, reviewAvaila
       <button type="button" disabled={questions.length >= 30} onClick={() => addQuestion()}>+ Thêm câu hỏi riêng</button>
       <label>Trạng thái phiếu<select value={status} onChange={e => { setStatus(e.target.value as typeof status); changed() }}><option value="DRAFT">Đang chuẩn bị / bản nháp</option><option value="COMPLETED">Hoàn tất ghi nhận</option></select></label>
     </fieldset>
+    <HrSupportFeedback key={`${identity}:${revision}:${feedbackEpoch}`} sources={oldSources} rows={rows} userId={userId} revision={revision} disabled={blocked || saving || dirty} onDirty={setSupportDirty} onSubmit={supportAction} readiness={readiness} />
     {stale && questions.map(q => <article key={q.id}><h4>{q.question}</h4><p>{q.answer}</p><p>{q.note}</p></article>)}
   </section>
 }

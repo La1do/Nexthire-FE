@@ -18,7 +18,8 @@ function loadTs(file, mocks = {}) {
 }
 const { parseHrReviewEnvelope } = loadTs('src/types/hr-review.types.ts')
 const { ai1Copy } = loadTs('src/pages/RecruiterApplicationsPage/components/ai1/ai1Copy.ts')
-const { Ai1EvidenceView } = loadTs('src/pages/RecruiterApplicationsPage/components/ai1/Ai1EvidenceView.tsx')
+const evidenceDisplay = loadTs('src/pages/RecruiterApplicationsPage/components/ai1/evidenceDisplay.ts')
+const { Ai1EvidenceView } = loadTs('src/pages/RecruiterApplicationsPage/components/ai1/Ai1EvidenceView.tsx', { './evidenceDisplay': evidenceDisplay })
 const fixtures = JSON.parse(readFileSync(new URL('./fixtures/ai1-hr-review.synthetic.json', import.meta.url), 'utf8'))
 function parse(review) { return parseHrReviewEnvelope({ success: true, data: review }, review.applicationId, review.jobId) }
 function render(state, locale = 'vi', isMatching = false) {
@@ -48,6 +49,7 @@ test('reject out-of-range similarity, support assertion and corrupt component re
 })
 test('null support stays pending, quote/source exact, similarity never fit percent', () => {
   const review = parse(ready())
+  review.requirements[0].evidence = review.requirements[0].evidence.slice(0, 1)
   review.requirements[0].evidence[0].text = 'Used PostgreSQL.\nNo AWS experience. <script>alert(1)</script>'
   const html = render({ status: 'loaded', review })
   assert.ok(html.includes('Used PostgreSQL.\nNo AWS experience. &lt;script&gt;alert(1)&lt;/script&gt;'))
@@ -110,7 +112,8 @@ test('new copy preserves Unicode, source semantics and plan-unavailable evidence
   assert.equal(ai1Copy.ja.navigation, '求人要件')
   for (const locale of ['vi', 'en', 'ja']) for (const value of Object.values(ai1Copy[locale].sources)) assert.ok(!value.includes('?') && !value.includes('\ufffd'))
   for (const [source, evidenceId, expected] of [['project','uuid-opaque/technologies/2',ai1Copy.vi.sources.technology], ['unknown','opaque',ai1Copy.vi.sources.unknown]]) {
-    const value = ready(); Object.assign(value.requirements[0].evidence[0], {source, evidenceId})
+    const value = ready(); value.requirements[0].evidence = value.requirements[0].evidence.slice(0, 1)
+    Object.assign(value.requirements[0].evidence[0], {source, evidenceId})
     assert.ok(render({status:'loaded', review:parse(value)}).includes(expected))
   }
   const review = ready(); review.planStatus = 'UNAVAILABLE'
@@ -151,7 +154,8 @@ test('source paths and importance map without guessing unknown values in all loc
   const paths = [['profile/summary','summary'],['profile/headline','headline'],['skills/uuid','skill'],['experiences/0','experience'],['projects/0','project'],['projects/0/technologies/1','technology'],['educations/0','education'],['certifications/0','certification'],['opaque-uuid','unknown']]
   for (const locale of ['vi','en','ja']) {
     for (const [id,label] of paths) {
-      const review=ready(); Object.assign(review.requirements[0].evidence[0],{source:'FUTURE_SECTION',evidenceId:id})
+      const review=ready(); review.requirements[0].evidence = review.requirements[0].evidence.slice(0, 1)
+      Object.assign(review.requirements[0].evidence[0],{source:'FUTURE_SECTION',evidenceId:id})
       const html=render({status:'loaded',review:parse(review)},locale)
       assert.ok(html.includes(ai1Copy[locale].sources[label]))
     }
@@ -484,7 +488,7 @@ test('partial PDF location requires majority coverage in ordered substantial run
   assert.equal(findPartialPdfQuote('Objective: system design and database management.', quote).length, 0)
   assert.equal(findPartialPdfQuote('database management system design', 'system design').length, 0)
 })
-const { getBestSearchPhrase } = loadTs('src/pages/RecruiterApplicationsPage/components/ai1/Ai1EvidenceView.tsx')
+const { getBestSearchPhrase } = loadTs('src/pages/RecruiterApplicationsPage/components/ai1/Ai1EvidenceView.tsx', { './evidenceDisplay': evidenceDisplay })
 test('PDF exact quote normalization keeps specificity, Unicode and all occurrences', () => {
   const count = (text, quote) => findPdfTextMatches(text, quote).length
   assert.equal(count('Objective design. MSSQL (SQL Server)', 'MSSQL (SQL Server)'), 1)
@@ -553,4 +557,52 @@ test('PDF query is full returned span/quote, never requirement keyword or prefix
   assert.equal(getBestSearchPhrase(hit), 'MSSQL (SQL Server)')
   assert.equal(getBestSearchPhrase({ ...hit, relevantSpan: 'missing quote' }), hit.text)
   assert.equal(getBestSearchPhrase({ ...hit, relevantSpan: null }), hit.text)
+})
+
+test('opens the contextual work passage and preserves the original ranks', () => {
+  const review = ready()
+  const q = review.requirements[0]
+  q.text = 'Use Terraform to manage production AWS infrastructure.'
+  q.components = null
+  q.allOf = null
+  q.evidence = [
+    { evidenceId: 'skills/0', source: 'skill', text: 'Terraform', similarityScore: 92.5 },
+    { evidenceId: 'projects/0/technologies/0', source: 'project', text: 'AWS ECS', similarityScore: 90 },
+    { evidenceId: 'experiences/0', source: 'experience', text: 'Managed production AWS infrastructure with Terraform.', similarityScore: 76 },
+  ].map(hit => ({ ...hit, scoreMeaning: 'COSINE_RETRIEVAL_SIMILARITY_NOT_SUPPORT_PROBABILITY' }))
+  review.requirements = [q]
+  const html = render({ status: 'loaded', review: parse(review) }, 'en')
+  assert.match(html, /aria-pressed="true">Passage 3</)
+  assert.match(html, /<blockquote>Managed production AWS infrastructure with Terraform\.<\/blockquote>/)
+  assert.ok(html.includes('76.0 / 100') && html.includes('Passage 1') && html.includes('Passage 2'))
+  assert.ok(!html.includes(ai1Copy.en.contextNeeded))
+})
+
+test('prompts for context without automatically opening an unrelated quote', () => {
+  const review = ready()
+  const q = review.requirements[0]
+  q.text = 'Prepare and file state sales tax returns.'
+  q.evidence = [{ ...q.evidence[0], source: 'education', evidenceId: 'educations/0', text: 'Dental Assisting Diploma' }]
+  q.components = null
+  q.allOf = null
+  review.requirements = [q]
+  const html = render({ status: 'loaded', review: parse(review) }, 'en')
+  assert.ok(html.includes(ai1Copy.en.contextNeeded))
+  assert.match(html, /class="ai1-evidence__quote" hidden=""/)
+  assert.match(html, /aria-pressed="false">Passage 1</)
+  assert.ok(html.includes('Dental Assisting Diploma'))
+})
+
+test('a sandbox fragment is not prioritized and a leading limitation remains visible', () => {
+  const makeHit = (evidenceId, source, text, reasonCodes = []) => ({ evidenceId, source, text, reasonCodes, similarityScore: 85 })
+  const requirement = 'Use Terraform to manage production AWS infrastructure.'
+  const tag = makeHit('skills/0', 'skill', 'Terraform')
+  const limited = makeHit('experiences/0', 'experience', 'Never used Terraform to manage production AWS infrastructure.', ['EXPLICIT_NEGATION_CUE'])
+  const work = makeHit('experiences/1', 'experience', 'Managed production AWS infrastructure with Terraform.')
+  let result = evidenceDisplay.selectEvidencePreview([tag, limited], requirement)
+  assert.equal(result.index, 0)
+  assert.equal(result.needsContext, true)
+  result = evidenceDisplay.selectEvidencePreview([limited, work], requirement)
+  assert.equal(result.index, 0)
+  assert.equal(result.needsContext, true)
 })

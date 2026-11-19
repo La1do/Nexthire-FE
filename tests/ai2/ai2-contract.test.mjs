@@ -7,29 +7,45 @@ import { createRequire } from 'node:module'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 
+const require = createRequire(import.meta.url)
 const source = readFileSync(new URL('../../src/types/ai2-demo.types.ts', import.meta.url), 'utf8')
 const exports = {}
 vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports })
 const { parseAi2DemoEnvelope: parse } = exports
-const ready = () => ({ schemaVersion: 'ai2-demo-score-v1', applicationId: 'a', jobId: 'j',
+const currentCv = {
+  sourceFreshness: 'CURRENT_CV_REVALIDATED_AT_CHECK_TIME',
+  currentCvRevalidated: true,
+  sourceCheckedAt: '2026-10-18T10:00:00Z',
+}
+const ready = () => ({ ...currentCv, schemaVersion: 'ai2-demo-score-v1', applicationId: 'a', jobId: 'j',
   resultId: 'r', status: 'READY', score: -1.2, experimental: true,
   scoreMeaning: 'RELATIVE_RANKING_SCORE', rankingPosition: null, automaticallyReject: false,
   hiringDecision: null, attributionStatus: 'UNAVAILABLE', modelVersion: 'ai2-demo-xgb-observed-v1:5c0c5e3d4e81',
   jobSnapshotSha256: 'a'.repeat(64), candidateSnapshotSha256: 'b'.repeat(64), referenceDate: '2026-10-18' })
 const wrap = (data) => ({ success: true, data })
 const poolExports = {}
-vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../../src/types/ai2-pool.types.ts', import.meta.url), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: poolExports })
+vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../../src/types/ai2-pool.types.ts', import.meta.url), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, {
+  exports: poolExports,
+  require: id => id === './ai2-demo.types' ? exports : require(id),
+})
 test('pool parser rejects partial pools, foreign job and invalid order', () => {
   const base = { schemaVersion: 'ai2-demo-pool-v1', experimental: true, automaticallyReject: false,
-    hiringDecision: null, requestedCount: 2, comparedCount: 2, status: 'READY', jobId: 'j',
+    ...currentCv, hiringDecision: null, requestedCount: 2, comparedCount: 2, status: 'READY', jobId: 'j',
+    modelVersion: ready().modelVersion, jobSnapshotSha256: ready().jobSnapshotSha256, referenceDate: ready().referenceDate,
     items: [{ applicationId: 'a', rankingPosition: 1, resultId: 'ra' }, { applicationId: 'b', rankingPosition: 2, resultId: 'rb' }] }
   assert.equal(poolExports.parseAi2Pool(wrap(base), 'b', 'j').rank, 2)
   assert.throws(() => poolExports.parseAi2Pool(wrap(base), 'b', 'foreign'))
+  assert.throws(() => poolExports.parseAi2Pool(wrap({ ...base, currentCvRevalidated: false }), 'b', 'j'))
+  assert.throws(() => poolExports.parseAi2Pool(wrap({ ...base, sourceCheckedAt: '2026-02-30T00:00:00Z' }), 'b', 'j'))
+  assert.throws(() => poolExports.parseAi2Pool(wrap({ ...base, modelVersion: 'other' }), 'b', 'j'))
   assert.throws(() => poolExports.parseAi2Pool(wrap({ ...base, items: base.items.slice(0, 1) }), 'a', 'j'))
   assert.throws(() => poolExports.parseAi2Pool(wrap({ ...base, items: [{ applicationId: 'a', rankingPosition: 2 }, base.items[1]] }), 'a', 'j'))
 })
 const viewExports = {}
-vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../../src/pages/RecruiterApplicationsPage/components/ai2/Ai2DemoView.tsx', import.meta.url), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, { exports: viewExports, require: createRequire(import.meta.url) })
+vm.runInNewContext(ts.transpileModule(readFileSync(new URL('../../src/pages/RecruiterApplicationsPage/components/ai2/Ai2DemoView.tsx', import.meta.url), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, {
+  exports: viewExports,
+  require: id => id.endsWith('/ai2-demo.types') ? exports : require(id),
+})
 test('verified pool position renders without raw score', () => {
   const html = renderToStaticMarkup(React.createElement(viewExports.Ai2DemoView, { locale: 'vi', loading: false, failed: false,
     value: null, pool: { status: 'READY', count: 3, rank: 2 } }))
@@ -57,7 +73,9 @@ test('reject foreign identities, unsafe semantics and malformed metadata', () =>
     { score: Infinity }, { score: '1' }, { scoreMeaning: 'PERCENT_FIT' },
     { rankingPosition: 1 }, { automaticallyReject: true }, { modelVersion: 'other' },
     { jobSnapshotSha256: '' }, { referenceDate: '2026-02-30' }, { referenceDate: 'bad' },
-    { resultId: '' }, { attributionStatus: 'VERIFIED' }, { status: 'UNAVAILABLE' }]) {
+    { resultId: '' }, { attributionStatus: 'VERIFIED' }, { status: 'UNAVAILABLE' },
+    { currentCvRevalidated: false }, { sourceFreshness: 'STORED_MATCHING_SNAPSHOT_ONLY', currentCvRevalidated: false, sourceCheckedAt: undefined },
+    { sourceCheckedAt: '2026-02-30T00:00:00Z' }]) {
     assert.throws(() => parse(wrap({ ...ready(), ...mutation }), 'a', 'j'))
   }
 })
@@ -71,7 +89,7 @@ test('content-quality withholding never invents rank, fit percentage or support'
     assert.ok(!visible.includes('98.5') && !visible.includes('%'))
     assert.ok(!visible.includes('Suggested review position') && !visible.includes('Gợi ý xem thứ') && !visible.includes('確認順序：'))
     assert.ok(html.includes('98.5000') && !html.includes('<details open'))
-    assert.ok(visible.includes(locale === 'vi' ? 'Chất lượng đánh giá nội dung chưa được xác nhận' : locale === 'ja' ? '内容評価の品質が未確認' : 'Content assessment quality is not validated'))
+    assert.ok(visible.includes(locale === 'vi' ? 'Chất lượng đánh giá nội dung chưa được xác nhận' : locale === 'ja' ? '内容評価の品質が未確認' : 'Content assessment quality is unvalidated'))
   }
 })
 

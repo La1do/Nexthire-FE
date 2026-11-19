@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Search } from 'lucide-react'
 import type { HrEvidence, HrReview } from '../../../../types/hr-review.types'
 import type { Ai1Copy } from './ai1Copy'
+import { selectEvidencePreview } from './evidenceDisplay'
 import './ai1-evidence-panel.css'
 
 export type Ai1ViewState =
@@ -165,14 +166,16 @@ function Evidence({
   items,
   copy,
   requirementText,
+  contextual,
   onJumpToPdf,
 }: {
   items: HrEvidence[]
   copy: Ai1Copy
   requirementText?: string
+  contextual: boolean
   onJumpToPdf?: (payload: JumpToPdfPayload | string) => void
 }) {
-  const [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState<number | null>(null)
   if (!items || items.length === 0) {
     return <p className="ai1-evidence__no-evidence">{copy.noEvidence}</p>
   }
@@ -193,17 +196,23 @@ function Evidence({
     )
   }
 
-  const groups: Array<Array<{ hit: HrEvidence; rank: number }>> = []
-  visibleItems.forEach((hit, index) => {
-    const group = groups.find(group => group[0].hit.text === hit.text)
-    if (group) group.push({ hit, rank: index + 1 }); else groups.push([{ hit, rank: index + 1 }])
-  })
-  const group = groups[selected] ?? groups[0]
-  if (!group) return <p className="ai1-evidence__no-evidence">{copy.noEvidence}</p>
-  const hit = group[0].hit
+  const preview = contextual && requirementText
+    ? selectEvidencePreview(visibleItems, requirementText)
+    : { index: 0, needsContext: false }
 
-  const topHit = visibleItems[0]
-  const showSkillMatch = Boolean(topHit && isExactSkillMatch(topHit))
+  const groups: Array<Array<{ hit: HrEvidence; rank: number }>> = []
+  items.forEach((hit, index) => {
+    if (hasLexicalPenalty(hit)) return
+    const existing = groups.find(group => group[0].hit.text === hit.text)
+    if (existing) existing.push({ hit, rank: index + 1 })
+    else groups.push([{ hit, rank: index + 1 }])
+  })
+  const preferred = preview.index === null ? null : visibleItems[preview.index]
+  const preferredGroup = preferred === null ? null : groups.findIndex(group => group[0].hit.text === preferred.text)
+  const active = selected ?? preferredGroup
+  const group = groups[active ?? 0] ?? groups[0]
+  const hit = group[0].hit
+  const showSkillMatch = active !== null && isExactSkillMatch(hit)
   const tier = getRelevanceTier(hit.similarityScore)
   const relevanceText = getRelevanceLabel(hit.similarityScore, copy)
   const matchedKeywords = requirementText ? extractMatchingKeywords(hit.text, requirementText) : []
@@ -219,12 +228,13 @@ function Evidence({
       )}
       <h5>{copy.evidence}</h5>
       <p className="ai1-evidence__metadata">{copy.originNote}</p>
+      {preview.needsContext && <p className="ai1-evidence__notice">{copy.contextNeeded}</p>}
       <div className="ai1-evidence__passage-nav" aria-label={copy.evidence}>
         {groups.map((grp, index) => (
           <button
             type="button"
             key={grp[0].rank}
-            aria-pressed={selected === index}
+            aria-pressed={active === index}
             onClick={() => setSelected(index)}
           >
             {copy.passage} {grp.map(item => item.rank).join(' / ')}
@@ -237,6 +247,7 @@ function Evidence({
       <div
         className="ai1-evidence__quote"
         key={group[0].rank}
+        hidden={active === null}
       >
         <div className="ai1-evidence__quote-heading">
           <span className="ai1-evidence__source">
@@ -324,11 +335,13 @@ function Requirement({
   requirement,
   copy,
   index,
+  contextual,
   onJumpToPdf,
 }: {
   requirement: HrReview['requirements'][number]
   copy: Ai1Copy
   index: number
+  contextual: boolean
   onJumpToPdf?: (payload: JumpToPdfPayload | string) => void
 }) {
   const part = requirement.components?.length === 1 ? requirement.components[0] : null
@@ -356,7 +369,7 @@ function Requirement({
       {requirement.modelSuggestion !== null && <p className="ai1-evidence__proposal">{copy.proposal}: {copy[requirement.modelSuggestion]}</p>}
       {requirement.jointContextRequired && <p className="ai1-evidence__notice">{copy.joint}</p>}
       <Warnings codes={requirement.reasonCodes ?? []} copy={copy} />
-      <Evidence items={requirement.evidence} copy={copy} requirementText={requirement.text} onJumpToPdf={onJumpToPdf} />
+      <Evidence items={requirement.evidence} copy={copy} requirementText={requirement.text} contextual={contextual} onJumpToPdf={onJumpToPdf} />
       {wholeDuplicate && part && part.importance !== "unknown" && <p className="ai1-evidence__metadata">{copy.importance[part.importance as keyof Ai1Copy["importance"]] ?? copy.importance.unknown}</p>}
       <details className="ai1-evidence__provenance">
         <summary>{copy.technical}</summary>
@@ -394,7 +407,7 @@ function Requirement({
               {sameEvidence(compPart.evidence) ? (
                 compPart.evidence.length ? <p className="ai1-evidence__metadata">{copy.sharedEvidence}</p> : null
               ) : (
-                <Evidence items={compPart.evidence} copy={copy} requirementText={compPart.text} onJumpToPdf={onJumpToPdf} />
+                <Evidence items={compPart.evidence} copy={copy} requirementText={compPart.text} contextual={contextual} onJumpToPdf={onJumpToPdf} />
               )}
               <details className="ai1-evidence__provenance">
                 <summary>{copy.technical}</summary>
@@ -512,6 +525,7 @@ function Review({ review, copy, onJumpToPdf }: { review: HrReview; copy: Ai1Copy
               key={requirement.requirementId}
               requirement={requirement}
               index={selected}
+              contextual={review.assessmentSource === 'M1_RETRIEVAL'}
               copy={copy}
               onJumpToPdf={onJumpToPdf}
             />
