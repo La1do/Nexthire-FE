@@ -1,5 +1,6 @@
 export const ai1Copy = {
   vi: {
+    contextNeeded: 'Chưa chọn được đoạn có đủ ngữ cảnh. Hãy mở các đoạn đã truy hồi hoặc đối chiếu CV gốc.',
     sharedEvidence: 'Dùng các đoạn bằng chứng đã hiển thị ở trên.',
     cvSources: 'Nguồn trong CV', rank: 'Thứ tự gợi ý', unknownNotice: 'Có lưu ý cần kiểm tra', allGroups: 'Tất cả nhóm cần xét', oneOf: 'Một trong các ý', importance: { core: 'Cốt lõi', preferred: 'Ưu tiên', supplementary: 'Hỗ trợ', unknown: 'Chưa phân loại' },
     navigation: 'Yêu cầu JD', selected: 'Đang xem', passage: 'Đoạn', fullQuote: 'Đọc toàn bộ nội dung', technical: 'Dành cho kỹ thuật / Debug', how: 'Cách đọc kết quả', duplicate: 'Cùng nội dung tại', positions: 'vị trí', planUnavailable: 'Không tải được cấu trúc JD; vẫn xem bằng chứng',
@@ -40,6 +41,7 @@ export const ai1Copy = {
     },
   },
   en: {
+    contextNeeded: 'No passage could be prioritized with sufficient context. Open the retrieved passages or check the original CV.',
     sharedEvidence: 'Uses the evidence passages already shown above.',
     cvSources: 'Sources in the CV', rank: 'Suggestion order', unknownNotice: 'There is a note to check', allGroups: 'Consider all groups', oneOf: 'One of these items', importance: { core: 'Core', preferred: 'Preferred', supplementary: 'Supporting', unknown: 'Unclassified' },
     navigation: 'JD requirements', selected: 'Viewing', passage: 'Passage', fullQuote: 'Read full content', technical: 'Technical / Debug', how: 'How to read results', duplicate: 'Same text at', positions: 'locations', planUnavailable: 'Could not load the JD structure; evidence is still available',
@@ -80,6 +82,7 @@ export const ai1Copy = {
     },
   },
   ja: {
+    contextNeeded: '十分な文脈のある文章を優先できませんでした。取得した文章か元の履歴書を確認してください。',
     sharedEvidence: '上に表示した根拠文章を使用します。',
     cvSources: 'CV内の出典', rank: '候補の表示順', unknownNotice: '確認が必要な注意事項があります', allGroups: 'すべてのグループを検討', oneOf: '次の項目のいずれか', importance: { core: '中核', preferred: '優先', supplementary: '補助', unknown: '未分類' },
     navigation: '求人要件', selected: '表示中', passage: '文章', fullQuote: '内容全体を読む', technical: '技術詳細 / デバッグ', how: '結果の読み方', duplicate: '同一文章の出典数', positions: '件', planUnavailable: '求人構造を取得できません。根拠は引き続き確認できます',
