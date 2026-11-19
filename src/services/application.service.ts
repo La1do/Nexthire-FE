@@ -35,8 +35,8 @@ export const applicationService = {
     const response = await apiClient.get<Envelope<ApplicationCvDownloadResponse>>(`/applications/me/${id}/cv`)
     return response.data.data
   },
-  async getRecruiterApplications(params?: RecruiterApplicationQuery) {
-    const response = await apiClient.get<RecruiterApplicationListResponse>('/recruiter/applications', { params })
+  async getRecruiterApplications(params?: RecruiterApplicationQuery, signal?: AbortSignal) {
+    const response = await apiClient.get<RecruiterApplicationListResponse>('/recruiter/applications', { params, signal })
     return response.data
   },
   async getRecruiterCandidates(params?: RecruiterCandidateQuery) {

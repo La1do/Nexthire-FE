@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { applicationService } from '../../../../services/application.service'
 import type { ApplicationResponse } from '../../../../types/application.types'
+import { ai2FreshnessNotice, ai2ObservationWarning, ai2UnavailableReason, type Ai2SourceMetadata } from '../../../../types/ai2-demo.types'
 import { parseAi2Pool } from '../../../../types/ai2-pool.types'
 import './ai2-review-order.css'
+
+// The order uses two pool reads and paginated application reads within one deadline.
+const AI2_ORDER_TIMEOUT_MS = 65_000
 
 export type Ai2TableOrder = { applications: ApplicationResponse[]; ranks: Record<string, number> }
 type Props = {
@@ -12,14 +16,20 @@ type Props = {
 
 export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled, onApply, onReset }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'unavailable'>('idle')
+  const [freshness, setFreshness] = useState<Ai2SourceMetadata | null>(null)
+  const [planV2, setPlanV2] = useState(false)
+  const [reason, setReason] = useState<string | undefined>()
   const request = useRef<AbortController | null>(null)
   const vi = locale === 'vi'
-  useEffect(() => () => { request.current?.abort() }, [])
+  useEffect(() => {
+    request.current?.abort(); request.current = null; setStatus('idle'); setReason(undefined); setPlanV2(false); setFreshness(null)
+    return () => { request.current?.abort(); request.current = null }
+  }, [applicationId, jobId])
 
   function reset() {
     request.current?.abort()
     request.current = null
-    setStatus('idle')
+    setStatus('idle'); setReason(undefined); setPlanV2(false); setFreshness(null)
     onReset()
   }
 
@@ -31,21 +41,25 @@ export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled
     const timer = window.setTimeout(() => {
       controller.abort()
       if (request.current === controller) { request.current = null; onReset(); setStatus('unavailable') }
-    }, 20000)
+    }, AI2_ORDER_TIMEOUT_MS)
     try {
       const payload = await applicationService.getRecruiterApplicationAi2Pool(applicationId, controller.signal)
       const pool = parseAi2Pool(payload, applicationId, jobId)
-      if (pool.status !== 'READY' || pool.rank === null) throw new Error('Pool not comparable')
+      if (request.current === controller) { setPlanV2(pool.planSchemaVersion === 'jd-source-query-v2'); setFreshness(pool) }
+      if (pool.status !== 'READY' || pool.rank === null) {
+        if (request.current === controller) setReason(pool.reason)
+        throw new Error('Pool not comparable')
+      }
       const data = (payload as { data: { items: Array<{ applicationId: string; candidateId: string; candidateCvId: string; rankingPosition: number }> } }).data
       // Load the complete authorized job list, never reorder just the current server page.
       // Bound reads; a larger or changing list fails closed rather than displaying a partial order.
-      const first = await applicationService.getRecruiterApplications({ jobId, limit: 100, page: 1, sortBy: 'submittedAt', sortOrder: 'desc' })
+      const first = await applicationService.getRecruiterApplications({ jobId, limit: 100, page: 1, sortBy: 'submittedAt', sortOrder: 'desc' }, controller.signal)
       if (first.meta.page !== 1 || !Number.isInteger(first.meta.total) || first.meta.total < 0 || !Number.isInteger(first.meta.limit) || first.meta.limit < 1 ||
         !Number.isInteger(first.meta.totalPages) || first.meta.totalPages < 1 || first.meta.totalPages > 10) throw new Error('Scope too large')
       const applications = [...first.data]
       for (let page = 2; page <= first.meta.totalPages; page++) {
         controller.signal.throwIfAborted()
-        const next = await applicationService.getRecruiterApplications({ jobId, limit: 100, page, sortBy: 'submittedAt', sortOrder: 'desc' })
+        const next = await applicationService.getRecruiterApplications({ jobId, limit: 100, page, sortBy: 'submittedAt', sortOrder: 'desc' }, controller.signal)
         if (next.meta.total !== first.meta.total || next.meta.totalPages !== first.meta.totalPages || next.meta.page !== page) throw new Error('Scope changed')
         applications.push(...next.data)
       }
@@ -62,13 +76,21 @@ export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled
         ranks[app.id] = item.rankingPosition
       }
       const latest = await applicationService.getRecruiterApplicationAi2Pool(applicationId, controller.signal)
-      parseAi2Pool(latest, applicationId, jobId)
-      if (JSON.stringify((latest as { data: unknown }).data) !== JSON.stringify((payload as { data: unknown }).data)) throw new Error('Pool changed during loading')
+      const latestPool = parseAi2Pool(latest, applicationId, jobId)
+      if (latestPool.status !== 'READY' || latestPool.currentCvRevalidated !== true) {
+        if (request.current === controller) { setReason(latestPool.reason); setFreshness(latestPool) }
+        throw new Error('Current CV revalidation failed during loading')
+      }
+      const initialBinding = { ...(payload as { data: Record<string, unknown> }).data }
+      const latestBinding = { ...(latest as { data: Record<string, unknown> }).data }
+      // Every identity/model/plan/rank field remains compared; only independent check time may advance.
+      delete initialBinding.sourceCheckedAt; delete latestBinding.sourceCheckedAt
+      if (JSON.stringify(latestBinding) !== JSON.stringify(initialBinding)) throw new Error('Pool changed during loading')
       controller.signal.throwIfAborted()
       // Equal positions preserve the normal newest-first order, not an invented tie-break score.
       applications.sort((a, b) => (ranks[a.id] ?? Infinity) - (ranks[b.id] ?? Infinity) ||
         Date.parse(b.submittedAt) - Date.parse(a.submittedAt) || a.id.localeCompare(b.id))
-      if (request.current === controller) { onApply({ applications, ranks }); setStatus('idle') }
+      if (request.current === controller) { setFreshness(latestPool); onApply({ applications, ranks }); setStatus('idle') }
     } catch {
       if (request.current === controller) { onReset(); setStatus('unavailable') }
     } finally {
@@ -84,9 +106,11 @@ export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled
       {(applied || status === 'loading') && <button type="button" onClick={reset}>{vi ? 'Về thứ tự thường' : 'Restore normal order'}</button>}
     </div>
     <p role="note">{vi ? 'Model chưa được xác nhận chất lượng. Chỉ đổi thứ tự hiển thị trong bảng để kiểm thử; không phải độ phù hợp hay quyết định tuyển/loại.' : 'Model quality is unvalidated. Changes table display order for testing only; not suitability or a hiring/rejection decision.'}</p>
+    <p>{ai2FreshnessNotice(freshness, locale)}</p>
+    {planV2 && <p>{ai2ObservationWarning(locale)}</p>}
     {disabled ? <p>{vi ? 'Chọn một tin, bỏ tìm kiếm/bộ lọc trạng thái và chờ matching hoàn tất để so sánh toàn bộ nhóm.' : 'Select one job, clear search/status filters and wait for matching to finish to compare the complete group.'}</p> : null}
     {status === 'loading' ? <p role="status">{vi ? 'Đang kiểm tra toàn bộ nhóm hồ sơ…' : 'Checking the complete application group…'}</p> : null}
-    {status === 'unavailable' ? <p role="status">{vi ? 'Chưa thể so sánh toàn bộ nhóm. Đã giữ lại thứ tự thường.' : 'The complete group cannot be compared. Normal order is restored.'}</p> : null}
+    {status === 'unavailable' ? <p role="status">{ai2UnavailableReason(reason, locale) ?? (vi ? 'Chưa thể so sánh toàn bộ nhóm. Đã giữ lại thứ tự thường.' : locale === 'ja' ? 'グループ全体を比較できないため、通常の順序を維持します。' : 'The complete group cannot be compared. Normal order is restored.')}</p> : null}
     {applied ? <p role="status">{vi ? 'Đã áp dụng cho toàn bộ tin: hồ sơ đang hoạt động trước, hồ sơ đã đóng sau. Đồng hạng giữ thứ tự mới nhất. Tải lại sau khi dữ liệu thay đổi.' : 'Applied across this job: active applications first, closed applications afterward. Ties keep newest order. Refresh after data changes.'}</p> : null}
   </section>
 }
