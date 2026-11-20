@@ -55,10 +55,12 @@ test('READY loads both server pages before applying eight identities; equal posi
   assert.equal(mounted.applied[0].ranks['app-6'], 1)
   mounted.unmount()
 })
-test('missing authorized rows and unavailable pools never apply a partial order', async () => {
+test('missing authorized rows and disabled or unavailable pools never apply an AI2 order', async () => {
   for (const overrides of [
     { async getRecruiterApplications() { return { data: apps.slice(0, 6), meta: { total: 8, totalPages: 1, page: 1, limit: 100 } } } },
-    { async getRecruiterJobApplicationRankings() { return { ...pool(), data: { ...pool().data, status: 'UNAVAILABLE', items: [], comparedCount: 0 } } } },
+    ...['DISABLED', 'UNAVAILABLE'].map(status => ({
+      async getRecruiterJobApplicationRankings() { return { ...pool(), data: { ...pool().data, status, items: [], comparedCount: 0 } } },
+    })),
   ]) {
     const mounted = mount(overrides); mounted.apply(); await tick()
     assert.equal(mounted.applied.length, 0); assert.ok(mounted.resets.length >= 2); mounted.unmount()

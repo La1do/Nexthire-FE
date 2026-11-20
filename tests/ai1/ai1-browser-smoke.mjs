@@ -40,7 +40,7 @@ async function wait(expression) {
 let checks = 0
 function passed() { checks++ }
 try {
-  server = await createServer({ define: { 'import.meta.env.VITE_AI2_DEMO_ENABLED': JSON.stringify('false') }, server: { host: '127.0.0.1', port: 0 }, plugins: [{
+  server = await createServer({ envDir: false, define: { 'import.meta.env.DEV': 'false' }, server: { host: '127.0.0.1', port: 0 }, plugins: [{
     name: 'ai1-test-html', configureServer(server) {
       server.middlewares.use('/__ai1-ui-test__', async (_req, res) => {
         res.setHeader('Content-Type', 'text/html')
@@ -138,7 +138,7 @@ try {
   assert.ok(desktop.sideBySide && desktop.detailWidth > desktop.navWidth)
   assert.equal(desktop.active, 1); assert.equal(desktop.innerScrollers, 0)
   assert.ok(desktop.quoteTop < 650 && desktop.quoteBottom < 900, 'Initial quote must be fully visible')
-  const screenshotDir = resolve('node_modules/.tmp')
+  const screenshotDir = profile
   async function screenshot(name) {
     const {data} = await cdp('Page.captureScreenshot', {format: 'png', captureBeyondViewport: false})
     const path = join(screenshotDir, name); writeFileSync(path, Buffer.from(data, 'base64')); return path
@@ -192,7 +192,7 @@ try {
   assert.equal(await evaluate('window.ai1Harness.calls.length'), beforeAi2)
   assert.equal(await evaluate("document.querySelector('[data-ai2-off]').textContent"), ''); passed()
   await evaluate("window.ai1Harness.ai2('withheld')")
-  await wait("document.querySelector('[data-ai2-withheld]')?.innerText.includes('Content assessment quality is not validated')")
+  await wait("document.querySelector('[data-ai2-withheld]')?.innerText.includes('Content assessment quality is unvalidated')")
   assert.ok(await evaluate(`(() => {
     const panel = document.querySelector('[data-ai2-withheld]');
     const visible = panel.innerText;

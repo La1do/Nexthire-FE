@@ -25,7 +25,7 @@ export function Ai2DemoPanel({ applicationId, jobId, updatedAt, isMatching }: Pr
   const { locale } = useLocale()
   const identity = `${applicationId}:${jobId}:${updatedAt}:${isMatching}`
   const [state, setState] = useState<State | null>(null)
-  const enabled = import.meta.env.DEV && import.meta.env.VITE_AI2_DEMO_ENABLED === 'true'
+  const enabled = import.meta.env.DEV
 
   useEffect(() => {
     if (!enabled || isMatching) return

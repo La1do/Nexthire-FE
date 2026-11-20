@@ -25,6 +25,7 @@ apiClient.defaults.adapter = (config) => new Promise((resolve, reject) => {
   review.applicationId = appId
   review.jobId = 'synthetic-job'
   review.requirements[0].evidence[0].text = `EXACT QUOTE ${appId}\nNo AWS experience. <script>window.injected=true</script>`
+  review.requirements[0].evidence[0].reasonCodes = ['EXPLICIT_NEGATION_CUE']
   if (capturedMode === 'unavailable' || capturedMode === 'disabled') {
     review.assessmentStatus = capturedMode === 'disabled' ? 'NOT_PERFORMED' : 'UNAVAILABLE'
     review.requirements = []
@@ -33,8 +34,8 @@ apiClient.defaults.adapter = (config) => new Promise((resolve, reject) => {
     const names = ['Node.js', 'TypeScript', 'REST API', 'PostgreSQL', 'Git', 'Xây dựng REST API với Node.js và TypeScript', 'Thiết kế và truy vấn cơ sở dữ liệu', 'Xác thực và phân quyền', 'Cộng tác nhóm với Git', 'Triển khai dịch vụ trên AWS']
     review.requirements = names.map((text, index) => {
       const q = structuredClone(base.requirements[0]); q.requirementId = `synthetic-req-${index}`; q.text = text
-      q.evidence = q.evidence.map((hit, rank) => ({ ...hit, evidenceId: `synthetic-${index}/${rank}`, text: rank === 0 ? `SYNTHETIC QUOTE ${index + 1}. ` + 'Built and maintained API endpoints for a fictional internal service. Reviewed request validation, database queries and access rules with the team. '.repeat(8) : 'TypeScript', reasonCodes: rank === 2 ? ['EXPLICIT_NEGATION_CUE'] : [] }))
-      q.evidence[0].source = 'profile'; q.evidence[0].evidenceId = 'profile/summary'
+      q.evidence = q.evidence.map((hit, rank) => ({ ...hit, evidenceId: `synthetic-${index}/${rank}`, text: rank === 0 ? `SYNTHETIC QUOTE ${index + 1}. Built and maintained ${text} for a fictional internal service. ` + 'Reviewed request validation, database queries and access rules with the team. '.repeat(16) : 'TypeScript', reasonCodes: rank === 2 ? ['EXPLICIT_NEGATION_CUE'] : [] }))
+      q.evidence[0].source = 'experience'; q.evidence[0].evidenceId = 'experiences/0'
       q.evidence[1].source = 'skill'; q.evidence[2].source = 'project'; q.evidence[2].evidenceId = `uuid-${index}/technologies/0`
       q.evidence[2].similarityScore = 72.5
       q.components = null; q.allOf = null; q.componentAnalysis = 'NOT_PERFORMED'; q.jointContextRequired = false
@@ -55,7 +56,6 @@ apiClient.defaults.adapter = (config) => new Promise((resolve, reject) => {
   if (capturedMode === 'invalid') review.applicationId = 'foreign'
   if (capturedMode === 'warning') {
     review.retrievalWarnings = ['M1_CONTEXT_TRUNCATED']
-    review.requirements[0].evidence[0].reasonCodes = ['EXPLICIT_NEGATION_CUE']
   }
   setTimeout(() => {
     const response = { config, status: 200, statusText: 'OK', headers: {}, data: { success: true, data: capturedMode === 'null' ? null : review } }

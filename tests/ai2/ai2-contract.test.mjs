@@ -93,9 +93,9 @@ test('content-quality withholding never invents rank, fit percentage or support'
   }
 })
 
-test('AI2 stays development-only, explicitly opt-in, and binds ready pool to the current score result', () => {
+test('AI2 loads by default in development and binds ready pool to the current score result', () => {
   const panel = readFileSync(new URL('../../src/pages/RecruiterApplicationsPage/components/ai2/Ai2DemoPanel.tsx', import.meta.url), 'utf8')
-  assert.ok(panel.includes("import.meta.env.DEV && import.meta.env.VITE_AI2_DEMO_ENABLED === 'true'"))
+  assert.match(panel, /const enabled = import\.meta\.env\.DEV\s*\n/)
   assert.ok(panel.includes('if (!enabled || isMatching) return'))
   assert.ok(panel.includes('if (!enabled) return null'))
   assert.ok(panel.includes("value.status !== 'READY' || pool.resultId !== value.resultId"))

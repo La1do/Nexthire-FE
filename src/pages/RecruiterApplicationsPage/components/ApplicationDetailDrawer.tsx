@@ -488,7 +488,18 @@ export function ApplicationDetailDrawer({
               ) : <p className="ai1-evidence__notice">Phiếu theo yêu cầu JD sẽ sẵn sàng khi có kết quả đối chiếu. Bạn vẫn có thể xem CV và yêu cầu tuyển dụng.</p>}
             </div>
             <div className="recruiter-review-tab-content" hidden={reviewTab !== 'profile'}>
-            <details><summary>Gợi ý thứ tự xem hồ sơ · thử nghiệm</summary><Ai2DemoPanel key={`ai2:${application.id}`} applicationId={application.id} jobId={application.jobId} updatedAt={application.updatedAt} isMatching={isMatching} /></details>
+            {reviewTab === 'profile' && (
+              <details>
+                <summary>Gợi ý thứ tự xem hồ sơ · thử nghiệm</summary>
+                <Ai2DemoPanel
+                  key={`ai2:${application.id}`}
+                  applicationId={application.id}
+                  jobId={application.jobId}
+                  updatedAt={application.updatedAt}
+                  isMatching={isMatching}
+                />
+              </details>
+            )}
             <section className="recruiter-application-detail-card recruiter-application-detail-card--identity">
               <div className="recruiter-application-detail-card__candidate">
                 <span aria-hidden="true" className="recruiter-applications-avatar">

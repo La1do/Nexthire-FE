@@ -147,7 +147,7 @@ export function RecruiterApplicationsPage() {
   const [ai2Revision, setAi2Revision] = useState(0)
   const listRequest = useRef(0)
   const ai2Scope = JSON.stringify([criteria.jobId, criteria.query, criteria.status, criteria.sort, ai2Revision])
-  const ai2Enabled = import.meta.env.DEV && import.meta.env.VITE_AI2_DEMO_ENABLED === 'true'
+  const ai2Enabled = import.meta.env.DEV
   const ai2Disabled = criteria.jobId === 'all' || !!criteria.query.trim() || criteria.status !== 'all' || matchingApplicationIds.size > 0 || statusUpdatingIds.size > 0
   const activeAi2Order = ai2Enabled && !ai2Disabled && ai2Order?.scope === ai2Scope ? ai2Order : null
   const resetAi2Order = useCallback(() => setAi2Order(null), [])

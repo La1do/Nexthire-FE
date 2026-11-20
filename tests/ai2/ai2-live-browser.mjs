@@ -34,7 +34,7 @@ async function wait(expression) {
   throw new Error('Panel did not reach expected state')
 }
 try {
-  server = await createServer({ define: { 'import.meta.env.VITE_AI2_DEMO_ENABLED': JSON.stringify(config.frontendEnabled === false ? 'false' : 'true') }, server: { host: '127.0.0.1', port: 15173, strictPort: true }, plugins: [{
+  server = await createServer({ envDir: false, define: { 'import.meta.env.DEV': JSON.stringify(config.frontendEnabled !== false) }, server: { host: '127.0.0.1', port: 15173, strictPort: true }, plugins: [{
     name: 'ai2-live-entry', configureServer(vite) {
       vite.middlewares.use('/__ai2-live__', async (_req, res) => {
         res.setHeader('Content-Type', 'text/html')
@@ -57,7 +57,7 @@ try {
   let ai2Requests = 0
   socket.addEventListener('message', ({ data }) => {
     const message = JSON.parse(data)
-    if (message.method === 'Network.requestWillBeSent' && /\/ranking-score(?:\?|$)/.test(message.params.request.url)) ai2Requests++
+    if (message.method === 'Network.requestWillBeSent' && /\/(ranking-score|application-rankings)(?:\?|$)/.test(message.params.request.url)) ai2Requests++
   })
   await cdp('Runtime.enable'); await cdp('Page.enable'); await cdp('Network.enable')
   // JWT remains in renderer memory; no browser auth storage or exported state.
@@ -66,16 +66,15 @@ try {
   if (config.frontendEnabled === false) {
     await wait("document.body.innerText.includes('Local AI2 E2E')")
     await delay(800)
-    assert.equal(await evaluate("document.querySelector('[aria-label=\"AI2 experimental\"]') === null"), true)
-    assert.equal(ai2Requests, 0, 'Default-off UI must make no AI2 request')
+    assert.equal(await evaluate("document.querySelector('section[aria-live=\"polite\"]') === null"), true)
+    assert.equal(ai2Requests, 0, 'Production UI must make no AI2 request')
   } else {
-  await wait("document.querySelector('[aria-label=\"AI2 experimental\"]') && !document.body.innerText.includes('Waiting for matching data') && !document.body.innerText.includes('Đang chờ dữ liệu')")
-  const text = await evaluate('document.body.innerText')
-  assert.ok(!text.includes('Experimental score unavailable.') && !text.includes('Không thể đọc điểm thử nghiệm.'))
-  if (config.expectedStatus === 'READY') assert.ok(text.includes('Relative ranking score') || text.includes('Điểm ranking tương đối'))
-  else assert.ok(text.includes('No compatible stored inputs') || text.includes('Chưa có dữ liệu tương thích'))
-  assert.ok(text.includes('not AI2 model attribution') || text.includes('không phải giải thích đóng góp'))
-  assert.ok(ai2Requests >= 1, 'Opt-in panel must call live API')
+    await wait("document.querySelector('section[aria-live=\"polite\"][aria-busy=\"false\"]')")
+    const text = await evaluate('document.body.innerText')
+    assert.doesNotMatch(text, /Suggestions could not be loaded|Ch\u01b0a th\u1ec3 t\u1ea3i g\u1ee3i \u00fd/)
+    const hasScore = await evaluate("document.querySelector('section[aria-live=\"polite\"] details') !== null")
+    if (config.expectedStatus) assert.equal(hasScore, config.expectedStatus === 'READY')
+    assert.equal(ai2Requests, 2, 'Development panel must read both score and order')
   }
   assert.equal(errors.length, 0)
   const shot = await cdp('Page.captureScreenshot', { format: 'png' })
