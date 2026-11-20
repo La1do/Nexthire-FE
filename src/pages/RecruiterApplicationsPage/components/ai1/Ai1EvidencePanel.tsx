@@ -31,7 +31,7 @@ export function Ai1EvidencePanel({ applicationId, jobId, isMatching, updatedAt, 
     let active = true
     const publish = (state: Ai1ViewState) => { if (active) setResult({ identity, state }) }
     publish({ status: 'loading' })
-    applicationService.getRecruiterApplicationHrReview(applicationId, controller.signal)
+    applicationService.getRecruiterApplicationMatchingEvidence(applicationId, controller.signal)
       .then((payload) => {
         try {
           const review = parseHrReviewEnvelope(payload, applicationId, jobId)

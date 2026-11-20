@@ -283,7 +283,7 @@ test('left navigation categorizes into has-evidence and need-review, right side 
 })
 
 const { findSkillOccurrence, createLatestRequestGuard, ApplicationReviewWorkspace } = loadTs('src/pages/RecruiterApplicationsPage/components/ApplicationReviewWorkspace.tsx', {
-  '../../../services/application.service': { applicationService: { getRecruiterApplicationCv: async () => ({}), getRecruiterApplicationHrReview: async () => ({}) } },
+  '../../../services/application.service': { applicationService: { getRecruiterApplicationCv: async () => ({}), getRecruiterApplicationMatchingEvidence: async () => ({}) } },
   '../../../services/job.service': { jobService: { getRecruiterJobById: async () => ({}) } },
   '../../../lib/api/apiError': { getApiErrorEnvelope: () => null },
   '../../../types/hr-review.types': { parseHrReviewEnvelope },

@@ -34,7 +34,8 @@ async function wait(expression) {
     if (await evaluate(expression)) return
     await sleep(100)
   }
-  throw new Error(`UI did not reach expected state: ${expression}`)
+  const state = await evaluate("({ text: document.body.innerText.slice(0, 1400), calls: window.ai1Harness?.calls })")
+  throw new Error(`UI did not reach expected state: ${expression}. ${JSON.stringify({ state, failures })}`)
 }
 let checks = 0
 function passed() { checks++ }
@@ -70,7 +71,7 @@ try {
   await cdp('Runtime.enable'); await cdp('Network.enable'); await cdp('Page.enable')
   await cdp('Page.navigate', { url: `${origin}/__ai1-ui-test__` })
   await wait("document.body.innerText.includes('EXACT QUOTE synthetic-a')")
-  assert.equal(await evaluate("window.ai1Harness.calls[0].url"), '/recruiter/applications/synthetic-a/hr-review')
+  assert.equal(await evaluate("window.ai1Harness.calls[0].url"), '/recruiter/applications/synthetic-a/matching-evidence')
   assert.equal(await evaluate("window.ai1Harness.calls[0].method"), 'get'); passed()
   assert.equal(await evaluate("document.querySelector('blockquote').textContent"), 'EXACT QUOTE synthetic-a\nNo AWS experience. <script>window.injected=true</script>')
   assert.equal(await evaluate('window.injected === true'), false); passed()

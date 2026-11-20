@@ -55,25 +55,25 @@ export const applicationService = {
     const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/matching-status`, { signal })
     return response.data
   },
-  async getRecruiterApplicationAi2Demo(id: string, signal?: AbortSignal): Promise<unknown> {
-    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/ai2-demo`, { signal })
+  async getRecruiterApplicationRankingScore(id: string, signal?: AbortSignal): Promise<unknown> {
+    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/ranking-score`, { signal })
     return response.data
   },
-  async getRecruiterApplicationAi2Pool(id: string, signal?: AbortSignal): Promise<unknown> {
-    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/ai2-pool`, { signal })
+  async getRecruiterJobApplicationRankings(jobId: string, signal?: AbortSignal): Promise<unknown> {
+    const response = await apiClient.get<unknown>(`/recruiter/jobs/${encodeURIComponent(jobId)}/application-rankings`, { signal })
     return response.data
   },
-  async getRecruiterApplicationHrReview(id: string, signal?: AbortSignal): Promise<unknown> {
-    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/hr-review`, { signal })
+  async getRecruiterApplicationMatchingEvidence(id: string, signal?: AbortSignal): Promise<unknown> {
+    const response = await apiClient.get<unknown>(`/recruiter/applications/${encodeURIComponent(id)}/matching-evidence`, { signal })
     return response.data
   },
   async getRecruiterApplicationCv(id: string) {
     const response = await apiClient.get<Envelope<ApplicationCvDownloadResponse>>(`/recruiter/applications/${id}/cv`)
     return response.data.data
   },
-  async runRecruiterApplicationMatch(id: string, signal?: AbortSignal) {
+  async requestRecruiterApplicationMatching(id: string, signal?: AbortSignal) {
     const response = await apiClient.post<Envelope<RecruiterApplicationMatchResponse>>(
-      `/recruiter/applications/${id}/match`,
+      `/recruiter/applications/${encodeURIComponent(id)}/matching-requests`,
       undefined,
       { signal },
     )

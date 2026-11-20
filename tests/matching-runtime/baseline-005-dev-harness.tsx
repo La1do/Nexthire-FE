@@ -28,7 +28,7 @@ apiClient.defaults.adapter = async config => {
   let data: unknown = null, meta: unknown
   const response = { config, status: 200, statusText: 'OK', headers: {}, data: {} as unknown }
   const fail = (status: number) => { throw new AxiosError('Synthetic failure', 'ERR_BAD_RESPONSE', config, undefined, { ...response, status }) }
-  if (url.endsWith('/match')) {
+  if (url.endsWith('/matching-requests')) {
     posted = true
     data = { applicationId: app.id, id: mode.startsWith('parse') ? null : 'new-request', status: mode.startsWith('parse') ? 'WAITING_FOR_CV_PARSE' : mode === 'processing' ? 'PROCESSING' : 'PENDING' }
   } else if (url.endsWith('/matching-status')) {
@@ -45,7 +45,7 @@ apiClient.defaults.adapter = async config => {
     data = [app]; meta = { page: 1, total: 1, totalPages: 1, limit: 6 }
   } else if (url === '/recruiter/jobs') {
     data = [{ id: app.jobId, title: app.jobTitle }]; meta = { page: 1, total: 1, totalPages: 1, limit: 100 }
-  } else if (url.endsWith('/hr-review')) {
+  } else if (url.endsWith('/matching-evidence')) {
     data = null
   } else if (url === '/recruiter/applications/app-005') {
     if (posted) detailReads++

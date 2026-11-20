@@ -2,13 +2,13 @@ import { AI2_DEMO_MODEL, ai2UnavailableReason, parseAi2SourceMetadata, validAi2R
 
 export type Ai2Pool = Ai2SourceMetadata & { modelVersion?: string; referenceDate?: string; jobSnapshotSha256?: string; status: 'READY' | 'DISABLED' | 'UNAVAILABLE'; count: number; rank: number | null; resultId?: string; reason?: string }
 
-export function parseAi2Pool(payload: unknown, applicationId: string, jobId: string): Ai2Pool {
+export function parseAi2Pool(payload: unknown, applicationId: string | null, jobId: string): Ai2Pool {
   const envelope = payload as { success?: unknown; data?: Record<string, unknown> }
   const data = envelope?.data
   if (envelope?.success !== true || !data || data.schemaVersion !== 'ai2-demo-pool-v1' ||
     data.experimental !== true || data.automaticallyReject !== false || data.hiringDecision !== null ||
     !Array.isArray(data.items) || !Number.isInteger(data.requestedCount) ||
-    (data.requestedCount as number) < 1 || (data.requestedCount as number) > 50) throw new Error('Invalid pool')
+    (data.requestedCount as number) < 0 || (data.requestedCount as number) > 50) throw new Error('Invalid pool')
   const metadata = parseAi2SourceMetadata(data)
   if (data.status === 'DISABLED' || data.status === 'UNAVAILABLE') {
     if (data.items.length || data.comparedCount !== 0) throw new Error('Partial pool forbidden')

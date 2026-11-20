@@ -57,7 +57,7 @@ try {
   let ai2Requests = 0
   socket.addEventListener('message', ({ data }) => {
     const message = JSON.parse(data)
-    if (message.method === 'Network.requestWillBeSent' && /\/ai2-demo(?:\?|$)/.test(message.params.request.url)) ai2Requests++
+    if (message.method === 'Network.requestWillBeSent' && /\/ranking-score(?:\?|$)/.test(message.params.request.url)) ai2Requests++
   })
   await cdp('Runtime.enable'); await cdp('Page.enable'); await cdp('Network.enable')
   // JWT remains in renderer memory; no browser auth storage or exported state.

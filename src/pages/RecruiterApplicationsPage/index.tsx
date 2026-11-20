@@ -505,7 +505,7 @@ export function RecruiterApplicationsPage() {
         candidateCvId: current.candidateCvId,
       }
       const request = validateMatchRequest(
-        await applicationService.runRecruiterApplicationMatch(application.id, session.signal),
+        await applicationService.requestRecruiterApplicationMatching(application.id, session.signal),
         application.id,
       )
       session.signal.throwIfAborted()
@@ -631,8 +631,8 @@ export function RecruiterApplicationsPage() {
       />
 
       {ai2Enabled && criteria.jobId !== 'all' ? (
-        <Ai2ReviewOrder key={`${ai2Scope}:${ai2Disabled}`} applicationId={applications.find(app => app.jobId === criteria.jobId && (app.status === 'SUBMITTED' || app.status === 'OFFERED'))?.id ?? ''}
-          jobId={criteria.jobId} locale={locale} applied={!!activeAi2Order} disabled={ai2Disabled || isLoading || !applications.some(app => app.jobId === criteria.jobId && (app.status === 'SUBMITTED' || app.status === 'OFFERED'))}
+        <Ai2ReviewOrder key={`${ai2Scope}:${ai2Disabled}`}
+          jobId={criteria.jobId} locale={locale} applied={!!activeAi2Order} disabled={ai2Disabled || isLoading}
           onApply={(order) => { listRequest.current += 1; setLoading(false); setLoadError(undefined); setAi2Order({ ...order, scope: ai2Scope }); setPage(1) }}
           onReset={resetAi2Order} />
       ) : null}

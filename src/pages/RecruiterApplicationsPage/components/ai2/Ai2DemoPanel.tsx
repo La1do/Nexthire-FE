@@ -38,9 +38,9 @@ export function Ai2DemoPanel({ applicationId, jobId, updatedAt, isMatching }: Pr
     }, AI2_PANEL_TIMEOUT_MS)
     const unavailable: Ai2Pool = { status: 'UNAVAILABLE', count: 0, rank: null }
     Promise.all([
-      applicationService.getRecruiterApplicationAi2Demo(applicationId, controller.signal)
+      applicationService.getRecruiterApplicationRankingScore(applicationId, controller.signal)
         .then(payload => parseAi2DemoEnvelope(payload, applicationId, jobId)),
-      applicationService.getRecruiterApplicationAi2Pool(applicationId, controller.signal)
+      applicationService.getRecruiterJobApplicationRankings(jobId, controller.signal)
         .then(payload => parseAi2Pool(payload, applicationId, jobId)),
     ])
       .then(([value, pool]) => {

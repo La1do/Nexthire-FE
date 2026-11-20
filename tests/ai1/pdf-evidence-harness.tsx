@@ -63,7 +63,7 @@ function DrawerHarness() {
   review.applicationId = 'synthetic'; review.jobId = 'job'
   review.requirements[0].evidence[0].text = 'MSSQL (SQL Server)'
   review.requirements[0].evidence[0].relevantSpan = null
-  applicationService.getRecruiterApplicationHrReview = async () => ({ success: true, data: review })
+  applicationService.getRecruiterApplicationMatchingEvidence = async () => ({ success: true, data: review })
   applicationService.getRecruiterApplicationCv = async () => ({ documentId: 'synthetic', fileName: 'synthetic.pdf', mimeType: 'application/pdf', size: 1024, url: '/synthetic-a.pdf', expiresInSeconds: 3600 })
   jobService.getRecruiterJobById = async () => ({ id: 'job', skills: [], requirements: 'Synthetic' }) as never
   const application = { id: 'synthetic', jobId: 'job', updatedAt: '1', skills: [], timeline: [], status: 'PENDING', cvParseStatus: 'PARSED', candidateName: 'Synthetic candidate', candidateHeadline: 'Backend developer', cvFileName: 'synthetic.pdf' } as unknown as RecruiterApplicationItem

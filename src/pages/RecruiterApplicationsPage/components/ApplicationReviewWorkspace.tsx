@@ -244,7 +244,7 @@ function ReviewWorkspaceContent({
     const controller = new AbortController()
 
     applicationService
-      .getRecruiterApplicationHrReview(application.id, controller.signal)
+      .getRecruiterApplicationMatchingEvidence(application.id, controller.signal)
       .then((payload) => {
         if (!active) return
         try {

@@ -22,7 +22,7 @@ const pool = () => ({ success: true, data: { schemaVersion: 'ai2-demo-pool-v1', 
 function mount(overrides = {}) {
   const applied = [], resets = [], calls = [], cleanup = []
   const service = {
-    async getRecruiterApplicationAi2Pool() { return pool() },
+    async getRecruiterJobApplicationRankings(jobId) { assert.equal(jobId, 'job'); return pool() },
     async getRecruiterApplications(params) {
       calls.push(params)
       return { data: apps.slice((params.page - 1) * 6, params.page * 6), meta: { total: 8, totalPages: 2, page: params.page, limit: 6 } }
@@ -40,7 +40,7 @@ function mount(overrides = {}) {
       return require(id)
     },
   })
-  const tree = exports.Ai2ReviewOrder({ applicationId: 'app-0', jobId: 'job', locale: 'en', applied: true, disabled: false, onApply: order => applied.push(order), onReset: () => resets.push(true) })
+  const tree = exports.Ai2ReviewOrder({ jobId: 'job', locale: 'en', applied: true, disabled: false, onApply: order => applied.push(order), onReset: () => resets.push(true) })
   const controls = tree.props.children[0].props.children
   return { apply: controls[1].props.onClick, reset: controls[2].props.onClick, applied, resets, calls, unmount: () => cleanup.forEach(fn => fn?.()) }
 }
@@ -58,7 +58,7 @@ test('READY loads both server pages before applying eight identities; equal posi
 test('missing authorized rows and unavailable pools never apply a partial order', async () => {
   for (const overrides of [
     { async getRecruiterApplications() { return { data: apps.slice(0, 6), meta: { total: 8, totalPages: 1, page: 1, limit: 100 } } } },
-    { async getRecruiterApplicationAi2Pool() { return { ...pool(), data: { ...pool().data, status: 'UNAVAILABLE', items: [], comparedCount: 0 } } } },
+    { async getRecruiterJobApplicationRankings() { return { ...pool(), data: { ...pool().data, status: 'UNAVAILABLE', items: [], comparedCount: 0 } } } },
   ]) {
     const mounted = mount(overrides); mounted.apply(); await tick()
     assert.equal(mounted.applied.length, 0); assert.ok(mounted.resets.length >= 2); mounted.unmount()
@@ -67,7 +67,7 @@ test('missing authorized rows and unavailable pools never apply a partial order'
 test('reset and unmount prevent a late READY request from applying', async () => {
   for (const operation of ['reset', 'unmount']) {
     let release
-    const mounted = mount({ getRecruiterApplicationAi2Pool: () => new Promise(resolve => { release = resolve }) })
+    const mounted = mount({ getRecruiterJobApplicationRankings: () => new Promise(resolve => { release = resolve }) })
     mounted.apply(); mounted[operation](); release(pool()); await tick()
     assert.equal(mounted.applied.length, 0)
     mounted.unmount()
@@ -91,7 +91,7 @@ test('reset aborts an in-flight application list read', async () => {
 })
 test('a newer check time with the same source bindings still applies', async () => {
   let calls = 0
-  const mounted = mount({ async getRecruiterApplicationAi2Pool() {
+  const mounted = mount({ async getRecruiterJobApplicationRankings() {
     const value = pool()
     if (++calls > 1) value.data.sourceCheckedAt = '2026-10-18T10:00:01Z'
     return value
@@ -103,6 +103,33 @@ test('a newer check time with the same source bindings still applies', async () 
 })
 test('changed second pool check clears the order', async () => {
   let calls = 0
-  const mounted = mount({ async getRecruiterApplicationAi2Pool() { const value = pool(); if (++calls > 1) value.data.items[0].resultId = 'changed'; return value } })
+  const mounted = mount({ async getRecruiterJobApplicationRankings() { const value = pool(); if (++calls > 1) value.data.items[0].resultId = 'changed'; return value } })
   mounted.apply(); await tick(); assert.equal(mounted.applied.length, 0); mounted.unmount()
+})
+
+
+test('recruiter AI client uses the gateway routes and scopes ranking to the job', async () => {
+  const calls = []
+  const response = { data: { success: true, data: { id: 'request' } } }
+  const client = {
+    async get(url, options) { calls.push(['GET', url, options.signal]); return response },
+    async post(url, body, options) { assert.equal(body, undefined); calls.push(['POST', url, options.signal]); return response },
+  }
+  const module = {}
+  vm.runInNewContext(compile('src/services/application.service.ts'), {
+    exports: module,
+    require: id => id === '../lib/api' ? { apiClient: client } : require(id),
+  })
+  const service = module.applicationService
+  const { signal } = new AbortController()
+  await service.getRecruiterJobApplicationRankings('job-1', signal)
+  await service.getRecruiterApplicationRankingScore('app-1', signal)
+  await service.getRecruiterApplicationMatchingEvidence('app-1', signal)
+  assert.equal(await service.requestRecruiterApplicationMatching('app-1', signal), response.data.data)
+  assert.deepEqual(calls, [
+    ['GET', '/recruiter/jobs/job-1/application-rankings', signal],
+    ['GET', '/recruiter/applications/app-1/ranking-score', signal],
+    ['GET', '/recruiter/applications/app-1/matching-evidence', signal],
+    ['POST', '/recruiter/applications/app-1/matching-requests', signal],
+  ])
 })

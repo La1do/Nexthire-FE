@@ -10,11 +10,11 @@ const AI2_ORDER_TIMEOUT_MS = 65_000
 
 export type Ai2TableOrder = { applications: ApplicationResponse[]; ranks: Record<string, number> }
 type Props = {
-  applicationId: string; jobId: string; locale: string; applied: boolean; disabled: boolean
+  jobId: string; locale: string; applied: boolean; disabled: boolean
   onApply: (order: Ai2TableOrder) => void; onReset: () => void
 }
 
-export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled, onApply, onReset }: Props) {
+export function Ai2ReviewOrder({ jobId, locale, applied, disabled, onApply, onReset }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'unavailable'>('idle')
   const [freshness, setFreshness] = useState<Ai2SourceMetadata | null>(null)
   const [planV2, setPlanV2] = useState(false)
@@ -24,7 +24,7 @@ export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled
   useEffect(() => {
     request.current?.abort(); request.current = null; setStatus('idle'); setReason(undefined); setPlanV2(false); setFreshness(null)
     return () => { request.current?.abort(); request.current = null }
-  }, [applicationId, jobId])
+  }, [jobId])
 
   function reset() {
     request.current?.abort()
@@ -43,10 +43,10 @@ export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled
       if (request.current === controller) { request.current = null; onReset(); setStatus('unavailable') }
     }, AI2_ORDER_TIMEOUT_MS)
     try {
-      const payload = await applicationService.getRecruiterApplicationAi2Pool(applicationId, controller.signal)
-      const pool = parseAi2Pool(payload, applicationId, jobId)
+      const payload = await applicationService.getRecruiterJobApplicationRankings(jobId, controller.signal)
+      const pool = parseAi2Pool(payload, null, jobId)
       if (request.current === controller) { setPlanV2(pool.planSchemaVersion === 'jd-source-query-v2'); setFreshness(pool) }
-      if (pool.status !== 'READY' || pool.rank === null) {
+      if (pool.status !== 'READY') {
         if (request.current === controller) setReason(pool.reason)
         throw new Error('Pool not comparable')
       }
@@ -75,8 +75,8 @@ export function Ai2ReviewOrder({ applicationId, jobId, locale, applied, disabled
           !['SUBMITTED', 'OFFERED'].includes(app.status)) throw new Error('Pool identity changed')
         ranks[app.id] = item.rankingPosition
       }
-      const latest = await applicationService.getRecruiterApplicationAi2Pool(applicationId, controller.signal)
-      const latestPool = parseAi2Pool(latest, applicationId, jobId)
+      const latest = await applicationService.getRecruiterJobApplicationRankings(jobId, controller.signal)
+      const latestPool = parseAi2Pool(latest, null, jobId)
       if (latestPool.status !== 'READY' || latestPool.currentCvRevalidated !== true) {
         if (request.current === controller) { setReason(latestPool.reason); setFreshness(latestPool) }
         throw new Error('Current CV revalidation failed during loading')
