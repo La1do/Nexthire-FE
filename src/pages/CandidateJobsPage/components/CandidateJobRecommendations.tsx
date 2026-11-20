@@ -12,6 +12,7 @@ const workingTypes: Record<string, string> = { ONSITE: 'Tại văn phòng', REMO
 const experienceLevels: Record<string, string> = { INTERN: 'Thực tập', FRESHER: 'Mới tốt nghiệp', JUNIOR: 'Junior', MIDDLE: 'Middle', SENIOR: 'Senior', LEAD: 'Trưởng nhóm' }
 const emptyReasons = {
   NO_PUBLIC_JOBS: 'Chưa có việc làm công khai đủ điều kiện trong lần kiểm tra này.',
+  NO_JOBS_ABOVE_THRESHOLD: 'Chưa tìm thấy việc làm phù hợp với CV này trong nhóm tin đã kiểm tra.',
   NO_KEYWORD_OVERLAP: 'Chưa tìm thấy từ khóa chung với CV trong nhóm việc làm đã kiểm tra.',
   CV_TEXT_EMPTY: 'Bản phân tích CV chưa có nội dung văn bản để đối chiếu.',
 }

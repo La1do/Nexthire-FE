@@ -59,7 +59,7 @@ const semanticRecommendationSchema = recommendationSourceSchema.extend({
   method: z.literal('M1_REQUIREMENT_SEMANTIC_V1'),
   scoreMeaning: z.literal('RELATIVE_SEMANTIC_SIMILARITY'),
   status: z.enum(['READY', 'READY_PARTIAL', 'EMPTY', 'INDEX_WARMING']),
-  reason: z.enum(['NO_PUBLIC_JOBS', 'CV_TEXT_EMPTY', 'JD_INDEX_PENDING']).nullable(),
+  reason: z.enum(['NO_PUBLIC_JOBS', 'CV_TEXT_EMPTY', 'JD_INDEX_PENDING', 'NO_JOBS_ABOVE_THRESHOLD']).nullable(),
   modelVersion: z.string().trim().min(1),
   pool: poolSchema.extend({ indexed: z.number().int().min(0).max(100) }),
   items: z.array(z.object({
@@ -99,7 +99,7 @@ const recommendationSchema = z.discriminatedUnion('schemaVersion', [
     hasRecommendations !== (data.items.length > 0) ||
     (data.status === 'READY' && data.reason !== null) ||
     (data.status === 'READY_PARTIAL' && data.reason !== null && data.reason !== 'JD_INDEX_PENDING') ||
-    (data.status === 'EMPTY' && data.reason !== 'NO_PUBLIC_JOBS' && data.reason !== 'CV_TEXT_EMPTY') ||
+    (data.status === 'EMPTY' && data.reason !== 'NO_PUBLIC_JOBS' && data.reason !== 'CV_TEXT_EMPTY' && data.reason !== 'NO_JOBS_ABOVE_THRESHOLD') ||
     (data.status === 'INDEX_WARMING' && data.reason !== 'JD_INDEX_PENDING')
   ) invalid('Invalid semantic recommendation status')
   if (
